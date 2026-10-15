@@ -86,7 +86,7 @@ internal sealed class LayoutCalculator
 
                 case MemberShape.Blob:
                     {
-                        // Only a message, which starts on a byte boundary, holds an aligned blob (NTC011), so the empty path's bits so far fix the alignment.
+                        // Only a message holds an aligned blob (NTC011), and it is never nested (NTC009) or a union arm (NTC012), so it starts on a byte boundary and the empty path's bits so far fix the alignment.
                         int misalignment = builder.Bits % 8;
                         if (member.BlobAlign && misalignment != 0)
                             builder.Widths.Add((byte)(8 - misalignment));

@@ -357,8 +357,8 @@ public sealed class DiagnosticTests
         AssertClean(run);
     }
 
-    // NTC003 proves every member of an enum fits its unsigned width, so a signed underlying type (int by
-    // default) gives NTC006 nothing to warn about; under TreatWarningsAsErrors a warning here fails the build.
+    // NTC003 reports an enum member that does not fit its unsigned width, so a signed underlying type (int
+    // by default) gives NTC006 nothing to add; under TreatWarningsAsErrors a warning here fails the build.
     [Fact]
     public void UIntOnAnIntBackedEnumWhoseValuesFitRaisesNothing()
     {
@@ -767,6 +767,84 @@ public sealed class DiagnosticTests
         Assert.DoesNotContain("Tests.Holder.g.cs", run.GeneratedSources);
     }
 
+    // A [UInt] selector's type holds the case, but its wire bits need more than the declared width.
+    [Fact]
+    public void UnionCaseAnUnsignedSelectorsWidthCannotCarryRaisesNtc013()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            public interface IArm : IWireStruct
+            {
+            }
+
+            [WireStruct]
+            [UnionCase(0)]
+            public sealed partial class Zero : IArm
+            {
+            }
+
+            [WireStruct]
+            [UnionCase(8)]
+            public sealed partial class Eight : IArm
+            {
+            }
+
+            [WireStruct]
+            public partial class Holder
+            {
+                [UInt(3)] public byte Selector { get; set; }
+
+                [Union(nameof(Selector))] public IArm Arm { get; set; } = new Zero();
+            }
+            """);
+
+        Diagnostic diagnostic = AssertSingle(run, "NTC013", DiagnosticSeverity.Error, "byte Selector");
+        Assert.Contains("is 3 bits wide, but the [UnionCase] of Eight = 8", MessageOf(diagnostic));
+        Assert.DoesNotContain("Tests.Holder.g.cs", run.GeneratedSources);
+    }
+
+    // A [UInt] selector's type cannot hold the case at all, whatever its width.
+    [Fact]
+    public void UnionCaseAnUnsignedSelectorsTypeCannotHoldRaisesNtc013()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            public interface IArm : IWireStruct
+            {
+            }
+
+            [WireStruct]
+            [UnionCase(0)]
+            public sealed partial class Zero : IArm
+            {
+            }
+
+            [WireStruct]
+            [UnionCase(300)]
+            public sealed partial class Big : IArm
+            {
+            }
+
+            [WireStruct]
+            public partial class Holder
+            {
+                [UInt(8)] public byte Selector { get; set; }
+
+                [Union(nameof(Selector))] public IArm Arm { get; set; } = new Zero();
+            }
+            """);
+
+        Diagnostic diagnostic = AssertSingle(run, "NTC013", DiagnosticSeverity.Error, "byte Selector");
+        Assert.Contains("the [UnionCase] of Big = 300", MessageOf(diagnostic));
+        Assert.DoesNotContain("Tests.Holder.g.cs", run.GeneratedSources);
+    }
+
     [Fact]
     public void GetOnlyScalarRaisesNtc009()
     {
@@ -961,6 +1039,47 @@ public sealed class DiagnosticTests
         Diagnostic diagnostic = AssertSingle(run, "NTC009", DiagnosticSeverity.Error, "Envelope Inner");
         Assert.Contains("holds an aligned blob", MessageOf(diagnostic));
         Assert.DoesNotContain("Tests.Holder.g.cs", run.GeneratedSources);
+    }
+
+    // An arm starts wherever its selector ends, so its blob would align to the body while its measure aligned to the arm.
+    [Fact]
+    public void AUnionArmHoldingAnAlignedBlobRaisesNtc012()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+            using NexusTomorrow.Network.Message;
+
+            namespace Tests;
+
+            public interface IShape : IWireStruct
+            {
+            }
+
+            [WireStruct]
+            [UnionCase(0)]
+            public sealed partial class Plain : IShape
+            {
+            }
+
+            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            [UnionCase(1)]
+            public sealed partial class Envelope : IShape
+            {
+                [Blob(32, Align = true)] public byte[] Payload { get; set; } = [];
+            }
+
+            [WireStruct]
+            public sealed partial class Holder
+            {
+                [UInt(3)] public byte Selector { get; set; }
+
+                [Union(nameof(Selector))] public IShape Shape { get; set; } = new Plain();
+            }
+            """);
+
+        Diagnostic diagnostic = AssertSingle(run, "NTC012", DiagnosticSeverity.Error, "class Envelope");
+        Assert.Contains("cannot hold an aligned blob", MessageOf(diagnostic));
+        Assert.DoesNotContain("Tests.Envelope.g.cs", run.GeneratedSources);
     }
 
     // A type that emits nothing has no Read or Write, so a type that nests it, or derives from it, must

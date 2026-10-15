@@ -14,7 +14,7 @@ internal static class Diagnostics
 
     public static readonly DiagnosticDescriptor MissingWidth = new(
         "NTC001", "Wire member has no width",
-        "Member '{0}' of '{1}' has no wire width; add [UInt(n)], [SInt(n)], [Float32], [Float64], [PackedFloat], a string, array, union, blob or pad attribute, give it a [WireStruct] type, or mark it [NotOnWire]",
+        "Member '{0}' of '{1}' has no wire width; add [UInt(n)], [SInt(n)], [Float32], [Float64], [PackedFloat], a string, array, union, blob or pad attribute, give it a [WireStruct] or [WireMessage] type, or mark it [NotOnWire]",
         Category, DiagnosticSeverity.Error, isEnabledByDefault: true);
 
     public static readonly DiagnosticDescriptor BadWidth = new(

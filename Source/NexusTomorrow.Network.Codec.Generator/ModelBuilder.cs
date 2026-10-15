@@ -74,6 +74,10 @@ internal static class ModelBuilder
         if (unionCase is not null && !TryGetCaseValue(ArgumentOf(unionCase, 0), out unionCaseValue))
             diagnostics.Add(DiagnosticInfo.Create(Diagnostics.BadType, typeLocation, typeName, "[UnionCase] needs an enum value or an integer"));
 
+        // An arm starts wherever its selector ends, so an aligned blob in it would align to the body's bytes while its measure aligns to the arm's.
+        if (unionCase is not null && HoldsAlignedBlob(type))
+            diagnostics.Add(DiagnosticInfo.Create(Diagnostics.BadType, typeLocation, typeName, "a [UnionCase] arm cannot hold an aligned blob, since an arm starts wherever its selector ends"));
+
         var supertypes = new List<string>();
         for (INamedTypeSymbol? ancestor = type.BaseType; ancestor is not null && ancestor.SpecialType != SpecialType.System_Object; ancestor = ancestor.BaseType)
             supertypes.Add(ancestor.ToDisplayString(s_fullName));
@@ -543,7 +547,7 @@ internal static class ModelBuilder
             return null;
         }
 
-        // An enum is exempt: NTC003 below proves each of its members fits the unsigned width.
+        // An enum is exempt: NTC003 below reports a member that does not fit the unsigned width, and writing one throws.
         if (encoding == ScalarEncoding.UInt && integer.Signed && bits < integer.Size && enumType is null)
             diagnostics.Add(DiagnosticInfo.Create(Diagnostics.NarrowSignedUInt, location, name, typeName, integer.Keyword, Text(bits)));
 

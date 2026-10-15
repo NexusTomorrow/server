@@ -16,6 +16,16 @@ namespace NexusTomorrow.Network.Codec.Generator;
 [Generator(LanguageNames.CSharp)]
 public sealed class WireGenerator : IIncrementalGenerator
 {
+    /// <summary>
+    /// The tracking name of the step that analyzes every wire type together.
+    /// </summary>
+    public const string ProductionStep = "Production";
+
+    /// <summary>
+    /// The tracking name of the step that takes the generated sources from the analysis.
+    /// </summary>
+    public const string SourcesStep = "Sources";
+
     private static readonly int[] s_directions = [1, 2];
 
     /// <inheritdoc/>
@@ -32,11 +42,13 @@ public sealed class WireGenerator : IIncrementalGenerator
             static (syntax, cancellationToken) => ModelBuilder.Build(syntax, isMessage: true, cancellationToken));
         IncrementalValueProvider<string> assemblyName = context.CompilationProvider.Select(static (compilation, _) => compilation.AssemblyName ?? "Wire");
 
+        // The tracking names let a test see a run reuse the analysis and the sources.
         IncrementalValueProvider<Production> production = structs.Collect().Combine(messages.Collect()).Combine(assemblyName)
-            .Select(static (input, _) => Analyze(input.Left.Left, input.Left.Right, input.Right));
+            .Select(static (input, _) => Analyze(input.Left.Left, input.Left.Right, input.Right))
+            .WithTrackingName(ProductionStep);
 
         context.RegisterSourceOutput(
-            production.Select(static (result, _) => result.Sources),
+            production.Select(static (result, _) => result.Sources).WithTrackingName(SourcesStep),
             static (output, sources) =>
             {
                 foreach (GeneratedSource source in sources)

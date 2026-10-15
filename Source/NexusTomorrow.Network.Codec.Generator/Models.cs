@@ -53,7 +53,7 @@ internal enum CollectionKind
 internal sealed record ScalarModel(ScalarEncoding Encoding, int Bits, string ClrType, string? IntegerType, string? UnsignedType, bool IsSigned, bool IsEnum, bool IsBool, int Components, int TypeBits);
 
 /// <summary>
-/// What one value is: a scalar, a string, or a [WireStruct] type (with its layout when it comes from another assembly).
+/// What one value is: a scalar, a string, or a [WireStruct] or [WireMessage] type (with its layout when it comes from another assembly).
 /// </summary>
 internal sealed record ValueModel(ValueKind Kind, ScalarModel? Scalar, StringEncoding String, string? StructType, LayoutModel? StructMetadataLayout);
 

@@ -1,4 +1,7 @@
-﻿namespace NexusTomorrow.Network.Codec.Generator.Tests;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+
+namespace NexusTomorrow.Network.Codec.Generator.Tests;
 
 public sealed class GeneratedSourceTests
 {
@@ -491,15 +494,97 @@ public sealed class GeneratedSourceTests
                     var read = new Turn();
                     var reader = new BitReader(bytes);
                     read.Read(ref reader);
-                    return System.FormattableString.Invariant($"{written.MeasureBits()} {read.Rotation} {bytes[15]:X2}");
+                    return System.FormattableString.Invariant($"{written.MeasureBits()} {read.Rotation} {System.Convert.ToHexString(bytes)}");
                 }
             }
             """);
 
         Assert.Empty(run.Diagnostics);
         Assert.Empty(run.CompilationErrors);
-        // 4f is 0x40800000; its last byte ends the body.
-        Assert.Equal("128 {X:1 Y:2 Z:3 W:4} 40", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
+        // Each float goes out as its IEEE bits, low byte first: 1f is 0x3F800000, 2f 0x40000000, 3f 0x40400000, 4f 0x40800000.
+        Assert.Equal("128 {X:1 Y:2 Z:3 W:4} 0000803F000000400000404000008040", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
+    }
+
+    // NTC003 keeps a member whose enum has a value too wide for it, such as a sentinel never sent; that value must not reach the wire.
+    [Fact]
+    public void WritingAnEnumValueWiderThanItsFieldThrows()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            public enum Slot : uint
+            {
+                First = 1,
+                None = 0xFFFFFFFF,
+            }
+
+            [WireStruct]
+            public sealed partial class Sample
+            {
+                [UInt(4)] public Slot Where { get; set; }
+            }
+
+            public static class Probe
+            {
+                public static string Write()
+                {
+                    var sample = new Sample { Where = Slot.None };
+                    byte[] bytes = new byte[1];
+                    var writer = new BitWriter(bytes);
+                    try
+                    {
+                        sample.Write(ref writer);
+                        return "written";
+                    }
+                    catch (CodecException exception)
+                    {
+                        return exception.GetType().Name;
+                    }
+                }
+            }
+            """);
+
+        Assert.Equal("NTC003", Assert.Single(run.Diagnostics).Id);
+        Assert.Empty(run.CompilationErrors);
+        Assert.Equal("CodecException", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "Write"));
+    }
+
+    // The analysis and the sources are values, so an edit that touches no wire type reruns neither.
+    [Fact]
+    public void AnEditOutsideTheWireTypesReusesTheAnalysisAndTheSources()
+    {
+        CSharpCompilation compilation = GeneratorHarness.Compile("""
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            [WireStruct]
+            public sealed partial class Sample
+            {
+                [UInt(8)] public byte Value { get; set; }
+            }
+            """);
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(
+            [new WireGenerator().AsSourceGenerator()],
+            driverOptions: new GeneratorDriverOptions(IncrementalGeneratorOutputKind.None, trackIncrementalGeneratorSteps: true));
+
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        driver = driver.RunGenerators(compilation, cancellationToken);
+        SyntaxTree unrelated = CSharpSyntaxTree.ParseText("namespace Tests; public static class Unrelated { }", cancellationToken: cancellationToken);
+        driver = driver.RunGenerators(compilation.AddSyntaxTrees(unrelated), cancellationToken);
+
+        GeneratorRunResult result = driver.GetRunResult().Results.Single();
+        IncrementalStepRunReason[] reasons =
+        [
+            .. new[] { WireGenerator.ProductionStep, WireGenerator.SourcesStep }
+                .SelectMany(step => result.TrackedSteps[step])
+                .SelectMany(run => run.Outputs)
+                .Select(output => output.Reason),
+        ];
+        Assert.NotEmpty(reasons);
+        Assert.All(reasons, reason => Assert.True(reason is IncrementalStepRunReason.Cached or IncrementalStepRunReason.Unchanged, reason.ToString()));
     }
 
     // The client nests whole message bodies in a list (ServerMissileActorListAdd carries ServerMissileActorAdd bodies).

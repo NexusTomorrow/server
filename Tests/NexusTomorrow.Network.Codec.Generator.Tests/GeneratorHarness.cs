@@ -27,13 +27,7 @@ internal static class GeneratorHarness
     /// </summary>
     public static GeneratorRun Run(string source)
     {
-        SyntaxTree tree = CSharpSyntaxTree.ParseText(source, CSharpParseOptions.Default, SourcePath);
-        var compilation = CSharpCompilation.Create(
-            AssemblyName,
-            [tree],
-            s_references,
-            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable));
-
+        CSharpCompilation compilation = Compile(source);
         GeneratorDriver driver = CSharpGeneratorDriver.Create(new WireGenerator())
             .RunGeneratorsAndUpdateCompilation(compilation, out Compilation output, out ImmutableArray<Diagnostic> diagnostics);
         GeneratorRunResult result = driver.GetRunResult().Results.Single();
@@ -43,6 +37,19 @@ internal static class GeneratorHarness
         var sources = result.GeneratedSources.ToDictionary(generated => generated.HintName, generated => generated.SourceText.ToString(), StringComparer.Ordinal);
         ImmutableArray<Diagnostic> errors = [.. output.GetDiagnostics().Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)];
         return new GeneratorRun(source, diagnostics, sources, errors, output);
+    }
+
+    /// <summary>
+    /// <paramref name="source"/> compiled as the test assembly, before the generator runs.
+    /// </summary>
+    public static CSharpCompilation Compile(string source)
+    {
+        SyntaxTree tree = CSharpSyntaxTree.ParseText(source, CSharpParseOptions.Default, SourcePath);
+        return CSharpCompilation.Create(
+            AssemblyName,
+            [tree],
+            s_references,
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable));
     }
 
     /// <summary>

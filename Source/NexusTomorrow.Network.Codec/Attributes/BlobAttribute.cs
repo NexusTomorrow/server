@@ -20,7 +20,7 @@ public sealed class BlobAttribute : Attribute
     public int LengthBits { get; }
 
     /// <summary>
-    /// True to skip to a byte boundary before the length; allowed only in a [WireMessage] type, which starts on one.
+    /// True to skip to a byte boundary before the length; allowed only in a [WireMessage] type that is neither nested nor a union arm, so it starts on one.
     /// </summary>
     public bool Align { get; set; }
 

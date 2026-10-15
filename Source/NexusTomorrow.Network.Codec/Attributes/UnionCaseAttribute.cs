@@ -1,7 +1,7 @@
 ﻿namespace NexusTomorrow.Network.Codec;
 
 /// <summary>
-/// Marks a [WireStruct] type as the union arm for one selector value.
+/// Marks a [WireStruct] or [WireMessage] type as the union arm for one selector value. An arm cannot hold an aligned blob (NTC012).
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class UnionCaseAttribute : Attribute
