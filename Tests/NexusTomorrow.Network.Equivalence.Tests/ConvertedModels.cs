@@ -27,6 +27,7 @@ internal static class ConvertedModels
     private const string ArticleIdIn14Bits = "the client sends the archive article id in 14 bits where the seed read 32; the declaration follows the client";
     private const string CharacterResultIn6Bits = "the client takes the result in 6 bits where the seed wrote 3; the declaration follows the client";
     private const string NestsMapRegion = "it nests MapRegion, which follows the client where the seed does not";
+    private const string NestsPublicEventStats = "it nests PublicEventStats, which follows the client where the seed does not";
     private const uint FloatExactIntegers = (1u << 24) - 1;
 
     private static readonly Assembly s_legacyAssembly = typeof(legacy::NexusTomorrow.Network.World.ServiceCollectionExtensions).Assembly;
@@ -90,11 +91,14 @@ internal static class ConvertedModels
         ["NexusTomorrow.Network.World.Message.Model.Pregame.ServerCharacterRenameResult"] = CharacterResultIn6Bits,
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerMapTrackedUnitUpdate"] = "the client takes the public event objective id in 15 bits where the seed wrote 14; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventBombStatus"] = "the client takes a 14-bit field before the carrier unit id that the seed did not write; the declaration follows the client",
+        ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventEnd"] = NestsPublicEventStats,
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventLocationUpdate"] = "the client takes the object id in 32 bits where the seed wrote 14; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventMapRegionUpdate"] = NestsMapRegion,
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventObjectiveNotificationMode"] = "the client takes the objective id in 15 bits where the seed wrote 14; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventObjectiveUpdate"] = "it nests PublicEventObjective, which follows the client where the seed does not",
+        ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventPersonalStatsUpdate"] = "it derives from PublicEventStats, which follows the client where the seed does not",
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventStart"] = "the client takes the reward type in 32 bits where the seed wrote 64, and it nests PublicEventObjective, which follows the client where the seed does not; the declaration follows the client",
+        ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventStatsUpdate"] = NestsPublicEventStats,
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventTriggerUiUpdates"] = "the client takes the event id in 32 bits where the seed wrote 14; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventUnitAdd"] = NoCount,
         ["NexusTomorrow.Network.World.Message.Model.Reward.LockedReward"] = "the client takes the rewarded flags in 32 bits where the seed wrote 64; the declaration follows the client",
@@ -115,6 +119,9 @@ internal static class ConvertedModels
         ["NexusTomorrow.Network.World.Message.Model.Shared.Item"] = "the legacy Write sends Glyphs.Count as the count of Unknown88; the declaration counts Unknown88",
         ["NexusTomorrow.Network.World.Message.Model.Shared.MapRegion"] = "the client takes the world socket id in 14 bits where the seed wrote 15; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.Shared.PublicEventObjective"] = NestsMapRegion,
+        ["NexusTomorrow.Network.World.Message.Model.Shared.PublicEventParticipantStats"] = NestsPublicEventStats,
+        ["NexusTomorrow.Network.World.Message.Model.Shared.PublicEventStats"] = "the client takes the mask as one 32-bit field where the seed wrote four bytes; the declaration follows the client",
+        ["NexusTomorrow.Network.World.Message.Model.Shared.PublicEventTeamStats"] = NestsPublicEventStats,
         ["NexusTomorrow.Network.World.Message.Model.Spell.ClientCastGuildBossToken"] = "the client sends the token item id in 18 bits where the seed read 32; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.Spell.ClientCastServiceToken"] = "the client sends the spell id in 18 bits where the seed read 32; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.Spell.ServerSpellGo"] = "the legacy Write puts the sbyte Phase through Write(int), 32 sign-extended bits, where the client facts give the 8 declared",

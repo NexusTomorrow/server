@@ -7,6 +7,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Shared;
 [WireStruct]
 public partial class PublicEventStats
 {
-    [FixedArray(4), UInt(8)] public byte[] Mask { get; set; } = new byte[4]; // 32 flags, least significant bit of each byte first
+    [UInt(32)] public uint Mask { get; set; } // 32 flags, the first in the least significant bit
     [Array(CountBits = 5), UInt(32)] public List<uint> Values { get; set; } = [];
 }
