@@ -20,6 +20,9 @@
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network.Codec.Generator\NexusTomorrow.Network.Codec.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <!-- WireMessageAttribute and GameMessageOpcode for the fixtures, and the legacy GamePacketReader and GamePacketWriter for LegacyParityTests. -->
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network\NexusTomorrow.Network.csproj" />
+    <!-- The declared messages the registry facts check compares with the client facts. -->
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network.Auth\NexusTomorrow.Network.Auth.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network.World\NexusTomorrow.Network.World.csproj" />
   </ItemGroup>
 
   <ItemGroup>
