@@ -5,7 +5,7 @@ namespace NexusTomorrow.Shared
 {
     public static class TaskExtensions
     {
-        public static async void FireAndForgetAsync(this Task task, Action<Exception> onException = null)
+        public static async void FireAndForgetAsync(this Task task, Action<Exception>? onException = null)
         {
             try
             {

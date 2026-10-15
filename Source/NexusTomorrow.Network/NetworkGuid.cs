@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network
         public int Data1 { get; private set; }
         public short Data2 { get; private set; }
         public short Data3 { get; private set; }
-        public byte[] Data4 { get; private set; }
+        public byte[] Data4 { get; private set; } = [];
 
         public void Read(GamePacketReader reader)
         {

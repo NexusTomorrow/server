@@ -140,7 +140,7 @@ namespace NexusTomorrow.Cryptography
                     sha256.TransformBlock(buffer, 0, buffer.Length, null, 0);
             }
 
-            byte[] hash = sha256.Hash;
+            byte[] hash = sha256.Hash ?? throw new InvalidOperationException("SHA-256 produced no hash after TransformFinalBlock.");
             if (reverse)
                 ReverseBytesAsUInt32(hash);
             return new BigInteger(hash, true);

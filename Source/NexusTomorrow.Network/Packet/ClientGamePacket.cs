@@ -3,6 +3,6 @@
     public class ClientGamePacket
     {
         public bool IsEncrypted { get; init; }
-        public byte[] Data { get; init; }
+        public required byte[] Data { get; init; }
     }
 }

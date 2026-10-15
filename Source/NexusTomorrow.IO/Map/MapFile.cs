@@ -9,7 +9,7 @@ namespace NexusTomorrow.IO.Map
         protected const uint Version = 4u;
         protected const uint Build   = 16042u;
 
-        public string Asset { get; protected set; }
+        public string Asset { get; protected set; } = string.Empty;
 
         protected readonly Dictionary<uint /*hash*/, MapFileGrid> grids = new();
 
@@ -60,7 +60,7 @@ namespace NexusTomorrow.IO.Map
         /// </summary>
         public uint? GetWorldAreaId(Vector3 vector)
         {
-            MapFileGrid grid = GetGrid(vector);
+            MapFileGrid? grid = GetGrid(vector);
             return grid?.GetWorldZoneId(vector);
         }
 
@@ -69,15 +69,15 @@ namespace NexusTomorrow.IO.Map
         /// </summary>
         public float? GetTerrainHeight(Vector3 vector)
         {
-            MapFileGrid grid = GetGrid(vector);
+            MapFileGrid? grid = GetGrid(vector);
             return grid?.GetTerrainHeight(vector);
         }
 
-        private MapFileGrid GetGrid(Vector3 vector)
+        private MapFileGrid? GetGrid(Vector3 vector)
         {
             (uint gridX, uint gridY) = GetGridCoord(vector);
             uint hash = (gridY << 16) | gridX;
-            return grids.TryGetValue(hash, out MapFileGrid grid) ? grid : null;
+            return grids.GetValueOrDefault(hash);
         }
 
         public IEnumerator<MapFileGrid> GetEnumerator()

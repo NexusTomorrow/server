@@ -42,7 +42,7 @@ namespace NexusTomorrow.IO.Map
         /// </summary>
         public uint? GetWorldZoneId(Vector3 vector)
         {
-            MapFileCell cell = GetCell(vector);
+            MapFileCell? cell = GetCell(vector);
             return cell?.GetWorldZoneId(vector);
         }
 
@@ -51,15 +51,15 @@ namespace NexusTomorrow.IO.Map
         /// </summary>
         public float? GetTerrainHeight(Vector3 vector)
         {
-            MapFileCell cell = GetCell(vector);
+            MapFileCell? cell = GetCell(vector);
             return cell?.GetTerrainHeight(vector);
         }
 
-        private MapFileCell GetCell(Vector3 vector)
+        private MapFileCell? GetCell(Vector3 vector)
         {
             (uint cellX, uint cellY) = GetCellCoord(vector);
             uint hash = (cellX << 16) | cellY;
-            return cells.TryGetValue(hash, out MapFileCell cell) ? cell : null;
+            return cells.GetValueOrDefault(hash);
         }
 
         public IEnumerator<MapFileCell> GetEnumerator()

@@ -11,8 +11,8 @@ namespace NexusTomorrow.Shared
         {
             for (uint i = 0u; i < count && !queue.IsEmpty; i++)
             {
-                queue.TryDequeue(out T result);
-                yield return result;
+                if (queue.TryDequeue(out T? result))
+                    yield return result;
             }
         }
 

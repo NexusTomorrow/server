@@ -5,7 +5,7 @@ namespace NexusTomorrow.Network.Configuration.Model
     [ConfigurationBind]
     public class NetworkConfig
     {
-        public string Host { get; set; }
+        public required string Host { get; set; }
         public ushort Port { get; set; }
     }
 }

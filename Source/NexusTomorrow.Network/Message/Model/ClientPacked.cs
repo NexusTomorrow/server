@@ -3,7 +3,7 @@
     [Message(GameMessageOpcode.ClientPacked)]
     public class ClientPacked : IReadable
     {
-        public byte[] Data { get; private set; }
+        public byte[] Data { get; private set; } = [];
 
         public void Read(GamePacketReader reader)
         {

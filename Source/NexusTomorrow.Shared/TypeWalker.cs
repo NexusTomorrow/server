@@ -9,7 +9,7 @@ namespace NexusTomorrow.Shared
         {
             foreach (Type type in assembly.GetTypes())
             {
-                T attribute = type.GetCustomAttribute<T>();
+                T? attribute = type.GetCustomAttribute<T>();
                 if (attribute == null)
                     continue;
 

@@ -21,9 +21,9 @@ namespace NexusTomorrow.IO.Map
 
         protected Flags flags;
 
-        protected uint[] worldZoneIds;
-        protected byte[,] worldZoneBounds;
-        protected Half[,] heightMap;
+        protected uint[]? worldZoneIds;
+        protected byte[,]? worldZoneBounds;
+        protected Half[,]? heightMap;
 
         public void Read(BinaryReader reader)
         {
@@ -74,23 +74,21 @@ namespace NexusTomorrow.IO.Map
         /// </summary>
         public uint? GetWorldZoneId(Vector3 vector)
         {
-            if ((flags & Flags.Zone) != 0)
-            {
-                if ((flags & Flags.ZoneBound) != 0)
-                {
-                    ZoneBoundFlags zoneFlags = GetZoneBoundFlags(vector);
-                    if ((zoneFlags & ZoneBoundFlags.WorldZone2) != 0)
-                        return worldZoneIds[2];
-                    if ((zoneFlags & ZoneBoundFlags.WorldZone1) != 0)
-                        return worldZoneIds[1];
-                    if ((zoneFlags & ZoneBoundFlags.WorldZone0) != 0)
-                        return worldZoneIds[0];
-                }
+            if (worldZoneIds is null)
+                return null;
 
-                return worldZoneIds[0];
+            if (worldZoneBounds is not null)
+            {
+                ZoneBoundFlags zoneFlags = GetZoneBoundFlags(worldZoneBounds, vector);
+                if ((zoneFlags & ZoneBoundFlags.WorldZone2) != 0)
+                    return worldZoneIds[2];
+                if ((zoneFlags & ZoneBoundFlags.WorldZone1) != 0)
+                    return worldZoneIds[1];
+                if ((zoneFlags & ZoneBoundFlags.WorldZone0) != 0)
+                    return worldZoneIds[0];
             }
 
-            return null;
+            return worldZoneIds[0];
         }
 
         /// <summary>
@@ -98,19 +96,19 @@ namespace NexusTomorrow.IO.Map
         /// </summary>
         public bool HasRoadMarch(Vector3 vector)
         {
-            if ((flags & Flags.ZoneBound) == 0)
+            if (worldZoneBounds is null)
                 return false;
 
-            return (GetZoneBoundFlags(vector) & ZoneBoundFlags.RoadMarch) != 0;
+            return (GetZoneBoundFlags(worldZoneBounds, vector) & ZoneBoundFlags.RoadMarch) != 0;
         }
 
-        private ZoneBoundFlags GetZoneBoundFlags(Vector3 vector)
+        private static ZoneBoundFlags GetZoneBoundFlags(byte[,] bounds, Vector3 vector)
         {
             float x = vector.X + MapDefines.WorldGridOrigin * MapDefines.GridSize;
             float z = vector.Z + MapDefines.WorldGridOrigin * MapDefines.GridSize;
             uint localX = ((uint)Math.Floor(x) & 31) * 2;
             uint localZ = ((uint)Math.Floor(z) & 31) * 2;
-            return (ZoneBoundFlags)worldZoneBounds[localX, localZ];
+            return (ZoneBoundFlags)bounds[localX, localZ];
         }
 
         /// <summary>
@@ -118,7 +116,7 @@ namespace NexusTomorrow.IO.Map
         /// </summary>
         public float? GetTerrainHeight(Vector3 vector)
         {
-            if ((flags & Flags.Zone) == 0)
+            if (heightMap is null)
                 return null;
 
             float trueX = vector.X + MapDefines.WorldGridOrigin * MapDefines.GridSize;

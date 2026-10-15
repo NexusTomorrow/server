@@ -19,7 +19,7 @@ namespace NexusTomorrow.Shared
 
         public T2 Resolve<T2>() where T2 : T
         {
-            return serviceProvider.GetService<T2>();
+            return serviceProvider.GetRequiredService<T2>();
         }
     }
 }

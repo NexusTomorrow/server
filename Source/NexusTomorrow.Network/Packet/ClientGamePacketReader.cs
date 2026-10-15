@@ -5,8 +5,10 @@ namespace NexusTomorrow.Network.Packet
 {
     public sealed class ClientGamePacketReader : IDisposable
     {
-        private MemoryStream stream;
-        private GamePacketReader reader;
+        private MemoryStream? stream;
+        private GamePacketReader? reader;
+
+        private GamePacketReader Reader => reader ?? throw new InvalidOperationException($"{nameof(reader)} is not set; call {nameof(Initialise)} first.");
 
         public void Dispose()
         {
@@ -25,13 +27,13 @@ namespace NexusTomorrow.Network.Packet
 
         public GameMessageOpcode ReadHeader()
         {
-            return reader.ReadEnum<GameMessageOpcode>(16u);
+            return Reader.ReadEnum<GameMessageOpcode>(16u);
         }
 
         public uint ReadBody(IReadable message)
         {
-            message.Read(reader);
-            return reader.BytesRemaining;
+            message.Read(Reader);
+            return Reader.BytesRemaining;
         }
     }
 }

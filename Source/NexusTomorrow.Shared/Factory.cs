@@ -15,7 +15,7 @@ namespace NexusTomorrow.Shared
 
         public T Resolve()
         {
-            return sp.GetService<T>();
+            return sp.GetRequiredService<T>();
         }
     }
 }

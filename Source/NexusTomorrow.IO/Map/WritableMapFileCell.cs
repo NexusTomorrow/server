@@ -53,22 +53,25 @@ namespace NexusTomorrow.IO.Map
                 {
                     case Flags.Zone:
                     {
-                        foreach (uint worldZoneId in worldZoneIds)
+                        uint[] zoneIds = worldZoneIds ?? throw new InvalidOperationException($"{nameof(Flags.Zone)} is set without {nameof(worldZoneIds)}.");
+                        foreach (uint worldZoneId in zoneIds)
                             writer.Write(worldZoneId);
                         break;
                     }
                     case Flags.Height:
                     {
+                        Half[,] heights = heightMap ?? throw new InvalidOperationException($"{nameof(Flags.Height)} is set without {nameof(heightMap)}.");
                         for (int y = 0; y < 17; y++)
                             for (int x = 0; x < 17; x++)
-                                writer.Write(heightMap[x, y]);
+                                writer.Write(heights[x, y]);
                         break;
                     }
                     case Flags.ZoneBound:
                     {
+                        byte[,] bounds = worldZoneBounds ?? throw new InvalidOperationException($"{nameof(Flags.ZoneBound)} is set without {nameof(worldZoneBounds)}.");
                         for (int y = 0; y < 64; y++)
                             for (int x = 0; x < 64; x++)
-                                writer.Write(worldZoneBounds[x, y]);
+                                writer.Write(bounds[x, y]);
                         break;
                     }
                 }
