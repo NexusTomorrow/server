@@ -6,7 +6,7 @@ namespace NexusTomorrow.Network.Sts.Model
     public class ClientConnectMessage : IReadable
     {
         public uint ConnType { get; private set; }
-        public string Address { get; }
+        public string? Address { get; }
         public uint? ConnProductType { get; }
         public uint? ConnAppIndex { get; }
         public uint? ConnDeployment { get; }
@@ -23,8 +23,8 @@ namespace NexusTomorrow.Network.Sts.Model
 
         public void Read(XmlDocument document)
         {
-            XmlNode rootNode = document["Connect"];
-            ConnType = rootNode["ConnType"].GetValue<uint>();
+            XmlElement rootNode = document.GetElement("Connect");
+            ConnType = rootNode.GetValue<uint>("ConnType");
         }
     }
 }

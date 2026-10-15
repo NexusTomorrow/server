@@ -4,7 +4,7 @@ namespace NexusTomorrow.Network.Sts.Model
 {
     public class RequestGameTokenResponse : IWritable
     {
-        public string Token { get; set; }
+        public required string Token { get; set; }
 
         public void Write(XmlWriter writer)
         {

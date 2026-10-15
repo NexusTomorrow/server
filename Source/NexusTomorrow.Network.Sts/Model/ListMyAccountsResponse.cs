@@ -4,9 +4,9 @@ namespace NexusTomorrow.Network.Sts.Model
 {
     public class ListMyAccountsResponse : IWritable
     {
-        public string Alias { get; set; }
-        public string Created { get; set; }
-        public string GameAccountId { get; set; }
+        public required string Alias { get; set; }
+        public required string Created { get; set; }
+        public required string GameAccountId { get; set; }
 
         public void Write(XmlWriter writer)
         {

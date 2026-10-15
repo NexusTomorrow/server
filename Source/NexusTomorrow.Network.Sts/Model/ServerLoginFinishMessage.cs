@@ -4,11 +4,11 @@ namespace NexusTomorrow.Network.Sts.Model
 {
     public class ServerLoginFinishMessage : IWritable
     {
-        public string LocationId { get; set; }
-        public string UserId { get; set; }
-        public uint UserCenter { get; set; }
-        public string UserName { get; set; }
-        public long AccessMask { get; set; }
+        public required string LocationId { get; set; }
+        public required string UserId { get; set; }
+        public required uint UserCenter { get; set; }
+        public required string UserName { get; set; }
+        public required long AccessMask { get; set; }
 
         // Status
         // Aliases

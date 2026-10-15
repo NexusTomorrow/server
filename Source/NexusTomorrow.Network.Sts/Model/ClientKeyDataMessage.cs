@@ -5,13 +5,13 @@ namespace NexusTomorrow.Network.Sts.Model
     [Message("/Auth/KeyData")]
     public class ClientKeyDataMessage : IReadable
     {
-        public byte[] A { get; private set; }
-        public byte[] M1 { get; private set; }
+        public byte[] A { get; private set; } = [];
+        public byte[] M1 { get; private set; } = [];
 
         public void Read(XmlDocument document)
         {
-            XmlNode rootNode = document["Request"];
-            string keyData = rootNode["KeyData"].GetValue<string>();
+            XmlElement rootNode = document.GetElement("Request");
+            string keyData = rootNode.GetValue<string>("KeyData");
 
             using var stream = new MemoryStream(Convert.FromBase64String(keyData));
             using var reader = new BinaryReader(stream);
