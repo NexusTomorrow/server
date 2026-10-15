@@ -23,7 +23,6 @@ internal static class RegistryDisagreements
         ["0x0144 client to server"] = PartMissing, // ClientCharacterAppearanceChange
         ["0x015A client to server"] = BitsDiffer, // ClientResurrectAccept
         ["0x018E server to client"] = FieldsDiffer, // ServerP2PTradeUpdateItem
-        ["0x01B7 server to client"] = BitsDiffer, // ServerChatFlag
         ["0x01C0 server to client"] = BitsDiffer, // ServerChatList
         ["0x023F client to server"] = FieldsDiffer, // ClientStatisticsConnection
         ["0x0240 client to server"] = FieldsDiffer, // ClientStatisticsFramerate

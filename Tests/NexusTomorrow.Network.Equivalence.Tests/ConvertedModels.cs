@@ -53,6 +53,7 @@ internal static class ConvertedModels
         ["NexusTomorrow.Network.World.Message.Model.AccountInventory.ServerAccountOperationResult"] = "the client takes the operation and the result in 32 bits each where the seed wrote 64 each; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.Achievement.ClientSteamAchievements"] = "the legacy Read decodes the achievement bytes into an ASCII string, which no declaration holds; the declaration keeps the bytes",
         ["NexusTomorrow.Network.World.Message.Model.Challenges.ServerChallengeResult"] = "the client takes the result in 5 bits where the seed wrote 64; the declaration follows the client",
+        ["NexusTomorrow.Network.World.Message.Model.Chat.ServerChatFlag"] = "the client takes the channel and the flags without the 64-bit channel guid the seed wrote between them; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.Cinematic.ClientCinematicCameraSubjectPosVel"] = "the legacy Read calls Read on a Position it never creates, so it always throws; the declaration creates it",
         ["NexusTomorrow.Network.World.Message.Model.Cinematic.ServerCinematicActorMode"] = "the client takes the mode in 32 bits where the seed wrote 64; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.ClientGroupRequestJoinResponse"] = "the client sends a 1-bit field after the invitee name that the seed did not read; the declaration follows the client",
