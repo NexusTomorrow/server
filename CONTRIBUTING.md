@@ -32,6 +32,7 @@ change that only touches nearby code.
 ## Building and testing
 
 ```powershell
+dotnet format Source/NexusTomorrow.slnx
 dotnet build Source/NexusTomorrow.slnx
 dotnet test --solution Source/NexusTomorrow.slnx
 ```
@@ -41,7 +42,8 @@ dotnet test --solution Source/NexusTomorrow.slnx
   (`NexusTomorrow.Cryptography.Tests`).
 - Name a test for the behaviour it checks, such as `SessionKeyIsAlwaysSixtyFourBytes`.
 - CI runs only when a maintainer dispatches the `Tests` workflow, so your pull request shows no
-  checks until a maintainer runs them for it.
+  checks until a maintainer runs them for it. Before it builds, it checks your commit messages, the
+  formatting, and that no `.cs` or `.md` file holds an em dash.
 - A workflow change uses only GitHub-owned actions, pinned by full commit SHA with the version in a
   comment, and keeps `permissions: contents: read`.
 
@@ -50,8 +52,14 @@ dotnet test --solution Source/NexusTomorrow.slnx
 The style follows Microsoft's
 [C# coding conventions](https://learn.microsoft.com/dotnet/csharp/fundamentals/coding-style/coding-conventions),
 with a few rules of our own. `.editorconfig` carries every rule an analyser can check, so an editor
-that reads it flags most problems as you type. Run `dotnet format` before you commit to fix the
-layout for you.
+that reads it flags most problems as you type. The build treats every warning as an error, style
+rules included, so a violation fails the build rather than waiting for review. Run
+`dotnet format Source/NexusTomorrow.slnx` before you commit to fix the layout for you; CI checks
+that it would change nothing.
+
+If a rule genuinely doesn't fit some code, suppress it with its reason rather than working around
+it: in `.editorconfig`, scoped to the files it covers, with a comment above saying why, or with a
+`#pragma warning disable` whose reason sits on the line above it.
 
 ### Naming
 
@@ -102,6 +110,9 @@ A comment states what is true and what proves it: the invariant, plus a `file:li
 count, or the guarantee that breaks without it. Leave out how the code got that way; that belongs
 in the commit message. When you change code, update its comments in the same change.
 
+Don't use em dashes in comments or Markdown: a comma, a colon, parentheses or two sentences do the
+job. CI rejects a `.cs` or `.md` file that holds one.
+
 ### Line endings and encoding
 
 Git stores text with LF and checks it out with CRLF on every system (`.gitattributes`). Every `.cs`
@@ -120,7 +131,8 @@ Validate the client connector's configuration where it is bound
 ```
 
 The blank line matters: git treats everything above the first blank line as the subject, so
-without it `git log --oneline` and GitHub run the whole message together as the title.
+without it `git log --oneline` and GitHub run the whole message together as the title. CI checks
+every commit since `main` for the blank line, the 72-character headline and the missing full stop.
 
 `git blame` skips the repository-wide formatting commits listed in `.git-blame-ignore-revs`. GitHub
 does this on its own; to do it locally, run:
