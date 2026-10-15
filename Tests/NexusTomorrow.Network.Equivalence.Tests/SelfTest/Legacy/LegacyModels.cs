@@ -563,3 +563,22 @@ public sealed class OneWayMessage : IReadable, IWritable
         Tail = reader.ReadByte();
     }
 }
+
+public sealed class TrailingWidthMessage : IReadable, IWritable
+{
+    public byte Head { get; set; }
+    public ushort Last { get; set; }
+
+    // Mismatch: Last is 14 bits where the declaration says 13. Its high bit is always zero and both bodies fill 3 bytes, so the bytes alone agree.
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Head);
+        writer.Write(Last, 14u);
+    }
+
+    public void Read(GamePacketReader reader)
+    {
+        Head = reader.ReadByte();
+        Last = reader.ReadUShort(14u);
+    }
+}

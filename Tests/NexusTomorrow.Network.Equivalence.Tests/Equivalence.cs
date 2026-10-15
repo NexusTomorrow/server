@@ -7,13 +7,20 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.Equivalence.Tests;
 
 /// <summary>
-/// Holds a declared model to the legacy model it replaces, over the empty instance and a run of seeded ones: the generated writer must put the legacy writer's bytes
-/// on the wire, and the generated and legacy readers must read those bytes to the same values.
+/// Holds a declared model to the legacy model it replaces, over the empty instance and a run of seeded ones: the generated writer must put the legacy writer's bits
+/// on the wire, the legacy reader must take exactly the bits written, and the generated and legacy readers must read them to the same values.
 /// </summary>
 internal sealed class Equivalence
 {
     private const string WriteDirection = "write";
     private const string ReadDirection = "read";
+
+    // GamePacketWriter counts the bits of the byte it has begun in bitPosition; GamePacketReader keeps in currentBitPosition the index of the last bit
+    // it took from its current byte, or 8 when it holds none.
+    private static readonly FieldInfo s_writerBitPosition = typeof(GamePacketWriter).GetField("bitPosition", BindingFlags.Instance | BindingFlags.NonPublic)
+        ?? throw new MissingFieldException(nameof(GamePacketWriter), "bitPosition");
+    private static readonly FieldInfo s_readerBitPosition = typeof(GamePacketReader).GetField("currentBitPosition", BindingFlags.Instance | BindingFlags.NonPublic)
+        ?? throw new MissingFieldException(nameof(GamePacketReader), "currentBitPosition");
 
     private readonly Type _declared;
     private readonly Type _legacy;
@@ -65,10 +72,12 @@ internal sealed class Equivalence
             return;
         }
 
+        int bits;
         byte[] bytes;
         try
         {
-            bytes = WriteDeclared(value);
+            bits = value.MeasureBits();
+            bytes = WriteDeclared(value, bits);
         }
         catch (Exception exception)
         {
@@ -77,12 +86,12 @@ internal sealed class Equivalence
         }
 
         if (typeof(IWritable).IsAssignableFrom(_legacy) && !_pairing.IsReadOnly(_declared))
-            CheckWrite(label, value, bytes);
+            CheckWrite(label, value, bytes, bits);
         if (typeof(IReadable).IsAssignableFrom(_legacy))
-            CheckRead(label, bytes);
+            CheckRead(label, bytes, bits);
     }
 
-    private void CheckWrite(string label, IWireStruct value, byte[] bytes)
+    private void CheckWrite(string label, IWireStruct value, byte[] bytes, int bits)
     {
         var mapDifferences = new List<string>();
         object? twin = null;
@@ -101,9 +110,10 @@ internal sealed class Equivalence
             return;
 
         byte[] legacyBytes;
+        long legacyBits;
         try
         {
-            legacyBytes = WriteLegacy((IWritable)twin);
+            (legacyBytes, legacyBits) = WriteLegacy((IWritable)twin);
         }
         catch (Exception exception)
         {
@@ -113,9 +123,11 @@ internal sealed class Equivalence
 
         if (FirstDifferentBit(bytes, legacyBytes) is { } bit)
             Report(label, WriteDirection, $"the bytes differ from bit {bit}: declared [{Convert.ToHexString(bytes)}], legacy [{Convert.ToHexString(legacyBytes)}]");
+        else if (legacyBits != bits)
+            Report(label, WriteDirection, $"the legacy writer wrote {legacyBits} bits where the declaration measures {bits}");
     }
 
-    private void CheckRead(string label, byte[] bytes)
+    private void CheckRead(string label, byte[] bytes, int bits)
     {
         IWireStruct declaredRead;
         try
@@ -139,9 +151,9 @@ internal sealed class Equivalence
             using var reader = new GamePacketReader(stream);
             ((IReadable)legacyRead).Read(reader);
 
-            // GamePacketReader takes a byte when it needs that byte's first bit, so a reader that reads every written bit ends on the last byte.
-            if (stream.Position != bytes.Length)
-                Report(label, ReadDirection, $"the legacy reader stopped at byte {stream.Position} of {bytes.Length}");
+            long read = BitsRead(reader, stream);
+            if (read != bits)
+                Report(label, ReadDirection, $"the legacy reader read {read} bits of the {bits} written");
         }
         catch (Exception exception)
         {
@@ -169,21 +181,35 @@ internal sealed class Equivalence
         _differences.Add($"{_declared.Name} {label} {direction}: {difference}");
     }
 
-    private static byte[] WriteDeclared(IWireStruct value)
+    private static byte[] WriteDeclared(IWireStruct value, int bits)
     {
-        byte[] buffer = new byte[(value.MeasureBits() + 7) / 8];
+        byte[] buffer = new byte[(bits + 7) / 8];
         var writer = new BitWriter(buffer);
         value.Write(ref writer);
         return buffer;
     }
 
-    private static byte[] WriteLegacy(IWritable value)
+    /// <summary>
+    /// The legacy body and its length in bits: the bytes it finished plus the bits of the byte it had begun, which equal bodies can differ in when the
+    /// last field's width differs and its high bits are zero.
+    /// </summary>
+    private static (byte[] Bytes, long Bits) WriteLegacy(IWritable value)
     {
         using var stream = new MemoryStream();
         using var writer = new GamePacketWriter(stream);
         value.Write(writer);
+        long bits = (stream.Length * 8) + (byte)s_writerBitPosition.GetValue(writer)!;
         writer.FlushBits();
-        return stream.ToArray();
+        return (stream.ToArray(), bits);
+    }
+
+    /// <summary>
+    /// The bits the legacy reader took: the bytes it has taken, less the bits it has not reached in the last of them.
+    /// </summary>
+    private static long BitsRead(GamePacketReader reader, Stream stream)
+    {
+        byte lastBit = (byte)s_readerBitPosition.GetValue(reader)!;
+        return (stream.Position * 8) - (lastBit <= 7 ? 7 - lastBit : 0);
     }
 
     /// <summary>

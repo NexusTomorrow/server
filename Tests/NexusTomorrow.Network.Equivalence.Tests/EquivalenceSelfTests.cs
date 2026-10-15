@@ -31,8 +31,9 @@ public sealed class EquivalenceSelfTests
     {
         List<string> differences = Check(typeof(ReaderMessage));
 
-        Assert.NotEmpty(differences);
-        Assert.All(differences, difference => Assert.Contains(" read: ReaderMessage.", difference, StringComparison.Ordinal));
+        Assert.Contains("ReaderMessage empty read: the legacy reader read 19 bits of the 20 written", differences);
+        Assert.Contains(differences, difference => difference.Contains(" read: ReaderMessage.", StringComparison.Ordinal));
+        Assert.All(differences, difference => Assert.Contains(" read: ", difference, StringComparison.Ordinal));
     }
 
     [Fact]
@@ -96,6 +97,15 @@ public sealed class EquivalenceSelfTests
 
         Assert.NotEmpty(differences);
         Assert.All(differences, difference => Assert.Contains(" read: ReversedBitArrayMessage.Flags[", difference, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void ALastFieldOneBitTooWideIsCaughtThoughTheBytesAgree()
+    {
+        List<string> differences = Check(typeof(TrailingWidthMessage));
+
+        Assert.Contains("TrailingWidthMessage empty write: the legacy writer wrote 22 bits where the declaration measures 21", differences);
+        Assert.Contains("TrailingWidthMessage empty read: the legacy reader read 22 bits of the 21 written", differences);
     }
 
     [Fact]

@@ -230,3 +230,10 @@ public sealed partial class OneWayMessage
     [UInt(8)] public byte Value { get; set; }
     [UInt(8)] public byte Tail { get; set; }
 }
+
+[WireMessage((GameMessageOpcode)0xFE11, Direction.Both)]
+public sealed partial class TrailingWidthMessage
+{
+    [UInt(8)] public byte Head { get; set; }
+    [UInt(13)] public ushort Last { get; set; }
+}
