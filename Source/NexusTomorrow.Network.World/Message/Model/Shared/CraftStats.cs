@@ -1,14 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class CraftStats : IReadable, IWritable
+[WireStruct]
+public sealed partial class CraftStats : IReadable, IWritable
 {
-    public Property[] StatType { get; set; } = new Property[5];
-    public byte Unknown { get; set; }
-    public byte ApSpSplit { get; set; } // Attack Power and Support Power split
-    public uint CircuitComplete { get; set; }
+    [FixedArray(5), UInt(8)] public Property[] StatType { get; set; } = new Property[5];
+    [Pad(8)] public Pad Reserved { get; }
+    [UInt(8)] public byte Unknown { get; set; }
+    [UInt(8)] public byte ApSpSplit { get; set; } // Attack Power and Support Power split
+    [NotOnWire] public uint CircuitComplete { get; set; }
 
     public void Read(GamePacketReader reader)
     {

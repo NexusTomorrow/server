@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerRealmEncrypted)]
-public class ServerRealmEncrypted : IWritable
+[WireMessage(GameMessageOpcode.ServerRealmEncrypted, Direction.ServerToClient)]
+public sealed partial class ServerRealmEncrypted : IWritable
 {
-    public byte[] Data { get; set; }
+    [Blob(32, LengthIncludesSelf = true)] public byte[] Data { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

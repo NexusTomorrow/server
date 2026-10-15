@@ -1,17 +1,19 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class PetCustomisation : IWritable
+[WireStruct]
+public sealed partial class PetCustomisation : IWritable
 {
     public const byte MaxCustomisationFlairs = 4;
 
-    public PetType PetType { get; set; }
-    public uint PetObjectId { get; set; }
-    public string PetName { get; set; }
+    [UInt(2)] public PetType PetType { get; set; }
+    [UInt(32)] public uint PetObjectId { get; set; }
+    [WideString] public string PetName { get; set; }
     // there are 4 slots - not sure if uint or some short/short struct
-    public uint[] SlotFlairIds { get; set; } = new uint[MaxCustomisationFlairs];
+    [FixedArray(MaxCustomisationFlairs), UInt(32)] public uint[] SlotFlairIds { get; set; } = new uint[MaxCustomisationFlairs];
 
     public PetCustomisation()
     {

@@ -6,7 +6,8 @@ namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
 // Only for adding a unit to a PublicEvent or PublicEventObjective. Ignores remove operations if specified.
 [Message(GameMessageOpcode.ServerPublicEventUnitAdd)]
-public partial class ServerPublicEventUnitAdd : IWritable
+[WireMessage(GameMessageOpcode.ServerPublicEventUnitAdd, Direction.ServerToClient)]
+public sealed partial class ServerPublicEventUnitAdd : IWritable
 {
     [WireStruct]
     public sealed partial class PublicEventOperation : IWritable
@@ -21,8 +22,8 @@ public partial class ServerPublicEventUnitAdd : IWritable
         }
     }
 
-    public uint UnitId { get; set; }
-    public List<PublicEventOperation> Operations { get; set; } = [];
+    [UInt(32)] public uint UnitId { get; set; }
+    [Array(CountBits = 32)] public List<PublicEventOperation> Operations { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

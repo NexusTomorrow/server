@@ -33,20 +33,19 @@ public partial class ServerQuestInit : IWritable
         }
     }
 
-    public class QuestActive : IWritable
+    // One objective count, then every objective's progress, then the quest's elapsed time, then every objective's
+    // elapsed time: element i of each objective list is one objective.
+    [WireStruct]
+    public sealed partial class QuestActive : IWritable
     {
-        public class Objective
-        {
-            public uint Progress { get; set; } // Sometimes flags, sometimes numbers
-            public uint TimeElapsed { get; set; }
-        }
-
-        public ushort QuestId { get; set; }
-        public QuestState State { get; set; }
-        public uint QuestObjectiveId { get; set; } // See questObjective tbl
-        public QuestStateFlags Flags { get; set; }
-        public List<Objective> Objectives { get; set; } = [];
-        public uint QuestTimeElapsed { get; set; }
+        [UInt(15)] public ushort QuestId { get; set; }
+        [UInt(4)] public QuestState State { get; set; }
+        [UInt(32)] public uint QuestObjectiveId { get; set; } // See questObjective tbl
+        [UInt(32)] public QuestStateFlags Flags { get; set; }
+        [UInt(32), Count] public uint ObjectiveCount { get; set; }
+        [Array(CountFrom = nameof(ObjectiveCount)), UInt(32)] public List<uint> ObjectiveProgress { get; set; } = []; // Sometimes flags, sometimes numbers
+        [UInt(32)] public uint QuestTimeElapsed { get; set; }
+        [Array(CountFrom = nameof(ObjectiveCount)), UInt(32)] public List<uint> ObjectiveTimeElapsed { get; set; } = [];
 
         public void Write(GamePacketWriter writer)
         {
@@ -55,15 +54,15 @@ public partial class ServerQuestInit : IWritable
             writer.Write(QuestObjectiveId);
             writer.Write(Flags, 32u);
 
-            writer.Write(Objectives.Count);
+            writer.Write(ObjectiveProgress.Count);
 
-            foreach (Objective objective in Objectives)
-                writer.Write(objective.Progress);
+            foreach (uint progress in ObjectiveProgress)
+                writer.Write(progress);
 
             writer.Write(QuestTimeElapsed);
 
-            foreach (Objective objective in Objectives)
-                writer.Write(objective.TimeElapsed);
+            foreach (uint timeElapsed in ObjectiveTimeElapsed)
+                writer.Write(timeElapsed);
         }
     }
 

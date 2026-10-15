@@ -1,18 +1,20 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Utility;
 
 [Message(GameMessageOpcode.ServerPlayedResponse)]
-public class ServerPlayedResponse : IWritable
+[WireMessage(GameMessageOpcode.ServerPlayedResponse, Direction.ServerToClient)]
+public sealed partial class ServerPlayedResponse : IWritable
 {
-    public DateTime CreateTime { get; set; }
-    public uint TimePlayedSession { get; set; }
-    public uint TimePlayedTotal { get; set; }
-    public uint TimePlayedLevel { get; set; }
+    [UInt(64)] public ulong CreateTime { get; set; } // a Windows file time, as DateTime.ToFileTime gives it
+    [UInt(32)] public uint TimePlayedSession { get; set; }
+    [UInt(32)] public uint TimePlayedTotal { get; set; }
+    [UInt(32)] public uint TimePlayedLevel { get; set; }
 
     public void Write(GamePacketWriter writer)
     {
-        writer.Write((ulong)CreateTime.ToFileTime());
+        writer.Write(CreateTime);
         writer.Write(TimePlayedSession);
         writer.Write(TimePlayedTotal);
         writer.Write(TimePlayedLevel);

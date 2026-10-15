@@ -1,41 +1,44 @@
 ﻿using NexusTomorrow.Game.Static.Housing;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ServerHousingResidences)]
-public class ServerHousingResidences : IWritable
+public partial class ServerHousingResidences : IWritable
 {
-    public class Residence : IWritable
+    [WireStruct]
+    public sealed partial class Residence : IWritable
     {
         public Identity ResidenceIdentity { get; set; }
-        public ulong NeighbourhoodId { get; set; }
-        public ulong? CharacterIdOwner { get; set; }
-        public ulong? GuildIdOwner { get; set; }
-        public ResidenceType Type { get; set; }
-        public uint TileId { get; set; }
-        public string Name { get; set; }
-        public PropertyInfoId PropertyInfoId { get; set; }
-        public uint ResidenceInfoId { get; set; }
-        public uint WallpaperExterior { get; set; }
-        public uint Entryway { get; set; }
-        public uint Roof { get; set; }
-        public uint Door { get; set; }
-        public uint Sky { get; set; }
-        public uint Music { get; set; }
-        public uint Ground { get; set; }
-        public ResidenceFlags Flags { get; set; }
-        public uint NeighbourHarvestSplit { get; set; }
-        public uint NeighbourGardenSplit { get; set; }
-        public bool ResidenceDeleted { get; set; }
+        [UInt(64)] public ulong NeighbourhoodId { get; set; }
+        [UInt(64)] public ulong CharacterIdOwner { get; set; } // 0 when no character owns the residence
+        [UInt(64)] public ulong GuildIdOwner { get; set; } // 0 when no guild owns the residence
+        [UInt(14)] public ResidenceType Type { get; set; }
+        [UInt(32)] public uint TileId { get; set; }
+        [WideString] public string Name { get; set; }
+        [UInt(32)] public PropertyInfoId PropertyInfoId { get; set; }
+        [UInt(32)] public uint ResidenceInfoId { get; set; }
+        [UInt(32)] public uint WallpaperExterior { get; set; }
+        [UInt(32)] public uint Entryway { get; set; }
+        [UInt(32)] public uint Roof { get; set; }
+        [UInt(32)] public uint Door { get; set; }
+        [UInt(32)] public uint Sky { get; set; }
+        [UInt(32)] public uint Music { get; set; }
+        [UInt(32)] public uint Ground { get; set; }
+        [UInt(32)] public ResidenceFlags Flags { get; set; }
+        [UInt(32)] public uint NeighbourHarvestSplit { get; set; }
+        [UInt(32)] public uint NeighbourGardenSplit { get; set; }
+        [Pad(512)] public Pad Unknown { get; } // 64 bytes of unknown meaning, sent as zeros
+        [UInt(1)] public bool ResidenceDeleted { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
             ResidenceIdentity.Write(writer);
             writer.Write(NeighbourhoodId);
-            writer.Write(CharacterIdOwner.GetValueOrDefault(0ul));
-            writer.Write(GuildIdOwner.GetValueOrDefault(0ul));
+            writer.Write(CharacterIdOwner);
+            writer.Write(GuildIdOwner);
             writer.Write(Type, 14u);
             writer.Write(TileId);
             writer.WriteStringWide(Name);
