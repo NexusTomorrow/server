@@ -1,16 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerGroupInviteReceived)]
-public class ServerGroupInviteReceived : IWritable
+[WireMessage(GameMessageOpcode.ServerGroupInviteReceived, Direction.ServerToClient)]
+public sealed partial class ServerGroupInviteReceived : IWritable
 {
-    public ulong GroupId { get; set; }
-    public uint LeaderIndex { get; set; }
-    public uint InviterIndex { get; set; }
+    [UInt(64)] public ulong GroupId { get; set; }
+    [UInt(32)] public uint LeaderIndex { get; set; }
+    [UInt(32)] public uint InviterIndex { get; set; }
 
-    public List<GroupCharacter> Members = [];
+    [Array(CountBits = 32)] public List<GroupCharacter> Members = [];
 
     public void Write(GamePacketWriter writer)
     {

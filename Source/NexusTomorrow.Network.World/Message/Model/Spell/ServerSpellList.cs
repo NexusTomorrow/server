@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellList)]
-public class ServerSpellList : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellList, Direction.ServerToClient)]
+public sealed partial class ServerSpellList : IWritable
 {
-    public List<SpellInit> SpellInitData { get; } = [];
+    [Array(CountBits = 32)] public List<SpellInit> SpellInitData { get; } = [];
 
     public void Write(GamePacketWriter writer)
     {
