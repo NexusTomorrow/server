@@ -1,12 +1,11 @@
 ﻿using System.IO;
 using System.Linq;
 using Nexus.Archive;
-using NexusForever.Shared;
 using NLog;
 
 namespace NexusForever.MapGenerator
 {
-    public sealed class ExtractionManager : Singleton<ExtractionManager>
+    public sealed class ExtractionManager
     {
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
 
@@ -19,6 +18,18 @@ namespace NexusForever.MapGenerator
         };
 
         private string outputDir;
+
+        #region Dependency Injection
+
+        private readonly ArchiveManager archiveManager;
+
+        public ExtractionManager(
+            ArchiveManager archiveManager)
+        {
+            this.archiveManager = archiveManager;
+        }
+
+        #endregion
 
         public void Initialise(string outputDir)
         {
@@ -38,8 +49,8 @@ namespace NexusForever.MapGenerator
         private void ExtractGameTables()
         {
             string searchPattern = Path.Combine("DB", "*.tbl");
-            foreach (IArchiveFileEntry fileEntry in ArchiveManager.Instance.MainArchive.IndexFile.GetFiles(searchPattern))
-                ExtractFile(ArchiveManager.Instance.MainArchive, fileEntry);
+            foreach (IArchiveFileEntry fileEntry in archiveManager.MainArchive.IndexFile.GetFiles(searchPattern))
+                ExtractFile(archiveManager.MainArchive, fileEntry);
         }
 
         /// <summary>
@@ -47,7 +58,7 @@ namespace NexusForever.MapGenerator
         /// </summary>
         private void ExtractLanguageFiles()
         {
-            foreach (Archive archive in ArchiveManager.Instance.LocalisationArchives)
+            foreach (Archive archive in archiveManager.LocalisationArchives)
             {
                 foreach (IArchiveFileEntry fileEntry in languageFiles
                     .Select(archive.IndexFile.FindEntry)

@@ -11,15 +11,29 @@ using NexusForever.IO;
 using NexusForever.IO.Area;
 using NexusForever.IO.Map;
 using NexusForever.MapGenerator.GameTable;
-using NexusForever.Shared;
 using NLog;
 
 namespace NexusForever.MapGenerator
 {
-    public sealed class GenerationManager : Singleton<GenerationManager>
+    public sealed class GenerationManager
     {
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
         private string outputDir;
+
+        #region Dependency Injection
+
+        private readonly ArchiveManager archiveManager;
+        private readonly GameTableManager gameTableManager;
+
+        public GenerationManager(
+            ArchiveManager archiveManager,
+            GameTableManager gameTableManager)
+        {
+            this.archiveManager   = archiveManager;
+            this.gameTableManager = gameTableManager;
+        }
+
+        #endregion
 
         public void Initialise(string outputDir)
         {
@@ -35,7 +49,7 @@ namespace NexusForever.MapGenerator
         /// </summary>
         public void GenerateWorld(ushort worldId, byte? gridX = null, byte? gridY = null)
         {
-            WorldEntry entry = GameTableManager.Instance.World.GetEntry(worldId);
+            WorldEntry entry = gameTableManager.World.GetEntry(worldId);
             if (entry != null)
                 ProcessWorld(entry, gridX, gridY);
         }
@@ -46,7 +60,7 @@ namespace NexusForever.MapGenerator
         public void GenerateWorlds(bool singleThread)
         {
             var taskList = new List<Task>();
-            foreach (WorldEntry entry in GameTableManager.Instance.World.Entries
+            foreach (WorldEntry entry in gameTableManager.World.Entries
                 .Where(e => e.AssetPath != string.Empty)
                 .GroupBy(e => e.AssetPath)
                 .Select(g => g.First()))
@@ -76,14 +90,14 @@ namespace NexusForever.MapGenerator
             if (gridX.HasValue && gridY.HasValue)
             {
                 string path = Path.Combine(entry.AssetPath, $"{mapFile.Asset}.{gridX:x2}{gridY:x2}.area");
-                IArchiveFileEntry grid = ArchiveManager.Instance.MainArchive.GetFileInfoByPath(path);
+                IArchiveFileEntry grid = archiveManager.MainArchive.GetFileInfoByPath(path);
                 if (grid != null)
                     ProcessGrid(mapFile, grid, gridX.Value, gridY.Value);
             }
             else
             {
                 string path = Path.Combine(entry.AssetPath, "*.*.area");
-                foreach (IArchiveFileEntry grid in ArchiveManager.Instance.MainArchive.IndexFile.GetFiles(path))
+                foreach (IArchiveFileEntry grid in archiveManager.MainArchive.IndexFile.GetFiles(path))
                 {
                     var regex = new Regex(@"[\w]+\.([A-Fa-f0-9]{2})([A-Fa-f0-9]{2})\.area");
                     Match match = regex.Match(grid.FileName);
@@ -120,7 +134,7 @@ namespace NexusForever.MapGenerator
 
             log.Info($"Processing {map.Asset} grid {gridX},{gridY}...");
 
-            using (Stream stream = ArchiveManager.Instance.MainArchive.OpenFileStream(grid))
+            using (Stream stream = archiveManager.MainArchive.OpenFileStream(grid))
             {
                 try
                 {

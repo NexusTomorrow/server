@@ -2,17 +2,24 @@
 using Nexus.Archive;
 using NexusForever.GameTable;
 using NexusForever.GameTable.Model;
-using NexusForever.Shared;
 
 namespace NexusForever.MapGenerator.GameTable
 {
-    public sealed class GameTableManager : Singleton<GameTableManager>
+    public sealed class GameTableManager
     {
         public GameTable<WorldEntry> World { get; private set; }
 
-        public GameTableManager()
+        #region Dependency Injection
+
+        private readonly ArchiveManager archiveManager;
+
+        public GameTableManager(
+            ArchiveManager archiveManager)
         {
+            this.archiveManager = archiveManager;
         }
+
+        #endregion
 
         public void Initialise()
         {
@@ -25,10 +32,10 @@ namespace NexusForever.MapGenerator.GameTable
         private GameTable<T> LoadGameTable<T>(string name) where T : class, new()
         {
             string filePath = Path.Combine("DB", name);
-            if (!(ArchiveManager.Instance.MainArchive.IndexFile.FindEntry(filePath) is IArchiveFileEntry file))
+            if (!(archiveManager.MainArchive.IndexFile.FindEntry(filePath) is IArchiveFileEntry file))
                 throw new FileNotFoundException();
 
-            using (Stream archiveStream = ArchiveManager.Instance.MainArchive.OpenFileStream(file))
+            using (Stream archiveStream = archiveManager.MainArchive.OpenFileStream(file))
             using (var memoryStream = new MemoryStream())
             {
                 archiveStream.CopyTo(memoryStream);

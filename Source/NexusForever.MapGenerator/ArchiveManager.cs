@@ -2,12 +2,11 @@
 using System.IO;
 using System.Linq;
 using Nexus.Archive;
-using NexusForever.Shared;
 using NLog;
 
 namespace NexusForever.MapGenerator
 {
-    public sealed class ArchiveManager : Singleton<ArchiveManager>
+    public sealed class ArchiveManager
     {
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
 

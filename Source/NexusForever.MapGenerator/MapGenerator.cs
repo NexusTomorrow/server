@@ -4,7 +4,6 @@ using CommandLine;
 using CommandLine.Text;
 using Microsoft.Extensions.DependencyInjection;
 using NexusForever.MapGenerator.GameTable;
-using NexusForever.Shared;
 using NLog;
 
 namespace NexusForever.MapGenerator
@@ -13,6 +12,7 @@ namespace NexusForever.MapGenerator
     {
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
         private static ParserResult<Parameters> parserResult;
+        private static IServiceProvider provider;
 
         #if DEBUG
         private const string Title = "NexusForever: Map Generator (DEBUG)";
@@ -28,7 +28,7 @@ namespace NexusForever.MapGenerator
             services.AddSingleton<ExtractionManager>();
             services.AddSingleton<GenerationManager>();
 
-            LegacyServiceProvider.Provider = services.BuildServiceProvider();
+            provider = services.BuildServiceProvider();
 
             Console.Title = Title;
 
@@ -56,20 +56,21 @@ namespace NexusForever.MapGenerator
                     throw new DirectoryNotFoundException(parameters.OutputDir);
             }
 
-            ArchiveManager.Instance.Initialise(parameters.PatchPath);
-            GameTableManager.Instance.Initialise();
+            provider.GetRequiredService<ArchiveManager>().Initialise(parameters.PatchPath);
+            provider.GetRequiredService<GameTableManager>().Initialise();
 
             if (parameters.Extract)
-                ExtractionManager.Instance.Initialise(parameters.OutputDir);
+                provider.GetRequiredService<ExtractionManager>().Initialise(parameters.OutputDir);
             if (parameters.Generate)
             {
-                GenerationManager.Instance.Initialise(parameters.OutputDir);
+                GenerationManager generationManager = provider.GetRequiredService<GenerationManager>();
+                generationManager.Initialise(parameters.OutputDir);
 
                 var start = DateTime.UtcNow;
                 if (parameters.WorldId.HasValue)
-                    GenerationManager.Instance.GenerateWorld(parameters.WorldId.Value, parameters.GridX, parameters.GridY);
+                    generationManager.GenerateWorld(parameters.WorldId.Value, parameters.GridX, parameters.GridY);
                 else
-                    GenerationManager.Instance.GenerateWorlds(true);
+                    generationManager.GenerateWorlds(true);
 
                 TimeSpan span = DateTime.UtcNow - start;
                 log.Info($"Generated base maps in {span.TotalSeconds}s.");
