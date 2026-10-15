@@ -10,6 +10,5 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 public sealed partial class ServerPathUnlockResult
 {
     [UInt(8)] public GenericError Result { get; set; }
-    [UInt(32)] public PathUnlockedMask UnlockedPathMask { get; set; }
-    [Pad(32)] public Pad UnlockedPathMaskHigh { get; }
+    [UInt(4)] public PathUnlockedMask UnlockedPathMask { get; set; }
 }

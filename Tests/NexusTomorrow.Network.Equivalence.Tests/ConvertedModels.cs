@@ -23,6 +23,7 @@ internal static class ConvertedModels
     private const string SelectorSwitch = "the legacy Write switches on the selector to pick the fields it writes, and each arm's fields differ in width or name, so a wrong case value writes another arm's fields and fails the write check";
     private const string ModifierTypeSwitch = "the legacy Write switches on ModifierType between a float and a uint cast, so a wrong Discrete value fails the write check; AdditiveScalar and MultiplicativeScalar write the same float, so their values are the RewardModifierValueType members of the arms' names";
     private const string InitialStatList = "the legacy Write replaces every element of SomeStatList with a new UnknownStruct0 before writing it, so only its initial values reach the wire";
+    private const string NestsLockedReward = "it nests LockedReward, which follows the client where the seed does not";
     private const uint FloatExactIntegers = (1u << 24) - 1;
 
     private static readonly Assembly s_legacyAssembly = typeof(legacy::NexusTomorrow.Network.World.ServiceCollectionExtensions).Assembly;
@@ -43,16 +44,25 @@ internal static class ConvertedModels
         ["NexusTomorrow.Network.World.Entity.Command.SetPositionProjectileCommand"] = "the legacy Read takes the float Gravity through ReadUInt, a numeric conversion, where the Write puts its IEEE bits; the declaration reads it as a float",
         ["NexusTomorrow.Network.World.Entity.Command.SetRotationMultiSplineCommand"] = "the legacy Read takes the floats Position and both location heights through ReadUInt, a numeric conversion, where the Write puts their IEEE bits; the declaration reads them as floats",
         ["NexusTomorrow.Network.World.Entity.Command.SetRotationSplineCommand"] = "the legacy Read takes the float Position through ReadUInt, a numeric conversion, where the Write puts its IEEE bits; the declaration reads it as a float",
+        ["NexusTomorrow.Network.World.Message.Model.AccountInventory.ServerAccountOperationResult"] = "the client takes the operation and the result in 32 bits each where the seed wrote 64 each; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.Achievement.ClientSteamAchievements"] = "the legacy Read decodes the achievement bytes into an ASCII string, which no declaration holds; the declaration keeps the bytes",
         ["NexusTomorrow.Network.World.Message.Model.Cinematic.ClientCinematicCameraSubjectPosVel"] = "the legacy Read calls Read on a Position it never creates, so it always throws; the declaration creates it",
+        ["NexusTomorrow.Network.World.Message.Model.ClientMatchingRoleCheckResponse"] = "the client sends the roles in 32 bits where the seed read 64; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.Crafting.ServerCraftingCurrentCraft"] = "it nests CraftStats, whose legacy Write packs its bytes high byte first where its Read unpacks them low byte first",
         ["NexusTomorrow.Network.World.Message.Model.Guild.ServerGuildBankInventoryAdd"] = NestsItem,
         ["NexusTomorrow.Network.World.Message.Model.Guild.ServerGuildBankTabInventory"] = NoCount,
         ["NexusTomorrow.Network.World.Message.Model.Housing.ClientHousingChangeInteriorWallpaper"] = "the legacy Read calls Read on the six null elements of DecorUpdates, so it always throws; the declaration follows the client facts",
         ["NexusTomorrow.Network.World.Message.Model.Map.ServerZoneMap"] = "the legacy Write sends Count / 8 as the byte length, from a Count the caller sets apart from the bytes; the declaration sends the bytes' own length",
         ["NexusTomorrow.Network.World.Message.Model.PlayerPath.ServerPathExplorerScavengerHuntClueAddUnitList"] = NoCount,
+        ["NexusTomorrow.Network.World.Message.Model.PlayerPath.ServerPathUnlockResult"] = "the client takes the unlocked path mask in 4 bits where the seed wrote 64; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventUnitAdd"] = NoCount,
+        ["NexusTomorrow.Network.World.Message.Model.Reward.LockedReward"] = "the client takes the rewarded flags in 32 bits where the seed wrote 64; the declaration follows the client",
+        ["NexusTomorrow.Network.World.Message.Model.Reward.ServerRewardRotationLockedAdd"] = NestsLockedReward,
+        ["NexusTomorrow.Network.World.Message.Model.Reward.ServerRewardRotationLockedList"] = NestsLockedReward,
+        ["NexusTomorrow.Network.World.Message.Model.Reward.ServerRewardRotationLockedRemove"] = NestsLockedReward,
+        ["NexusTomorrow.Network.World.Message.Model.Reward.ServerRewardRotationLockedUpdate"] = NestsLockedReward,
         ["NexusTomorrow.Network.World.Message.Model.ServerItemAdd"] = NestsItem,
+        ["NexusTomorrow.Network.World.Message.Model.ServerItemError"] = "the client takes the error code in 32 bits where the seed wrote 64; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.ServerPlayerCreate"] = NestsItem,
         ["NexusTomorrow.Network.World.Message.Model.Shared.InventoryItem"] = NestsItem,
         ["NexusTomorrow.Network.World.Message.Model.Shared.Item"] = "the legacy Write sends Glyphs.Count as the count of Unknown88; the declaration counts Unknown88",
@@ -148,7 +158,6 @@ internal static class ConvertedModels
     /// </summary>
     public static IReadOnlyDictionary<(string Type, string Pad), string> ZeroFedPads { get; } = new Dictionary<(string Type, string Pad), string>
     {
-        [("NexusTomorrow.Network.World.Message.Model.ClientMatchingRoleCheckResponse", "RolesHigh")] = "the legacy Read takes 64 bits into the int-backed Role, and Enum.ToObject keeps the low 32, so these bits change nothing",
         [("NexusTomorrow.Network.World.Message.Model.Marketplace.Filter.EquippableByAuctionFilter", "ClassIdHigh")] = ByteEnumIn14Bits,
         [("NexusTomorrow.Network.World.Message.Model.Marketplace.Filter.EquippableByAuctionFilter", "RaceIdHigh")] = ByteEnumIn14Bits,
         [("NexusTomorrow.Network.World.Message.Model.Option.ClientCombatLogDisableOthers", "Reserved")] = "the legacy Read sets the flag when any of the 32 bits is set, where the declaration reads bit 0 alone; stage 3 declares the client's 32-bit field",

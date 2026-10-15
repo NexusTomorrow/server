@@ -8,7 +8,5 @@ namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 public sealed partial class ServerAccountOperationResult
 {
     [UInt(32)] public AccountOperation Operation { get; set; }
-    [Pad(32)] public Pad OperationHigh { get; }
     [UInt(32)] public AccountOperationResult Result { get; set; }
-    [Pad(32)] public Pad ResultHigh { get; }
 }

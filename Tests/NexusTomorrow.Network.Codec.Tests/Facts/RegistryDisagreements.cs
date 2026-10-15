@@ -89,12 +89,10 @@ internal static class RegistryDisagreements
         ["0x0511"] = NoRow, // ClientHousingNeighbourInviteResponse
         ["0x0519 server to client"] = BitsDiffer, // ServerHousingNeighbourUpdate
         ["0x053A server to client"] = BitsDiffer, // ServerHousingAttachUnitToDecorItem
-        ["0x056A server to client"] = BitsDiffer, // ServerItemError
         ["0x058F client to server"] = FieldsDiffer, // ClientHelloRealm
         ["0x0592 client to server"] = FieldsDiffer, // ClientHelloAuth
         ["0x0599 server to client"] = FieldsDiffer, // ServerPlayerInfoFullResponse
         ["0x059D server to client"] = BitsDiffer, // ServerRealmInfoResponse
-        ["0x05B2 client to server"] = BitsDiffer, // ClientMatchingRoleCheckResponse
         ["0x05D9 server to client"] = FieldsDiffer, // ServerMatchingPenaltyUpdated
         ["0x05E3 server to client"] = FieldsDiffer, // ServerMatchingQueueStatus
         ["0x05E5 server to client"] = FieldsDiffer, // ServerMatchingMatchPvpPoolUpdated
@@ -105,7 +103,6 @@ internal static class RegistryDisagreements
         ["0x066A client to server"] = FieldsDiffer, // ClientPathMissionAttemptScientistExperimentation
         ["0x068E client to server"] = BitsDiffer, // ClientPetSetStance
         ["0x06BC server to client"] = FieldsDiffer, // ServerPathInitialise
-        ["0x06BE server to client"] = BitsDiffer, // ServerPathUnlockResult
         ["0x06F6 server to client"] = BitsDiffer, // ServerPublicEventBombStatus
         ["0x0700 server to client"] = BitsDiffer, // ServerPublicEventTriggerUiUpdates
         ["0x0768 server to client"] = FieldsDiffer, // ServerRecruitmentGuildDemands
@@ -113,9 +110,6 @@ internal static class RegistryDisagreements
         ["0x0784 server to client"] = BitsDiffer, // ServerSpellVisualEffectRemove
         ["0x0785 server to client"] = BitsDiffer, // ServerSpellVisualEffectRemoveFromUnit
         ["0x07A1 server to client"] = FieldsDiffer, // ServerNewRealm
-        ["0x07C7 server to client"] = BitsDiffer, // ServerRewardRotationLockedRemove
-        ["0x07C9 server to client"] = BitsDiffer, // ServerRewardRotationLockedUpdate
-        ["0x07CB server to client"] = BitsDiffer, // ServerRewardRotationLockedAdd
         ["0x07CD server to client"] = FieldsDiffer, // ServerRewardTrackAdd
         ["0x07D5 server to client"] = FieldsDiffer, // ServerRewardTrackUpdate
         ["0x0823 client to server"] = PartMissing, // ClientSteamAchievements
@@ -132,7 +126,6 @@ internal static class RegistryDisagreements
         ["0x094F client to server"] = BitsDiffer, // ClientCastGuildBossToken
         ["0x0954 server to client"] = BitsDiffer, // ServerWarPartyMatchResults
         ["0x0967 server to client"] = BitsDiffer, // ServerAccountCurrencyGrant
-        ["0x0970 server to client"] = BitsDiffer, // ServerAccountOperationResult
         ["0x776E"] = NoRow, // ClientRecruitmentGuildGetDetailedGuildInfo
     };
 }
