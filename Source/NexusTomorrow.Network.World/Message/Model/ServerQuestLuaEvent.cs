@@ -4,7 +4,8 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerQuestLuaEvent)]
-public partial class ServerQuestLuaEvent : IWritable
+[WireMessage(GameMessageOpcode.ServerQuestLuaEvent, Direction.ServerToClient)]
+public sealed partial class ServerQuestLuaEvent : IWritable
 {
     public enum LuaEventType
     {
@@ -16,12 +17,13 @@ public partial class ServerQuestLuaEvent : IWritable
         Quest = 5,
     }
 
-    public interface ILuaEventData : IWritable
+    public interface ILuaEventData : IWritable, IWireStruct
     {
         LuaEventType Type { get; }
     }
 
     [WireStruct]
+    [UnionCase(LuaEventType.Int)]
     public sealed partial class LuaEventDataInt : ILuaEventData, IWritable
     {
         [NotOnWire] public LuaEventType Type => LuaEventType.Int;
@@ -34,6 +36,7 @@ public partial class ServerQuestLuaEvent : IWritable
     }
 
     [WireStruct]
+    [UnionCase(LuaEventType.String)]
     public sealed partial class LuaEventDataString : ILuaEventData, IWritable
     {
         [NotOnWire] public LuaEventType Type => LuaEventType.String;
@@ -46,6 +49,7 @@ public partial class ServerQuestLuaEvent : IWritable
     }
 
     [WireStruct]
+    [UnionCase(LuaEventType.Bool)]
     public sealed partial class LuaEventDataBool : ILuaEventData, IWritable
     {
         [NotOnWire] public LuaEventType Type => LuaEventType.Bool;
@@ -58,6 +62,7 @@ public partial class ServerQuestLuaEvent : IWritable
     }
 
     [WireStruct]
+    [UnionCase(LuaEventType.Item)]
     public sealed partial class LuaEventDataItem : ILuaEventData, IWritable
     {
         [NotOnWire] public LuaEventType Type => LuaEventType.Item;
@@ -70,6 +75,7 @@ public partial class ServerQuestLuaEvent : IWritable
     }
 
     [WireStruct]
+    [UnionCase(LuaEventType.Quest)]
     public sealed partial class LuaEventDataQuest : ILuaEventData, IWritable
     {
         [NotOnWire] public LuaEventType Type => LuaEventType.Quest;
@@ -81,17 +87,25 @@ public partial class ServerQuestLuaEvent : IWritable
         }
     }
 
-    public ushort LuaEventId { get; set; }
-    public List<ILuaEventData> LuaEvents { get; set; } = [];
+    // One element of LuaEvents: the 32-bit type, then the data it selects.
+    [WireStruct]
+    public sealed partial class LuaEvent
+    {
+        [UInt(32)] public LuaEventType Type { get; set; }
+        [Union(nameof(Type))] public ILuaEventData Data { get; set; }
+    }
+
+    [UInt(14)] public ushort LuaEventId { get; set; } // 14 bits in the client facts for opcode 857; the legacy Write puts 16
+    [Array(CountBits = 32)] public List<LuaEvent> LuaEvents { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {
         writer.Write(LuaEventId);
         writer.Write(LuaEvents.Count);
-        foreach (ILuaEventData luaEvent in LuaEvents)
+        foreach (LuaEvent luaEvent in LuaEvents)
         {
-            writer.Write(luaEvent.Type, 32u);
-            luaEvent.Write(writer);
+            writer.Write(luaEvent.Data.Type, 32u);
+            luaEvent.Data.Write(writer);
         }
     }
 }

@@ -5,6 +5,7 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
+[UnionCase(CombatLogType.CCStateBreak)]
 public sealed partial class CombatLogCCStateBreak : ICombatLog
 {
     [NotOnWire] public CombatLogType Type => CombatLogType.CCStateBreak;

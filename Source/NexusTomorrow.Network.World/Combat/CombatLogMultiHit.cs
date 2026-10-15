@@ -5,6 +5,7 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
+[UnionCase(CombatLogType.MultiHit)]
 public sealed partial class CombatLogMultiHit : ICombatLog
 {
     [NotOnWire] public CombatLogType Type => CombatLogType.MultiHit;

@@ -1,15 +1,17 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Game.Static.Support;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Support;
 
-public interface ISurvey : IReadable
+public interface ISurvey : IReadable, IWireStruct
 {
 };
 
 public partial class Survey
 {
     [WireStruct]
+    [UnionCase(SurveyType.QuestGeneric)]
     public sealed partial class QuestDifficultySurvey : ISurvey
     {
         // Probably Quest Id
@@ -39,6 +41,7 @@ public partial class Survey
     }
 
     [WireStruct]
+    [UnionCase(SurveyType.TSpellQuest)]
     public sealed partial class QuestTSpellSurvey : ISurvey
     {
         // Probably Quest Id
@@ -68,6 +71,7 @@ public partial class Survey
     }
 
     [WireStruct]
+    [UnionCase(SurveyType.HoldoutQuest)]
     public sealed partial class QuestHoldoutSurvey : ISurvey
     {
         // Probably Quest Id
@@ -97,6 +101,7 @@ public partial class Survey
     }
 
     [WireStruct]
+    [UnionCase(SurveyType.LevelUp)]
     public sealed partial class LevelingSurvey : ISurvey
     {
         [UInt(16)] public short Level { get; set; }
@@ -125,6 +130,7 @@ public partial class Survey
     }
 
     [WireStruct]
+    [UnionCase(SurveyType.GenericChallenge)]
     public sealed partial class ChallengesSurvey : ISurvey
     {
         [UInt(16)] public short ChallengeId { get; set; }

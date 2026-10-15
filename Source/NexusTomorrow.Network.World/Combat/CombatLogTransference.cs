@@ -7,6 +7,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
+[UnionCase(CombatLogType.Transference)]
 public sealed partial class CombatLogTransference : ICombatLog
 {
     [WireStruct]

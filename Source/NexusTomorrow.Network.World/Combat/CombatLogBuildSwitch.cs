@@ -4,6 +4,7 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
+[UnionCase(CombatLogType.BuildSwitch)]
 public sealed partial class CombatLogBuildSwitch : ICombatLog
 {
     [NotOnWire] public CombatLogType Type => CombatLogType.BuildSwitch;

@@ -5,6 +5,7 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
+[UnionCase(CombatLogType.VitalModifier)]
 public sealed partial class CombatLogVitalModifier : ICombatLog
 {
     [NotOnWire] public CombatLogType Type => CombatLogType.VitalModifier;

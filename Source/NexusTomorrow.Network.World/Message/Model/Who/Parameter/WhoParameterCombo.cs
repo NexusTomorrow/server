@@ -1,10 +1,12 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Game.Static.Who;
 using NexusTomorrow.Network.Codec;
 using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
 
 namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
 
 [WireStruct]
+[UnionCase(WhoParameterType.Combo)]
 public sealed partial class WhoParameterCombo : IWhoParameterData
 {
     [WideString] public string SearchString { get; private set; }

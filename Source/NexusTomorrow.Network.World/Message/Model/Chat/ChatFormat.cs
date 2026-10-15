@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Chat;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
-public class ChatFormat : IWritable
+[WireStruct]
+public partial class ChatFormat : IWritable
 {
-    public ChatFormatType Type { get; set; }
-    public ushort StartIndex { get; set; }
-    public ushort StopIndex { get; set; }
-    public IChatFormatModel Model { get; set; }
+    [UInt(4)] public ChatFormatType Type { get; set; }
+    [UInt(16)] public ushort StartIndex { get; set; }
+    [UInt(16)] public ushort StopIndex { get; set; }
+    [Union(nameof(Type))] public IChatFormatModel Model { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

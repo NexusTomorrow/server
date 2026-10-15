@@ -1,10 +1,12 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Game.Static.Marketplace;
 using NexusTomorrow.Game.Static.Reputation;
 using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
 
 [WireStruct]
+[UnionCase(AuctionFilterType.EquippableBy)]
 public sealed partial class EquippableByAuctionFilter : IAuctionFilter
 {
     [UInt(8)] public Race RaceId { get; private set; }

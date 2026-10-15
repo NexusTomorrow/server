@@ -4,6 +4,7 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Chat.Model;
 
 [WireStruct]
+[UnionCase(ChatFormatType.NavPoint)]
 public sealed partial class ChatFormatNavPoint : IChatFormatModel
 {
     [NotOnWire] public ChatFormatType Type => ChatFormatType.NavPoint;

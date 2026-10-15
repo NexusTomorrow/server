@@ -4,6 +4,7 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
+[UnionCase(CombatLogType.DelayDeath)]
 public sealed partial class CombatLogDelayDeath : ICombatLog
 {
     [NotOnWire] public CombatLogType Type => CombatLogType.DelayDeath;

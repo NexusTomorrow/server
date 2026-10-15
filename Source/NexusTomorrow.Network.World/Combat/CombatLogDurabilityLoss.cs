@@ -4,6 +4,7 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
+[UnionCase(CombatLogType.DurabilityLoss)]
 public sealed partial class CombatLogDurabilityLoss : ICombatLog
 {
     [NotOnWire] public CombatLogType Type => CombatLogType.DurabilityLoss;
