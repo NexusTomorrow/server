@@ -7,6 +7,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetPositionPath)]
 [WireStruct]
+[UnionCase(EntityCommand.SetPositionPath)]
 public sealed partial class SetPositionPathCommand : IEntityCommandModel
 {
     [Array(CountBits = 10), Float32] public List<Vector3> Positions { get; set; } = [];

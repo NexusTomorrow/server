@@ -5,6 +5,7 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Entity.Model;
 
 [WireStruct]
+[UnionCase(EntityType.Ghost)]
 public sealed partial class GhostEntityModel : IEntityModel
 {
     [UInt(64)] public ulong Id { get; set; }

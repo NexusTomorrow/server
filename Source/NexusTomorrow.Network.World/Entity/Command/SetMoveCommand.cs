@@ -6,6 +6,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetMove)]
 [WireStruct]
+[UnionCase(EntityCommand.SetMove)]
 public sealed partial class SetMoveCommand : IEntityCommandModel
 {
     [PackedFloat] public Vector3 Move { get; set; }

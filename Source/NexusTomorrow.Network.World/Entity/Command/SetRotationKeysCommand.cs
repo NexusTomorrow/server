@@ -6,6 +6,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetRotationKeys)]
 [WireStruct]
+[UnionCase(EntityCommand.SetRotationKeys)]
 public sealed partial class SetRotationKeysCommand : IEntityCommandModel
 {
     [UInt(10), Count] public ushort TimesCount { get; set; }

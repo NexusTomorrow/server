@@ -7,6 +7,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetPositionSpline)]
 [WireStruct]
+[UnionCase(EntityCommand.SetPositionSpline)]
 public sealed partial class SetPositionSplineCommand : IEntityCommandModel
 {
     [UInt(32)] public uint SplineId { get; set; }

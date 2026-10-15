@@ -1,16 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerEntityCommand)]
-public class ServerEntityCommand : IWritable
+[WireMessage(GameMessageOpcode.ServerEntityCommand, Direction.ServerToClient)]
+public sealed partial class ServerEntityCommand : IWritable
 {
-    public uint Guid { get; set; }
-    public uint Time { get; set; }
-    public bool TimeReset { get; set; }
-    public bool ServerControlled { get; set; }
-    public List<INetworkEntityCommand> Commands { get; set; } = [];
+    [UInt(32)] public uint Guid { get; set; }
+    [UInt(32)] public uint Time { get; set; }
+    [UInt(1)] public bool TimeReset { get; set; }
+    [UInt(1)] public bool ServerControlled { get; set; }
+    [Array(CountBits = 5)] public List<NetworkEntityCommand> Commands { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

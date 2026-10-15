@@ -5,6 +5,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetScale)]
 [WireStruct]
+[UnionCase(EntityCommand.SetScale)]
 public sealed partial class SetScaleCommand : IEntityCommandModel
 {
     [PackedFloat] public float Scale { get; set; }

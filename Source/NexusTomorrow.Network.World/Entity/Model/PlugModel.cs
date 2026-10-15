@@ -1,8 +1,10 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Model;
 
 [WireStruct]
+[UnionCase(EntityType.Plug)]
 public sealed partial class PlugModel : IEntityModel
 {
     [UInt(14)] public ushort SocketId { get; set; }
