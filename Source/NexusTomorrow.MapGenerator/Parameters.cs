@@ -6,7 +6,7 @@ namespace NexusTomorrow.MapGenerator
     {
         [Option('i', "patchPath", Required = true,
             HelpText = "The location of the WildStar client patch folder.")]
-        public string PatchPath { get; set; }
+        public required string PatchPath { get; set; }
 
         [Option('e', "extract",
             HelpText = "Extract all game tables (.tbl) and localisation files (.bin).")]
@@ -18,7 +18,7 @@ namespace NexusTomorrow.MapGenerator
 
         [Option('o', "output",
             HelpText = "The base directory where output files will be created.", Default = "")]
-        public string OutputDir { get; set; }
+        public string OutputDir { get; set; } = string.Empty;
 
         [Option("debug")]
         public bool Debug { get; set; }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using Nexus.Archive;
 using NLog;
@@ -17,7 +18,7 @@ namespace NexusTomorrow.MapGenerator
             "en-GB.bin"
         };
 
-        private string outputDir;
+        private string? outputDir;
 
         #region Dependency Injection
 
@@ -74,6 +75,9 @@ namespace NexusTomorrow.MapGenerator
         /// </summary>
         private void ExtractFile(Archive archive, IArchiveFileEntry fileEntry)
         {
+            if (outputDir == null)
+                throw new InvalidOperationException($"{nameof(outputDir)} is not set; call {nameof(Initialise)} first.");
+
             string filePath = Path.Combine(outputDir, fileEntry.FileName);
 
             using (Stream archiveStream = archive.OpenFileStream(fileEntry))

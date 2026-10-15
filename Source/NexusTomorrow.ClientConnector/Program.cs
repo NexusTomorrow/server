@@ -21,7 +21,7 @@ namespace NexusTomorrow.ClientConnector
             bool bInheritHandles,
             uint dwCreationFlags,
             IntPtr lpEnvironment,
-            string lpCurrentDirectory,
+            string? lpCurrentDirectory,
             ref STARTUPINFO lpStartupInfo,
             out PROCESS_INFORMATION lpProcessInformation
         );
@@ -31,10 +31,16 @@ namespace NexusTomorrow.ClientConnector
             if (!File.Exists(jsonFile))
             {
                 Console.Write("Type in your host name: ");
-                string hostName = Console.ReadLine();
+                string? hostName = Console.ReadLine();
 
                 Console.Write("Type in your language: [en,de]");
-                string language = Console.ReadLine();
+                string? language = Console.ReadLine();
+
+                if (hostName == null || language == null)
+                {
+                    Console.WriteLine("Input ended before the configuration was complete.");
+                    return;
+                }
 
                 var clientConfig = new ClientConfiguration
                 {
@@ -49,7 +55,7 @@ namespace NexusTomorrow.ClientConnector
                 .AddJsonFile(jsonFile, false)
                 .Build();
 
-            LaunchClient(configuration.Get<ClientConfiguration>());
+            LaunchClient(configuration.Get<ClientConfiguration>() ?? throw new InvalidDataException($"{jsonFile} holds no client configuration."));
         }
 
         private static void LaunchClient(ClientConfiguration config)

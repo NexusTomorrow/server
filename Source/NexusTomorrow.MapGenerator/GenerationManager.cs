@@ -18,7 +18,7 @@ namespace NexusTomorrow.MapGenerator
     public sealed class GenerationManager
     {
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
-        private string outputDir;
+        private string? outputDir;
 
         #region Dependency Injection
 
@@ -49,7 +49,7 @@ namespace NexusTomorrow.MapGenerator
         /// </summary>
         public void GenerateWorld(ushort worldId, byte? gridX = null, byte? gridY = null)
         {
-            WorldEntry entry = gameTableManager.World.GetEntry(worldId);
+            WorldEntry? entry = gameTableManager.World.GetEntry(worldId);
             if (entry != null)
                 ProcessWorld(entry, gridX, gridY);
         }
@@ -114,6 +114,9 @@ namespace NexusTomorrow.MapGenerator
                 log.Info($"Map {mapFile.Asset} has no grid information, skipping");
                 return;
             }
+
+            if (outputDir == null)
+                throw new InvalidOperationException($"{nameof(outputDir)} is not set; call {nameof(Initialise)} first.");
 
             // Path.ChangeExtension(mapFile.Asset, "nfmap")
             // ChangeExtension doesn't behave correctly on linux

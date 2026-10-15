@@ -11,8 +11,6 @@ namespace NexusTomorrow.MapGenerator
     internal static class MapGenerator
     {
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
-        private static ParserResult<Parameters> parserResult;
-        private static IServiceProvider provider;
 
         #if DEBUG
         private const string Title = "NexusTomorrow: Map Generator (DEBUG)";
@@ -28,17 +26,17 @@ namespace NexusTomorrow.MapGenerator
             services.AddSingleton<ExtractionManager>();
             services.AddSingleton<GenerationManager>();
 
-            provider = services.BuildServiceProvider();
+            IServiceProvider provider = services.BuildServiceProvider();
 
             Console.Title = Title;
 
-            parserResult = Parser.Default.ParseArguments<Parameters>(args);
-            parserResult.WithParsed(ParameterOk);
+            ParserResult<Parameters> parserResult = Parser.Default.ParseArguments<Parameters>(args);
+            parserResult.WithParsed(parameters => ParameterOk(parameters, provider, parserResult));
 
             log.Info("Finished!");
         }
 
-        private static void ParameterOk(Parameters parameters)
+        private static void ParameterOk(Parameters parameters, IServiceProvider provider, ParserResult<Parameters> parserResult)
         {
             if (!Directory.Exists(parameters.PatchPath))
                 throw new DirectoryNotFoundException();
@@ -46,7 +44,7 @@ namespace NexusTomorrow.MapGenerator
             if (!parameters.Extract && !parameters.Generate)
             {
                 log.Warn("Please specify the Extract or Generate parameter");
-                log.Info(GetHelp());
+                log.Info(GetHelp(parserResult));
                 return;
             }
 
@@ -77,7 +75,7 @@ namespace NexusTomorrow.MapGenerator
             }
         }
 
-        private static string GetHelp()
+        private static string GetHelp(ParserResult<Parameters> parserResult)
         {
             return HelpText.AutoBuild(parserResult, h => h, e => e);
         }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Nexus.Archive;
 using NexusTomorrow.GameTable;
 using NexusTomorrow.GameTable.Model;
@@ -7,7 +8,13 @@ namespace NexusTomorrow.MapGenerator.GameTable
 {
     public sealed class GameTableManager
     {
-        public GameTable<WorldEntry> World { get; private set; }
+        private GameTable<WorldEntry>? world;
+
+        /// <summary>
+        /// World table from the main client archive.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"><see cref="Initialise"/> has not loaded it.</exception>
+        public GameTable<WorldEntry> World => world ?? throw new InvalidOperationException($"{nameof(World)} is not loaded; call {nameof(Initialise)} first.");
 
         #region Dependency Injection
 
@@ -23,7 +30,7 @@ namespace NexusTomorrow.MapGenerator.GameTable
 
         public void Initialise()
         {
-            World = LoadGameTable<WorldEntry>("World.tbl");
+            world = LoadGameTable<WorldEntry>("World.tbl");
         }
 
         /// <summary>
