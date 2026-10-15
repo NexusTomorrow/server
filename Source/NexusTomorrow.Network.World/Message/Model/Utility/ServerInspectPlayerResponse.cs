@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Utility;
 
 [Message(GameMessageOpcode.ServerInspectPlayerResponse)]
-public class ServerInspectPlayerResponse : IWritable
+[WireMessage(GameMessageOpcode.ServerInspectPlayerResponse, Direction.ServerToClient)]
+public sealed partial class ServerInspectPlayerResponse : IWritable
 {
-    public uint UnitId { get; set; }
-    public List<Item> Items { get; set; } = [];
+    [UInt(32)] public uint UnitId { get; set; }
+    [Array(CountBits = 5)] public List<Item> Items { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

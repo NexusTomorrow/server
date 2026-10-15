@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class InventoryItem : IWritable
+[WireStruct]
+public sealed partial class InventoryItem : IWritable
 {
     public Item Item { get; set; }
-    public ItemUpdateReason Reason { get; set; }
+    [UInt(6)] public ItemUpdateReason Reason { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

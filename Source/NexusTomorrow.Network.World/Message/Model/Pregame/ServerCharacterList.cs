@@ -8,7 +8,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 [Message(GameMessageOpcode.ServerCharacterList)]
-public partial class ServerCharacterList : IWritable
+[WireMessage(GameMessageOpcode.ServerCharacterList, Direction.ServerToClient)]
+public sealed partial class ServerCharacterList : IWritable
 {
     [WireStruct]
     public sealed partial class Character : IWritable
@@ -95,18 +96,18 @@ public partial class ServerCharacterList : IWritable
         }
     }
 
-    public ulong ServerTime { get; set; }
-    public List<Character> Characters { get; } = [];
-    public List<uint> EnabledCharacterCreationIds { get; set; } = []; // Unclear if sending these has any effect.
-    public List<uint> DisabledCharacterCreationIds { get; set; } = [];
-    public ushort RealmId { get; set; }
+    [UInt(64)] public ulong ServerTime { get; set; }
+    [Array(CountBits = 32)] public List<Character> Characters { get; } = [];
+    [Array(CountBits = 32), UInt(32)] public List<uint> EnabledCharacterCreationIds { get; set; } = []; // Unclear if sending these has any effect.
+    [Array(CountBits = 32), UInt(32)] public List<uint> DisabledCharacterCreationIds { get; set; } = [];
+    [UInt(14)] public ushort RealmId { get; set; }
     public Identity CharacterRemoveIdentity { get; set; } = new Identity();
-    public uint CharacterRemoveTime { get; set; }
-    public uint CharacterReservationCount { get; set; }
-    public uint MaxNumberCharacters { get; set; }
-    public uint AdditionalCount { get; set; }
-    public Faction FactionRestriction { get; set; }
-    public bool FreeLevel50 { get; set; }
+    [UInt(32)] public uint CharacterRemoveTime { get; set; }
+    [UInt(32)] public uint CharacterReservationCount { get; set; }
+    [UInt(32)] public uint MaxNumberCharacters { get; set; }
+    [UInt(32)] public uint AdditionalCount { get; set; }
+    [UInt(14)] public Faction FactionRestriction { get; set; }
+    [UInt(1)] public bool FreeLevel50 { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -5,7 +5,8 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerQuestInit)]
-public partial class ServerQuestInit : IWritable
+[WireMessage(GameMessageOpcode.ServerQuestInit, Direction.ServerToClient)]
+public sealed partial class ServerQuestInit : IWritable
 {
     [WireStruct]
     public sealed partial class QuestComplete : IWritable
@@ -66,11 +67,11 @@ public partial class ServerQuestInit : IWritable
         }
     }
 
-    public List<QuestComplete> Completed { get; set; } = [];
-    public List<QuestInactive> Inactive { get; set; } = [];
-    public List<QuestActive> Active { get; set; } = [];
+    [Array(CountBits = 32)] public List<QuestComplete> Completed { get; set; } = [];
+    [Array(CountBits = 32)] public List<QuestInactive> Inactive { get; set; } = [];
+    [Array(CountBits = 32)] public List<QuestActive> Active { get; set; } = [];
 
-    public ulong DailyRandomSeed { get; set; }
+    [UInt(64)] public ulong DailyRandomSeed { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

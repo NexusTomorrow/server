@@ -7,7 +7,8 @@ using FactionId = NexusTomorrow.Game.Static.Reputation.Faction;
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerPlayerCreate)]
-public partial class ServerPlayerCreate : IWritable
+[WireMessage(GameMessageOpcode.ServerPlayerCreate, Direction.ServerToClient)]
+public sealed partial class ServerPlayerCreate : IWritable
 {
     [WireStruct]
     public sealed partial class Faction : IWritable
@@ -67,29 +68,29 @@ public partial class ServerPlayerCreate : IWritable
         }
     }
 
-    public List<InventoryItem> Inventory { get; } = [];
-    public ulong[] Money { get; } = new ulong[16];
-    public uint Xp { get; set; }
-    public uint RestBonusXp { get; set; }
-    public ItemProficiency ItemProficiencies { get; set; }
-    public uint ElderPoints { get; set; }
-    public uint DailyElderPoints { get; set; }
-    public byte SpecIndex { get; set; }
-    public ushort BonusPower { get; set; }
-    public uint UnknownA0 { get; set; }
+    [Array(CountBits = 32)] public List<InventoryItem> Inventory { get; } = [];
+    [FixedArray(16), UInt(64)] public ulong[] Money { get; } = new ulong[16];
+    [UInt(32)] public uint Xp { get; set; }
+    [UInt(32)] public uint RestBonusXp { get; set; }
+    [UInt(32)] public ItemProficiency ItemProficiencies { get; set; }
+    [UInt(32)] public uint ElderPoints { get; set; }
+    [UInt(32)] public uint DailyElderPoints { get; set; }
+    [UInt(3)] public byte SpecIndex { get; set; }
+    [UInt(16)] public ushort BonusPower { get; set; }
+    [UInt(32)] public uint UnknownA0 { get; set; }
     public Faction FactionData { get; set; }
-    public List<Pet> Pets { get; } = [];
-    public uint InputKeySet { get; set; }
-    public ushort UnknownBC { get; set; }
-    public int ActiveCostumeIndex { get; set; }
-    public uint UnknownC4 { get; set; }
-    public uint UnknownC8 { get; set; }
-    public List<ushort> KnownDyes { get; } = [];
-    public ushort[] TradeskillMaterials { get; set; } = new ushort[512];
-    public float GearScore { get; set; }
-    public bool IsPvpServer { get; set; }
-    public uint MatchingEligibilityFlagMask { get; set; } // Mask checked against matchingMapPreqrequisite.matchingEligibilityFlagEnum field. Tbl has no entries though.
-    public List<CharacterEntitlement> CharacterEntitlements { set; get; } = [];
+    [Array(CountBits = 32)] public List<Pet> Pets { get; } = [];
+    [UInt(32)] public uint InputKeySet { get; set; }
+    [UInt(16)] public ushort UnknownBC { get; set; }
+    [UInt(32)] public int ActiveCostumeIndex { get; set; }
+    [UInt(32)] public uint UnknownC4 { get; set; }
+    [UInt(32)] public uint UnknownC8 { get; set; }
+    [Array(CountBits = 6), UInt(16)] public List<ushort> KnownDyes { get; } = [];
+    [FixedArray(512), UInt(16)] public ushort[] TradeskillMaterials { get; set; } = new ushort[512];
+    [Float32] public float GearScore { get; set; }
+    [UInt(1)] public bool IsPvpServer { get; set; }
+    [UInt(32)] public uint MatchingEligibilityFlagMask { get; set; } // Mask checked against matchingMapPreqrequisite.matchingEligibilityFlagEnum field. Tbl has no entries though.
+    [Array(CountBits = 32)] public List<CharacterEntitlement> CharacterEntitlements { set; get; } = [];
 
     public void Write(GamePacketWriter writer)
     {

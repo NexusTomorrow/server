@@ -6,7 +6,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ServerHousingResidences)]
-public partial class ServerHousingResidences : IWritable
+[WireMessage(GameMessageOpcode.ServerHousingResidences, Direction.ServerToClient)]
+public sealed partial class ServerHousingResidences : IWritable
 {
     [WireStruct]
     public sealed partial class Residence : IWritable
@@ -59,7 +60,7 @@ public partial class ServerHousingResidences : IWritable
         }
     }
 
-    public List<Residence> Residences { get; } = [];
+    [Array(CountBits = 32)] public List<Residence> Residences { get; } = [];
 
     public void Write(GamePacketWriter writer)
     {

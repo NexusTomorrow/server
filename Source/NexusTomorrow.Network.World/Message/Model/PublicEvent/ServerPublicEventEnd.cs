@@ -6,7 +6,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
 [Message(GameMessageOpcode.ServerPublicEventEnd)]
-public partial class ServerPublicEventEnd : IWritable
+[WireMessage(GameMessageOpcode.ServerPublicEventEnd, Direction.ServerToClient)]
+public sealed partial class ServerPublicEventEnd : IWritable
 {
     [WireStruct]
     public sealed partial class PublicEventObjectiveStatus : IWritable
@@ -21,16 +22,16 @@ public partial class ServerPublicEventEnd : IWritable
         }
     }
 
-    public uint PublicEventId { get; set; }
-    public PublicEventRemoveReason Reason { get; set; }
-    public uint ElapsedTimeMs { get; set; }
+    [UInt(14)] public uint PublicEventId { get; set; }
+    [UInt(32)] public PublicEventRemoveReason Reason { get; set; }
+    [UInt(32)] public uint ElapsedTimeMs { get; set; }
     public PublicEventStats PersonalStats { get; set; }
-    public List<PublicEventTeamStats> TeamStats { get; set; } = [];
-    public List<PublicEventParticipantStats> ParticipantStats { get; set; } = [];
-    public List<PublicEventObjectiveStatus> ObjectiveStatus { get; set; } = [];
-    public PublicEventRewardTier RewardTier { get; set; }
-    public PublicEventRewardType RewardType { get; set; }
-    public uint[] RewardThreshold { get; set; } = new uint[3];
+    [Array(CountBits = 32)] public List<PublicEventTeamStats> TeamStats { get; set; } = [];
+    [Array(CountBits = 32)] public List<PublicEventParticipantStats> ParticipantStats { get; set; } = [];
+    [Array(CountBits = 32)] public List<PublicEventObjectiveStatus> ObjectiveStatus { get; set; } = [];
+    [UInt(32)] public PublicEventRewardTier RewardTier { get; set; }
+    [UInt(32)] public PublicEventRewardType RewardType { get; set; }
+    [FixedArray(3), UInt(32)] public uint[] RewardThreshold { get; set; } = new uint[3];
 
     public void Write(GamePacketWriter writer)
     {
