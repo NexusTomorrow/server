@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,12 @@
     <ProjectReference Include="..\NexusTomorrow.GameTable\NexusTomorrow.GameTable.csproj" />
     <ProjectReference Include="..\NexusTomorrow.IO\NexusTomorrow.IO.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Shared\NexusTomorrow.Shared.csproj" />
+  </ItemGroup>
+
+  <!-- Nexus.Archive 1.0.1 references one SharpCompress member, the LzmaStream constructor (read from its metadata); both advisories concern extracting archive entries into a directory. -->
+  <ItemGroup>
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-6c8g-7p36-r338" />
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-jp7f-grcv-6mjf" />
   </ItemGroup>
 
 </Project>
