@@ -6,4 +6,8 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="NexusTomorrow.Cryptography.Tests" />
+  </ItemGroup>
+
 </Project>

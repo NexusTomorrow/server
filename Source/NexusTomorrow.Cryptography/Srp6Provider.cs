@@ -74,8 +74,17 @@ namespace NexusTomorrow.Cryptography
             if (S == BigInteger.Zero)
                 throw new CryptographicException("Missing data from previous operations: S");
 
-            K = ShaInterleave(S);
-            return K.ToByteArray(true);
+            byte[] sessionKey = DeriveSessionKey(S);
+            K = new BigInteger(sessionKey, true);
+            return sessionKey;
+        }
+
+        /// <summary>
+        /// Derive the session key from the shared secret S.
+        /// </summary>
+        internal static byte[] DeriveSessionKey(BigInteger S)
+        {
+            return new BigInteger(ShaInterleave(S), true).ToByteArray(true);
         }
 
         /// <summary>
@@ -140,7 +149,7 @@ namespace NexusTomorrow.Cryptography
         /// <summary>
         /// Variable length version of SHA_Interleave from RFC2945.
         /// </summary>
-        private static BigInteger ShaInterleave(BigInteger key)
+        private static byte[] ShaInterleave(BigInteger key)
         {
             byte[] keyBytes = key.ToByteArray(true);
             byte[] T = keyBytes
@@ -174,7 +183,7 @@ namespace NexusTomorrow.Cryptography
                     K[i] = H[i / 2];
             }
 
-            return new BigInteger(K, true);
+            return K;
         }
 
         private static void ReverseBytesAsUInt32(byte[] array)
