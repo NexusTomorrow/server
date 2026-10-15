@@ -1,0 +1,20 @@
+﻿using NexusTomorrow.Network.Auth.Static;
+using NexusTomorrow.Network.Message;
+
+namespace NexusTomorrow.Network.Auth.Message.Model;
+
+[Message(GameMessageOpcode.ServerAuthDenied)]
+public class ServerAuthDenied : IWritable
+{
+    public NpLoginResult LoginResult { get; set; }
+    // if LoginResult > 27 client uses this value in some way for an error code
+    public uint ErrorValue { get; set; } // Value to insert into replacement token in the localized string from the LoginResult
+    public float SuspendedDays { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(LoginResult, 32);
+        writer.Write(ErrorValue);
+        writer.Write(SuspendedDays);
+    }
+}

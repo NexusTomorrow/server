@@ -1,0 +1,14 @@
+﻿using NexusTomorrow.Network.Message;
+
+namespace NexusTomorrow.Network.World.Message.Model.Spell;
+
+[Message(GameMessageOpcode.ClientCancelEffect)]
+public class ClientCancelEffect : IReadable
+{
+    public uint ServerUniqueId { get; private set; }
+
+    public void Read(GamePacketReader reader)
+    {
+        ServerUniqueId = reader.ReadUInt();
+    }
+}

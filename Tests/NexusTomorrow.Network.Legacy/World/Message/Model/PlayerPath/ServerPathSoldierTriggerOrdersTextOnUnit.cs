@@ -1,0 +1,16 @@
+﻿using NexusTomorrow.Network.Message;
+
+namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
+
+[Message(GameMessageOpcode.ServerPathSoldierTriggerOrdersTextOnUnit)]
+public class ServerPathSoldierTriggerOrdersTextOnUnit : IWritable
+{
+    public ushort PathMissionId { get; set; }
+    public uint UnitId { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(PathMissionId, 15);
+        writer.Write(UnitId);
+    }
+}

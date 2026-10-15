@@ -1,0 +1,14 @@
+﻿using NexusTomorrow.Network.Message;
+
+namespace NexusTomorrow.Network.World.Message.Model.Pet;
+
+[Message(GameMessageOpcode.ServerUnlockPetFlair)]
+public class ServerUnlockPetFlair : IWritable
+{
+    public ushort PetFlairId { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(PetFlairId, 14u);
+    }
+}

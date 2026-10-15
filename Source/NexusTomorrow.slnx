@@ -22,6 +22,7 @@
     <Project Path="../Tests/NexusTomorrow.GameTable.Tests/NexusTomorrow.GameTable.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Codec.Generator.Tests/NexusTomorrow.Network.Codec.Generator.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Codec.Tests/NexusTomorrow.Network.Codec.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Network.Legacy/NexusTomorrow.Network.Legacy.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="../Directory.Build.targets" />

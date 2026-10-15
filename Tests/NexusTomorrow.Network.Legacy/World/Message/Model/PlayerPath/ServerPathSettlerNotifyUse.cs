@@ -1,0 +1,16 @@
+﻿using NexusTomorrow.Network.Message;
+
+namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
+
+[Message(GameMessageOpcode.ServerPathSettlerNotifyUse)]
+public class ServerPathSettlerNotifyUse : IWritable
+{
+    public ushort PathSettlerImprovementGroupId { get; set; }
+    public string Name { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(PathSettlerImprovementGroupId, 14);
+        writer.WriteStringWide(Name);
+    }
+}
