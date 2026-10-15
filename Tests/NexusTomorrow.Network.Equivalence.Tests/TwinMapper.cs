@@ -33,7 +33,8 @@ internal sealed class TwinMapper
     private object MapObject(object declared, Type legacyType, string path, List<string> differences)
     {
         object legacy = ActivatorUtilities.CreateInstance(_legacyServices, legacyType);
-        foreach (WireMember member in WireMembers.Of(declared.GetType()))
+        IReadOnlyList<WireMember> members = WireMembers.Of(declared.GetType());
+        foreach (WireMember member in members)
         {
             if (member.Shape == WireShape.Pad)
                 continue;
@@ -41,7 +42,7 @@ internal sealed class TwinMapper
             MemberInfo? twin = MemberAccess.Find(legacyType, member.Name);
             if (twin is null)
             {
-                if (!member.IsCount)
+                if (!member.IsCount && !WireMembers.IsSelector(member, members))
                     differences.Add($"{member.QualifiedName} has no legacy twin");
                 continue;
             }
@@ -117,7 +118,16 @@ internal sealed class TwinMapper
 
         Type target = Nullable.GetUnderlyingType(targetType) ?? targetType;
         if (encoding == WireEncoding.Struct)
+        {
+            // A declared holder of one union maps onto the bare arm where the legacy model keeps the arm itself and computes its selector.
+            if (WireMembers.SingleUnionOf(value.GetType()) is { } union && (_twinOf(value.GetType()) is not { } holderTwin || !target.IsAssignableFrom(holderTwin)))
+            {
+                object? arm = MemberAccess.GetValue(union.Member, value);
+                return arm is null ? null : MapTwin(arm, null, $"{path}.{union.Name}", differences);
+            }
+
             return MapTwin(value, target, path, differences);
+        }
         if (ScalarValues.TryGetInteger(value, out Int128 number) && ScalarValues.IsInteger(target))
             return ScalarValues.FromInteger(number, target);
 

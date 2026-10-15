@@ -1,12 +1,14 @@
 ﻿using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using NexusTomorrow.Network.Codec.Generator;
 
 namespace NexusTomorrow.ModelConverter;
 
 /// <summary>
 /// A project's sources compiled without MSBuild: every <c>.cs</c> file outside <c>bin</c> and <c>obj</c>, the SDK's
-/// implicit usings, the framework, and the assemblies in this tool's own output folder except the project's own.
+/// implicit usings, the framework, and the assemblies in this tool's own output folder except the project's own,
+/// with the codec generator's output added as the build adds it.
 /// </summary>
 internal static class SourceProject
 {
@@ -39,11 +41,17 @@ internal static class SourceProject
             trees.Add(CSharpSyntaxTree.ParseText(File.ReadAllText(file, Encoding.UTF8), options, file, Encoding.UTF8));
         }
 
-        return CSharpCompilation.Create(
+        var compilation = CSharpCompilation.Create(
             assemblyName,
             trees,
             References(assemblyName),
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Disable));
+
+        // Declared types implement IWireStruct through generated code, which the compilation only has once the generator runs.
+        CSharpGeneratorDriver.Create(new WireGenerator())
+            .WithUpdatedParseOptions(options)
+            .RunGeneratorsAndUpdateCompilation(compilation, out Compilation generated, out _);
+        return (CSharpCompilation)generated;
     }
 
     private static List<MetadataReference> References(string assemblyName)
@@ -60,6 +68,7 @@ internal static class SourceProject
         return [.. paths
             .Where(entry => !entry.Key.StartsWith("Microsoft.CodeAnalysis", StringComparison.Ordinal)
                 && entry.Key != "NexusTomorrow.ModelConverter"
+                && entry.Key != "NexusTomorrow.Network.Codec.Generator"
                 && !string.Equals(entry.Key, assemblyName, StringComparison.OrdinalIgnoreCase))
             .Select(entry => MetadataReference.CreateFromFile(entry.Value))];
     }

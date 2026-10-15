@@ -10,6 +10,8 @@ namespace NexusTomorrow.Network.Codec.Generator;
 
 /// <summary>
 /// Implements <c>IWireStruct</c> for every [WireStruct] class and <c>IWireMessage</c> for every [WireMessage] class, and writes the assembly's message registry.
+/// The sources and diagnostics come from the models alone, so they cache between runs; only placing each diagnostic on its syntax tree, which lets
+/// <c>.editorconfig</c> severities and <c>#pragma</c> reach it, reads the compilation.
 /// </summary>
 [Generator(LanguageNames.CSharp)]
 public sealed class WireGenerator : IIncrementalGenerator
@@ -30,13 +32,39 @@ public sealed class WireGenerator : IIncrementalGenerator
             static (syntax, cancellationToken) => ModelBuilder.Build(syntax, isMessage: true, cancellationToken));
         IncrementalValueProvider<string> assemblyName = context.CompilationProvider.Select(static (compilation, _) => compilation.AssemblyName ?? "Wire");
 
+        IncrementalValueProvider<Production> production = structs.Collect().Combine(messages.Collect()).Combine(assemblyName)
+            .Select(static (input, _) => Analyze(input.Left.Left, input.Left.Right, input.Right));
+
         context.RegisterSourceOutput(
-            structs.Collect().Combine(messages.Collect()).Combine(assemblyName),
-            static (production, input) => Emit(production, input.Left.Left, input.Left.Right, input.Right));
+            production.Select(static (result, _) => result.Sources),
+            static (output, sources) =>
+            {
+                foreach (GeneratedSource source in sources)
+                    output.AddSource(source.HintName, source.Text);
+            });
+        context.RegisterSourceOutput(
+            production.Select(static (result, _) => result.Diagnostics).Combine(context.CompilationProvider),
+            static (output, input) => Report(output, input.Left, input.Right));
     }
 
-    private static void Emit(SourceProductionContext production, ImmutableArray<TypeModel?> structs, ImmutableArray<TypeModel?> messages, string assemblyName)
+    /// <summary>
+    /// Report each diagnostic on the syntax tree its file path names, or at the file path when no tree has it.
+    /// </summary>
+    private static void Report(SourceProductionContext output, EquatableArray<DiagnosticInfo> diagnostics, Compilation compilation)
     {
+        if (diagnostics.Count == 0)
+            return;
+
+        var trees = new Dictionary<string, SyntaxTree>(StringComparer.Ordinal);
+        foreach (SyntaxTree tree in compilation.SyntaxTrees)
+            trees[tree.FilePath] = tree;
+        foreach (DiagnosticInfo diagnostic in diagnostics)
+            output.ReportDiagnostic(diagnostic.ToDiagnostic(trees));
+    }
+
+    private static Production Analyze(ImmutableArray<TypeModel?> structs, ImmutableArray<TypeModel?> messages, string assemblyName)
+    {
+        var diagnostics = new List<DiagnosticInfo>();
         var types = new Dictionary<string, TypeModel>(StringComparer.Ordinal);
         foreach (TypeModel? model in structs)
         {
@@ -52,7 +80,7 @@ public sealed class WireGenerator : IIncrementalGenerator
 
             if (types.ContainsKey(model.FullName))
             {
-                production.ReportDiagnostic(Diagnostic.Create(Diagnostics.BadType, model.Location?.ToLocation(), model.Name, "a type is a [WireStruct] or a [WireMessage], not both; a message nests as it is"));
+                diagnostics.Add(DiagnosticInfo.Create(Diagnostics.BadType, model.Location, model.Name, "a type is a [WireStruct] or a [WireMessage], not both; a message nests as it is"));
                 failed.Add(model.FullName);
             }
 
@@ -64,16 +92,17 @@ public sealed class WireGenerator : IIncrementalGenerator
         {
             foreach (DiagnosticInfo diagnostic in type.Diagnostics)
             {
-                production.ReportDiagnostic(diagnostic.ToDiagnostic());
+                diagnostics.Add(diagnostic);
                 if (diagnostic.IsError)
                     failed.Add(type.FullName);
             }
         }
 
         var layouts = new LayoutCalculator(types);
-        failed.UnionWith(CheckUnions(production, ordered, layouts));
+        failed.UnionWith(CheckUnions(diagnostics, ordered, layouts));
         FailDependents(ordered, failed);
 
+        var sources = new List<GeneratedSource>();
         var registry = new List<(TypeModel Type, MessageModel Message)>();
         var claimed = new Dictionary<(ushort Opcode, int Direction), string>();
         foreach (TypeModel type in ordered)
@@ -81,7 +110,7 @@ public sealed class WireGenerator : IIncrementalGenerator
             if (failed.Contains(type.FullName))
                 continue;
 
-            production.AddSource(HintName(type.FullName), SourceEmitter.EmitType(type, layouts));
+            sources.Add(new GeneratedSource(HintName(type.FullName), SourceEmitter.EmitType(type, layouts)));
             if (type.Message is not { } message)
                 continue;
 
@@ -91,7 +120,7 @@ public sealed class WireGenerator : IIncrementalGenerator
                 if (claimed.TryGetValue((message.Opcode, direction), out string? owner))
                 {
                     string text = string.Format(CultureInfo.InvariantCulture, "'{0}' and '{1}' both declare opcode 0x{2:X4} in the same direction", owner, type.Name, message.Opcode);
-                    production.ReportDiagnostic(Diagnostic.Create(Diagnostics.Duplicate, type.Location?.ToLocation(), text));
+                    diagnostics.Add(DiagnosticInfo.Create(Diagnostics.Duplicate, type.Location, text));
                     duplicate = true;
                 }
                 else
@@ -104,13 +133,14 @@ public sealed class WireGenerator : IIncrementalGenerator
                 registry.Add((type, message));
         }
 
-        production.AddSource("WireMessages.g.cs", SourceEmitter.EmitRegistry(assemblyName, [.. registry.OrderBy(entry => entry.Message.Opcode)]));
+        sources.Add(new GeneratedSource("WireMessages.g.cs", SourceEmitter.EmitRegistry(assemblyName, [.. registry.OrderBy(entry => entry.Message.Opcode)])));
+        return new Production(new EquatableArray<GeneratedSource>([.. sources]), new EquatableArray<DiagnosticInfo>([.. diagnostics]));
     }
 
     /// <summary>
     /// Report every union with no arm, with an arm its selector cannot carry, or with two arms its selector cannot tell apart, and return the full names of the types that hold one, so they emit nothing.
     /// </summary>
-    private static HashSet<string> CheckUnions(SourceProductionContext production, IEnumerable<TypeModel> types, LayoutCalculator layouts)
+    private static HashSet<string> CheckUnions(List<DiagnosticInfo> diagnostics, IEnumerable<TypeModel> types, LayoutCalculator layouts)
     {
         var brokenHolders = new HashSet<string>(StringComparer.Ordinal);
         var reported = new HashSet<(string UnionType, ulong Label)>();
@@ -122,7 +152,7 @@ public sealed class WireGenerator : IIncrementalGenerator
                 List<TypeModel> arms = layouts.ArmsOf(unionType);
                 if (arms.Count == 0)
                 {
-                    production.ReportDiagnostic(Diagnostic.Create(Diagnostics.NoArms, member.Location?.ToLocation(), member.Name, type.Name, unionType.Replace("global::", "")));
+                    diagnostics.Add(DiagnosticInfo.Create(Diagnostics.NoArms, member.Location, member.Name, type.Name, unionType.Replace("global::", "")));
                     brokenHolders.Add(type.FullName);
                     continue;
                 }
@@ -134,7 +164,7 @@ public sealed class WireGenerator : IIncrementalGenerator
                 foreach (TypeModel arm in arms.Where(arm => !UnionCases.Fits(arm.UnionCaseValue, scalar)))
                 {
                     string bits = scalar.Bits.ToString(CultureInfo.InvariantCulture);
-                    production.ReportDiagnostic(Diagnostic.Create(Diagnostics.CaseTooWide, selector.Location?.ToLocation(), selector.Name, type.Name, bits, arm.Name, UnionCases.ValueText(arm.UnionCaseValue)));
+                    diagnostics.Add(DiagnosticInfo.Create(Diagnostics.CaseTooWide, selector.Location, selector.Name, type.Name, bits, arm.Name, UnionCases.ValueText(arm.UnionCaseValue)));
                     brokenHolders.Add(type.FullName);
                 }
 
@@ -149,7 +179,7 @@ public sealed class WireGenerator : IIncrementalGenerator
                         continue;
 
                     string text = string.Format(CultureInfo.InvariantCulture, "{0} arms of {1} claim the selector value {2}: {3}", claim.Count(), unionType.Replace("global::", ""), UnionCases.LabelText(claim.First().UnionCaseValue, scalar), string.Join(", ", claim.Select(arm => arm.Name)));
-                    production.ReportDiagnostic(Diagnostic.Create(Diagnostics.Duplicate, claim.Last().Location?.ToLocation(), text));
+                    diagnostics.Add(DiagnosticInfo.Create(Diagnostics.Duplicate, claim.Last().Location, text));
                 }
             }
         }

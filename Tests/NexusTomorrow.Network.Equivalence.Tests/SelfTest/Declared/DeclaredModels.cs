@@ -108,13 +108,51 @@ public sealed partial class EmptyMessage
 }
 
 [WireMessage((GameMessageOpcode)0xFE08, Direction.Both)]
+public sealed partial class ArmListMessage
+{
+    [Array(CountBits = 3)] public List<ArmEntry> Entries { get; set; } = [];
+}
+
+[WireStruct]
+public sealed partial class ArmEntry
+{
+    [UInt(2)] public byte Kind { get; set; }
+    [Union(nameof(Kind))] public IListArm Arm { get; set; } = new ListArmA();
+}
+
+[WireMessage((GameMessageOpcode)0xFE09, Direction.Both)]
+public sealed partial class ComputedSelectorMessage
+{
+    [UInt(2)] public byte Kind { get; set; }
+    [Union(nameof(Kind))] public IListArm Arm { get; set; } = new ListArmA();
+}
+
+public interface IListArm : IWireStruct
+{
+}
+
+[WireStruct]
+[UnionCase(0)]
+public sealed partial class ListArmA : IListArm
+{
+    [UInt(4)] public byte A { get; set; }
+}
+
+[WireStruct]
+[UnionCase(1)]
+public sealed partial class ListArmB : IListArm
+{
+    [UInt(8)] public byte B { get; set; }
+}
+
+[WireMessage((GameMessageOpcode)0xFE0A, Direction.Both)]
 public sealed partial class BitArrayMessage
 {
     [UInt(8)] public byte Kind { get; set; }
     [FixedArray(4), UInt(8)] public byte[] Flags { get; set; } = new byte[4];
 }
 
-[WireMessage((GameMessageOpcode)0xFE09, Direction.ClientToServer)]
+[WireMessage((GameMessageOpcode)0xFE0B, Direction.ClientToServer)]
 public sealed partial class ReversedBitArrayMessage
 {
     [FixedArray(4), UInt(8)] public byte[] Flags { get; set; } = new byte[4];

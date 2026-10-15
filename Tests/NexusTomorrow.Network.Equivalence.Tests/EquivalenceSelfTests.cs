@@ -71,6 +71,18 @@ public sealed class EquivalenceSelfTests
     }
 
     [Fact]
+    public void AUnionSelectorTheLegacyArmComputesNeedsNoTwin()
+    {
+        AssertNone(Check(typeof(ComputedSelectorMessage)));
+    }
+
+    [Fact]
+    public void AHolderOfOneUnionMapsOntoTheBareLegacyArm()
+    {
+        AssertNone(Check(typeof(ArmListMessage)));
+    }
+
+    [Fact]
     public void ADeclaredByteArrayStandsForALegacyBitArray()
     {
         AssertNone(Check(typeof(BitArrayMessage)));

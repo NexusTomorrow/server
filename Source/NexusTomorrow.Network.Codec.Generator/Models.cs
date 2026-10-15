@@ -94,6 +94,16 @@ internal sealed record LayoutModel(bool IsFixed, bool IsComplete, EquatableArray
 
 internal sealed record ContainingTypeModel(string Keyword, string Name);
 
+/// <summary>
+/// One generated source file.
+/// </summary>
+internal sealed record GeneratedSource(string HintName, string Text);
+
+/// <summary>
+/// Everything one generator run produces from the models: the sources and the diagnostics, held as values so the run caches.
+/// </summary>
+internal sealed record Production(EquatableArray<GeneratedSource> Sources, EquatableArray<DiagnosticInfo> Diagnostics);
+
 internal sealed record MessageModel(ushort Opcode, string OpcodeExpression, int Direction);
 
 /// <summary>

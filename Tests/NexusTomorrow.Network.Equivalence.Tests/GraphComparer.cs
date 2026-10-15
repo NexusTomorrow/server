@@ -60,7 +60,8 @@ internal sealed class GraphComparer
     private void CompareObject(object declared, object legacy, string path, List<string> differences)
     {
         Type legacyType = legacy.GetType();
-        foreach (WireMember member in WireMembers.Of(declared.GetType()))
+        IReadOnlyList<WireMember> members = WireMembers.Of(declared.GetType());
+        foreach (WireMember member in members)
         {
             if (member.Shape == WireShape.Pad)
                 continue;
@@ -68,7 +69,7 @@ internal sealed class GraphComparer
             MemberInfo? twin = MemberAccess.Find(legacyType, member.Name);
             if (twin is null)
             {
-                if (!member.IsCount)
+                if (!member.IsCount && !WireMembers.IsSelector(member, members))
                     differences.Add($"{member.QualifiedName} has no legacy twin");
                 continue;
             }
@@ -84,6 +85,13 @@ internal sealed class GraphComparer
 
         if (encoding == WireEncoding.Struct)
         {
+            // A declared holder of one union compares through to the bare arm the legacy model keeps.
+            if (WireMembers.SingleUnionOf(declared.GetType()) is { } union && _twinOf(declared.GetType()) != legacy.GetType())
+            {
+                CompareArms(MemberAccess.GetValue(union.Member, declared), legacy, $"{path}.{union.Name}", differences);
+                return;
+            }
+
             CompareObject(declared, legacy, path, differences);
             return;
         }
