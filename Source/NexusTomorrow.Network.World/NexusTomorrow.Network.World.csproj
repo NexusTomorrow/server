@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <!-- Replaced in Part B: the codec's converter rewrites these models, and Part B removes these two lines with the conversion. -->
+    <!-- Replaced in Part B: the converted models keep the seed's legacy Read and Write until stage 3 strips them, and stage 3 removes these two lines with them. -->
     <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
     <AnalysisLevel>10-none</AnalysisLevel>
     <!-- Replaced in Part B: the converted models keep the seed's widths, so an enum member wider than its field (NTC003) and an unsigned width on a narrow signed type (NTC006) stand until stage 3 settles each from the client facts. The generator reports at file locations, which path-scoped .editorconfig severities do not reach. -->
