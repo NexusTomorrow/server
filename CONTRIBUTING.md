@@ -97,6 +97,22 @@ it: in `.editorconfig`, scoped to the files it covers, with a comment above sayi
   primary constructors on services or managers.
 - **Packages:** versions live only in `Directory.Packages.props`, pinned exactly.
 
+### Hot paths
+
+Code that runs on every tick or for every message lives in projects marked
+`<HotPath>true</HotPath>`; today that's `NexusTomorrow.Network.Codec`. Hot code allocates nothing
+in steady state, so in those projects the build refuses:
+
+- LINQ, `Activator`, `Enum.ToObject` and `Convert`, which allocate or box;
+- `Stream` and `MemoryStream`, since hot code reads and writes spans;
+- `DateTime.Now` and `DateTime.UtcNow`, since time comes from the injected clock;
+- `Thread.Sleep`, `Task.Result`, `Task.Wait` and `GC.Collect`, which block or stall the tick.
+
+It also treats the performance analysers as errors there, so logging goes through
+source-generated `LoggerMessage` methods. The full list, with a reason for each entry, is in
+`Build/HotPath/`. What no analyser sees is still yours to avoid: lambdas that capture, boxing
+through an interface or a generic, and exceptions used for control flow.
+
 ### Documentation
 
 Every public type and member gets a `/// <summary>`. Data declarations are the exception: game
