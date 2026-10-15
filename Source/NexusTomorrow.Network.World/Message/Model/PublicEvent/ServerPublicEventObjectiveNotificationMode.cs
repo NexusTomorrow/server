@@ -7,6 +7,6 @@ namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 [WireMessage(GameMessageOpcode.ServerPublicEventObjectiveNotificationMode, Direction.ServerToClient)]
 public sealed partial class ServerPublicEventObjectiveNotificationMode
 {
-    [UInt(14)] public uint ObjectiveId { get; set; }
+    [UInt(15)] public uint ObjectiveId { get; set; }
     [UInt(32)] public PublicEventObjectiveNotificationMode NotificationMode { get; set; }
 }

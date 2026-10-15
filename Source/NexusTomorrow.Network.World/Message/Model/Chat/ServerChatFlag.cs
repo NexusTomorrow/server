@@ -8,6 +8,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Chat;
 public sealed partial class ServerChatFlag
 {
     public Channel ChatChannelId { get; set; }
-    [UInt(64)] public ulong ChannelGuid { get; set; }
     [UInt(32)] public ChatChannelMemberFlags Flags { get; set; }
 }

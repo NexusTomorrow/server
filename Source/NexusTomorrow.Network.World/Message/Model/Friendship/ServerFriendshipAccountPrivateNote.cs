@@ -7,6 +7,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 [WireMessage(GameMessageOpcode.ServerFriendshipAccountPrivateNote, Direction.ServerToClient)]
 public sealed partial class ServerFriendshipAccountPrivateNote
 {
-    [UInt(32)] public uint AccountId { get; set; }
+    [UInt(64)] public ulong AccountId { get; set; }
     [WideString] public string PrivateNote { get; set; }
 }

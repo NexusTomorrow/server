@@ -7,4 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model;
 [WireMessage(GameMessageOpcode.ServerDialogEnd, Direction.ServerToClient)]
 public sealed partial class ServerDialogEnd
 {
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

@@ -7,4 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Instance;
 [WireMessage(GameMessageOpcode.ServerHideInstanceGameModeDialog, Direction.ServerToClient)]
 public sealed partial class ServerHideInstanceGameModeDialog
 {
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

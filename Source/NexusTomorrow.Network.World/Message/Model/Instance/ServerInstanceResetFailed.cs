@@ -8,4 +8,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Instance;
 [WireMessage(GameMessageOpcode.ServerInstanceResetFailed, Direction.ServerToClient)]
 public sealed partial class ServerInstanceResetFailed
 {
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

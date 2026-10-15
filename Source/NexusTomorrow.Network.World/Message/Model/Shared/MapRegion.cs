@@ -6,6 +6,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Shared;
 [WireStruct]
 public sealed partial class MapRegion
 {
-    [UInt(15)] public uint WorldSocketId { get; set; }
+    [UInt(14)] public uint WorldSocketId { get; set; }
     [UInt(17)] public uint WorldLocation2Id { get; set; }
 }

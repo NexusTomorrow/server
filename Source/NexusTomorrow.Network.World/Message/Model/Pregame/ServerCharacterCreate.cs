@@ -9,5 +9,5 @@ public sealed partial class ServerCharacterCreate
 {
     [UInt(64)] public ulong CharacterId { get; set; }
     [UInt(32)] public uint WorldId { get; set; }
-    [UInt(3)] public CharacterModifyResult Result { get; set; }
+    [UInt(6)] public CharacterModifyResult Result { get; set; }
 }

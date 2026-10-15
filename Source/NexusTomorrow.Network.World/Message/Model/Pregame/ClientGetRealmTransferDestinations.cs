@@ -8,4 +8,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 [WireMessage(GameMessageOpcode.ClientGetRealmTransferDestinations, Direction.ClientToServer)]
 public sealed partial class ClientGetRealmTransferDestinations
 {
+    [UInt(1)] public bool Unknown0 { get; private set; }
 }

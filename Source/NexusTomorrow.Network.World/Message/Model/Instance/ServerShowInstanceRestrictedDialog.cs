@@ -7,4 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Instance;
 [WireMessage(GameMessageOpcode.ServerShowInstanceRestrictedDialog, Direction.ServerToClient)]
 public sealed partial class ServerShowInstanceRestrictedDialog
 {
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

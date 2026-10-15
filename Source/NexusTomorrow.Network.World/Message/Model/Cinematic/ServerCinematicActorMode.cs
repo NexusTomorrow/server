@@ -10,5 +10,4 @@ public sealed partial class ServerCinematicActorMode
     [UInt(32)] public uint Delay { get; set; }
     [UInt(32)] public uint UnitId { get; set; }
     [UInt(32)] public ModeType Mode { get; set; }
-    [Pad(32)] public Pad ModeHigh { get; }
 }

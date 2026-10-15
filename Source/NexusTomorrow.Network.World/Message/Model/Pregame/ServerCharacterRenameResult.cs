@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 [WireMessage(GameMessageOpcode.ServerCharacterRenameResult, Direction.ServerToClient)]
 public sealed partial class ServerCharacterRenameResult
 {
-    [UInt(3)] public CharacterModifyResult Result { get; set; }
+    [UInt(6)] public CharacterModifyResult Result { get; set; }
     [UInt(64)] public ulong CharacterId { get; set; }
     [WideString] public string Name { get; set; }
 }
