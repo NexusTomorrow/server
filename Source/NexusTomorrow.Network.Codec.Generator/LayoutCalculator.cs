@@ -113,7 +113,7 @@ internal sealed class LayoutCalculator
         switch (value.Kind)
         {
             case ValueKind.Scalar when value.Scalar is not null:
-                for (int i = 0; i < (value.Scalar.IsVector3 ? 3 : 1); i++)
+                for (int i = 0; i < value.Scalar.Components; i++)
                     builder.Widths.Add((byte)value.Scalar.Bits);
                 break;
             case ValueKind.String:

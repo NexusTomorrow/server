@@ -426,6 +426,45 @@ public sealed class GeneratedSourceTests
         Assert.Equal("200 High 255 NegativeShape", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
     }
 
+    [Fact]
+    public void AVector2IsTwoFloatsOnTheWire()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using System.Numerics;
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            [WireStruct]
+            public sealed partial class Point
+            {
+                [Float32] public Vector2 Full { get; set; }
+
+                [PackedFloat] public Vector2 Packed { get; set; }
+            }
+
+            public static class Probe
+            {
+                public static string RoundTrip()
+                {
+                    var written = new Point { Full = new Vector2(1.5f, -2f), Packed = new Vector2(0.5f, 4f) };
+                    byte[] bytes = new byte[12];
+                    var writer = new BitWriter(bytes);
+                    written.Write(ref writer);
+                    var read = new Point();
+                    var reader = new BitReader(bytes);
+                    read.Read(ref reader);
+                    return System.FormattableString.Invariant($"{written.MeasureBits()} {read.Full.X} {read.Full.Y} {read.Packed.X} {read.Packed.Y} {bytes[0]:X2}{bytes[1]:X2}{bytes[2]:X2}{bytes[3]:X2}");
+                }
+            }
+            """);
+
+        Assert.Empty(run.Diagnostics);
+        Assert.Empty(run.CompilationErrors);
+        // 1.5f is 0x3FC00000, written least significant byte first.
+        Assert.Equal("96 1.5 -2 0.5 4 0000C03F", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
+    }
+
     // The client nests whole message bodies in a list (ServerMissileActorListAdd carries ServerMissileActorAdd bodies).
     [Fact]
     public void AMessageNestedInAnotherRoundTrips()

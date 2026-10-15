@@ -92,6 +92,12 @@ internal sealed class ReadBodyReader
         }
 
         ExpressionSyntax value = WriteBodyReader.Strip(assignment.Right);
+        if (VectorOfReads(value) is { } vector)
+        {
+            _ops.Add(new ScalarOp(member, vector.Encoding, vector.Bits));
+            return;
+        }
+
         if (value is BaseObjectCreationExpressionSyntax creation)
         {
             if (creation.Initializer is not null || creation.ArgumentList?.Arguments.Count > 0)
@@ -251,6 +257,26 @@ internal sealed class ReadBodyReader
             "ReadSingle" => (list, new ElementOp("Float32", ReadBits(method, call), null)),
             "ReadDouble" => (list, new ElementOp("Float64", ReadBits(method, call), null)),
             _ => ReadBits(method, call) is > 0 and var bits ? (list, new ElementOp("UInt", bits, null)) : (null, null),
+        };
+    }
+
+    /// <summary>
+    /// A Vector2 or Vector3 built from one read per component, every one <c>ReadSingle()</c> or every one <c>ReadPackedFloat()</c>, which is that vector on the wire.
+    /// </summary>
+    private (string Encoding, int Bits)? VectorOfReads(ExpressionSyntax value)
+    {
+        if (value is not ObjectCreationExpressionSyntax { ArgumentList.Arguments: { Count: 2 or 3 } arguments } creation
+            || _model.GetTypeInfo(creation).Type?.ToDisplayString() is not ("System.Numerics.Vector3" or "System.Numerics.Vector2"))
+        {
+            return null;
+        }
+
+        HashSet<string> methods = [.. arguments.Select(argument => ReaderCall(argument.Expression) is { ArgumentList.Arguments.Count: 0 } call && _model.GetSymbolInfo(call).Symbol is IMethodSymbol method ? method.Name : "")];
+        return methods.Count != 1 ? null : methods.Single() switch
+        {
+            "ReadSingle" => ("Float32", 32),
+            "ReadPackedFloat" => ("PackedFloat", 16),
+            _ => null,
         };
     }
 

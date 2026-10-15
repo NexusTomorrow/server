@@ -15,7 +15,7 @@ internal sealed class WriteBodyReader
     private readonly INamedTypeSymbol _type;
     private readonly IParameterSymbol _writer;
     private readonly List<RawOp> _ops = [];
-    private (ISymbol Vector, char Next)? _vector;
+    private (ISymbol Vector, char Next, string Encoding)? _vector;
     private string? _failure;
 
     private WriteBodyReader(SemanticModel model, INamedTypeSymbol type, IParameterSymbol writer)
@@ -45,21 +45,24 @@ internal sealed class WriteBodyReader
     }
 
     /// <summary>
-    /// Take the X, Y and Z of one Vector3 written in turn as the one Float32 vector they are on the wire.
+    /// Take the components of one Vector2 or Vector3 written in turn, in one encoding, as the one vector they are on the wire.
     /// </summary>
-    private void AddVectorComponent(ISymbol vector, char axis)
+    private void AddVectorComponent(ISymbol vector, char axis, string encoding)
     {
+        bool plane = MemberBuilder.TypeOf(vector).ToDisplayString() == "System.Numerics.Vector2";
+        int bits = encoding == "Float32" ? 32 : 16;
         switch (axis)
         {
             case 'X' when _vector is null:
-                _vector = (vector, 'Y');
+                _vector = (vector, 'Y', encoding);
                 break;
-            case 'Y':
-                _vector = (vector, 'Z');
-                break;
+            case 'Y' when plane:
             case 'Z':
                 _vector = null;
-                _ops.Add(new ScalarOp(vector, "Float32", 32));
+                _ops.Add(new ScalarOp(vector, encoding, bits));
+                break;
+            case 'Y':
+                _vector = (vector, 'Z', encoding);
                 break;
             default:
                 _failure ??= $"Write: {vector.Name}.{axis} is written out of order";
@@ -150,18 +153,21 @@ internal sealed class WriteBodyReader
     /// </summary>
     private bool IsVectorComponent(StatementSyntax statement)
     {
+        string method = _vector?.Encoding == "PackedFloat" ? "WritePackedFloat" : "Write";
         return statement is ExpressionStatementSyntax { Expression: InvocationExpressionSyntax { ArgumentList.Arguments: [var argument] } invocation }
-            && IsWriter((invocation.Expression as MemberAccessExpressionSyntax)?.Expression)
+            && invocation.Expression is MemberAccessExpressionSyntax access
+            && access.Name.Identifier.ValueText == method
+            && IsWriter(access.Expression)
             && VectorComponent(argument.Expression) is { } component
             && SymbolEqualityComparer.Default.Equals(component.Vector, _vector?.Vector)
             && component.Axis == _vector?.Next;
     }
 
-    private (ISymbol Vector, char Axis)? VectorComponent(ExpressionSyntax expression)
+    private (ISymbol Vector, char Axis)? VectorComponent(ExpressionSyntax? expression)
     {
         return expression is MemberAccessExpressionSyntax { Name.Identifier.ValueText: "X" or "Y" or "Z" } access
             && MemberOf(access.Expression) is { } vector
-            && MemberBuilder.TypeOf(vector).ToDisplayString() == "System.Numerics.Vector3"
+            && MemberBuilder.TypeOf(vector).ToDisplayString() is "System.Numerics.Vector3" or "System.Numerics.Vector2"
             ? (vector, access.Name.Identifier.ValueText[0])
             : null;
     }
@@ -245,7 +251,7 @@ internal sealed class WriteBodyReader
 
                     if (encoding == "Float32" && bits == 32 && VectorComponent(value) is { } component)
                     {
-                        AddVectorComponent(component.Vector, component.Axis);
+                        AddVectorComponent(component.Vector, component.Axis, "Float32");
                         return;
                     }
 
@@ -260,6 +266,9 @@ internal sealed class WriteBodyReader
 
             case "WriteStringWide" or "WriteString" or "WriteStringFixed" when MemberOf(value) is { } member:
                 _ops.Add(new StringOp(member, StringAttribute(method.Name)));
+                return;
+            case "WritePackedFloat" when VectorComponent(value) is { } packed:
+                AddVectorComponent(packed.Vector, packed.Axis, "PackedFloat");
                 return;
             case "WritePackedFloat" or "WritePackedVector3" when MemberOf(value) is { } member:
                 _ops.Add(new ScalarOp(member, "PackedFloat", 16));

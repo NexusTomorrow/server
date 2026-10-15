@@ -431,12 +431,17 @@ internal static class ModelBuilder
                 return integer is null ? null : new ValueModel(ValueKind.Scalar, integer, StringEncoding.None, null, null);
             }
 
-            bool isVector3 = typeDisplay == WireNames.Vector3;
+            int components = typeDisplay switch
+            {
+                WireNames.Vector3 => 3,
+                WireNames.Vector2 => 2,
+                _ => 1,
+            };
             (ScalarEncoding Encoding, int Bits, bool Allowed) floating = attributeName switch
             {
-                WireNames.Float32 => (ScalarEncoding.Float32, 32, type.SpecialType == SpecialType.System_Single || isVector3),
+                WireNames.Float32 => (ScalarEncoding.Float32, 32, type.SpecialType == SpecialType.System_Single || components > 1),
                 WireNames.Float64 => (ScalarEncoding.Float64, 64, type.SpecialType == SpecialType.System_Double),
-                _ => (ScalarEncoding.PackedFloat, 16, type.SpecialType == SpecialType.System_Single || isVector3),
+                _ => (ScalarEncoding.PackedFloat, 16, type.SpecialType == SpecialType.System_Single || components > 1),
             };
             if (!floating.Allowed)
             {
@@ -445,7 +450,7 @@ internal static class ModelBuilder
                 return null;
             }
 
-            var model = new ScalarModel(floating.Encoding, floating.Bits, typeDisplay, null, null, false, false, false, isVector3, floating.Bits);
+            var model = new ScalarModel(floating.Encoding, floating.Bits, typeDisplay, null, null, false, false, false, components, floating.Bits);
             return new ValueModel(ValueKind.Scalar, model, StringEncoding.None, null, null);
         }
 
@@ -502,7 +507,7 @@ internal static class ModelBuilder
                 return null;
             }
 
-            return new ScalarModel(encoding, 1, typeDisplay, null, null, false, false, true, false, 1);
+            return new ScalarModel(encoding, 1, typeDisplay, null, null, false, false, true, 1, 1);
         }
 
         INamedTypeSymbol? enumType = type is INamedTypeSymbol { TypeKind: TypeKind.Enum } named ? named : null;
@@ -550,7 +555,7 @@ internal static class ModelBuilder
                 diagnostics.Add(DiagnosticInfo.Create(Diagnostics.ValueTooWide, location, name, typeName, Text(bits), enumType.Name + "." + tooWide.Name, Convert.ToString(tooWide.ConstantValue, CultureInfo.InvariantCulture) ?? ""));
         }
 
-        return new ScalarModel(encoding, bits, typeDisplay, integer.Keyword, integer.Unsigned, integer.Signed, enumType is not null, false, false, integer.Size);
+        return new ScalarModel(encoding, bits, typeDisplay, integer.Keyword, integer.Unsigned, integer.Signed, enumType is not null, false, 1, integer.Size);
     }
 
     private static void CheckReferences(List<MemberModel> members, string typeName, List<DiagnosticInfo> diagnostics)

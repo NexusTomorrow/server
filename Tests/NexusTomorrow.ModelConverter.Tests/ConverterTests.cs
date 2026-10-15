@@ -180,6 +180,40 @@ public sealed class ConverterTests
     }
 
     [Fact]
+    public void VectorsReadAndWrittenByComponentAreOneVectorEachWay()
+    {
+        ConversionResult result = ConverterHarness.Convert("""
+            namespace Tests;
+
+            public class Place : IReadable, IWritable
+            {
+                public Vector3 Spot { get; private set; }
+                public Vector2 Grid { get; private set; }
+
+                public void Read(GamePacketReader reader)
+                {
+                    Spot = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                    Grid = new Vector2(reader.ReadPackedFloat(), reader.ReadPackedFloat());
+                }
+
+                public void Write(GamePacketWriter writer)
+                {
+                    writer.Write(Spot.X);
+                    writer.Write(Spot.Y);
+                    writer.Write(Spot.Z);
+                    writer.WritePackedFloat(Grid.X);
+                    writer.WritePackedFloat(Grid.Y);
+                }
+            }
+            """);
+
+        ConverterHarness.AssertInOrder(
+            ConverterHarness.Converted(result),
+            "[Float32] public Vector3 Spot { get; private set; }",
+            "[PackedFloat] public Vector2 Grid { get; private set; }");
+    }
+
+    [Fact]
     public void AFixedArrayTakesItsLengthFromItsInitializer()
     {
         ConversionResult result = ConverterHarness.Convert("""

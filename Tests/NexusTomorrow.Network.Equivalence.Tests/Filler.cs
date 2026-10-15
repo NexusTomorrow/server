@@ -161,6 +161,8 @@ internal static class Filler
     {
         if (type == typeof(Vector3))
             return new Vector3(next(), next(), next());
+        if (type == typeof(Vector2))
+            return new Vector2(next(), next());
 
         return next();
     }

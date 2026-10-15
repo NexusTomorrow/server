@@ -478,11 +478,21 @@ internal static class SourceEmitter
         switch (scalar.Encoding)
         {
             case ScalarEncoding.Float32:
-                return scalar.IsVector3 ? "reader.ReadVector3()" : "reader.ReadFloat32()";
+                return scalar.Components switch
+                {
+                    3 => "reader.ReadVector3()",
+                    2 => "new global::System.Numerics.Vector2(reader.ReadFloat32(), reader.ReadFloat32())",
+                    _ => "reader.ReadFloat32()",
+                };
             case ScalarEncoding.Float64:
                 return "reader.ReadFloat64()";
             case ScalarEncoding.PackedFloat:
-                return scalar.IsVector3 ? "reader.ReadPackedVector3()" : "reader.ReadPackedFloat()";
+                return scalar.Components switch
+                {
+                    3 => "reader.ReadPackedVector3()",
+                    2 => "new global::System.Numerics.Vector2(reader.ReadPackedFloat(), reader.ReadPackedFloat())",
+                    _ => "reader.ReadPackedFloat()",
+                };
             case ScalarEncoding.SInt:
                 return scalar.IsEnum
                     ? $"({scalar.ClrType})unchecked(({scalar.IntegerType})reader.ReadSignedBits({bits}))"
@@ -502,11 +512,21 @@ internal static class SourceEmitter
         switch (scalar.Encoding)
         {
             case ScalarEncoding.Float32:
-                return scalar.IsVector3 ? $"writer.WriteVector3({expression});" : $"writer.WriteFloat32({expression});";
+                return scalar.Components switch
+                {
+                    3 => $"writer.WriteVector3({expression});",
+                    2 => $"writer.WriteFloat32({expression}.X); writer.WriteFloat32({expression}.Y);",
+                    _ => $"writer.WriteFloat32({expression});",
+                };
             case ScalarEncoding.Float64:
                 return $"writer.WriteFloat64({expression});";
             case ScalarEncoding.PackedFloat:
-                return scalar.IsVector3 ? $"writer.WritePackedVector3({expression});" : $"writer.WritePackedFloat({expression});";
+                return scalar.Components switch
+                {
+                    3 => $"writer.WritePackedVector3({expression});",
+                    2 => $"writer.WritePackedFloat({expression}.X); writer.WritePackedFloat({expression}.Y);",
+                    _ => $"writer.WritePackedFloat({expression});",
+                };
             case ScalarEncoding.SInt:
                 return scalar.IsEnum
                     ? $"writer.WriteSignedBits(({scalar.IntegerType}){expression}, {bits});"
