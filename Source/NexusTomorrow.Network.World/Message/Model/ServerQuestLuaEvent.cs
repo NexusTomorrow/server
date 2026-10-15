@@ -95,7 +95,7 @@ public sealed partial class ServerQuestLuaEvent : IWritable
         [Union(nameof(Type))] public ILuaEventData Data { get; set; }
     }
 
-    [UInt(14)] public ushort LuaEventId { get; set; } // 14 bits in the client facts for opcode 857; the legacy Write puts 16
+    [UInt(16)] public ushort LuaEventId { get; set; }
     [Array(CountBits = 32)] public List<LuaEvent> LuaEvents { get; set; } = [];
 
     public void Write(GamePacketWriter writer)

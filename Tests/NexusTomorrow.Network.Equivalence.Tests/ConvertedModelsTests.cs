@@ -15,6 +15,7 @@ public sealed class ConvertedModelsTests
         var untwinned = new List<string>();
         var differences = new List<string>();
         int pairs = 0;
+        int holders = 0;
 
         foreach (Type type in declared)
         {
@@ -25,7 +26,11 @@ public sealed class ConvertedModelsTests
             Type? twin = ConvertedModels.TwinOf(type);
             if (twin is null)
             {
-                untwinned.Add(fullName);
+                // A holder of one union that only the declaration has is checked through the twinned type that holds it, where the seed keeps the bare arm.
+                if (WireMembers.SingleUnionOf(type) is not null && IsHeldByATwinnedType(type, declared))
+                    holders++;
+                else
+                    untwinned.Add(fullName);
                 continue;
             }
 
@@ -33,12 +38,19 @@ public sealed class ConvertedModelsTests
             pairs++;
         }
 
-        TestContext.Current.TestOutputHelper?.WriteLine($"Checked {pairs} of {declared.Count} declared types against their legacy twins; {ConvertedModels.Exclusions.Count} excluded.");
+        TestContext.Current.TestOutputHelper?.WriteLine($"Checked {pairs} of {declared.Count} declared types against their legacy twins; {holders} union holders checked through the types holding them; {ConvertedModels.Exclusions.Count} excluded.");
         if (untwinned.Count > 0)
             Assert.Fail($"These declared types have no legacy twin and no exclusion: {string.Join(", ", untwinned)}");
         if (differences.Count > 0)
             Assert.Fail(Report(differences));
-        Assert.Equal(declared.Count, pairs + ConvertedModels.Exclusions.Count);
+        Assert.Equal(declared.Count, pairs + holders + ConvertedModels.Exclusions.Count);
+    }
+
+    private static bool IsHeldByATwinnedType(Type holder, List<Type> declared)
+    {
+        return declared.Any(type => ConvertedModels.TwinOf(type) is not null
+            && !ConvertedModels.Exclusions.ContainsKey(type.FullName ?? type.Name)
+            && WireMembers.Of(type).Any(member => member.ValueType == holder));
     }
 
     /// <summary>
