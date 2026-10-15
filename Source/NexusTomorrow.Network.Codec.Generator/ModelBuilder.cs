@@ -433,6 +433,7 @@ internal static class ModelBuilder
 
             int components = typeDisplay switch
             {
+                WireNames.Quaternion => 4,
                 WireNames.Vector3 => 3,
                 WireNames.Vector2 => 2,
                 _ => 1,

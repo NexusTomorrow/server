@@ -45,29 +45,38 @@ internal sealed class WriteBodyReader
     }
 
     /// <summary>
-    /// Take the components of one Vector2 or Vector3 written in turn, in one encoding, as the one vector they are on the wire.
+    /// Take the components of one Vector2, Vector3 or Quaternion written in turn (X, Y, Z, W), in one encoding, as the one value they are on the wire.
     /// </summary>
     private void AddVectorComponent(ISymbol vector, char axis, string encoding)
     {
-        bool plane = MemberBuilder.TypeOf(vector).ToDisplayString() == "System.Numerics.Vector2";
-        int bits = encoding == "Float32" ? 32 : 16;
-        switch (axis)
+        const string Axes = "XYZW";
+        int components = ComponentsOf(MemberBuilder.TypeOf(vector));
+        int expected = _vector is { } open ? Axes.IndexOf(open.Next, StringComparison.Ordinal) : 0;
+        if (Axes.IndexOf(axis, StringComparison.Ordinal) != expected || (_vector is not null && !SymbolEqualityComparer.Default.Equals(_vector.Value.Vector, vector)))
         {
-            case 'X' when _vector is null:
-                _vector = (vector, 'Y', encoding);
-                break;
-            case 'Y' when plane:
-            case 'Z':
-                _vector = null;
-                _ops.Add(new ScalarOp(vector, encoding, bits));
-                break;
-            case 'Y':
-                _vector = (vector, 'Z', encoding);
-                break;
-            default:
-                _failure ??= $"Write: {vector.Name}.{axis} is written out of order";
-                break;
+            _failure ??= $"Write: {vector.Name}.{axis} is written out of order";
+            return;
         }
+
+        if (expected + 1 < components)
+        {
+            _vector = (vector, Axes[expected + 1], encoding);
+            return;
+        }
+
+        _vector = null;
+        _ops.Add(new ScalarOp(vector, encoding, encoding == "Float32" ? 32 : 16));
+    }
+
+    internal static int ComponentsOf(ITypeSymbol type)
+    {
+        return type.ToDisplayString() switch
+        {
+            "System.Numerics.Quaternion" => 4,
+            "System.Numerics.Vector3" => 3,
+            "System.Numerics.Vector2" => 2,
+            _ => 0,
+        };
     }
 
     private void ReadStatement(StatementSyntax statement)
@@ -165,9 +174,9 @@ internal sealed class WriteBodyReader
 
     private (ISymbol Vector, char Axis)? VectorComponent(ExpressionSyntax? expression)
     {
-        return expression is MemberAccessExpressionSyntax { Name.Identifier.ValueText: "X" or "Y" or "Z" } access
+        return expression is MemberAccessExpressionSyntax { Name.Identifier.ValueText: "X" or "Y" or "Z" or "W" } access
             && MemberOf(access.Expression) is { } vector
-            && MemberBuilder.TypeOf(vector).ToDisplayString() is "System.Numerics.Vector3" or "System.Numerics.Vector2"
+            && ComponentsOf(MemberBuilder.TypeOf(vector)) > 0
             ? (vector, access.Name.Identifier.ValueText[0])
             : null;
     }

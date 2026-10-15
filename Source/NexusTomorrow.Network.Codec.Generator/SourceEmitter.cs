@@ -480,6 +480,7 @@ internal static class SourceEmitter
             case ScalarEncoding.Float32:
                 return scalar.Components switch
                 {
+                    4 => "new global::System.Numerics.Quaternion(reader.ReadFloat32(), reader.ReadFloat32(), reader.ReadFloat32(), reader.ReadFloat32())",
                     3 => "reader.ReadVector3()",
                     2 => "new global::System.Numerics.Vector2(reader.ReadFloat32(), reader.ReadFloat32())",
                     _ => "reader.ReadFloat32()",
@@ -489,6 +490,7 @@ internal static class SourceEmitter
             case ScalarEncoding.PackedFloat:
                 return scalar.Components switch
                 {
+                    4 => "new global::System.Numerics.Quaternion(reader.ReadPackedFloat(), reader.ReadPackedFloat(), reader.ReadPackedFloat(), reader.ReadPackedFloat())",
                     3 => "reader.ReadPackedVector3()",
                     2 => "new global::System.Numerics.Vector2(reader.ReadPackedFloat(), reader.ReadPackedFloat())",
                     _ => "reader.ReadPackedFloat()",
@@ -514,6 +516,7 @@ internal static class SourceEmitter
             case ScalarEncoding.Float32:
                 return scalar.Components switch
                 {
+                    4 => $"writer.WriteFloat32({expression}.X); writer.WriteFloat32({expression}.Y); writer.WriteFloat32({expression}.Z); writer.WriteFloat32({expression}.W);",
                     3 => $"writer.WriteVector3({expression});",
                     2 => $"writer.WriteFloat32({expression}.X); writer.WriteFloat32({expression}.Y);",
                     _ => $"writer.WriteFloat32({expression});",
@@ -523,6 +526,7 @@ internal static class SourceEmitter
             case ScalarEncoding.PackedFloat:
                 return scalar.Components switch
                 {
+                    4 => $"writer.WritePackedFloat({expression}.X); writer.WritePackedFloat({expression}.Y); writer.WritePackedFloat({expression}.Z); writer.WritePackedFloat({expression}.W);",
                     3 => $"writer.WritePackedVector3({expression});",
                     2 => $"writer.WritePackedFloat({expression}.X); writer.WritePackedFloat({expression}.Y);",
                     _ => $"writer.WritePackedFloat({expression});",

@@ -214,6 +214,34 @@ public sealed class ConverterTests
     }
 
     [Fact]
+    public void AQuaternionReadAndWrittenByComponentIsOneValueEachWay()
+    {
+        ConversionResult result = ConverterHarness.Convert("""
+            namespace Tests;
+
+            public class Facing : IReadable, IWritable
+            {
+                public Quaternion Rotation { get; private set; }
+
+                public void Read(GamePacketReader reader)
+                {
+                    Rotation = new Quaternion(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                }
+
+                public void Write(GamePacketWriter writer)
+                {
+                    writer.Write(Rotation.X);
+                    writer.Write(Rotation.Y);
+                    writer.Write(Rotation.Z);
+                    writer.Write(Rotation.W);
+                }
+            }
+            """);
+
+        ConverterHarness.AssertInOrder(ConverterHarness.Converted(result), "[Float32] public Quaternion Rotation { get; private set; }");
+    }
+
+    [Fact]
     public void AFixedArrayTakesItsLengthFromItsInitializer()
     {
         ConversionResult result = ConverterHarness.Convert("""

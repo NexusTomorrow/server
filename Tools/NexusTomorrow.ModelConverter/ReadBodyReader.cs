@@ -261,12 +261,14 @@ internal sealed class ReadBodyReader
     }
 
     /// <summary>
-    /// A Vector2 or Vector3 built from one read per component, every one <c>ReadSingle()</c> or every one <c>ReadPackedFloat()</c>, which is that vector on the wire.
+    /// A Vector2, Vector3 or Quaternion built from one read per component, every one <c>ReadSingle()</c> or every one <c>ReadPackedFloat()</c>, which is that value on the wire.
     /// </summary>
     private (string Encoding, int Bits)? VectorOfReads(ExpressionSyntax value)
     {
-        if (value is not ObjectCreationExpressionSyntax { ArgumentList.Arguments: { Count: 2 or 3 } arguments } creation
-            || _model.GetTypeInfo(creation).Type?.ToDisplayString() is not ("System.Numerics.Vector3" or "System.Numerics.Vector2"))
+        if (value is not ObjectCreationExpressionSyntax { ArgumentList.Arguments: var arguments } creation
+            || _model.GetTypeInfo(creation).Type is not { } type
+            || WriteBodyReader.ComponentsOf(type) is 0
+            || WriteBodyReader.ComponentsOf(type) != arguments.Count)
         {
             return null;
         }

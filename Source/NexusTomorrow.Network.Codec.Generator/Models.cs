@@ -48,7 +48,7 @@ internal enum CollectionKind
 /// <param name="IntegerType">For an enum, its underlying type; otherwise the integral type itself, or null for bool and floats.</param>
 /// <param name="UnsignedType">The unsigned type of <paramref name="IntegerType"/>'s size, through which a signed value reaches the wire.</param>
 /// <param name="IsSigned">True when <paramref name="IntegerType"/> is signed.</param>
-/// <param name="Components">The floats a value carries: 1, or 2 for a Vector2 and 3 for a Vector3, each at <paramref name="Bits"/>.</param>
+/// <param name="Components">The floats a value carries: 1, or 2 for a Vector2, 3 for a Vector3 and 4 for a Quaternion, each at <paramref name="Bits"/>.</param>
 /// <param name="TypeBits">The size of <paramref name="IntegerType"/> in bits; for bool and floats, <paramref name="Bits"/>.</param>
 internal sealed record ScalarModel(ScalarEncoding Encoding, int Bits, string ClrType, string? IntegerType, string? UnsignedType, bool IsSigned, bool IsEnum, bool IsBool, int Components, int TypeBits);
 

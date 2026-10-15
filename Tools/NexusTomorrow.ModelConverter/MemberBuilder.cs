@@ -242,7 +242,7 @@ internal sealed class MemberBuilder
     {
         attribute = "";
         padBits = 0;
-        bool isVector = type.ToDisplayString() is "System.Numerics.Vector3" or "System.Numerics.Vector2";
+        bool isVector = type.ToDisplayString() is "System.Numerics.Vector3" or "System.Numerics.Vector2" or "System.Numerics.Quaternion";
         switch (encoding)
         {
             case "UInt" when type.SpecialType == SpecialType.System_Boolean:

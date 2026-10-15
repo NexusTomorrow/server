@@ -163,6 +163,8 @@ internal static class Filler
             return new Vector3(next(), next(), next());
         if (type == typeof(Vector2))
             return new Vector2(next(), next());
+        if (type == typeof(Quaternion))
+            return new Quaternion(next(), next(), next(), next());
 
         return next();
     }

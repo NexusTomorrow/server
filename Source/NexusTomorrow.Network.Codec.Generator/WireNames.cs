@@ -29,6 +29,7 @@ internal static class WireNames
     public const string IWireStruct = Codec + ".IWireStruct";
 
     public const string GlobalCodec = "global::" + Codec;
+    public const string Quaternion = "global::System.Numerics.Quaternion";
     public const string Vector2 = "global::System.Numerics.Vector2";
     public const string Vector3 = "global::System.Numerics.Vector3";
 }

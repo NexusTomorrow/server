@@ -166,6 +166,7 @@ internal sealed class GraphComparer
             (double left, double right) => BitConverter.DoubleToUInt64Bits(left) == BitConverter.DoubleToUInt64Bits(right),
             (Vector3 left, Vector3 right) => SameBits(left.X, right.X) && SameBits(left.Y, right.Y) && SameBits(left.Z, right.Z),
             (Vector2 left, Vector2 right) => SameBits(left.X, right.X) && SameBits(left.Y, right.Y),
+            (Quaternion left, Quaternion right) => SameBits(left.X, right.X) && SameBits(left.Y, right.Y) && SameBits(left.Z, right.Z) && SameBits(left.W, right.W),
             _ => Equals(declared, legacy),
         };
     }
@@ -186,6 +187,7 @@ internal sealed class GraphComparer
             double precise => $"{precise.ToString(CultureInfo.InvariantCulture)} (0x{BitConverter.DoubleToUInt64Bits(precise):X16})",
             Vector3 vector => $"({Describe(vector.X)}, {Describe(vector.Y)}, {Describe(vector.Z)})",
             Vector2 plane => $"({Describe(plane.X)}, {Describe(plane.Y)})",
+            Quaternion rotation => $"({Describe(rotation.X)}, {Describe(rotation.Y)}, {Describe(rotation.Z)}, {Describe(rotation.W)})",
             byte[] bytes => $"[{Convert.ToHexString(bytes)}]",
             Enum named when ScalarValues.TryGetInteger(named, out Int128 number) => $"{named} ({number})",
             IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),

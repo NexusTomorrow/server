@@ -465,6 +465,43 @@ public sealed class GeneratedSourceTests
         Assert.Equal("96 1.5 -2 0.5 4 0000C03F", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
     }
 
+    [Fact]
+    public void AQuaternionIsFourFloatsOnTheWireInXYZWOrder()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using System.Numerics;
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            [WireStruct]
+            public sealed partial class Turn
+            {
+                [Float32] public Quaternion Rotation { get; set; }
+            }
+
+            public static class Probe
+            {
+                public static string RoundTrip()
+                {
+                    var written = new Turn { Rotation = new Quaternion(1, 2, 3, 4) };
+                    byte[] bytes = new byte[16];
+                    var writer = new BitWriter(bytes);
+                    written.Write(ref writer);
+                    var read = new Turn();
+                    var reader = new BitReader(bytes);
+                    read.Read(ref reader);
+                    return System.FormattableString.Invariant($"{written.MeasureBits()} {read.Rotation} {bytes[15]:X2}");
+                }
+            }
+            """);
+
+        Assert.Empty(run.Diagnostics);
+        Assert.Empty(run.CompilationErrors);
+        // 4f is 0x40800000; its last byte ends the body.
+        Assert.Equal("128 {X:1 Y:2 Z:3 W:4} 40", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
+    }
+
     // The client nests whole message bodies in a list (ServerMissileActorListAdd carries ServerMissileActorAdd bodies).
     [Fact]
     public void AMessageNestedInAnotherRoundTrips()
