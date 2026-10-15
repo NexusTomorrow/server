@@ -32,8 +32,7 @@ public sealed class Srp6Provider
 
     public static byte[] GenerateVerifier(byte[] salt, string identity, string password)
     {
-        using var sha256 = SHA256.Create();
-        byte[] P = sha256.ComputeHash(Encoding.UTF8.GetBytes($"{identity}:{password}"));
+        byte[] P = SHA256.HashData(Encoding.UTF8.GetBytes($"{identity}:{password}"));
         BigInteger x = Hash(true, new BigInteger(salt, true), new BigInteger(P, true));
         return BigInteger.ModPow(g, x, N).ToByteArray();
     }
@@ -96,8 +95,7 @@ public sealed class Srp6Provider
         if (_clientPublicEphemeral == BigInteger.Zero || _serverPublicEphemeral == BigInteger.Zero || _sharedSecret == BigInteger.Zero)
             throw new CryptographicException("Missing data from previous operations: A, B, S");
 
-        using var sha256 = SHA256.Create();
-        byte[] IHash = sha256.ComputeHash(_identity);
+        byte[] IHash = SHA256.HashData(_identity);
         BigInteger serverM1 = Hash(false, Hash(false, N) ^ Hash(false, g),
             new BigInteger(IHash, true), _salt, _clientPublicEphemeral, _serverPublicEphemeral, _sessionKey);
 
@@ -169,9 +167,8 @@ public sealed class Srp6Provider
         for (uint i = 0u; i < F.Length; i++)
             F[i] = T[i * 2 + 1];
 
-        using var sha256 = SHA256.Create();
-        byte[] G = sha256.ComputeHash(E);
-        byte[] H = sha256.ComputeHash(F);
+        byte[] G = SHA256.HashData(E);
+        byte[] H = SHA256.HashData(F);
 
         byte[] K = new byte[G.Length + H.Length];
         for (uint i = 0u; i < K.Length; i++)

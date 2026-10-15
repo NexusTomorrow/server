@@ -13,16 +13,15 @@ public class WritableMapFileGrid : MapFileGrid, IWritable
         writer.Write(X);
         writer.Write(Y);
 
-        writer.Write(cells.Count);
-        foreach (WritableMapFileCell cell in cells.Values)
+        writer.Write(Cells.Count);
+        foreach (WritableMapFileCell cell in Cells.Values)
             cell.Write(writer);
     }
 
     public void AddCell(WritableMapFileCell cell)
     {
-        if (cell == null)
-            throw new ArgumentNullException();
+        ArgumentNullException.ThrowIfNull(cell);
 
-        cells.Add((cell.X << 16) | cell.Y, cell);
+        Cells.Add((cell.X << 16) | cell.Y, cell);
     }
 }

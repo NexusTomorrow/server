@@ -2,7 +2,7 @@
 
 public class Chnk : IReadable
 {
-    public ChnkCell[] Cells = new ChnkCell[16 * 16];
+    public ChnkCell[] Cells { get; } = new ChnkCell[16 * 16];
 
     public void Read(BinaryReader reader)
     {

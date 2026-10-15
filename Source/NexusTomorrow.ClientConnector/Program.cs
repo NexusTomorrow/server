@@ -12,7 +12,7 @@ internal static class Program
 {
     private const string JsonFile = "config.json";
 
-    [DllImport("kernel32.dll")]
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
     private static extern bool CreateProcess(
         string lpApplicationName,
         string lpCommandLine,

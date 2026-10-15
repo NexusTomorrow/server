@@ -14,13 +14,13 @@ public class WritableMapFile : MapFile, IWritable
         writer.Write(Build);
         writer.Write(Asset);
 
-        writer.Write(grids.Count);
-        foreach (WritableMapFileGrid grid in grids.Values)
+        writer.Write(Grids.Count);
+        foreach (WritableMapFileGrid grid in Grids.Values)
             grid.Write(writer);
     }
 
     public void SetGrid(uint x, uint y, WritableMapFileGrid grid)
     {
-        grids.Add((grid.X << 16) | grid.Y, grid);
+        Grids.Add((grid.X << 16) | grid.Y, grid);
     }
 }

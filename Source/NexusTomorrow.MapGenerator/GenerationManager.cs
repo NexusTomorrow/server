@@ -17,7 +17,7 @@ namespace NexusTomorrow.MapGenerator;
 
 public sealed class GenerationManager
 {
-    private static readonly ILogger s_log = LogManager.GetCurrentClassLogger();
+    private static readonly Logger s_log = LogManager.GetCurrentClassLogger();
     private string? _outputDir;
 
     private readonly ArchiveManager _archiveManager;
@@ -99,8 +99,8 @@ public sealed class GenerationManager
             {
                 var regex = new Regex(@"[\w]+\.([A-Fa-f0-9]{2})([A-Fa-f0-9]{2})\.area");
                 Match match = regex.Match(grid.FileName);
-                byte x = byte.Parse(match.Groups[1].Value, NumberStyles.HexNumber);
-                byte y = byte.Parse(match.Groups[2].Value, NumberStyles.HexNumber);
+                byte x = byte.Parse(match.Groups[1].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                byte y = byte.Parse(match.Groups[2].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
 
                 ProcessGrid(mapFile, grid, x, y);
             }

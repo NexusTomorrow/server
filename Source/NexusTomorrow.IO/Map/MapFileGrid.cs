@@ -8,7 +8,7 @@ public class MapFileGrid : IReadable, IEnumerable<MapFileCell>
     public uint X { get; protected set; }
     public uint Y { get; protected set; }
 
-    protected readonly Dictionary<uint /*hash*/, MapFileCell> cells = [];
+    protected Dictionary<uint /*hash*/, MapFileCell> Cells { get; } = [];
 
     private static (uint cellX, uint cellY) GetCellCoord(Vector3 vector)
     {
@@ -33,7 +33,7 @@ public class MapFileGrid : IReadable, IEnumerable<MapFileCell>
         {
             var cell = new MapFileCell();
             cell.Read(reader);
-            cells.Add((cell.X << 16) | cell.Y, cell);
+            Cells.Add((cell.X << 16) | cell.Y, cell);
         }
     }
 
@@ -59,12 +59,12 @@ public class MapFileGrid : IReadable, IEnumerable<MapFileCell>
     {
         (uint cellX, uint cellY) = GetCellCoord(vector);
         uint hash = (cellX << 16) | cellY;
-        return cells.GetValueOrDefault(hash);
+        return Cells.GetValueOrDefault(hash);
     }
 
     public IEnumerator<MapFileCell> GetEnumerator()
     {
-        return cells.Values.GetEnumerator();
+        return Cells.Values.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()

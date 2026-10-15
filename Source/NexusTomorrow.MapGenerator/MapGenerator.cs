@@ -10,7 +10,7 @@ namespace NexusTomorrow.MapGenerator;
 
 internal static class MapGenerator
 {
-    private static readonly ILogger s_log = LogManager.GetCurrentClassLogger();
+    private static readonly Logger s_log = LogManager.GetCurrentClassLogger();
 
 #if DEBUG
     private const string Title = "NexusTomorrow: Map Generator (DEBUG)";

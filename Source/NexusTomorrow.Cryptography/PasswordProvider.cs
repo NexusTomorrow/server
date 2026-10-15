@@ -8,7 +8,7 @@ public class PasswordProvider
     public static (string salt, string verifier) GenerateSaltAndVerifier(string email, string password)
     {
         byte[] s = RandomProvider.GetBytes(16u);
-        byte[] v = Srp6Provider.GenerateVerifier(s, email.ToLower(), password);
+        byte[] v = Srp6Provider.GenerateVerifier(s, email.ToLowerInvariant(), password);
         return (Convert.ToHexString(s), Convert.ToHexString(v));
     }
 }

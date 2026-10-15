@@ -19,51 +19,51 @@ public class MapFileCell : IReadable
     public uint X { get; protected set; }
     public uint Y { get; protected set; }
 
-    protected Flags flags;
+    protected Flags CellFlags { get; set; }
 
-    protected uint[]? worldZoneIds;
-    protected byte[,]? worldZoneBounds;
-    protected Half[,]? heightMap;
+    protected uint[]? WorldZoneIds { get; set; }
+    protected byte[,]? WorldZoneBounds { get; set; }
+    protected Half[,]? HeightMap { get; set; }
 
     public void Read(BinaryReader reader)
     {
         X = reader.ReadUInt32();
         Y = reader.ReadUInt32();
-        flags = (Flags)reader.ReadUInt32();
+        CellFlags = (Flags)reader.ReadUInt32();
 
         for (int i = 0; i < 32; i++)
         {
             var flag = (Flags)(1 << i);
-            if ((flags & flag) == 0)
+            if ((CellFlags & flag) == 0)
                 continue;
 
             switch (flag)
             {
                 case Flags.Zone:
                     {
-                        worldZoneIds = new uint[4];
-                        for (int j = 0; j < worldZoneIds.Length; j++)
-                            worldZoneIds[j] = reader.ReadUInt32();
+                        WorldZoneIds = new uint[4];
+                        for (int j = 0; j < WorldZoneIds.Length; j++)
+                            WorldZoneIds[j] = reader.ReadUInt32();
                         break;
                     }
                 case Flags.Height:
                     {
-                        heightMap = new Half[17, 17];
+                        HeightMap = new Half[17, 17];
                         for (int y = 0; y < 17; y++)
                         {
                             for (int x = 0; x < 17; x++)
-                                heightMap[x, y] = reader.ReadHalf();
+                                HeightMap[x, y] = reader.ReadHalf();
                         }
 
                         break;
                     }
                 case Flags.ZoneBound:
                     {
-                        worldZoneBounds = new byte[64, 64];
+                        WorldZoneBounds = new byte[64, 64];
                         for (int y = 0; y < 64; y++)
                         {
                             for (int x = 0; x < 64; x++)
-                                worldZoneBounds[x, y] = reader.ReadByte();
+                                WorldZoneBounds[x, y] = reader.ReadByte();
                         }
 
                         break;
@@ -80,21 +80,21 @@ public class MapFileCell : IReadable
     /// </summary>
     public uint? GetWorldZoneId(Vector3 vector)
     {
-        if (worldZoneIds is null)
+        if (WorldZoneIds is null)
             return null;
 
-        if (worldZoneBounds is not null)
+        if (WorldZoneBounds is not null)
         {
-            ZoneBoundFlags zoneFlags = GetZoneBoundFlags(worldZoneBounds, vector);
+            ZoneBoundFlags zoneFlags = GetZoneBoundFlags(WorldZoneBounds, vector);
             if ((zoneFlags & ZoneBoundFlags.WorldZone2) != 0)
-                return worldZoneIds[2];
+                return WorldZoneIds[2];
             if ((zoneFlags & ZoneBoundFlags.WorldZone1) != 0)
-                return worldZoneIds[1];
+                return WorldZoneIds[1];
             if ((zoneFlags & ZoneBoundFlags.WorldZone0) != 0)
-                return worldZoneIds[0];
+                return WorldZoneIds[0];
         }
 
-        return worldZoneIds[0];
+        return WorldZoneIds[0];
     }
 
     /// <summary>
@@ -102,10 +102,10 @@ public class MapFileCell : IReadable
     /// </summary>
     public bool HasRoadMarch(Vector3 vector)
     {
-        if (worldZoneBounds is null)
+        if (WorldZoneBounds is null)
             return false;
 
-        return (GetZoneBoundFlags(worldZoneBounds, vector) & ZoneBoundFlags.RoadMarch) != 0;
+        return (GetZoneBoundFlags(WorldZoneBounds, vector) & ZoneBoundFlags.RoadMarch) != 0;
     }
 
     private static ZoneBoundFlags GetZoneBoundFlags(byte[,] bounds, Vector3 vector)
@@ -122,7 +122,7 @@ public class MapFileCell : IReadable
     /// </summary>
     public float? GetTerrainHeight(Vector3 vector)
     {
-        if (heightMap is null)
+        if (HeightMap is null)
             return null;
 
         float trueX = vector.X + MapDefines.WorldGridOrigin * MapDefines.GridSize;
@@ -133,8 +133,8 @@ public class MapFileCell : IReadable
         uint vertexY = (uint)Math.Floor(trueZ / 2f);
         uint localVertexY = vertexY & 15;
 
-        float p1 = (float)heightMap[localVertexX + 1, localVertexY];
-        float p2 = (float)heightMap[localVertexX, localVertexY + 1];
+        float p1 = (float)HeightMap[localVertexX + 1, localVertexY];
+        float p2 = (float)HeightMap[localVertexX, localVertexY + 1];
 
         float sqX = (trueX / 2) - vertexX;
         float sqZ = (trueZ / 2) - vertexY;
@@ -142,14 +142,14 @@ public class MapFileCell : IReadable
         float height;
         if ((sqX + sqZ) < 1)
         {
-            float p0 = (float)heightMap[localVertexX, localVertexY];
+            float p0 = (float)HeightMap[localVertexX, localVertexY];
             height = p0;
             height += (p1 - p0) * sqX;
             height += (p2 - p0) * sqZ;
         }
         else
         {
-            float p3 = (float)heightMap[localVertexX + 1, localVertexY + 1];
+            float p3 = (float)HeightMap[localVertexX + 1, localVertexY + 1];
             height = p3;
             height += (p1 - p3) * (1.0f - sqZ);
             height += (p2 - p3) * (1.0f - sqX);

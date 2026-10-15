@@ -1,6 +1,7 @@
 ﻿namespace NexusTomorrow.Network.Sts;
 
-public class MessageAttribute : Attribute
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class MessageAttribute : Attribute
 {
     public string Uri { get; }
 

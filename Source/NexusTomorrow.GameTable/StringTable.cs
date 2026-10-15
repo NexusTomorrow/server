@@ -2,7 +2,7 @@
 
 namespace NexusTomorrow.GameTable;
 
-public class StringTable : IDisposable
+public sealed class StringTable : IDisposable
 {
     private readonly MemoryStream _stream;
     private readonly BinaryReader _reader;

@@ -7,12 +7,7 @@ public static class Hasher
 {
     public static string Hash(this Stream stream)
     {
-        using (var sha256 = SHA256.Create())
-        {
-            return BitConverter.ToString(sha256.ComputeHash(stream))
-                .Replace("-", "")
-                .ToLower();
-        }
+        return Convert.ToHexStringLower(SHA256.HashData(stream));
     }
     public static string HashBytes(byte[] data)
     {

@@ -11,7 +11,7 @@ public class MapFile : IReadable, IEnumerable<MapFileGrid>
 
     public string Asset { get; protected set; } = string.Empty;
 
-    protected readonly Dictionary<uint /*hash*/, MapFileGrid> grids = [];
+    protected Dictionary<uint /*hash*/, MapFileGrid> Grids { get; } = [];
 
     private static (uint gridX, uint gridY) GetGridCoord(Vector3 vector)
     {
@@ -36,14 +36,14 @@ public class MapFile : IReadable, IEnumerable<MapFileGrid>
         {
             var grid = new MapFileGrid();
             grid.Read(reader);
-            grids.Add((grid.X << 16) | grid.Y, grid);
+            Grids.Add((grid.X << 16) | grid.Y, grid);
         }
 
         if (reader.BaseStream.Position != reader.BaseStream.Length)
             throw new InvalidDataException();
     }
 
-    public void ReadHeader(BinaryReader reader)
+    public static void ReadHeader(BinaryReader reader)
     {
         if (reader.ReadUInt32() != Magic)
             throw new InvalidDataException();
@@ -77,12 +77,12 @@ public class MapFile : IReadable, IEnumerable<MapFileGrid>
     {
         (uint gridX, uint gridY) = GetGridCoord(vector);
         uint hash = (gridY << 16) | gridX;
-        return grids.GetValueOrDefault(hash);
+        return Grids.GetValueOrDefault(hash);
     }
 
     public IEnumerator<MapFileGrid> GetEnumerator()
     {
-        return grids.Values.GetEnumerator();
+        return Grids.Values.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()

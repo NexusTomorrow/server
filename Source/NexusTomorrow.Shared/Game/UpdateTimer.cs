@@ -8,7 +8,7 @@ public class UpdateTimer : IUpdate
     public double Time { get; private set; }
     public bool IsTicking { get; private set; }
 
-    public readonly double Duration;
+    public double Duration { get; }
 
     /// <summary>
     /// Create a new <see cref="UpdateTimer"/> with supplied starting duration.

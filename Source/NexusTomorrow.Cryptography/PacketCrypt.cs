@@ -99,10 +99,9 @@ public class PacketCrypt
     /// </summary>
     public static ulong GetKeyFromTicket(byte[] sessionKey)
     {
-        if (sessionKey == null)
-            throw new ArgumentNullException();
+        ArgumentNullException.ThrowIfNull(sessionKey);
         if (sessionKey.Length != 16)
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(sessionKey), sessionKey.Length, "The session key must be 16 bytes.");
 
         ulong key = CryptKeyInitialValue;
         for (int i = 0; i < 16; i++)

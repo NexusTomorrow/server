@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Globalization;
+using System.Xml;
 
 namespace NexusTomorrow.Network.Sts;
 
@@ -22,7 +23,7 @@ public static class Extensions
         string value = node.GetElement(name).FirstChild?.Value
             ?? throw new InvalidDataException($"Element {name} has no value.");
 
-        object converted = Convert.ChangeType(value, typeof(T))
+        object converted = Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture)
             ?? throw new InvalidOperationException($"Convert.ChangeType returned null for element {name}.");
 
         return (T)converted;

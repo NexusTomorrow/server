@@ -11,33 +11,33 @@ public class WritableMapFileCell : MapFileCell, IWritable
 
         if ((cell.Flags & ChnkCellFlags.Zone) != 0)
         {
-            worldZoneIds = new uint[4];
-            Array.Copy(cell.WorldZoneIds, worldZoneIds, 4);
-            flags |= Flags.Zone;
+            WorldZoneIds = new uint[4];
+            Array.Copy(cell.WorldZoneIds, WorldZoneIds, 4);
+            CellFlags |= Flags.Zone;
         }
 
         if ((cell.Flags & ChnkCellFlags.HeightMap) != 0)
         {
-            heightMap = new Half[17, 17];
+            HeightMap = new Half[17, 17];
             for (int y = 0; y < 17; y++)
             {
                 for (int x = 0; x < 17; x++)
-                    heightMap[x, y] = (Half)((cell.Heightmap[x + 1, y + 1] / 8.0f) - 2048f);
+                    HeightMap[x, y] = (Half)((cell.Heightmap[x + 1, y + 1] / 8.0f) - 2048f);
             }
 
-            flags |= Flags.Height;
+            CellFlags |= Flags.Height;
         }
 
         if ((cell.Flags & ChnkCellFlags.ZoneBound) != 0)
         {
-            worldZoneBounds = new byte[64, 64];
+            WorldZoneBounds = new byte[64, 64];
             for (int y = 0; y < 64; y++)
             {
                 for (int x = 0; x < 64; x++)
-                    worldZoneBounds[x, y] = cell.WorldZoneBounds[x, y];
+                    WorldZoneBounds[x, y] = cell.WorldZoneBounds[x, y];
             }
 
-            flags |= Flags.ZoneBound;
+            CellFlags |= Flags.ZoneBound;
         }
     }
 
@@ -45,26 +45,26 @@ public class WritableMapFileCell : MapFileCell, IWritable
     {
         writer.Write(X);
         writer.Write(Y);
-        writer.Write((uint)flags);
+        writer.Write((uint)CellFlags);
 
         for (int i = 0; i < 32; i++)
         {
             var flag = (Flags)(1 << i);
-            if ((flags & flag) == 0)
+            if ((CellFlags & flag) == 0)
                 continue;
 
             switch (flag)
             {
                 case Flags.Zone:
                     {
-                        uint[] zoneIds = worldZoneIds ?? throw new InvalidOperationException($"{nameof(Flags.Zone)} is set without {nameof(worldZoneIds)}.");
+                        uint[] zoneIds = WorldZoneIds ?? throw new InvalidOperationException($"{nameof(Flags.Zone)} is set without {nameof(WorldZoneIds)}.");
                         foreach (uint worldZoneId in zoneIds)
                             writer.Write(worldZoneId);
                         break;
                     }
                 case Flags.Height:
                     {
-                        Half[,] heights = heightMap ?? throw new InvalidOperationException($"{nameof(Flags.Height)} is set without {nameof(heightMap)}.");
+                        Half[,] heights = HeightMap ?? throw new InvalidOperationException($"{nameof(Flags.Height)} is set without {nameof(HeightMap)}.");
                         for (int y = 0; y < 17; y++)
                         {
                             for (int x = 0; x < 17; x++)
@@ -75,7 +75,7 @@ public class WritableMapFileCell : MapFileCell, IWritable
                     }
                 case Flags.ZoneBound:
                     {
-                        byte[,] bounds = worldZoneBounds ?? throw new InvalidOperationException($"{nameof(Flags.ZoneBound)} is set without {nameof(worldZoneBounds)}.");
+                        byte[,] bounds = WorldZoneBounds ?? throw new InvalidOperationException($"{nameof(Flags.ZoneBound)} is set without {nameof(WorldZoneBounds)}.");
                         for (int y = 0; y < 64; y++)
                         {
                             for (int x = 0; x < 64; x++)

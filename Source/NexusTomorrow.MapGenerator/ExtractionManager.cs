@@ -8,7 +8,7 @@ namespace NexusTomorrow.MapGenerator;
 
 public sealed class ExtractionManager
 {
-    private static readonly ILogger s_log = LogManager.GetCurrentClassLogger();
+    private static readonly Logger s_log = LogManager.GetCurrentClassLogger();
 
     private static readonly string[] s_languageFiles =
     [

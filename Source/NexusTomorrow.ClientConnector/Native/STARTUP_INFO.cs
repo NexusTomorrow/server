@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace NexusTomorrow.ClientConnector.Native;
 
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 public struct STARTUPINFO
 {
     public uint cb;

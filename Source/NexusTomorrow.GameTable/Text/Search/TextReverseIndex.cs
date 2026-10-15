@@ -5,7 +5,7 @@ namespace NexusTomorrow.GameTable.Text.Search;
 public class TextReverseIndex : ITextReverseIndex
 {
     private readonly Dictionary<string, List<uint>> _index;
-    public bool IsEmpty => !_index.Keys.Any();
+    public bool IsEmpty => _index.Count == 0;
 
     public TextReverseIndex(TextTable? textTable)
     {
@@ -17,7 +17,7 @@ public class TextReverseIndex : ITextReverseIndex
             AddEntry(_index, entry);
     }
 
-    private void AddEntry(Dictionary<string, List<uint>> dictionary, TextTableEntry entry)
+    private static void AddEntry(Dictionary<string, List<uint>> dictionary, TextTableEntry entry)
     {
         if (!dictionary.TryGetValue(entry.Text, out List<uint>? list) || list == null)
             dictionary[entry.Text] = list = [];
