@@ -16,16 +16,14 @@ internal static class RegistryDisagreements
     {
         ["0x00BA server to client"] = FieldsDiffer, // ServerBuybackItemUpdated
         ["0x00C2 client to server"] = BitsDiffer, // ClientCastServiceToken
-        ["0x00C6 server to client"] = BitsDiffer, // ServerChallengeResult
         ["0x00D3 server to client"] = BitsDiffer, // ServerHideInstanceGameModeDialog
         ["0x00D6 server to client"] = FieldsDiffer, // ServerPublicEventEnd
         ["0x00D8 server to client"] = FieldsDiffer, // ServerCostume
         ["0x00DC server to client"] = BitsDiffer, // ServerCharacterCreate
-        ["0x0100 server to client"] = BitsDiffer, // ServerResurrectionState
         ["0x0103 client to server"] = BitsDiffer, // ClientGalacticArchiveUnlock
         ["0x0104 server to client"] = BitsDiffer, // ServerGalacticArchiveUpdate
         ["0x0105 client to server"] = BitsDiffer, // ClientGalacticArchiveViewed
-        ["0x0112 server to client"] = BitsDiffer, // ServerPublicEventStart
+        ["0x0112 server to client"] = FieldsDiffer, // ServerPublicEventStart
         ["0x012E server to client"] = FieldsDiffer, // ServerPetCustomisationList
         ["0x012F server to client"] = FieldsDiffer, // ServerPetCustomisation
         ["0x0131 server to client"] = BitsDiffer, // ServerPublicEventLocationUpdate
@@ -44,7 +42,6 @@ internal static class RegistryDisagreements
         ["0x0197 client to server"] = BitsDiffer, // ClientP2PTradingSetMoney
         ["0x01B7 server to client"] = BitsDiffer, // ServerChatFlag
         ["0x01C0 server to client"] = BitsDiffer, // ServerChatList
-        ["0x0231 server to client"] = BitsDiffer, // ServerCinematicActorMode
         ["0x023F client to server"] = FieldsDiffer, // ClientStatisticsConnection
         ["0x0240 client to server"] = FieldsDiffer, // ClientStatisticsFramerate
         ["0x0248 client to server"] = FieldsDiffer, // ClientCombatLogDisableOthers
