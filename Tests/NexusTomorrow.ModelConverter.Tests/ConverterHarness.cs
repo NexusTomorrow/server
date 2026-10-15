@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using NexusTomorrow.Network;
+using NexusTomorrow.Network.Codec.Generator;
 
 namespace NexusTomorrow.ModelConverter.Tests;
 
@@ -37,6 +38,30 @@ internal static partial class ConverterHarness
     }
 
     /// <summary>
+    /// Compile <paramref name="source"/> with the codec generator's output, which it must compile with, and strip it.
+    /// </summary>
+    public static StripResult Strip(string source)
+    {
+        return Stripper.Strip(CompileWithGenerator(source));
+    }
+
+    /// <summary>
+    /// Compile <paramref name="source"/> with the codec generator's output and return the errors, so a stripped file can be shown to build.
+    /// </summary>
+    public static IEnumerable<Diagnostic> ErrorsOf(string source)
+    {
+        return CompileWithGenerator(source, checkErrors: false).GetDiagnostics().Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
+    }
+
+    /// <summary>
+    /// The one stripped file with every run of whitespace collapsed to a space.
+    /// </summary>
+    public static string Stripped(StripResult result)
+    {
+        return Collapse(Assert.Single(result.Files).Value);
+    }
+
+    /// <summary>
     /// The one rewritten file with every run of whitespace collapsed to a space, so fragments match whatever the line breaks.
     /// </summary>
     public static string Converted(ConversionResult result)
@@ -61,6 +86,20 @@ internal static partial class ConverterHarness
     public static TypeOutcome Outcome(ConversionResult result, string name)
     {
         return Assert.Single(result.Outcomes, outcome => outcome.FullName == name);
+    }
+
+    private static CSharpCompilation CompileWithGenerator(string source, bool checkErrors = true)
+    {
+        CSharpParseOptions options = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview);
+        var compilation = CSharpCompilation.Create(
+            "Models",
+            [CSharpSyntaxTree.ParseText(Usings, options, "Usings.cs"), CSharpSyntaxTree.ParseText(source, options, "Model.cs")],
+            s_references,
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+        CSharpGeneratorDriver.Create(new WireGenerator()).WithUpdatedParseOptions(options).RunGeneratorsAndUpdateCompilation(compilation, out Compilation generated, out _);
+        if (checkErrors)
+            Assert.Empty(generated.GetDiagnostics().Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error));
+        return (CSharpCompilation)generated;
     }
 
     private static string Collapse(string text)
