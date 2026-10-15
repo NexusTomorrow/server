@@ -106,3 +106,16 @@ public sealed partial class EmptyMessage
     [UInt(32)] public uint TargetId { get; set; }
     [UInt(16)] public ushort Value { get; set; }
 }
+
+[WireMessage((GameMessageOpcode)0xFE08, Direction.Both)]
+public sealed partial class BitArrayMessage
+{
+    [UInt(8)] public byte Kind { get; set; }
+    [FixedArray(4), UInt(8)] public byte[] Flags { get; set; } = new byte[4];
+}
+
+[WireMessage((GameMessageOpcode)0xFE09, Direction.ClientToServer)]
+public sealed partial class ReversedBitArrayMessage
+{
+    [FixedArray(4), UInt(8)] public byte[] Flags { get; set; } = new byte[4];
+}

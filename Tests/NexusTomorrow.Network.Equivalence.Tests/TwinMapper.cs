@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace NexusTomorrow.Network.Equivalence.Tests;
 
 /// <summary>
-/// Copies a declared instance onto a new legacy instance by member name, recursively, so the legacy writer is handed the same values.
+/// Copies a declared instance onto a new legacy instance by member name, recursively, so the legacy writer is handed the same values; a declared byte[] fills a legacy bit array's buffer.
 /// Run it after the generated Write, which assigns the count and selector members a legacy twin may carry.
 /// </summary>
 internal sealed class TwinMapper
@@ -49,6 +49,13 @@ internal sealed class TwinMapper
             string memberPath = $"{path}.{member.Name}";
             object? value = MemberAccess.GetValue(member.Member, declared);
             Type twinType = MemberAccess.TypeOf(twin);
+            if (twinType == typeof(NetworkBitArray) && value is byte[] bytes)
+            {
+                if (BitArrayOf(bytes, memberPath, differences) is { } bits)
+                    Assign(member, value, twin, legacy, bits, memberPath, differences);
+                continue;
+            }
+
             if (member.Shape is WireShape.Array or WireShape.FixedArray && value is IEnumerable items)
             {
                 Type elementType = CollectionAccess.ElementTypeOf(twinType);
@@ -64,6 +71,23 @@ internal sealed class TwinMapper
         }
 
         return legacy;
+    }
+
+    /// <summary>
+    /// A legacy bit array whose buffer holds <paramref name="bytes"/>: a declared byte[] stands for one, as the legacy writer sends a bit array's buffer byte by byte.
+    /// Null, with a difference, for no bytes, since a bit array holds at least one.
+    /// </summary>
+    private static NetworkBitArray? BitArrayOf(byte[] bytes, string path, List<string> differences)
+    {
+        if (bytes.Length == 0)
+        {
+            differences.Add($"{path}: a NetworkBitArray cannot hold zero bytes");
+            return null;
+        }
+
+        var bits = new NetworkBitArray((uint)bytes.Length * 8, NetworkBitArray.BitOrder.LeastSignificantBit);
+        bytes.CopyTo(bits.GetBuffer(), 0);
+        return bits;
     }
 
     // A legacy member with neither a setter nor a backing field is computed, so it carries the declared value only if it already computes it.
