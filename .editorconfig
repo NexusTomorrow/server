@@ -125,10 +125,9 @@ dotnet_diagnostic.CA1051.severity = none
 dotnet_diagnostic.CA1051.severity = none
 dotnet_diagnostic.CA1707.severity = none
 
-# Part B's opcode task resolves the value 0x07DF declared twice and names the opcodes still known
-# only by number.
+# Server_0x178_SoundTrigger keeps the seed's name while the legacy snapshot, which names it, stands;
+# stage 3 renames it when the snapshot goes, and this section goes with it.
 [Source/NexusTomorrow.Network/Message/GameMessageOpcode.cs]
-dotnet_diagnostic.CA1069.severity = none
 dotnet_diagnostic.CA1707.severity = none
 
 # Release tracking (RS2008) serves analyzers published as packages; this generator ships only inside
