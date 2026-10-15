@@ -36,9 +36,9 @@ namespace NexusTomorrow.ClientConnector
                 Console.Write("Type in your language: [en,de]");
                 string? language = Console.ReadLine();
 
-                if (hostName == null || language == null)
+                if (string.IsNullOrWhiteSpace(hostName) || string.IsNullOrWhiteSpace(language))
                 {
-                    Console.WriteLine("Input ended before the configuration was complete.");
+                    Console.WriteLine("A host name and a language are both required; nothing was written.");
                     return;
                 }
 
@@ -59,11 +59,19 @@ namespace NexusTomorrow.ClientConnector
         }
 
         /// <summary>
-        /// Bind <see cref="ClientConfiguration"/> from the supplied configuration.
+        /// Bind <see cref="ClientConfiguration"/> from the supplied configuration, throwing <see cref="InvalidDataException"/> naming any key that is missing or empty, since the configuration binder does not enforce <c>required</c>.
         /// </summary>
         internal static ClientConfiguration ReadConfiguration(IConfiguration configuration)
         {
-            return configuration.Get<ClientConfiguration>() ?? throw new InvalidDataException($"{jsonFile} holds no client configuration.");
+            ClientConfiguration config = configuration.Get<ClientConfiguration>()
+                ?? throw new InvalidDataException($"{jsonFile} holds no client configuration.");
+
+            if (string.IsNullOrWhiteSpace(config.HostName))
+                throw new InvalidDataException($"{jsonFile} has no {nameof(ClientConfiguration.HostName)}.");
+            if (string.IsNullOrWhiteSpace(config.Language))
+                throw new InvalidDataException($"{jsonFile} has no {nameof(ClientConfiguration.Language)}.");
+
+            return config;
         }
 
         private static void LaunchClient(ClientConfiguration config)
