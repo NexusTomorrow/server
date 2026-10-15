@@ -4,7 +4,7 @@
     {
         bool IsEmpty { get; }
 
-        IEnumerable<uint> ExactSearch(string text);
+        IEnumerable<uint>? ExactSearch(string text);
         IEnumerable<uint> FuzzySearch(string text);
     }
 }

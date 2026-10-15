@@ -6,6 +6,6 @@ namespace NexusTomorrow.GameTable.Model
         public uint RaceId;
         public uint Faction2Id;
         public uint Gender;
-        public string StringPreset;
+        public string StringPreset = string.Empty;
     }
 }

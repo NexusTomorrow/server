@@ -4,8 +4,8 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint LocalizedTextIdName;
-        public string AssetPath;
-        public string ImagePath;
+        public string AssetPath = string.Empty;
+        public string ImagePath = string.Empty;
         public uint ImageWidth;
         public uint ImageHeight;
         public uint ImageOffsetX;

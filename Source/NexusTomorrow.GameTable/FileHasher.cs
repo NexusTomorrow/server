@@ -20,7 +20,7 @@ namespace NexusTomorrow.GameTable
                 return memoryStream.Hash();
         }
 
-        public static string Hash(this string @string, Encoding encoding = null)
+        public static string Hash(this string @string, Encoding? encoding = null)
         {
             if(encoding == null)
                 encoding = Encoding.UTF8;

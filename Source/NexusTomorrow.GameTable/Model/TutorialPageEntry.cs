@@ -10,9 +10,9 @@ namespace NexusTomorrow.GameTable.Model
         public uint LocalizedTextIdBody00;
         public uint LocalizedTextIdBody01;
         public uint LocalizedTextIdBody02;
-        public string Sprite00;
-        public string Sprite01;
-        public string Sprite02;
+        public string Sprite00 = string.Empty;
+        public string Sprite01 = string.Empty;
+        public string Sprite02 = string.Empty;
         public uint SoundEventId;
     }
 }

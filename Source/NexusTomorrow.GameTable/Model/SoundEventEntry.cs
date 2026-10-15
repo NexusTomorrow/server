@@ -3,7 +3,7 @@ namespace NexusTomorrow.GameTable.Model
     public class SoundEventEntry
     {
         public uint Id;
-        public string Name;
+        public string Name = string.Empty;
         public uint Hash;
         public float Radius;
         public uint SoundBankId00;

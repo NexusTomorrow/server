@@ -13,6 +13,6 @@ namespace NexusTomorrow.GameTable.Model
         public uint PathExplorerScavengerClueId06;
         public uint LocalizedTextIdStart;
         public uint Spell4IdRelic;
-        public string AssetPathSprite;
+        public string AssetPathSprite = string.Empty;
     }
 }

@@ -4,6 +4,6 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint VisualEffectId;
-        public string IconPath;
+        public string IconPath = string.Empty;
     }
 }

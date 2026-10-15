@@ -6,7 +6,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint RewardItemTypeEnum;
         public uint RewardItemObject;
         public uint Count;
-        public string IconPath;
+        public string IconPath = string.Empty;
         public uint MinPlayerLevel;
         public uint WorldDifficultyFlags;
     }

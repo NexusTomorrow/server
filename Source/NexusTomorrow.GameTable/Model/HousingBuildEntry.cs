@@ -3,8 +3,8 @@ namespace NexusTomorrow.GameTable.Model
     public class HousingBuildEntry
     {
         public uint Id;
-        public string Description;
-        public string AssetPath;
+        public string Description = string.Empty;
+        public string AssetPath = string.Empty;
         public uint ConstructionEffectsId;
         public float BuildPreDelayTimeMS;
         public float BuildPostDelayTimeMS;

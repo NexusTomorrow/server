@@ -6,8 +6,8 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         [GameTableFieldArray(5u)]
-        public ItemStatType[] ItemStatTypeEnum;
+        public ItemStatType[] ItemStatTypeEnum = [];
         [GameTableFieldArray(5u)]
-        public uint[] ItemStatData;
+        public uint[] ItemStatData = [];
     }
 }

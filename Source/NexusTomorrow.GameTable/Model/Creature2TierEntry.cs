@@ -4,6 +4,6 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         [GameTableFieldArray(200)]
-        public float[] UnitPropertyMultiplier;
+        public float[] UnitPropertyMultiplier = [];
     }
 }

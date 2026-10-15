@@ -14,7 +14,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint SoundEventId;
         public uint WorldZoneId;
         public uint UnlockCount;
-        public string AssetPathImage;
+        public string AssetPathImage = string.Empty;
         public uint DatacubeFactionEnum;
         public uint WorldLocation2Id;
         public uint QuestDirectionId;

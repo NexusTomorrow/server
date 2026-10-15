@@ -43,11 +43,11 @@ namespace NexusTomorrow.GameTable.Model
         public uint HousingContributionInfoIdUpkeepCost03;
         public uint HousingContributionInfoIdUpkeepCost04;
         public uint GameFormulaIdHousingBuildBonus;
-        public string ScreenshotSprite00;
-        public string ScreenshotSprite01;
-        public string ScreenshotSprite02;
-        public string ScreenshotSprite03;
-        public string ScreenshotSprite04;
+        public string ScreenshotSprite00 = string.Empty;
+        public string ScreenshotSprite01 = string.Empty;
+        public string ScreenshotSprite02 = string.Empty;
+        public string ScreenshotSprite03 = string.Empty;
+        public string ScreenshotSprite04 = string.Empty;
         public uint HousingPlugTypeEnum;
         public uint AccountItemIdUpsell;
     }

@@ -7,6 +7,6 @@ namespace NexusTomorrow.GameTable.Model
         public uint LocalizedTextIdDescription;
         public uint PathMissionId;
         public uint PathScientistExperimentationId;
-        public string IconAssetPath;
+        public string IconAssetPath = string.Empty;
     }
 }

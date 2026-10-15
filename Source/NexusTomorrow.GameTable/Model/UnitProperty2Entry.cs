@@ -5,8 +5,8 @@ namespace NexusTomorrow.GameTable.Model
     public class UnitProperty2Entry
     {
         public uint Id;
-        public string Description;
-        public string EnumName;
+        public string Description = string.Empty;
+        public string EnumName = string.Empty;
         public float DefaultValue;
         public uint LocalizedTextId;
         public float ValuePerPoint;

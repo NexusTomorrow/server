@@ -3,7 +3,7 @@ namespace NexusTomorrow.GameTable.Model
     public class HookAssetEntry
     {
         public uint Id;
-        public string Asset;
+        public string Asset = string.Empty;
         public float Scale;
         public float OffsetX;
         public float OffsetY;

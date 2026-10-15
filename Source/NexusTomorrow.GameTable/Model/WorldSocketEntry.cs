@@ -5,7 +5,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint Id;
         public uint WorldId;
         [GameTableFieldArray(4u)]
-        public uint[] BoundIds;
+        public uint[] BoundIds = [];
         public uint AverageHeight;
     }
 }

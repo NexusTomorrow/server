@@ -5,7 +5,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint Id;
         public uint WorldWaterFogId;
         public uint SurfaceType;
-        public string ParticleFile;
+        public string ParticleFile = string.Empty;
         public uint SoundDirectionalAmbienceId;
     }
 }

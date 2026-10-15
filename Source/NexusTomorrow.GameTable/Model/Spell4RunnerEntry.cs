@@ -3,7 +3,7 @@ namespace NexusTomorrow.GameTable.Model
     public class Spell4RunnerEntry
     {
         public uint Id;
-        public string SpriteName;
+        public string SpriteName = string.Empty;
         public float RedTint;
         public float GreenTint;
         public float BlueTint;

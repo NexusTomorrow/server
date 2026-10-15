@@ -17,8 +17,8 @@ namespace NexusTomorrow.GameTable.Model
         public uint LocalizedTextIdTextScientist04;
         public uint LocalizedTextIdTextScientist05;
         public uint Creature2IdPortrait;
-        public string IconAssetPath;
-        public string InlineAssetPath;
+        public string IconAssetPath = string.Empty;
+        public string InlineAssetPath = string.Empty;
         public uint ArchiveEntryTypeEnum;
         public uint ArchiveEntryFlags;
         public uint ArchiveEntryHeaderEnum;

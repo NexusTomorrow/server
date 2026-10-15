@@ -4,7 +4,7 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint ScientistCreatureFlags;
-        public string DisplayIcon;
+        public string DisplayIcon = string.Empty;
         public uint PrerequisiteIdScan;
         public uint PrerequisiteIdRawScan;
         public uint PrerequisiteIdScanCreature;

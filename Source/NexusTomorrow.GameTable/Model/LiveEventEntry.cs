@@ -10,10 +10,10 @@ namespace NexusTomorrow.GameTable.Model
         public uint LiveEventIdParent;
         public uint LocalizedTextIdName;
         public uint LocalizedTextIdSummary;
-        public string IconPath;
-        public string IconPathButton;
-        public string SpritePathTitle;
-        public string SpritePathBackground;
+        public string IconPath = string.Empty;
+        public string IconPathButton = string.Empty;
+        public string SpritePathTitle = string.Empty;
+        public string SpritePathBackground = string.Empty;
         public uint CurrencyTypeIdEarned;
         public uint LocalizedTextIdCurrencyEarnedTooltip;
         public uint WorldLocation2IdExile;

@@ -13,7 +13,7 @@ namespace NexusTomorrow.GameTable.Model
         public Faction FactionId;
         public bool CostumeOnly;
         [GameTableFieldArray(16u)]
-        public uint[] ItemIds;
+        public uint[] ItemIds = [];
         public bool Enabled;
         public CharacterCreationStart CharacterCreationStartEnum;
         public uint Xp;

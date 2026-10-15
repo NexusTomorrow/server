@@ -7,13 +7,13 @@ namespace NexusTomorrow.GameTable.Model
         public uint Id;
         public EvaluationMode Flags;
         [GameTableFieldArray(3u)]
-        public PrerequisiteType[] PrerequisiteTypeId;
+        public PrerequisiteType[] PrerequisiteTypeId = [];
         [GameTableFieldArray(3u)]
-        public PrerequisiteComparison[] PrerequisiteComparisonId;
+        public PrerequisiteComparison[] PrerequisiteComparisonId = [];
         [GameTableFieldArray(3u)]
-        public uint[] ObjectId;
+        public uint[] ObjectId = [];
         [GameTableFieldArray(3u)]
-        public uint[] Value;
+        public uint[] Value = [];
         public uint LocalizedTextIdFailure;
     }
 }

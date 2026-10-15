@@ -4,6 +4,6 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint ComponentLayoutId;
-        public string EnumName;
+        public string EnumName = string.Empty;
     }
 }

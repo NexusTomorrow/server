@@ -9,8 +9,8 @@ namespace NexusTomorrow.GameTable.Model
         public uint ItemDisplayId;
         public uint Flags;
         [GameTableFieldArray(2)]
-        public uint[] CharacterCustomizationLabelId;
+        public uint[] CharacterCustomizationLabelId = [];
         [GameTableFieldArray(2)]
-        public uint[] Value;
+        public uint[] Value = [];
     }
 }

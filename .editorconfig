@@ -49,7 +49,3 @@ dotnet_naming_rule.private_fields_are_camel.severity = suggestion
 dotnet_naming_symbols.private_fields.applicable_kinds = field
 dotnet_naming_symbols.private_fields.applicable_accessibilities = private, protected, internal, protected_internal, private_protected
 dotnet_naming_style.camel.capitalization = camel_case
-
-# GameTable<T>.ReadEntries creates each row with new T() and assigns every field from the table file.
-[Source/NexusTomorrow.GameTable/Model/**.cs]
-dotnet_diagnostic.CS8618.severity = none

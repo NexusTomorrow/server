@@ -3,7 +3,7 @@ namespace NexusTomorrow.GameTable.Model
     public class Spell4Entry
     {
         public uint Id;
-        public string Description;
+        public string Description = string.Empty;
         public uint Spell4BaseIdBaseSpell;
         public uint TierIndex;
         public uint RavelInstanceId;
@@ -46,7 +46,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint RunnerTargetTypeEnum00;
         public uint RunnerTargetTypeEnum01;
         [GameTableFieldArray(2u)]
-        public uint[] PrerequisiteIdRunners;
+        public uint[] PrerequisiteIdRunners = [];
         public uint AbilityChargeCount;
         public uint AbilityRechargeTime;
         public uint AbilityRechargeCount;

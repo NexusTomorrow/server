@@ -7,9 +7,9 @@ namespace NexusTomorrow.GameTable.Model
         public uint CastStage;
         public uint OriginUnitEnum;
         public uint TargetFlags;
-        public string ModelPath;
-        public string FxPath;
-        public string BeamPath;
+        public string ModelPath = string.Empty;
+        public string FxPath = string.Empty;
+        public string BeamPath = string.Empty;
         public uint BeamSource;
         public uint BeamTarget;
         public uint ItemSlot;
@@ -26,11 +26,11 @@ namespace NexusTomorrow.GameTable.Model
         public uint RevolverNestedMissileInitDelay;
         public uint RevolverNestedMissileSubDelay;
         public uint Spell4ClientMissileIdNested;
-        public string RevolverMissileImpactAssetPath;
+        public string RevolverMissileImpactAssetPath = string.Empty;
         public uint MissileRevolverTrackId;
-        public string BirthAnchorPath;
-        public string DeathAnchorPath;
-        public string TrajAnchorPath;
+        public string BirthAnchorPath = string.Empty;
+        public string DeathAnchorPath = string.Empty;
+        public string TrajAnchorPath = string.Empty;
         public float BirthDuration;
         public float BirthAnchorAngleMin;
         public float BirthAnchorAngleMax;

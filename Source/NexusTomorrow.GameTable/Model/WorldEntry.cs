@@ -5,11 +5,11 @@ namespace NexusTomorrow.GameTable.Model
     public class WorldEntry
     {
         public uint Id;
-        public string AssetPath;
+        public string AssetPath = string.Empty;
         public uint Flags;
         public MapType Type;
-        public string ScreenPath;
-        public string ScreenModelPath;
+        public string ScreenPath = string.Empty;
+        public string ScreenModelPath = string.Empty;
         public uint ChunkBounds00;
         public uint ChunkBounds01;
         public uint ChunkBounds02;

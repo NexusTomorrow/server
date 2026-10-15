@@ -4,9 +4,9 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint Flags;
-        public string ColorTexture;
-        public string NormalTexture;
-        public string DistortionTexture;
+        public string ColorTexture = string.Empty;
+        public string NormalTexture = string.Empty;
+        public string DistortionTexture = string.Empty;
         public uint DurationMin;
         public uint DurationMax;
         public float ScaleStart;

@@ -11,11 +11,11 @@ namespace NexusTomorrow.GameTable.Model
         public uint InstantEventEnum;
         public uint AccountCurrencyEnum;
         public ulong AccountCurrencyAmount;
-        public string ButtonIcon;
+        public string ButtonIcon = string.Empty;
         public uint PrerequisiteId;
         public uint AccountItemCooldownGroupId;
         public uint StoreDisplayInfoId;
-        public string StoreIdentifierUpsell;
+        public string StoreIdentifierUpsell = string.Empty;
         public uint Creature2DisplayGroupIdGacha;
         public uint EntitlementIdPurchase;
         public uint GenericUnlockSetId;

@@ -32,7 +32,7 @@ namespace NexusTomorrow.GameTable.Text.Filter
         /// </summary>
         public bool IsTextValid(string text, TextFilterClass filterClass)
         {
-            if (!words.TryGetValue(filterClass, out ImmutableList<string> filerWords))
+            if (!words.TryGetValue(filterClass, out ImmutableList<string>? filerWords))
                 return false;
 
             return !filerWords.Any(w => text.Contains(w, StringComparison.InvariantCultureIgnoreCase));

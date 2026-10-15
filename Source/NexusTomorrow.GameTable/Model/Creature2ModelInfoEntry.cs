@@ -3,9 +3,9 @@ namespace NexusTomorrow.GameTable.Model
     public class Creature2ModelInfoEntry
     {
         public uint Id;
-        public string AssetPath;
-        public string AssetTexture0;
-        public string AssetTexture1;
+        public string AssetPath = string.Empty;
+        public string AssetTexture0 = string.Empty;
+        public string AssetTexture1 = string.Empty;
         public uint ModelTextureId0;
         public uint ModelTextureId1;
         public uint CreatureMaterialEnum;

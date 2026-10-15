@@ -4,7 +4,7 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint LocalizedTextIdLabel;
-        public string IconPath;
+        public string IconPath = string.Empty;
         public uint PublicEventObjectiveId;
     }
 }

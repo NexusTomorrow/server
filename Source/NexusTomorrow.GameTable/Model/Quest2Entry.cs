@@ -11,7 +11,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint PrerequisiteLevel;
         public uint PrerequisiteFlags;
         [GameTableFieldArray(3u)]
-        public uint[] PrerequisiteQuests;
+        public uint[] PrerequisiteQuests = [];
         public uint PrerequisiteRace;
         public uint PrerequisiteItem;
         public uint QuestPlayerFactionEnum;
@@ -20,11 +20,11 @@ namespace NexusTomorrow.GameTable.Model
         public uint RewardXpOverride;
         public uint RewardCashOverride;
         [GameTableFieldArray(6u)]
-        public uint[] PushedItemIds;
+        public uint[] PushedItemIds = [];
         [GameTableFieldArray(6u)]
-        public uint[] PushedItemCounts;
+        public uint[] PushedItemCounts = [];
         [GameTableFieldArray(6u)]
-        public uint[] Objectives;
+        public uint[] Objectives = [];
         public uint LocalizedTextIdGiverTextUnknown;
         public uint LocalizedTextIdGiverTextAccepted;
         public uint LocalizedTextIdReceiverTextAccepted;

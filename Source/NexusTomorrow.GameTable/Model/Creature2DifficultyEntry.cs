@@ -9,6 +9,6 @@ namespace NexusTomorrow.GameTable.Model
         public uint RankValue;
         public uint GroupValue;
         [GameTableFieldArray(200)]
-        public float[] UnitPropertyMultiplier;
+        public float[] UnitPropertyMultiplier = [];
     }
 }

@@ -12,9 +12,9 @@ namespace NexusTomorrow.GameTable.Model
         public uint MinLevel;
         public uint MaxLevel;
         [GameTableFieldArray(3u)]
-        public uint[] Quests;
+        public uint[] Quests = [];
         [GameTableFieldArray(3u)]
-        public uint[] States;
+        public uint[] States = [];
         public uint FactionId;
         public uint ClassId;
         public uint RaceId;

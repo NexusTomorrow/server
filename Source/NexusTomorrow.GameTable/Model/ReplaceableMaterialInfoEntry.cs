@@ -94,13 +94,13 @@ namespace NexusTomorrow.GameTable.Model
         public uint MaterialTypeId01;
         public uint MaterialTypeId02;
         public uint MaterialTypeId03;
-        public string ColorTexture00;
-        public string ColorTexture01;
-        public string ColorTexture02;
-        public string ColorTexture03;
-        public string NormalTexture00;
-        public string NormalTexture01;
-        public string NormalTexture02;
-        public string NormalTexture03;
+        public string ColorTexture00 = string.Empty;
+        public string ColorTexture01 = string.Empty;
+        public string ColorTexture02 = string.Empty;
+        public string ColorTexture03 = string.Empty;
+        public string NormalTexture00 = string.Empty;
+        public string NormalTexture01 = string.Empty;
+        public string NormalTexture02 = string.Empty;
+        public string NormalTexture03 = string.Empty;
     }
 }

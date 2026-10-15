@@ -13,7 +13,7 @@ namespace NexusTomorrow.GameTable.Model
         public float IconColorB;
         public uint DefaultRunes;
         public uint MaxRunes;
-        public string AssetPathDieModel;
+        public string AssetPathDieModel = string.Empty;
         public uint SoundEventIdFortuneCardFanfare;
     }
 }

@@ -7,7 +7,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint WorldLocation2Id;
         public uint LocalizedTextIdName;
         public uint LocalizedTextIdDescription;
-        public string SpritePath;
+        public string SpritePath = string.Empty;
         public uint GenericMapNodeTypeEnum;
         public uint Flags;
     }

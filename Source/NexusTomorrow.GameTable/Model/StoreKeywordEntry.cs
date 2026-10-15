@@ -4,6 +4,6 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint StoreDisplayInfoId;
-        public string Keyword;
+        public string Keyword = string.Empty;
     }
 }

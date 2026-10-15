@@ -37,9 +37,9 @@ namespace NexusTomorrow.GameTable.Model
         public uint PrerequisiteIdTargetPersistence;
         public uint PrerequisiteIdTargetSuspend;
         [GameTableFieldArray(4)]
-        public SpellEffectParameterType[] ParameterType;
+        public SpellEffectParameterType[] ParameterType = [];
         [GameTableFieldArray(4)]
-        public float[] ParameterValue;
+        public float[] ParameterValue = [];
         public uint PhaseFlags;
         public uint OrderIndex;
     }

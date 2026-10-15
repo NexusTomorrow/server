@@ -5,9 +5,9 @@ namespace NexusTomorrow.GameTable.Model
     public class ChatChannelEntry
     {
         public uint Id;
-        public string EnumName;
-        public string UniversalCommand00;
-        public string UniversalCommand01;
+        public string EnumName = string.Empty;
+        public string UniversalCommand00 = string.Empty;
+        public string UniversalCommand01 = string.Empty;
         public uint LocalizedTextIdName;
         public uint LocalizedTextIdCommand;
         public uint LocalizedTextIdAbbreviation;

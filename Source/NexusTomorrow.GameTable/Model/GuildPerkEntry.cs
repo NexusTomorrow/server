@@ -5,8 +5,8 @@ namespace NexusTomorrow.GameTable.Model
         public uint Id;
         public uint LocalizedTextIdTitle;
         public uint LocalizedTextIdDescription;
-        public string LuaSprite;
-        public string LuaName;
+        public string LuaSprite = string.Empty;
+        public string LuaName = string.Empty;
         public uint PurchaseInfluenceCost;
         public uint ActivateInfluenceCost;
         public uint Spell4IdActivate;

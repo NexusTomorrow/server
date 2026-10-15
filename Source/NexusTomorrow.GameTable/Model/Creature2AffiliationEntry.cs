@@ -5,6 +5,6 @@ namespace NexusTomorrow.GameTable.Model
         public uint Id;
         public uint LocalizedTextIdTitle;
         public uint MiniMapMarkerId;
-        public string OverheadIconAssetPath;
+        public string OverheadIconAssetPath = string.Empty;
     }
 }

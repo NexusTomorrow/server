@@ -3,7 +3,7 @@ namespace NexusTomorrow.GameTable.Model
     public class ClientEventEntry
     {
         public uint Id;
-        public string Description;
+        public string Description = string.Empty;
         public uint WorldId;
         public uint EventTypeEnum;
         public uint EventData;

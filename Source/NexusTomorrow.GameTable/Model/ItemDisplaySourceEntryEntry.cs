@@ -8,6 +8,6 @@ namespace NexusTomorrow.GameTable.Model
         public uint ItemMinLevel;
         public uint ItemMaxLevel;
         public uint ItemDisplayId;
-        public string Icon;
+        public string Icon = string.Empty;
     }
 }

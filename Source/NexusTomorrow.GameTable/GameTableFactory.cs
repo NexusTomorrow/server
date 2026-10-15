@@ -5,10 +5,10 @@
         public static object LoadGameTable(Type type, string filePath)
         {
             Type table = typeof(GameTable<>).MakeGenericType(type);
-            return Activator.CreateInstance(table, filePath);
+            return Activator.CreateInstance(table, filePath) ?? throw new InvalidOperationException($"Could not create {table}.");
         }
 
-        public static TextTable LoadTextTable(string filePath)
+        public static TextTable? LoadTextTable(string filePath)
         {
             if (!File.Exists(filePath))
                 return null;

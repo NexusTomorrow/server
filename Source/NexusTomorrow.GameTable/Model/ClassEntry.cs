@@ -3,27 +3,27 @@ namespace NexusTomorrow.GameTable.Model
     public class ClassEntry
     {
         public uint Id;
-        public string EnumName;
+        public string EnumName = string.Empty;
         public uint LocalizedTextId;
         public uint LocalizedTextIdNameFemale;
         public uint Mechanic;
 
         [GameTableFieldArray(3)]
-        public uint[] Spell4IdInnateAbilityActive;
+        public uint[] Spell4IdInnateAbilityActive = [];
 
         [GameTableFieldArray(3)]
-        public uint[] Spell4IdInnateAbilityPassive;
+        public uint[] Spell4IdInnateAbilityPassive = [];
 
         [GameTableFieldArray(3)]
-        public uint[] PrerequisiteIdInnateAbility;
+        public uint[] PrerequisiteIdInnateAbility = [];
 
         public uint StartingItemProficiencies;
 
         [GameTableFieldArray(2)]
-        public uint[] Spell4IdAttackPrimary;
+        public uint[] Spell4IdAttackPrimary = [];
 
         [GameTableFieldArray(2)]
-        public uint[] Spell4IdAttackUnarmed;
+        public uint[] Spell4IdAttackUnarmed = [];
 
         public uint Spell4IdResAbility;
         public uint LocalizedTextIdDescription;

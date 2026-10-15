@@ -9,7 +9,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint Creature2MaxSize;
         public uint CreatureMaterialEnum;
         public uint MovementStateFlags;
-        public string DeathModelAsset;
+        public string DeathModelAsset = string.Empty;
         public uint ModelSequenceIdDeath;
         public uint VisualEffectIdDeath00;
         public uint VisualEffectIdDeath01;

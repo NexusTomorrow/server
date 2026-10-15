@@ -4,7 +4,7 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint LocalizedTextId;
-        public string IconName;
+        public string IconName = string.Empty;
         public uint AccountItemId;
     }
 }

@@ -5,7 +5,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint Id;
         public uint LocalizedTextIdName;
         public uint MapContinentId;
-        public string Folder;
+        public string Folder = string.Empty;
         public uint HexMinX;
         public uint HexMinY;
         public uint HexLimX;

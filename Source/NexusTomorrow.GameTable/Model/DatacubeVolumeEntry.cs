@@ -4,7 +4,7 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint LocalizedTextIdName;
-        public string AssetPath;
+        public string AssetPath = string.Empty;
         public uint DatacubeId00;
         public uint DatacubeId01;
         public uint DatacubeId02;

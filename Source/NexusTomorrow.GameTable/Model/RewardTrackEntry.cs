@@ -7,8 +7,8 @@ namespace NexusTomorrow.GameTable.Model
         public uint PrerequisiteId;
         public uint LocalizedTextId;
         public uint LocalizedTextIdSummary;
-        public string AssetPathImage;
-        public string AssetPathButtonImage;
+        public string AssetPathImage = string.Empty;
+        public string AssetPathButtonImage = string.Empty;
         public uint RewardPointCost00;
         public uint RewardPointCost01;
         public uint RewardPointCost02;

@@ -19,7 +19,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint Spell4BaseIdPrerequisiteSpell;
         public uint WorldZoneIdZoneRequired;
         public uint Spell4SpellTypesIdSpellType;
-        public string Icon;
+        public string Icon = string.Empty;
         public uint CastMethod;
         public uint School;
         public uint SpellClass;

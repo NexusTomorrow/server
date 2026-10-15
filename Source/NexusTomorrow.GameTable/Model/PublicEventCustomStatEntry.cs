@@ -9,6 +9,6 @@ namespace NexusTomorrow.GameTable.Model
         public uint PublicEventId;
         public uint StatIndex;
         public uint LocalizedTextIdStatName;
-        public string IconPath;
+        public string IconPath = string.Empty;
     }
 }

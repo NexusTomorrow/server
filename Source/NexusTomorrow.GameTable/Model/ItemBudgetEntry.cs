@@ -4,6 +4,6 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         [GameTableFieldArray(5u)]
-        public float[] Budgets;
+        public float[] Budgets = [];
     }
 }

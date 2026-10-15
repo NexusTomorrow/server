@@ -5,7 +5,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint Id;
         public uint LocalizedTextIdName;
         public uint LocalizedTextIdDescription;
-        public string LuaVariable;
+        public string LuaVariable = string.Empty;
         public uint LocalizedTextIdCommand;
         public uint GuildTypeEnumFlags;
         public uint DisplayIndex;

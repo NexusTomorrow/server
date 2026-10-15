@@ -3,11 +3,11 @@ namespace NexusTomorrow.GameTable.Model
     public class RaceEntry
     {
         public uint Id;
-        public string EnumName;
+        public string EnumName = string.Empty;
         public uint LocalizedTextId;
         public uint LocalizedTextIdNameFemale;
-        public string MaleAssetPath;
-        public string FemaleAssetPath;
+        public string MaleAssetPath = string.Empty;
+        public string FemaleAssetPath = string.Empty;
         public float HitRadius;
         public uint SoundImpactDescriptionIdOrigin;
         public uint SoundImpactDescriptionIdTarget;

@@ -3,9 +3,9 @@ namespace NexusTomorrow.GameTable.Model
     public class WorldWaterLayerEntry
     {
         public uint Id;
-        public string Description;
-        public string RippleColorTex;
-        public string RippleNormalTex;
+        public string Description = string.Empty;
+        public string RippleColorTex = string.Empty;
+        public string RippleNormalTex = string.Empty;
         public float Scale;
         public float Rotation;
         public float Speed;

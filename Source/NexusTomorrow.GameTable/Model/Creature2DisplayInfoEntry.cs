@@ -4,20 +4,20 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint StatusFlags;
-        public string AssetPath;
-        public string AssetTexture00;
-        public string AssetTexture01;
-        public string AssetTexture02;
-        public string AssetTexture03;
-        public string AssetTexture04;
-        public string AssetTexture05;
+        public string AssetPath = string.Empty;
+        public string AssetTexture00 = string.Empty;
+        public string AssetTexture01 = string.Empty;
+        public string AssetTexture02 = string.Empty;
+        public string AssetTexture03 = string.Empty;
+        public string AssetTexture04 = string.Empty;
+        public string AssetTexture05 = string.Empty;
         public uint ModelTextureId00;
         public uint ModelTextureId01;
         public uint ModelTextureId02;
         public uint ModelTextureId03;
         public uint ModelTextureId04;
         public uint ModelTextureId05;
-        public string ColorShiftTexturePath;
+        public string ColorShiftTexturePath = string.Empty;
         public uint ColorShiftTextureIdMask;
         public uint MaterialDataIdSkinColor0;
         public uint MaterialDataIdSkinColor1;

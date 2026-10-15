@@ -5,7 +5,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint Id;
         public uint TradeSkillTierId;
         public uint AchievementId;
-        public string IconPath;
+        public string IconPath = string.Empty;
         public uint LocalizedTextIdName;
         public uint LocalizedTextIdTooltip;
         public uint TradeskillBonusEnum00;

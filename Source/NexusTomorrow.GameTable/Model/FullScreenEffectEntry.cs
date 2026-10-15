@@ -3,9 +3,9 @@ namespace NexusTomorrow.GameTable.Model
     public class FullScreenEffectEntry
     {
         public uint Id;
-        public string Description;
-        public string TexturePath;
-        public string ModelPath;
+        public string Description = string.Empty;
+        public string TexturePath = string.Empty;
+        public string ModelPath = string.Empty;
         public uint Priority;
         public uint FullScreenEffectTypeEnum;
         public float AlphaMinStart;

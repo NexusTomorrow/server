@@ -3,6 +3,6 @@ namespace NexusTomorrow.GameTable.Model
     public class SoundBankEntry
     {
         public uint Id;
-        public string Name;
+        public string Name = string.Empty;
     }
 }

@@ -6,8 +6,8 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint LocalizedTextIdDescription;
-        public string SpriteIcon;
-        public string SpritePreview;
+        public string SpriteIcon = string.Empty;
+        public string SpritePreview = string.Empty;
         public GenericUnlockType GenericUnlockTypeEnum;
         public uint UnlockObject;
     }

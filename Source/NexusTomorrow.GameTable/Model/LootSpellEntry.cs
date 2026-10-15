@@ -6,7 +6,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint LootSpellTypeEnum;
         public uint LootSpellPickupEnumFlags;
         public uint Creature2Id;
-        public string ButtonIcon;
+        public string ButtonIcon = string.Empty;
         public uint LocalizedTextIdName;
         public uint LocalizedTextIdDescription;
         public uint VisualEffectId;

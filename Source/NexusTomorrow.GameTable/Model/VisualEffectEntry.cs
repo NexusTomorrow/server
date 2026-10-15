@@ -8,7 +8,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint Duration;
         public uint ModelItemSlot;
         public uint ModelItemCostumeSide;
-        public string ModelAssetPath;
+        public string ModelAssetPath = string.Empty;
         public uint ModelAttachmentId;
         public uint ModelSequencePriority;
         public uint ModelSequenceIdTarget00;

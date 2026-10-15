@@ -24,6 +24,6 @@ namespace NexusTomorrow.GameTable.Model
         public uint AchievementGroupId;
         public uint AchievementSubGroupId;
         public uint AchievementPointEnum;
-        public string SteamAchievementName;
+        public string SteamAchievementName = string.Empty;
     }
 }

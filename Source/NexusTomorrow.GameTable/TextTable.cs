@@ -7,30 +7,32 @@ namespace NexusTomorrow.GameTable
 {
     public class TextTable
     {
-        public TextTableEntry[] Entries { get; private set; }
+        public TextTableEntry[] Entries { get; }
 
-        private TextTableHeader header;
-        private int[] lookup;
+        private readonly int[] lookup;
 
         [JsonConstructor]
         public TextTable(IEnumerable<TextTableEntry> entries)
         {
             Entries = entries.ToArray();
-            BuildLookup();
+            lookup  = BuildLookup(Entries);
         }
 
         public TextTable(string path)
         {
             using (FileStream stream = File.OpenRead(path))
-                Initialise(stream);
+                Entries = Read(stream);
+
+            lookup = BuildLookup(Entries);
         }
 
         public TextTable(Stream stream)
         {
-            Initialise(stream);
+            Entries = Read(stream);
+            lookup  = BuildLookup(Entries);
         }
 
-        private void Initialise(Stream inputStream)
+        private static TextTableEntry[] Read(Stream inputStream)
         {
             using (var stream = new BufferedStream(inputStream, 64 * 1024))
             using (var reader = new BinaryReader(stream, Encoding.Unicode))
@@ -42,7 +44,7 @@ namespace NexusTomorrow.GameTable
                 ReadOnlySpan<TextTableHeader> headerSpan
                     = MemoryMarshal.Cast<byte, TextTableHeader>(reader.ReadBytes(Marshal.SizeOf<TextTableHeader>()));
 
-                header = headerSpan[0];
+                TextTableHeader header = headerSpan[0];
 
                 if (header.Signature != 0x4C544558)
                     throw new InvalidDataException();
@@ -53,14 +55,13 @@ namespace NexusTomorrow.GameTable
                 ReadOnlySpan<TextTableField> fields = MemoryMarshal.Cast<byte, TextTableField>(
                     reader.ReadBytes(Marshal.SizeOf<TextTableField>() * (int)header.RecordCount));
 
-                ReadEntries(reader, fields);
-                BuildLookup();
+                return ReadEntries(reader, header, fields);
             }
         }
 
-        private void ReadEntries(BinaryReader reader, ReadOnlySpan<TextTableField> fields)
+        private static TextTableEntry[] ReadEntries(BinaryReader reader, TextTableHeader header, ReadOnlySpan<TextTableField> fields)
         {
-            Entries = new TextTableEntry[fields.Length];
+            var entries = new TextTableEntry[fields.Length];
 
             // build string table
             reader.BaseStream.Position = Marshal.SizeOf<TextTableHeader>() + (long)header.StringTableOffset;
@@ -70,26 +71,33 @@ namespace NexusTomorrow.GameTable
                 {
                     TextTableField field = fields[i];
                     string @string = stringTable.GetEntry(field.Offset * 2);
-                    Entries[i] = new TextTableEntry(header.Language, field.Id, @string);
+                    entries[i] = new TextTableEntry(header.Language, field.Id, @string);
                 }
             }
+
+            return entries;
         }
 
-        private void BuildLookup()
+        private static int[] BuildLookup(TextTableEntry[] entries)
         {
             // final field will always have the max id
-            lookup = new int[Entries[Entries.Length - 1].Id + 1];
+            var lookup = new int[entries[entries.Length - 1].Id + 1];
             for (int i = 0; i < lookup.Length; i++)
                 lookup[i] = -1;
 
-            for (int i = 0; i < Entries.Length; i++)
+            for (int i = 0; i < entries.Length; i++)
             {
-                TextTableEntry entry = Entries[i];
+                TextTableEntry entry = entries[i];
                 lookup[entry.Id] = i;
             }
+
+            return lookup;
         }
 
-        public string GetEntry(uint id)
+        /// <summary>
+        /// Return the text for the supplied id, or null when the table has none.
+        /// </summary>
+        public string? GetEntry(uint id)
         {
             if (id >= lookup.Length)
                 return null;

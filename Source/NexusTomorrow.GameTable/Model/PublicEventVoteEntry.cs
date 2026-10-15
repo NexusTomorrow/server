@@ -6,10 +6,10 @@ namespace NexusTomorrow.GameTable.Model
         public uint LocalizedTextIdTitle;
         public uint LocalizedTextIdDescription;
         [GameTableFieldArray(5u)]
-        public uint[] LocalizedTextIdOption;
+        public uint[] LocalizedTextIdOption = [];
         [GameTableFieldArray(5u)]
-        public uint[] LocalizedTextIdLabel;
+        public uint[] LocalizedTextIdLabel = [];
         public uint DurationMS;
-        public string AssetPathSprite;
+        public string AssetPathSprite = string.Empty;
     }
 }

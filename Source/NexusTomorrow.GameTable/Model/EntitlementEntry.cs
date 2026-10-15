@@ -9,6 +9,6 @@ namespace NexusTomorrow.GameTable.Model
         public uint CharacterTitleId;
         public uint LocalizedTextIdName;
         public uint LocalizedTextIdDescription;
-        public string ButtonIcon;
+        public string ButtonIcon = string.Empty;
     }
 }

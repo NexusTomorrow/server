@@ -28,17 +28,17 @@ namespace NexusTomorrow.GameTable.Model
         public float MaxSize09;
         public float MaxSize10;
         public float MaxSize11;
-        public string Model00;
-        public string Model01;
-        public string Model02;
-        public string Model03;
-        public string Model04;
-        public string Model05;
-        public string Model06;
-        public string Model07;
-        public string Model08;
-        public string Model09;
-        public string Model10;
-        public string Model11;
+        public string Model00 = string.Empty;
+        public string Model01 = string.Empty;
+        public string Model02 = string.Empty;
+        public string Model03 = string.Empty;
+        public string Model04 = string.Empty;
+        public string Model05 = string.Empty;
+        public string Model06 = string.Empty;
+        public string Model07 = string.Empty;
+        public string Model08 = string.Empty;
+        public string Model09 = string.Empty;
+        public string Model10 = string.Empty;
+        public string Model11 = string.Empty;
     }
 }

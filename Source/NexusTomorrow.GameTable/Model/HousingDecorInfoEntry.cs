@@ -14,8 +14,8 @@ namespace NexusTomorrow.GameTable.Model
         public uint PrerequisiteIdUnlock;
         public uint Spell4IdInteriorBuff;
         public uint HousingDecorLimitCategoryId;
-        public string AltPreviewAsset;
-        public string AltEditAsset;
+        public string AltPreviewAsset = string.Empty;
+        public string AltEditAsset = string.Empty;
         public float MinScale;
         public float MaxScale;
     }

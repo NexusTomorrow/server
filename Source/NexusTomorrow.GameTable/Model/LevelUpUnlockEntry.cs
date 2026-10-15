@@ -7,7 +7,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint Level;
         public uint LevelUpUnlockTypeId;
         public uint LocalizedTextIdDescription;
-        public string DisplayIcon;
+        public string DisplayIcon = string.Empty;
         public uint PrerequisiteId;
         public uint LevelUpUnlockValue;
     }

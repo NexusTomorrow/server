@@ -4,6 +4,6 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint LocalizedTextId;
-        public string LuaString;
+        public string LuaString = string.Empty;
     }
 }

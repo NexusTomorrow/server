@@ -40,19 +40,19 @@ namespace NexusTomorrow.GameTable.Model
         public uint BindFlags;
         public uint BuyFromVendorStackCount;
         [GameTableFieldArray(2)]
-        public CurrencyType[] CurrencyTypeId;
+        public CurrencyType[] CurrencyTypeId = [];
         [GameTableFieldArray(2)]
-        public uint[] CurrencyAmount;
+        public uint[] CurrencyAmount = [];
         [GameTableFieldArray(2)]
-        public CurrencyType[] CurrencyTypeIdSellToVendor;
+        public CurrencyType[] CurrencyTypeIdSellToVendor = [];
         [GameTableFieldArray(2)]
-        public uint[] CurrencyAmountSellToVendor;
+        public uint[] CurrencyAmountSellToVendor = [];
         public uint ItemColorSetId;
         public float SupportPowerPercentage;
         public uint LocalizedTextIdName;
         public uint LocalizedTextIdTooltip;
-        public string ButtonTemplate;
-        public string ButtonIcon;
+        public string ButtonTemplate = string.Empty;
+        public string ButtonIcon = string.Empty;
         public uint SoundEventIdEquip;
     }
 }

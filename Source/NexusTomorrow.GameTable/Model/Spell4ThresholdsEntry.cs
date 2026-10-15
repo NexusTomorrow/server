@@ -12,7 +12,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint VitalCostValue00;
         public uint VitalCostValue01;
         public uint LocalizedTextIdTooltip;
-        public string IconReplacement;
+        public string IconReplacement = string.Empty;
         public uint VisualEffectId;
     }
 }

@@ -6,7 +6,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint Flags;
         public float DefaultBreakProbability;
         public uint LocalizedTextIdName;
-        public string SpellIcon;
+        public string SpellIcon = string.Empty;
         public uint VisualEffectId00;
         public uint VisualEffectId01;
         public uint VisualEffectId02;

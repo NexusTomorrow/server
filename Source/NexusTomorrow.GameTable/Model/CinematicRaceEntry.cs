@@ -5,7 +5,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint Id;
         public uint CinematicId;
         public uint RaceId;
-        public string MaleAssetPath;
-        public string FemaleAssetPath;
+        public string MaleAssetPath = string.Empty;
+        public string FemaleAssetPath = string.Empty;
     }
 }

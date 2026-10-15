@@ -28,7 +28,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint ModelSequenceIdStandState;
         public uint VisualEffectId;
         public uint Flags;
-        public string UniversalCommand00;
-        public string UniversalCommand01;
+        public string UniversalCommand00 = string.Empty;
+        public string UniversalCommand01 = string.Empty;
     }
 }

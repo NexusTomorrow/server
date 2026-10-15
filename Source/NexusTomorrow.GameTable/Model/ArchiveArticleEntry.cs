@@ -4,7 +4,7 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint Creature2IdPortrait;
-        public string IconAssetPath;
+        public string IconAssetPath = string.Empty;
         public uint LocalizedTextIdTitle;
         public uint LocalizedTextIdText00;
         public uint LocalizedTextIdText01;
@@ -35,6 +35,6 @@ namespace NexusTomorrow.GameTable.Model
         public uint LocalizedTextIdToolTip;
         public uint WorldZoneId;
         public uint CharacterTitleIdReward;
-        public string LinkName;
+        public string LinkName = string.Empty;
     }
 }

@@ -24,7 +24,7 @@ namespace NexusTomorrow.GameTable.Model
         public uint VendorItemPrice;
         public uint LocalizedTextIdName;
         public uint LocalizedTextIdTooltip;
-        public string ButtonIcon;
+        public string ButtonIcon = string.Empty;
         public uint Flags;
         public uint SoundEventIdTakeoff;
         public uint SoundEventIdLanding;

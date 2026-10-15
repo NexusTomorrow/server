@@ -3,15 +3,15 @@ namespace NexusTomorrow.GameTable.Model
     public class WorldClutterEntry
     {
         public uint Id;
-        public string Description;
+        public string Description = string.Empty;
         public float Density;
         public uint ClutterFlags;
-        public string AssetPath0;
-        public string AssetPath01;
-        public string AssetPath02;
-        public string AssetPath03;
-        public string AssetPath04;
-        public string AssetPath05;
+        public string AssetPath0 = string.Empty;
+        public string AssetPath01 = string.Empty;
+        public string AssetPath02 = string.Empty;
+        public string AssetPath03 = string.Empty;
+        public string AssetPath04 = string.Empty;
+        public string AssetPath05 = string.Empty;
         public float AssetWeight0;
         public float AssetWeight01;
         public float AssetWeight02;

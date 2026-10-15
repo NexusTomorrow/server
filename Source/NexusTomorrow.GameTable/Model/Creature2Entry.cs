@@ -4,7 +4,7 @@ namespace NexusTomorrow.GameTable.Model
     {
         public uint Id;
         public uint CreationTypeEnum;
-        public string Description;
+        public string Description = string.Empty;
         public uint LocalizedTextIdName;
         public uint Creature2AoiSizeEnum;
         public uint UnitRaceId;
@@ -33,9 +33,9 @@ namespace NexusTomorrow.GameTable.Model
         public uint TradeSkillIdTrainer;
         public uint TradeSkillIdStation;
         [GameTableFieldArray(25u)]
-        public uint[] QuestIdGiven;
+        public uint[] QuestIdGiven = [];
         [GameTableFieldArray(25u)]
-        public uint[] QuestIdReceive;
+        public uint[] QuestIdReceive = [];
         public uint QuestAnimStateId;
         public uint PrerequisiteIdAnimState;
         public uint QuestAnimObjectiveIndex;
