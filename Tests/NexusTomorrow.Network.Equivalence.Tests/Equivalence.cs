@@ -51,7 +51,7 @@ internal sealed class Equivalence
         IWireStruct value;
         try
         {
-            object instance = seed.HasValue ? Filler.Fill(_declared, new Random(seed.Value), seed.Value) : Activator.CreateInstance(_declared)!;
+            object instance = seed.HasValue ? Filler.Fill(_declared, new Random(seed.Value), seed.Value) : Filler.Empty(_declared);
             value = (IWireStruct)instance;
         }
         catch (Exception exception)

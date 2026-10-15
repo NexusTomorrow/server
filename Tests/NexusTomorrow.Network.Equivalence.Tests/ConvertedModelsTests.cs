@@ -5,7 +5,7 @@ namespace NexusTomorrow.Network.Equivalence.Tests;
 public sealed class ConvertedModelsTests
 {
     private const int Seeds = 32;
-    private const int MaxReportedLines = 200;
+    private const int MaxReportedLines = 1200;
 
     [Fact]
     public void EveryDeclaredTypeWritesAndReadsLikeItsLegacyTwin()
@@ -41,11 +41,15 @@ public sealed class ConvertedModelsTests
         Assert.Equal(declared.Count, pairs + ConvertedModels.Exclusions.Count);
     }
 
+    /// <summary>
+    /// One line per type that differs, its first difference and how many it has, so a run shows every failing type.
+    /// </summary>
     private static string Report(List<string> differences)
     {
-        IEnumerable<string> lines = differences.Take(MaxReportedLines);
-        if (differences.Count > MaxReportedLines)
-            lines = lines.Append($"... and {differences.Count - MaxReportedLines} more");
-        return string.Join(Environment.NewLine, lines);
+        List<IGrouping<string, string>> types = [.. differences.GroupBy(difference => difference[..difference.IndexOf(' ', StringComparison.Ordinal)])];
+        IEnumerable<string> lines = types.Take(MaxReportedLines).Select(type => $"{type.First()} ({type.Count()} in all)");
+        if (types.Count > MaxReportedLines)
+            lines = lines.Append($"... and {types.Count - MaxReportedLines} more types");
+        return $"{types.Count} types differ:{Environment.NewLine}{string.Join(Environment.NewLine, lines)}";
     }
 }

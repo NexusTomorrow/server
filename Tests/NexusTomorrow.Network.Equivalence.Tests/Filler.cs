@@ -31,6 +31,15 @@ internal static class Filler
         return instance;
     }
 
+    /// <summary>
+    /// The empty instance of <paramref name="type"/>: zero numbers, empty strings, lists and blobs, the first fitting enum value and the first union arm,
+    /// with every nested member built, which the seed's models leave null until a caller sets them.
+    /// </summary>
+    public static object Empty(Type type)
+    {
+        return Fill(type, new ZeroRandom(), 0);
+    }
+
     private static void FillMembers(object instance, Random random, int seed)
     {
         IReadOnlyList<WireMember> members = WireMembers.Of(instance.GetType());
@@ -214,5 +223,36 @@ internal static class Filler
             throw new InvalidOperationException($"{union.QualifiedName} has no [UnionCase] arm in its assembly.");
 
         return arms[seed % arms.Length];
+    }
+
+    /// <summary>
+    /// Draws zero every time; <see cref="NextDouble"/> gives the midpoint, which the packed float range maps to zero.
+    /// </summary>
+    private sealed class ZeroRandom : Random
+    {
+        public override int Next(int maxValue)
+        {
+            return 0;
+        }
+
+        public override int Next(int minValue, int maxValue)
+        {
+            return minValue;
+        }
+
+        public override double NextDouble()
+        {
+            return 0.5;
+        }
+
+        public override void NextBytes(byte[] buffer)
+        {
+            Array.Clear(buffer);
+        }
+
+        public override void NextBytes(Span<byte> buffer)
+        {
+            buffer.Clear();
+        }
     }
 }
