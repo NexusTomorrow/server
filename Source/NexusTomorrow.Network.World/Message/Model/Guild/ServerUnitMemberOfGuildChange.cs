@@ -10,5 +10,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 public sealed partial class ServerUnitMemberOfGuildChange
 {
     [UInt(32)] public uint UnitId { get; set; }
-    [Array(CountBits = 32), UInt(64)] public List<ulong> GuildIds { get; set; } = [];
+    [Array(CountBits = 8), UInt(64)] public List<ulong> GuildIds { get; set; } = [];
 }

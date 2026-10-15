@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Housing;
 public partial class Neighbourhood
 {
     [UInt(64)] public ulong NeighbourhoodId { get; set; }
-    [UInt(64)] public ulong HousingNeighbourhoodInfoId { get; set; }
+    [UInt(14)] public ushort HousingNeighbourhoodInfoId { get; set; }
     [UInt(14)] public ushort ParentRealmId { get; set; }
     [UInt(64)] public ulong GuildIdOwner { get; set; }
     [WideString] public string Name { get; set; }

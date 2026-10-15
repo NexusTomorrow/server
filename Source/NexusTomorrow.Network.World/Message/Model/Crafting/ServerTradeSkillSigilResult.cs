@@ -7,5 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 [WireMessage(GameMessageOpcode.ServerTradeskillSigilResult, Direction.ServerToClient)]
 public sealed partial class ServerTradeskillSigilResult
 {
-    [UInt(32)] public TradeskillResult TradeskillSigilResult { get; set; }
+    [UInt(4)] public TradeskillResult TradeskillSigilResult { get; set; }
 }

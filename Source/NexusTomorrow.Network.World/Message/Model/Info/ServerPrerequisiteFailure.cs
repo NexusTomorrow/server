@@ -9,5 +9,5 @@ public sealed partial class ServerPrerequisiteFailure
 {
     [UInt(17)] public uint PrerequisiteId { get; set; }
     [UInt(9)] public uint PrerequisiteTypeId { get; set; }
-    [UInt(15)] public uint LocalizedStringId { get; set; }
+    [UInt(21)] public uint LocalizedStringId { get; set; }
 }

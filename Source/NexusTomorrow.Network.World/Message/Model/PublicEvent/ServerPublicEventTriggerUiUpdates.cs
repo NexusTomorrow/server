@@ -7,6 +7,6 @@ namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 [WireMessage(GameMessageOpcode.ServerPublicEventTriggerUiUpdates, Direction.ServerToClient)]
 public sealed partial class ServerPublicEventTriggerUiUpdates
 {
-    [UInt(14)] public uint EventId { get; set; }
+    [UInt(32)] public uint EventId { get; set; }
     [UInt(1)] public bool Start { get; set; } // true = triggers PublicEventStart, false = triggers PublicEventCleared
 }

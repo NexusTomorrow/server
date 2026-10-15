@@ -8,5 +8,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Housing;
 public sealed partial class ServerHousingNeighbourUpdate
 {
     public Neighbour Neighbour { get; set; }
-    [UInt(7)] public NeighborResult Result { get; set; }
+    [UInt(3)] public NeighborResult Result { get; set; }
 }

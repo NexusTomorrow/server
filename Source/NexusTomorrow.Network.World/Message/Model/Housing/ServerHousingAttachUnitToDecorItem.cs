@@ -9,5 +9,5 @@ public sealed partial class ServerHousingAttachUnitToDecorItem
 {
     public Identity ResidenceIdentity { get; set; }
     [UInt(64)] public ulong DecorId { get; set; }
-    [UInt(64)] public ulong AttachedUnitId { get; set; }
+    [UInt(32)] public uint AttachedUnitId { get; set; }
 }

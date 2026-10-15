@@ -8,6 +8,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell;
 public sealed partial class ClientCastGuildBossToken
 {
     public Identity GuildIdentity { get; private set; } = new Identity();
-    [UInt(32)] public uint Item2Id { get; private set; } // item2Id of the guild boss token item being used
+    [UInt(18)] public uint Item2Id { get; private set; } // item2Id of the guild boss token item being used
     [UInt(32)] public uint ClientSpellCastUniqueId { get; private set; }
 }

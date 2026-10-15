@@ -10,5 +10,5 @@ public sealed partial class ServerGroupActionResult
 {
     [UInt(64)] public ulong GroupId { get; set; }
     public Identity Identity { get; set; }
-    [UInt(32)] public GroupActionResult Result { get; set; }
+    [UInt(6)] public GroupActionResult Result { get; set; }
 }
