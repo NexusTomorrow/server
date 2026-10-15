@@ -84,7 +84,7 @@ namespace NexusTomorrow.Cryptography
         /// </summary>
         internal static byte[] DeriveSessionKey(BigInteger S)
         {
-            return new BigInteger(ShaInterleave(S), true).ToByteArray(true);
+            return ShaInterleave(S);
         }
 
         /// <summary>
