@@ -8,9 +8,11 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 [Message(GameMessageOpcode.ServerCharacterList)]
-public partial class ServerCharacterList : IWritable
+[WireMessage(GameMessageOpcode.ServerCharacterList, Direction.ServerToClient)]
+public sealed partial class ServerCharacterList : IWritable
 {
-    public partial class Character : IWritable
+    [WireStruct]
+    public sealed partial class Character : IWritable
     {
         // probably, x, y, z, yaw, pitch
         [WireStruct]
@@ -28,27 +30,28 @@ public partial class ServerCharacterList : IWritable
             }
         }
 
-        public ulong Id { get; set; }
-        public string Name { get; set; }
-        public Sex Sex { get; set; }
-        public Race Race { get; set; }
-        public Class Class { get; set; }
-        public uint Faction { get; set; }
-        public uint Level { get; set; }
-        public List<ItemVisual> Appearance { get; } = [];
-        public List<ItemVisual> Gear { get; } = [];
-        public ushort WorldId { get; set; }
-        public ushort WorldZoneId { get; set; }
-        public ushort RealmId { get; set; }
+        [UInt(64)] public ulong Id { get; set; }
+        [WideString] public string Name { get; set; }
+        [UInt(2)] public Sex Sex { get; set; }
+        [UInt(5)] public Race Race { get; set; }
+        [UInt(5)] public Class Class { get; set; }
+        [UInt(32)] public uint Faction { get; set; }
+        [UInt(32)] public uint Level { get; set; }
+        [Array(CountBits = 32)] public List<ItemVisual> Appearance { get; } = [];
+        [Array(CountBits = 32)] public List<ItemVisual> Gear { get; } = [];
+        [UInt(15)] public ushort WorldId { get; set; }
+        [UInt(15)] public ushort WorldZoneId { get; set; }
+        [UInt(14)] public ushort RealmId { get; set; }
         public WorldLocation Location { get; } = new();
-        public byte Path { get; set; }
-        public bool IsLocked { get; set; }
-        public bool RequiresRename { get; set; }
-        public uint GearMask { get; set; }
-        public List<uint> Labels { get; } = [];
-        public List<uint> Values { get; } = [];
-        public List<float> Bones { get; } = [];
-        public float LastLoggedOutDays { get; set; }
+        [UInt(3)] public byte Path { get; set; }
+        [UInt(1)] public bool IsLocked { get; set; }
+        [UInt(1)] public bool RequiresRename { get; set; }
+        [UInt(32)] public uint GearMask { get; set; }
+        [UInt(4), Count] public byte CustomisationCount { get; set; }
+        [Array(CountFrom = nameof(CustomisationCount)), UInt(32)] public List<uint> Labels { get; } = [];
+        [Array(CountFrom = nameof(CustomisationCount)), UInt(32)] public List<uint> Values { get; } = [];
+        [Array(CountBits = 32), Float32] public List<float> Bones { get; } = [];
+        [Float32] public float LastLoggedOutDays { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -93,18 +96,18 @@ public partial class ServerCharacterList : IWritable
         }
     }
 
-    public ulong ServerTime { get; set; }
-    public List<Character> Characters { get; } = [];
-    public List<uint> EnabledCharacterCreationIds { get; set; } = []; // Unclear if sending these has any effect.
-    public List<uint> DisabledCharacterCreationIds { get; set; } = [];
-    public ushort RealmId { get; set; }
+    [UInt(64)] public ulong ServerTime { get; set; }
+    [Array(CountBits = 32)] public List<Character> Characters { get; } = [];
+    [Array(CountBits = 32), UInt(32)] public List<uint> EnabledCharacterCreationIds { get; set; } = []; // Unclear if sending these has any effect.
+    [Array(CountBits = 32), UInt(32)] public List<uint> DisabledCharacterCreationIds { get; set; } = [];
+    [UInt(14)] public ushort RealmId { get; set; }
     public Identity CharacterRemoveIdentity { get; set; } = new Identity();
-    public uint CharacterRemoveTime { get; set; }
-    public uint CharacterReservationCount { get; set; }
-    public uint MaxNumberCharacters { get; set; }
-    public uint AdditionalCount { get; set; }
-    public Faction FactionRestriction { get; set; }
-    public bool FreeLevel50 { get; set; }
+    [UInt(32)] public uint CharacterRemoveTime { get; set; }
+    [UInt(32)] public uint CharacterReservationCount { get; set; }
+    [UInt(32)] public uint MaxNumberCharacters { get; set; }
+    [UInt(32)] public uint AdditionalCount { get; set; }
+    [UInt(14)] public Faction FactionRestriction { get; set; }
+    [UInt(1)] public bool FreeLevel50 { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

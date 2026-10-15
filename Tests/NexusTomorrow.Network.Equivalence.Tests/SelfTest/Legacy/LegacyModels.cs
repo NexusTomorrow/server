@@ -355,3 +355,34 @@ public sealed class ListArmB : IListArm
         B = reader.ReadByte();
     }
 }
+
+public sealed class BitArrayMessage : IReadable, IWritable
+{
+    public byte Kind { get; set; }
+    public NetworkBitArray Flags { get; set; } = new(32, NetworkBitArray.BitOrder.LeastSignificantBit);
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Kind);
+        writer.WriteBytes(Flags.GetBuffer());
+    }
+
+    public void Read(GamePacketReader reader)
+    {
+        Kind = reader.ReadByte();
+        reader.ReadBytes(4u).CopyTo(Flags.GetBuffer(), 0);
+    }
+}
+
+public sealed class ReversedBitArrayMessage : IReadable
+{
+    public NetworkBitArray Flags { get; } = new(32, NetworkBitArray.BitOrder.LeastSignificantBit);
+
+    public void Read(GamePacketReader reader)
+    {
+        // Mismatch: the bytes land in the buffer last first.
+        byte[] bytes = reader.ReadBytes(4u);
+        Array.Reverse(bytes);
+        bytes.CopyTo(Flags.GetBuffer(), 0);
+    }
+}

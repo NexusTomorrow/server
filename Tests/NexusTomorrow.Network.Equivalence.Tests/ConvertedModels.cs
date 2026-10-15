@@ -13,6 +13,9 @@ internal static class ConvertedModels
     private const string ReadShortThrows = "the legacy Read takes its first field with ReadShort(32), which throws, so the legacy model never reads; stage 3 declares it from the client facts";
     private const string ChatSeedWidths = "the legacy Read takes the random text seed in 14 bits and the legacy Write puts it in 32, so the two disagree; the declaration follows the Read";
     private const string HoldsChatSeed = "the legacy Write puts the Alien and Profanity formats' random text seed in 32 bits where their legacy Read takes 14, so no declaration matches both";
+    private const string Columns = "the legacy model keeps one list of records and writes each of their fields as a column; the declaration holds the columns as lists sharing a count, which have no legacy twin";
+    private const string NoCount = "the legacy Write leaves out the 32-bit count the client facts put before the elements; the declaration writes it";
+    private const string NestsItem = "it nests Item, whose legacy Write sends Glyphs.Count as the count of Unknown88";
 
     private static readonly Assembly s_legacyAssembly = typeof(legacy::NexusTomorrow.Network.World.ServiceCollectionExtensions).Assembly;
 
@@ -30,16 +33,35 @@ internal static class ConvertedModels
     {
         ["NexusTomorrow.Network.World.Chat.Model.ChatFormatAlien"] = ChatSeedWidths,
         ["NexusTomorrow.Network.World.Chat.Model.ChatFormatProfanity"] = ChatSeedWidths,
+        ["NexusTomorrow.Network.World.Message.Model.Abilities.ServerAmpRespecResult"] = Columns,
+        ["NexusTomorrow.Network.World.Message.Model.Achievement.ClientSteamAchievements"] = "the legacy Read decodes the achievement bytes into an ASCII string, which no declaration holds; the declaration keeps the bytes",
         ["NexusTomorrow.Network.World.Message.Model.Chat.ChatClientFormat"] = HoldsChatSeed,
         ["NexusTomorrow.Network.World.Message.Model.Chat.ChatFormat"] = HoldsChatSeed,
         ["NexusTomorrow.Network.World.Message.Model.Chat.ServerChat"] = HoldsChatSeed,
         ["NexusTomorrow.Network.World.Message.Model.Cinematic.ClientCinematicCameraSubjectPosVel"] = "the legacy Read calls Read on a Position it never creates, so it always throws; the declaration creates it",
+        ["NexusTomorrow.Network.World.Message.Model.Crafting.ServerCraftingCurrentCraft"] = "it nests CraftStats, whose legacy Write packs its bytes high byte first where its Read unpacks them low byte first",
+        ["NexusTomorrow.Network.World.Message.Model.Friendship.ServerFriendshipLocationUpdate"] = Columns,
+        ["NexusTomorrow.Network.World.Message.Model.Guild.ServerGuildBankInventoryAdd"] = NestsItem,
+        ["NexusTomorrow.Network.World.Message.Model.Guild.ServerGuildBankTabInventory"] = NoCount,
+        ["NexusTomorrow.Network.World.Message.Model.Housing.ServerHousingHarvestItemsSentToOwner"] = Columns,
+        ["NexusTomorrow.Network.World.Message.Model.Map.ServerZoneMap"] = "the legacy Write sends Count / 8 as the byte length, from a Count the caller sets apart from the bytes; the declaration sends the bytes' own length",
+        ["NexusTomorrow.Network.World.Message.Model.PlayerPath.ServerPathExplorerScavengerHuntClueAddUnitList"] = NoCount,
+        ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventUnitAdd"] = NoCount,
+        ["NexusTomorrow.Network.World.Message.Model.ServerItemAdd"] = NestsItem,
+        ["NexusTomorrow.Network.World.Message.Model.ServerPlayerCreate"] = NestsItem,
+        ["NexusTomorrow.Network.World.Message.Model.ServerQuestInit"] = "it nests QuestActive, whose objective columns have no legacy twin",
+        ["NexusTomorrow.Network.World.Message.Model.ServerQuestInit+QuestActive"] = Columns,
+        ["NexusTomorrow.Network.World.Message.Model.Shared.CraftStats"] = "the legacy Write packs the 64 bits high byte first where the legacy Read unpacks them low byte first; the declaration follows the Read",
+        ["NexusTomorrow.Network.World.Message.Model.Shared.InventoryItem"] = NestsItem,
+        ["NexusTomorrow.Network.World.Message.Model.Shared.Item"] = "the legacy Write sends Glyphs.Count as the count of Unknown88; the declaration counts Unknown88",
         ["NexusTomorrow.Network.World.Message.Model.Support.ClientCustomerSurveySubmit"] = "the legacy Read reads every survey arm with ReadShort(32), which throws, and leaves Survey null for any other id, so the legacy model never reads",
-        ["NexusTomorrow.Network.World.Message.Model.Support.Survey+ChallengesSurvey"] = ReadShortThrows,
-        ["NexusTomorrow.Network.World.Message.Model.Support.Survey+LevelingSurvey"] = ReadShortThrows,
-        ["NexusTomorrow.Network.World.Message.Model.Support.Survey+QuestDifficultySurvey"] = ReadShortThrows,
-        ["NexusTomorrow.Network.World.Message.Model.Support.Survey+QuestHoldoutSurvey"] = ReadShortThrows,
-        ["NexusTomorrow.Network.World.Message.Model.Support.Survey+QuestTSpellSurvey"] = ReadShortThrows,
+        ["NexusTomorrow.Network.World.Message.Model.Support.Survey+ChallengesSurvey"] = ReadShortThrows,
+        ["NexusTomorrow.Network.World.Message.Model.Support.Survey+LevelingSurvey"] = ReadShortThrows,
+        ["NexusTomorrow.Network.World.Message.Model.Support.Survey+QuestDifficultySurvey"] = ReadShortThrows,
+        ["NexusTomorrow.Network.World.Message.Model.Support.Survey+QuestHoldoutSurvey"] = ReadShortThrows,
+        ["NexusTomorrow.Network.World.Message.Model.Support.Survey+QuestTSpellSurvey"] = ReadShortThrows,
+        ["NexusTomorrow.Network.World.Message.Model.Utility.ServerInspectPlayerResponse"] = NestsItem,
+        ["NexusTomorrow.Network.World.Message.Model.Utility.ServerPlayedResponse"] = "the legacy Write converts a DateTime with ToFileTime, which no declaration does; the declaration carries the file time",
     };
 
     /// <summary>

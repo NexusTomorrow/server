@@ -1,19 +1,21 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Map;
 
 [Message(GameMessageOpcode.ServerZoneMap)]
-public class ServerZoneMap : IWritable
+[WireMessage(GameMessageOpcode.ServerZoneMap, Direction.ServerToClient)]
+public sealed partial class ServerZoneMap : IWritable
 {
-    public uint ZoneMapId { get; set; }
-    public uint Count { get; set; }
-    public NetworkBitArray ZoneMapBits { get; set; }
+    [UInt(32)] public uint ZoneMapId { get; set; }
+    [NotOnWire] public uint Count { get; set; }
+    [Blob(32)] public byte[] ZoneMapBits { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {
         writer.Write(ZoneMapId);
         writer.Write(Count / 8);
 
-        writer.WriteBytes(ZoneMapBits.GetBuffer());
+        writer.WriteBytes(ZoneMapBits);
     }
 }

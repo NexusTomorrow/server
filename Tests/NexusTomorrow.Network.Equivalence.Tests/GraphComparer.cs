@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.Equivalence.Tests;
 
 /// <summary>
 /// Compares a declared instance with a legacy instance member by member, with the twin mapper's name mapping and skips.
-/// Numbers compare by value, floats and doubles by bit pattern, strings by ordinal, collections by count then element, and union arms must be twins.
+/// Numbers compare by value, floats and doubles by bit pattern, strings by ordinal, collections by count then element, a legacy bit array by its buffer's bytes, and union arms must be twins.
 /// </summary>
 internal sealed class GraphComparer
 {
@@ -36,6 +36,10 @@ internal sealed class GraphComparer
     /// </summary>
     public void CompareMember(WireMember member, object? declared, object? legacy, string path, List<string> differences)
     {
+        // A declared byte[] stands for a legacy bit array, so the two compare by the bit array's buffer.
+        if (legacy is NetworkBitArray bits)
+            legacy = bits.GetBuffer();
+
         switch (member.Shape)
         {
             case WireShape.Value:

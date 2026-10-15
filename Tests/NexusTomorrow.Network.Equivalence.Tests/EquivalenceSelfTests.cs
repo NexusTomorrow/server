@@ -82,6 +82,21 @@ public sealed class EquivalenceSelfTests
         AssertNone(Check(typeof(ArmListMessage)));
     }
 
+    [Fact]
+    public void ADeclaredByteArrayStandsForALegacyBitArray()
+    {
+        AssertNone(Check(typeof(BitArrayMessage)));
+    }
+
+    [Fact]
+    public void ABitArrayReadInAnotherByteOrderIsCaught()
+    {
+        List<string> differences = Check(typeof(ReversedBitArrayMessage));
+
+        Assert.NotEmpty(differences);
+        Assert.All(differences, difference => Assert.Contains(" read: ReversedBitArrayMessage.Flags[", difference, StringComparison.Ordinal));
+    }
+
     private static List<string> Check(Type declared)
     {
         using ServiceProvider legacyServices = new ServiceCollection().BuildServiceProvider();

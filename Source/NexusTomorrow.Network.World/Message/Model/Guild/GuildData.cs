@@ -4,7 +4,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-public partial class GuildData : IWritable
+[WireStruct]
+public sealed partial class GuildData : IWritable
 {
     [WireStruct]
     public sealed partial class Info : IWritable
@@ -59,30 +60,30 @@ public partial class GuildData : IWritable
         }
     }
 
-    public ulong GuildId { get; set; }
-    public string GuildName { get; set; }
-    public GuildFlag Flags { get; set; }
-    public GuildType Type { get; set; }
+    [UInt(64)] public ulong GuildId { get; set; }
+    [WideString] public string GuildName { get; set; }
+    [UInt(32)] public GuildFlag Flags { get; set; }
+    [UInt(4)] public GuildType Type { get; set; }
 
-    public List<GuildRank> Ranks { get; set; } = [.. new GuildRank[10]];
+    [FixedArray(10)] public GuildRank[] Ranks { get; set; } = [.. Enumerable.Range(0, 10).Select(_ => new GuildRank())];
 
     public GuildStandard GuildStandard { get; set; } = new();
 
-    public uint MemberCount { get; set; }
-    public uint OnlineMemberCount { get; set; }
-    public uint Influence { get; set; }
-    public uint BonusInfluenceRemaining { get; set; }
+    [UInt(32)] public uint MemberCount { get; set; }
+    [UInt(32)] public uint OnlineMemberCount { get; set; }
+    [UInt(32)] public uint Influence { get; set; }
+    [UInt(32)] public uint BonusInfluenceRemaining { get; set; }
 
-    public ulong Money { get; set; }
-    public uint WarCoins { get; set; }
-    public uint BankTabCount { get; set; }
-    public List<string> BankTabNames { get; set; } = [.. new string[10]];
+    [UInt(64)] public ulong Money { get; set; }
+    [UInt(32)] public uint WarCoins { get; set; }
+    [UInt(32)] public uint BankTabCount { get; set; }
+    [FixedArray(10), WideString] public string[] BankTabNames { get; set; } = [.. Enumerable.Repeat(string.Empty, 10)];
 
-    public NetworkBitArray UnlockedPerks { get; set; } = new NetworkBitArray(128, NetworkBitArray.BitOrder.LeastSignificantBit);
+    [FixedArray(16), UInt(8)] public byte[] UnlockedPerks { get; set; } = new byte[16];
     // Set of flags represeting the unlock state of a GuildPerkId
-    // GuildPerkId = 1 is bit 0
+    // GuildPerkId = 1 is bit 0, least significant bit of each byte first
 
-    public List<ActivePerk> ActivePerks { get; set; } = [];
+    [Array(CountBits = 32)] public List<ActivePerk> ActivePerks { get; set; } = [];
 
     public Info GuildInfo { get; set; } = new();
 
@@ -93,13 +94,8 @@ public partial class GuildData : IWritable
         writer.Write(Flags, 32u);
         writer.Write(Type, 4u);
 
-        if (Ranks.Count < 10)
-        {
-            for (int i = Ranks.Count; i < 10; i++)
-                Ranks.Add(new GuildRank());
-        }
-
-        Ranks.ForEach(c => c.Write(writer));
+        foreach (GuildRank rank in Ranks)
+            rank.Write(writer);
 
         GuildStandard.Write(writer);
 
@@ -116,7 +112,7 @@ public partial class GuildData : IWritable
 
         // This has not been verified to put the bytes in the correct order.
         // May need to reverse the bit order or the byte order.
-        foreach (byte perk in UnlockedPerks.GetBuffer())
+        foreach (byte perk in UnlockedPerks)
             writer.Write(perk);
 
         writer.Write(ActivePerks.Count);

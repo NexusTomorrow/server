@@ -1,9 +1,12 @@
-﻿namespace NexusTomorrow.Network.Message.Model;
+﻿using NexusTomorrow.Network.Codec;
+
+namespace NexusTomorrow.Network.Message.Model;
 
 [Message(GameMessageOpcode.ClientEncrypted)]
-public class ClientEncrypted : IReadable
+[WireMessage(GameMessageOpcode.ClientEncrypted, Direction.ClientToServer)]
+public sealed partial class ClientEncrypted : IReadable
 {
-    public byte[] Data { get; private set; } = [];
+    [Blob(32, LengthIncludesSelf = true)] public byte[] Data { get; private set; } = [];
 
     public void Read(GamePacketReader reader)
     {

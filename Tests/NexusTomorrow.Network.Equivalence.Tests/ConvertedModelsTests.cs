@@ -26,8 +26,9 @@ public sealed class ConvertedModelsTests
             Type? twin = ConvertedModels.TwinOf(type);
             if (twin is null)
             {
-                // A holder of one union that only the declaration has is checked through the twinned type that holds it, where the seed keeps the bare arm.
-                if (WireMembers.SingleUnionOf(type) is not null && IsHeldByATwinnedType(type, declared))
+                // A type only the declaration has is checked through the twinned type that holds it: the mapper and comparer pair its members with
+                // the legacy member's own type, or with the bare arm where the seed keeps a union's arm itself.
+                if (IsHeldByATwinnedType(type, declared))
                     holders++;
                 else
                     untwinned.Add(fullName);
@@ -38,7 +39,7 @@ public sealed class ConvertedModelsTests
             pairs++;
         }
 
-        TestContext.Current.TestOutputHelper?.WriteLine($"Checked {pairs} of {declared.Count} declared types against their legacy twins; {holders} union holders checked through the types holding them; {ConvertedModels.Exclusions.Count} excluded.");
+        TestContext.Current.TestOutputHelper?.WriteLine($"Checked {pairs} of {declared.Count} declared types against their legacy twins; {holders} types without a twin checked through the types holding them; {ConvertedModels.Exclusions.Count} excluded.");
         if (untwinned.Count > 0)
             Assert.Fail($"These declared types have no legacy twin and no exclusion: {string.Join(", ", untwinned)}");
         if (differences.Count > 0)

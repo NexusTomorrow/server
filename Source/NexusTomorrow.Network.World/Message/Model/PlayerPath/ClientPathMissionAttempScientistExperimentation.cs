@@ -1,15 +1,17 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ClientPathMissionAttemptScientistExperimentation)]
-public class ClientPathMissionAttemptScientistExperimentation : IReadable
+[WireMessage(GameMessageOpcode.ClientPathMissionAttemptScientistExperimentation, Direction.ClientToServer)]
+public sealed partial class ClientPathMissionAttemptScientistExperimentation : IReadable
 {
-    public List<uint> Choices { get; private set; } = []; // Are all PathScientistExperimentationPatternDataId
+    [FixedArray(4), UInt(32)] public uint[] Choices { get; private set; } = new uint[4]; // Are all PathScientistExperimentationPatternDataId
 
     public void Read(GamePacketReader reader)
     {
         for (uint i = 0u; i < 4; i++)
-            Choices.Add(reader.ReadUInt());
+            Choices[i] = reader.ReadUInt();
     }
 }

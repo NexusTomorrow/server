@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientPackedWorld)]
-public class ClientPackedWorld : IReadable
+[WireMessage(GameMessageOpcode.ClientPackedWorld, Direction.ClientToServer)]
+public sealed partial class ClientPackedWorld : IReadable
 {
     // TODO: research this more
     // client hardcoded value of either 11 or 19 depending on what function sends the packet
-    public byte Unknown0 { get; private set; }
-    public byte[] Data { get; private set; }
+    [UInt(5)] public byte Unknown0 { get; private set; }
+    [Blob(32, Align = true, LengthIncludesSelf = true)] public byte[] Data { get; private set; } = [];
 
     public void Read(GamePacketReader reader)
     {

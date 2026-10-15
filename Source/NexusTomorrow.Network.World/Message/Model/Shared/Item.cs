@@ -3,7 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public partial class Item : IWritable
+[WireStruct]
+public sealed partial class Item : IWritable
 {
     [WireStruct]
     public sealed partial class UnknownStructure : IWritable
@@ -33,27 +34,27 @@ public partial class Item : IWritable
         }
     }
 
-    public ulong Guid { get; set; }
-    public ulong Unknown0 { get; set; }
-    public uint ItemId { get; set; }
+    [UInt(64)] public ulong Guid { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [UInt(18)] public uint ItemId { get; set; }
     public ItemLocation LocationData { get; set; }
-    public uint StackCount { get; set; }
-    public uint Charges { get; set; }
-    public ulong RandomCircuitData { get; set; }
-    public uint RandomGlyphData { get; set; }
-    public ulong ThresholdData { get; set; }
-    public float Durability { get; set; }
-    public uint Unknown44 { get; set; }
-    public byte Unknown48 { get; set; }
-    public uint DyeData { get; set; }
-    public uint DynamicFlags { get; set; }
-    public uint ExpirationTimeLeft { get; set; }
-    public UnknownStructure[] Unknown58 { get; set; }
-    public uint Unknown70 { get; set; }
-    public List<uint> Microchips { get; } = [];
-    public List<uint> Glyphs { get; } = [];
-    public List<UnknownStructure2> Unknown88 { get; } = [];
-    public uint EffectiveItemLevel { get; set; }
+    [UInt(32)] public uint StackCount { get; set; }
+    [UInt(32)] public uint Charges { get; set; }
+    [UInt(64)] public ulong RandomCircuitData { get; set; }
+    [UInt(32)] public uint RandomGlyphData { get; set; }
+    [UInt(64)] public ulong ThresholdData { get; set; }
+    [Float32] public float Durability { get; set; }
+    [UInt(32)] public uint Unknown44 { get; set; }
+    [UInt(8)] public byte Unknown48 { get; set; }
+    [UInt(32)] public uint DyeData { get; set; }
+    [UInt(32)] public uint DynamicFlags { get; set; }
+    [UInt(32)] public uint ExpirationTimeLeft { get; set; }
+    [FixedArray(2)] public UnknownStructure[] Unknown58 { get; set; } = [new(), new()];
+    [UInt(18)] public uint Unknown70 { get; set; }
+    [Array(CountBits = 3), UInt(32)] public List<uint> Microchips { get; } = [];
+    [Array(CountBits = 4), UInt(32)] public List<uint> Glyphs { get; } = [];
+    [Array(CountBits = 6)] public List<UnknownStructure2> Unknown88 { get; } = [];
+    [UInt(32)] public uint EffectiveItemLevel { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathEpisodeProgress)]
-public class ServerPathEpisodeProgress : IWritable
+[WireMessage(GameMessageOpcode.ServerPathEpisodeProgress, Direction.ServerToClient)]
+public sealed partial class ServerPathEpisodeProgress : IWritable
 {
-    public ushort EpisodeId { get; set; }
-    public List<Mission> Missions { get; set; } = [];
+    [UInt(14)] public ushort EpisodeId { get; set; }
+    [Array(CountBits = 16)] public List<MissionProgress> Missions { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

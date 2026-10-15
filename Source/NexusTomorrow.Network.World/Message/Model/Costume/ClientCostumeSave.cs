@@ -5,7 +5,8 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Costume;
 
 [Message(GameMessageOpcode.ClientCostumeSave)]
-public partial class ClientCostumeSave : IReadable
+[WireMessage(GameMessageOpcode.ClientCostumeSave, Direction.ClientToServer)]
+public sealed partial class ClientCostumeSave : IReadable
 {
     [WireStruct]
     public sealed partial class CostumeItem : IReadable
@@ -21,12 +22,12 @@ public partial class ClientCostumeSave : IReadable
         }
     }
 
-    public int Index { get; private set; }
-    public CostumeType Type { get; private set; }
-    public ulong MannequinDecorId { get; private set; }
-    public List<CostumeItem> Items { get; } = []; // in order of CostumeItemSlot enum
-    public uint VisibilityMask { get; private set; }
-    public bool UserServiceToken { get; private set; }
+    [SInt(32)] public int Index { get; private set; }
+    [UInt(2)] public CostumeType Type { get; private set; }
+    [UInt(64)] public ulong MannequinDecorId { get; private set; }
+    [FixedArray(Costume.MaxCostumeItems)] public CostumeItem[] Items { get; } = new CostumeItem[Costume.MaxCostumeItems]; // in order of CostumeItemSlot enum
+    [UInt(32)] public uint VisibilityMask { get; private set; }
+    [UInt(1)] public bool UserServiceToken { get; private set; }
 
     public void Read(GamePacketReader reader)
     {
@@ -38,7 +39,7 @@ public partial class ClientCostumeSave : IReadable
         {
             var part = new CostumeItem();
             part.Read(reader);
-            Items.Add(part);
+            Items[i] = part;
         }
 
         VisibilityMask = reader.ReadUInt();

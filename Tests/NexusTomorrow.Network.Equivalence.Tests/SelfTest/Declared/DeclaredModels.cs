@@ -144,3 +144,16 @@ public sealed partial class ListArmB : IListArm
 {
     [UInt(8)] public byte B { get; set; }
 }
+
+[WireMessage((GameMessageOpcode)0xFE0A, Direction.Both)]
+public sealed partial class BitArrayMessage
+{
+    [UInt(8)] public byte Kind { get; set; }
+    [FixedArray(4), UInt(8)] public byte[] Flags { get; set; } = new byte[4];
+}
+
+[WireMessage((GameMessageOpcode)0xFE0B, Direction.ClientToServer)]
+public sealed partial class ReversedBitArrayMessage
+{
+    [FixedArray(4), UInt(8)] public byte[] Flags { get; set; } = new byte[4];
+}

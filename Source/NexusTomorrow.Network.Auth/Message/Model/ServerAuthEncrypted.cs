@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.Auth.Message.Model;
 
 [Message(GameMessageOpcode.ServerAuthEncrypted)]
-public class ServerAuthEncrypted : IWritable
+[WireMessage(GameMessageOpcode.ServerAuthEncrypted, Direction.ServerToClient)]
+public sealed partial class ServerAuthEncrypted : IWritable
 {
-    public byte[] Data { get; set; }
+    [Blob(32, LengthIncludesSelf = true)] public byte[] Data { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {
