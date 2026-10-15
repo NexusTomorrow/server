@@ -17,7 +17,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network.Codec\NexusTomorrow.Network.Codec.csproj" />
-    <!-- The legacy GamePacketReader and GamePacketWriter for LegacyParityTests. -->
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network.Codec.Generator\NexusTomorrow.Network.Codec.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <!-- WireMessageAttribute and GameMessageOpcode for the fixtures, and the legacy GamePacketReader and GamePacketWriter for LegacyParityTests. -->
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network\NexusTomorrow.Network.csproj" />
   </ItemGroup>
 

@@ -131,6 +131,11 @@ dotnet_diagnostic.CA1707.severity = none
 dotnet_diagnostic.CA1069.severity = none
 dotnet_diagnostic.CA1707.severity = none
 
+# Release tracking (RS2008) serves analyzers published as packages; this generator ships only inside
+# the repository, built with the projects that use it.
+[Source/NexusTomorrow.Network.Codec.Generator/**.cs]
+dotnet_diagnostic.RS2008.severity = none
+
 # Replaced in Part B: the codec's converter rewrites these wire models and retires these primitives,
 # so they keep the seed's names and analyzer findings until then. Network.World and Network.Auth
 # switch their analyzers off in their project files. Part B deletes each section as its files go.

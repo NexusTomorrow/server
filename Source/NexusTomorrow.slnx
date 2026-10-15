@@ -9,6 +9,7 @@
     <Project Path="NexusTomorrow.GameTable/NexusTomorrow.GameTable.csproj" />
     <Project Path="NexusTomorrow.IO/NexusTomorrow.IO.csproj" />
     <Project Path="NexusTomorrow.Network.Auth/NexusTomorrow.Network.Auth.csproj" />
+    <Project Path="NexusTomorrow.Network.Codec.Generator/NexusTomorrow.Network.Codec.Generator.csproj" />
     <Project Path="NexusTomorrow.Network.Codec/NexusTomorrow.Network.Codec.csproj" />
     <Project Path="NexusTomorrow.Network.Sts/NexusTomorrow.Network.Sts.csproj" />
     <Project Path="NexusTomorrow.Network.World/NexusTomorrow.Network.World.csproj" />
@@ -19,6 +20,7 @@
     <Project Path="../Tests/NexusTomorrow.ClientConnector.Tests/NexusTomorrow.ClientConnector.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Cryptography.Tests/NexusTomorrow.Cryptography.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.GameTable.Tests/NexusTomorrow.GameTable.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Network.Codec.Generator.Tests/NexusTomorrow.Network.Codec.Generator.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Codec.Tests/NexusTomorrow.Network.Codec.Tests.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
