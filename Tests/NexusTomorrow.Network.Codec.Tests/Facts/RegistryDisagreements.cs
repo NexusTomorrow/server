@@ -73,7 +73,6 @@ internal static class RegistryDisagreements
         ["0x0405 server to client"] = FieldsDiffer, // ServerGroupMemberAdd
         ["0x0424 server to client"] = FieldsDiffer, // ServerGroupRequestJoinResponse
         ["0x046F server to client"] = BitsDiffer, // ServerGuildBankInventoryAdd
-        ["0x0487 server to client"] = BitsDiffer, // ServerGuildEventLogChange
         ["0x0493 server to client"] = FieldsDiffer, // ServerGuildJoin
         ["0x04A1 server to client"] = FieldsDiffer, // ServerGuildBankWithdraw
         ["0x04A3 server to client"] = FieldsDiffer, // ServerGuildMemberChange

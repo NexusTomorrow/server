@@ -55,6 +55,7 @@ internal static class ConvertedModels
         ["NexusTomorrow.Network.World.Message.Model.Guild.ServerGuildBankInventoryAdd"] = NestsItem,
         ["NexusTomorrow.Network.World.Message.Model.Guild.ServerGuildBankTabInventory"] = NoCount,
         ["NexusTomorrow.Network.World.Message.Model.Guild.ServerGuildClassification"] = "the client takes the classification in 3 bits where the seed wrote 14; the declaration follows the client",
+        ["NexusTomorrow.Network.World.Message.Model.Guild.ServerGuildEventLogChange"] = "the client takes one guild identity before the entry's fields where the seed wrote two; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.Guild.ServerUnitMemberOfGuildChange"] = "the client takes the guild id count in 8 bits where the seed wrote 32; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.Housing.ClientHousingChangeInteriorWallpaper"] = "the legacy Read calls Read on the six null elements of DecorUpdates, so it always throws; the declaration follows the client facts",
         ["NexusTomorrow.Network.World.Message.Model.Housing.Neighbourhood"] = "the client takes the neighbourhood info id in 14 bits where the seed wrote 64; the declaration follows the client",
