@@ -99,7 +99,8 @@ internal static class WireMembers
             return (WireEncoding.NarrowString, 0);
         if (member.IsDefined(typeof(TerminatedWideStringAttribute)))
             return (WireEncoding.TerminatedWideString, 0);
-        if (valueType.IsDefined(typeof(WireStructAttribute), inherit: false))
+        // A message nests as it is, as the client nests whole message bodies in lists.
+        if (IsWireType(valueType))
             return (WireEncoding.Struct, 0);
 
         throw new InvalidOperationException($"{member.DeclaringType?.Name}.{member.Name} has no wire encoding.");

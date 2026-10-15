@@ -133,8 +133,9 @@ internal static class Filler
     {
         if (type == typeof(bool))
             return random.Next(2) == 1;
+        // A negative enum value is left out: the legacy writer converts an enum with ToUInt64, which throws for one, so the seed could never send it.
         if (type.IsEnum)
-            return NextEnum(type, number => ScalarValues.FitsUnsigned(number, bits, ScalarValues.SizeOf(type)), random);
+            return NextEnum(type, number => number >= 0 && ScalarValues.FitsUnsigned(number, bits, ScalarValues.SizeOf(type)), random);
 
         // Any pattern of the low bits: for a signed type as wide as its field, that includes every negative value.
         return ScalarValues.FromInteger(NextBits(random, bits), type);
