@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NexusTomorrow.Game.Static\NexusTomorrow.Game.Static.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Network\NexusTomorrow.Network.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/Client/">
+    <Project Path="NexusTomorrow.ClientConnector/NexusTomorrow.ClientConnector.csproj" />
+    <Project Path="NexusTomorrow.MapGenerator/NexusTomorrow.MapGenerator.csproj" />
+  </Folder>
+  <Folder Name="/Server/">
+    <Project Path="NexusTomorrow.Cryptography/NexusTomorrow.Cryptography.csproj" />
+    <Project Path="NexusTomorrow.Game.Static/NexusTomorrow.Game.Static.csproj" />
+    <Project Path="NexusTomorrow.GameTable/NexusTomorrow.GameTable.csproj" />
+    <Project Path="NexusTomorrow.IO/NexusTomorrow.IO.csproj" />
+    <Project Path="NexusTomorrow.Network.Auth/NexusTomorrow.Network.Auth.csproj" />
+    <Project Path="NexusTomorrow.Network.Sts/NexusTomorrow.Network.Sts.csproj" />
+    <Project Path="NexusTomorrow.Network.World/NexusTomorrow.Network.World.csproj" />
+    <Project Path="NexusTomorrow.Network/NexusTomorrow.Network.csproj" />
+    <Project Path="NexusTomorrow.Shared/NexusTomorrow.Shared.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+</Solution>

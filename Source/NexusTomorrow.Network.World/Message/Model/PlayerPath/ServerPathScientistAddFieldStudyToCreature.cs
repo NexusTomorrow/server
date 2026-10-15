@@ -1,0 +1,17 @@
+﻿using NexusTomorrow.Network.Message;
+
+namespace NexusTomorrow.Network.World.Message.Model.PlayerPath
+{
+    [Message(GameMessageOpcode.ServerPathScientistAddFieldStudyToCreature)]
+    public class ServerPathScientistAddFieldStudyToCreature : IWritable
+    {
+        public uint UnitId { get; set; }
+        public uint PathScientistFieldStudyId { get; set; }
+
+        public void Write(GamePacketWriter writer)
+        {
+            writer.Write(UnitId);
+            writer.Write(PathScientistFieldStudyId, 14);
+        }
+    }
+}

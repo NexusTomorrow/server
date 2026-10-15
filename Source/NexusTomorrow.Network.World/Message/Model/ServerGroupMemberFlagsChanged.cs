@@ -1,0 +1,25 @@
+using NexusTomorrow.Network.Message;
+using NexusTomorrow.Network.World.Message.Model.Shared;
+using NexusTomorrow.Game.Static.Group;
+
+namespace NexusTomorrow.Network.World.Message.Model
+{
+    [Message(GameMessageOpcode.ServerGroupMemberFlagsChanged)]
+    public class ServerGroupMemberFlagsChanged : IWritable
+    {
+        public ulong GroupId { get; set; }
+        public uint MemberIndex { get; set; } //< Not sure
+        public Identity TargetedPlayer { get; set; } = new();
+        public GroupMemberInfoFlags ChangedFlags { get; set; }
+        public bool IsFromPromotion { get; set; }
+
+        public void Write(GamePacketWriter writer)
+        {
+            writer.Write(GroupId);
+            writer.Write(MemberIndex);
+            TargetedPlayer.Write(writer);
+            writer.Write(ChangedFlags, 32);
+            writer.Write(IsFromPromotion);
+        }
+    }
+}

@@ -1,0 +1,23 @@
+﻿using NexusTomorrow.Game.Static.Matching;
+using NexusTomorrow.Network.Message;
+using NexusTomorrow.Network.World.Message.Model.Shared;
+
+namespace NexusTomorrow.Network.World.Message.Model
+{
+    [Message(GameMessageOpcode.ClientMatchingQueueParty)]
+    public class ClientMatchingQueueParty : IReadable
+    {
+        public MatchingMap MapData { get; private set; }
+        public Role Roles { get; private set; }
+        public uint PrimeLevel { get; private set; }
+
+        public void Read(GamePacketReader reader)
+        {
+            MapData = new MatchingMap();
+            MapData.Read(reader);
+
+            Roles    = reader.ReadEnum<Role>(32u);
+            PrimeLevel = reader.ReadUInt();
+        }
+    }
+}

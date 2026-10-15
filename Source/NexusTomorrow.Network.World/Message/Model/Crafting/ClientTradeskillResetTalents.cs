@@ -1,0 +1,16 @@
+using NexusTomorrow.Network.Message;
+using NexusTomorrow.Game.Static.Crafting;
+
+namespace NexusTomorrow.Network.World.Message.Model.Crafting
+{
+    [Message(GameMessageOpcode.ClientTradeskillResetTalents)]
+    public class ClientTradeskillResetTalents : IReadable
+    {
+        public TradeskillType TradeskillId { get; private set; }
+
+        public void Read(GamePacketReader reader)
+        {
+            TradeskillId = reader.ReadEnum<TradeskillType>(32u);
+        }
+    }
+}
