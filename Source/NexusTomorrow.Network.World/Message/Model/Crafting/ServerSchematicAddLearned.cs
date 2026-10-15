@@ -1,4 +1,4 @@
-using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Message;
 using NexusTomorrow.Game.Static.Crafting;
 using System.Numerics;
 

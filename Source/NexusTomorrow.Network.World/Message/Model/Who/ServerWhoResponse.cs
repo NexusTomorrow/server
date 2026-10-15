@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Entity;
+﻿using NexusTomorrow.Game.Static.Entity;
 using NexusTomorrow.Game.Static.Reputation;
 using NexusTomorrow.Game.Static.Who;
 using NexusTomorrow.Network.Message;

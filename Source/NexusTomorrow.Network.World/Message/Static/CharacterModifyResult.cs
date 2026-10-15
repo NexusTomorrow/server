@@ -1,4 +1,4 @@
-namespace NexusTomorrow.Network.World.Message.Static
+﻿namespace NexusTomorrow.Network.World.Message.Static
 {
     public enum CharacterModifyResult
     {

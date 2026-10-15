@@ -1,4 +1,4 @@
-namespace NexusTomorrow.Game.Static.Housing
+﻿namespace NexusTomorrow.Game.Static.Housing
 {
     public enum HousingPlugFacing
     {

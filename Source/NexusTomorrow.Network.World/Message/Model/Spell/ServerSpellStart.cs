@@ -1,4 +1,4 @@
-using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell
@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell
     public class ServerSpellStart : IWritable
     {
         public class InitialPosition : IWritable
-        {   
+        {
             public uint  UnitId { get; set; }
             public byte  TargetFlags { get; set; }
             public Position Position { get; set; } = new Position();
@@ -25,7 +25,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell
         }
 
         public class TelegraphPosition : IWritable
-        {   
+        {
             public ushort TelegraphId { get; set; }
             public uint   AttachedUnitId { get; set; }
             public byte   TargetFlags { get; set; }

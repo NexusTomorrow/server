@@ -32,7 +32,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Housing
             uint temp = reader.ReadUInt();
             MannequinCostumeIndex = (ushort)(temp & 0xFFFF);
             MannequinPoseId = (ushort)(temp >> 16);
-            
+
             RecordFlags      = reader.ReadUInt();
             HookIndex        = reader.ReadUInt();
             PlotIndex        = reader.ReadUInt();

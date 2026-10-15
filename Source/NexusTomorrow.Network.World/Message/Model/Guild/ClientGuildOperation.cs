@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using NexusTomorrow.Game.Static.Guild;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;

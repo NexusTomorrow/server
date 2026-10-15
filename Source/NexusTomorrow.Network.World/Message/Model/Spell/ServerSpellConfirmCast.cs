@@ -1,4 +1,4 @@
-using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell
     // After a client initialises a spell cast, the server confirms the cast with this message.
     // Not used when spell casts are initiated by other sources.
 
-    [Message(GameMessageOpcode.ServerSpellConfirmCast)] 
+    [Message(GameMessageOpcode.ServerSpellConfirmCast)]
     public class ServerSpellConfirmCast : IWritable
     {
         public uint ClientSpellCastUniqueId { get; set; }

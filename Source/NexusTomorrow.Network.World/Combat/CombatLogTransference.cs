@@ -24,8 +24,8 @@ namespace NexusTomorrow.Network.World.Combat
                 writer.Write(Absorption);
             }
         }
-        
-        
+
+
         public CombatLogType Type => CombatLogType.Transference;
 
         public uint DamageAmount { get; set; }

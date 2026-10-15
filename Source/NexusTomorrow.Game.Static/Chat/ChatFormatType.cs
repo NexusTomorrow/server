@@ -2,7 +2,7 @@
 {
     public enum ChatFormatType
     {
-        Format0  = 0, 
+        Format0  = 0,
         Alien    = 1,
         Roleplay = 2,
         Format3  = 3,

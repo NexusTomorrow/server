@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Support
     public class ClientStuck : IReadable
     {
         public UnstickType UnstickingType { get; private set; }
-        public uint ClientSpellCastUniqueId { get; private set; } 
+        public uint ClientSpellCastUniqueId { get; private set; }
 
         public void Read(GamePacketReader reader)
         {

@@ -1,4 +1,4 @@
-namespace NexusTomorrow.Game.Static.Spell
+﻿namespace NexusTomorrow.Game.Static.Spell
 {
     public enum ShortcutSet
     {

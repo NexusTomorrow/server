@@ -1,4 +1,4 @@
-namespace NexusTomorrow.Game.Static
+﻿namespace NexusTomorrow.Game.Static
 {
     public enum DisableType
     {

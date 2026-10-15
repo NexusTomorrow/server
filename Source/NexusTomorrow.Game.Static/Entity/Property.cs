@@ -81,7 +81,7 @@
         RatingDamageReflectAmount                   = 62,
         RatingDamageReflectChance                   = 63,
         RatingCCResilience                          = 64,
-        MoveSpeedMultiplier                         = 100, 
+        MoveSpeedMultiplier                         = 100,
         BaseAvoidChance                             = 101,
         BaseCritChance                              = 102,
         DamageMitigationPctOffset                   = 103,

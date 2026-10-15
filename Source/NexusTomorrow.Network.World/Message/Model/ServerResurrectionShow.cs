@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Message.Model
         public uint RezCost { get; set; }
 
         /// <summary>
-        /// Set the amount of time, in milliseconds, 
+        /// Set the amount of time, in milliseconds,
         /// </summary>
         public uint TimeUntilRezMs { get; set; }
 

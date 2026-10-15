@@ -1,4 +1,4 @@
-namespace NexusTomorrow.Game.Static.Entity
+﻿namespace NexusTomorrow.Game.Static.Entity
 {
     public enum FlairType
     {

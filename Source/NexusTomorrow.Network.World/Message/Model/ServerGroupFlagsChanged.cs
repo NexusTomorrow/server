@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Group;
+﻿using NexusTomorrow.Game.Static.Group;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model

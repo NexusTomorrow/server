@@ -12,7 +12,7 @@ namespace NexusTomorrow.Network.Sts.Model
         }
 
         public void Write(XmlWriter writer)
-        {   
+        {
             writer.WriteStartElement("Error");
 
             writer.WriteStartAttribute("code");

@@ -13,7 +13,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild
         /// If the operation was a rank update, then this value is the index of the rank that was updated.
         /// Otherwise, this can be 1 or 0.
         /// </summary>
-        public uint ReferenceId { get; set; } 
+        public uint ReferenceId { get; set; }
         public string TargetName { get; set; } // The name of the target of the operation.  This can be a character name or rank name.
         public GuildResult Result { get; set; }
 

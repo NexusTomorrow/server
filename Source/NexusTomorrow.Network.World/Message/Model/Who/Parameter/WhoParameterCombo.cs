@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter
         public Class ClassId { get; private set; }
         public ushort WorldZoneId { get; private set; }
         public ushort WorldZoneId2 { get; private set; } // usually a duplicate of WorldZoneId, not sure why this is only 14 bits
- 
+
         public void Read(GamePacketReader reader)
         {
             SearchString = reader.ReadWideString();

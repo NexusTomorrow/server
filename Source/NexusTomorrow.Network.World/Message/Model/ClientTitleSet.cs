@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Message.Model
 {
     [Message(GameMessageOpcode.ClientTitleSet)]
-    public class ClientTitleSet : IReadable 
+    public class ClientTitleSet : IReadable
     {
         public ushort TitleId { get; set; }
 

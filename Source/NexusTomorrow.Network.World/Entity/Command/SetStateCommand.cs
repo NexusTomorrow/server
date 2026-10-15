@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Entity.Movement.Command;
+﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
 using NexusTomorrow.Game.Static.Entity.Movement.Command.State;
 
 namespace NexusTomorrow.Network.World.Entity.Command

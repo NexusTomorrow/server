@@ -22,7 +22,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Chat
         {
             writer.Write(ChatMessageId);
             writer.Write(GM);
-            
+
             writer.Write(Formats.Count, 5u);
             Formats.ForEach(format => format.Write(writer));
 

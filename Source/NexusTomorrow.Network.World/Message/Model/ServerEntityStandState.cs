@@ -13,7 +13,7 @@ namespace NexusTomorrow.Network.World.Message.Model
         public void Write(GamePacketWriter writer)
         {
             writer.Write(Guid);
-            writer.Write(StandState, 4); 
+            writer.Write(StandState, 4);
             writer.Write(EmoteId, 14);
         }
     }

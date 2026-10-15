@@ -22,7 +22,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell
             writer.Write(UnitId_2);
             writer.WriteVector3(Position_Unit2);
             writer.Write(MissileActorId);
-            writer.Write(TimeElapsed);            
+            writer.Write(TimeElapsed);
         }
     }
 }

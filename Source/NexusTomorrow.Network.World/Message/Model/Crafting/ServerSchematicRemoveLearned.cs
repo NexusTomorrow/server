@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Crafting;
+﻿using NexusTomorrow.Game.Static.Crafting;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting

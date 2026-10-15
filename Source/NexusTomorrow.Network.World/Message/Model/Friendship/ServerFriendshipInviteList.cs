@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Entity;
+﻿using NexusTomorrow.Game.Static.Entity;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
@@ -15,7 +15,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship
             public float ExpiryInDays { get; set; }
             public string Note { get; set; }
             public string Name { get; set; }
-            public Class Class { get; set; } 
+            public Class Class { get; set; }
             public Game.Static.PlayerPath.Path Path { get; set; }
             public byte Level { get; set; }
 

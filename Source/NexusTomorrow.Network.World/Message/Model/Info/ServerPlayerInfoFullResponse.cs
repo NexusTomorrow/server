@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Entity;
+﻿using NexusTomorrow.Game.Static.Entity;
 using NexusTomorrow.Network.Message;
 using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
 

@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Storefront;
+﻿using NexusTomorrow.Game.Static.Storefront;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model
@@ -67,8 +67,8 @@ namespace NexusTomorrow.Network.World.Message.Model
                 public float PricePremium { get; set; }
                 public float PriceAlternative { get; set; }
                 public DisplayFlag DisplayFlags { get; set; }
-                public long Unknown6 { get; set; } 
-                public byte Unknown7 { get; set; } 
+                public long Unknown6 { get; set; }
+                public byte Unknown7 { get; set; }
                 public List<OfferCurrencyData> CurrencyData { get; set; } = new();
                 public List<OfferItemData> ItemData { get; set; } = new();
 

@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Entity;
+﻿using NexusTomorrow.Game.Static.Entity;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 using FactionId = NexusTomorrow.Game.Static.Reputation.Faction;

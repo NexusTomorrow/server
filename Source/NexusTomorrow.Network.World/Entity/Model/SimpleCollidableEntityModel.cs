@@ -1,4 +1,4 @@
-namespace NexusTomorrow.Network.World.Entity.Model
+﻿namespace NexusTomorrow.Network.World.Entity.Model
 {
     public class SimpleCollidableEntityModel : IEntityModel
     {

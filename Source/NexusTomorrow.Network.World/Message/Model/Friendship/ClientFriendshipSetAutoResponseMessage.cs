@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship
     {
         public string AwayMessage { get; private set; }
         public string BusyMessage { get; private set; }
-        
+
         public void Read(GamePacketReader reader)
         {
             AwayMessage = reader.ReadWideString();

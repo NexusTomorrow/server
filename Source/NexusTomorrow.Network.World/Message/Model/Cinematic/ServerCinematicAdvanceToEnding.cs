@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic
 {
     // TODO:: confirm
-    [Message(GameMessageOpcode.ServerCinematicAdvanceToEnding)] 
+    [Message(GameMessageOpcode.ServerCinematicAdvanceToEnding)]
     public class ServerCinematicAdvanceToEnding : IWritable
     {
         public byte Unused { get; set; }

@@ -12,7 +12,7 @@ namespace NexusTomorrow.Network.World.Message.Model.AccountInventory
             public ulong Price { get; set; }
             public bool  IsBuyOrder { get; set; }
             public ulong ListTime { get; set; } // a Win32 FILETIME
-            public ulong ExpirationTime { get; set; } // a Win32 FILETIME 
+            public ulong ExpirationTime { get; set; } // a Win32 FILETIME
 
             public void Write(GamePacketWriter writer)
             {

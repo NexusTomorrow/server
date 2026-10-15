@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Entity;
+﻿using NexusTomorrow.Game.Static.Entity;
 using NexusTomorrow.Game.Static.Guild;
 
 namespace NexusTomorrow.Network.World.Entity.Model
@@ -33,7 +33,7 @@ namespace NexusTomorrow.Network.World.Entity.Model
 
             writer.Write((byte)GuildIds.Count, 5u);
             GuildIds.ForEach(e => writer.Write(e));
-            
+
             writer.Write(Bones.Count, 6u);
             Bones.ForEach(e => writer.Write(e));
 

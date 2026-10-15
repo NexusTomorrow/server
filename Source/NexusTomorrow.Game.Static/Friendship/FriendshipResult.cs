@@ -31,7 +31,7 @@
         PlayerNotOfThisRealm,     // Player is not member of this realm.
         FriendsBlocked,           // Player is blocking Friend Requests. Mean, right?
         // 27 missing
-        LocationsBusy       = 28, // 
+        LocationsBusy       = 28, //
         CannotInviteSelf    = 29, // You can't ignore or add yourself as a Friend or Rival.
         ThrottledRequest    = 30, // Please try again, and slow down!
         ContainsProfanity   = 31, // This text contains profanity.

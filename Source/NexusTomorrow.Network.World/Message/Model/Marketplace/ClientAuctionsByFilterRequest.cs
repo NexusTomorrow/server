@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Marketplace
     {
         // Only one of the four fields below will be filled out depedning on the search type
         // Family, Category, Type, or by item(s)
-        public uint Item2FamilyId { get; private set; } 
+        public uint Item2FamilyId { get; private set; }
         public uint Item2CategoryId { get; private set; }
         public uint Item2TypeId { get; private set; }
         public List<uint> Item2Ids { get; private set; } = [];

@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Mail;
+﻿using NexusTomorrow.Game.Static.Mail;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail

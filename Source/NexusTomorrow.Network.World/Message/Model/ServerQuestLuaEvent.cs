@@ -46,7 +46,7 @@ namespace NexusTomorrow.Network.World.Message.Model
         {
             public LuaEventType Type => LuaEventType.Bool;
             public bool Bool { get; set; }
-    
+
             public void Write(GamePacketWriter writer)
             {
                 writer.Write(Bool);

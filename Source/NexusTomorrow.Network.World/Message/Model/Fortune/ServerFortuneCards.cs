@@ -8,10 +8,10 @@ namespace NexusTomorrow.Network.World.Message.Model.Fortune
     [Message(GameMessageOpcode.ServerFortuneCards)]
     public class ServerFortuneCards : IWritable
     {
-        public FortuneOperation Operation { get; set; } 
-        public RewardRarity[] Rarity { get; set; } = new RewardRarity[3]; 
-        public uint[] AccountItemId { get; set; } = new uint[3]; 
-        public bool[] CardFlipped { get; set; } = new bool[3]; 
+        public FortuneOperation Operation { get; set; }
+        public RewardRarity[] Rarity { get; set; } = new RewardRarity[3];
+        public uint[] AccountItemId { get; set; } = new uint[3];
+        public bool[] CardFlipped { get; set; } = new bool[3];
 
         public void Write(GamePacketWriter writer)
         {

@@ -126,7 +126,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame
 
             writer.Write(CharacterRemoveTime);
             writer.Write(CharacterReservationCount);
-            writer.Write(MaxNumberCharacters); 
+            writer.Write(MaxNumberCharacters);
             writer.Write(AdditionalCount);
             writer.Write(FactionRestriction, 14);
             writer.Write(FreeLevel50);

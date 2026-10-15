@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Message.Model
 
         public void Write(GamePacketWriter writer)
         {
-            writer.Write(Guid); 
+            writer.Write(Guid);
             writer.Write(Title, 14);
         }
     }

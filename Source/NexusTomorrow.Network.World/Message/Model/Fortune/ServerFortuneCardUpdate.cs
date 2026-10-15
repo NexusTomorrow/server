@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Fortune
     public class ServerFortuneCardUpdate : IWritable
     {
         public bool Unknown { get; set; } = true; // always needs to be true or the client ignores the rest of the message
-        public FortuneOperation Operation { get; set; }   
+        public FortuneOperation Operation { get; set; }
         public bool[] CardFlipped { get; set; } = new bool[3];
 
         public void Write(GamePacketWriter writer)

@@ -9,6 +9,6 @@
         FreePlace        = 4,
         Landscape        = 6,
         WarplotFreePlace = 7,
-        Mannequin        = 8 
+        Mannequin        = 8
     }
 }

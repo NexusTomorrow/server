@@ -1,4 +1,4 @@
-namespace NexusTomorrow.Game.Static.AccountInventory
+﻿namespace NexusTomorrow.Game.Static.AccountInventory
 {
     public enum AccountCurrencyType
     {
@@ -6,7 +6,7 @@ namespace NexusTomorrow.Game.Static.AccountInventory
         Credd                   = 1,
         RealmTransfer           = 2,
         CharacterRename         = 3,
-        Essence                 = 4, 
+        Essence                 = 4,
         MysticShiny             = 5,  // FortuneCoin
         Omnibits                = 6,
         NCoins                  = 7,
@@ -17,9 +17,9 @@ namespace NexusTomorrow.Game.Static.AccountInventory
         GiantPoints             = 12,
         PromotionToken          = 13, // MaxLevelToken
         PromissoryNote          = 14,
-        RedEssence              = 15, // CrimsonEssence   
-        BlueEssence             = 16, // CobaltEssence   
+        RedEssence              = 15, // CrimsonEssence
+        BlueEssence             = 16, // CobaltEssence
         GreenEssence            = 17, // ViridianEssence
-        PurplEssence            = 18  // VioletEssence  
+        PurplEssence            = 18  // VioletEssence
     }
 }

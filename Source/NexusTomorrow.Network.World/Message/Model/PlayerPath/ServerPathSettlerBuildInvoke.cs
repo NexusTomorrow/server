@@ -13,7 +13,7 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath
         {
             writer.Write(SettlerHubUnitId);
             writer.Write(PathSettlerImprovementGroupIds.Count);
-            PathSettlerImprovementGroupIds.ForEach(id => writer.Write(id)); 
+            PathSettlerImprovementGroupIds.ForEach(id => writer.Write(id));
         }
     }
 }

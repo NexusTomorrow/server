@@ -5,7 +5,7 @@ namespace NexusTomorrow.Network.World.Message.Model.AccountInventory
 {
     public class AccountInventoryItem : IWritable
     {
-        public ulong UserInventoryId { get; set; } 
+        public ulong UserInventoryId { get; set; }
         public uint AccountItemId { get; set; }
         public byte Unused1 { get; set; } // sometimes set to 6, value not used by client
         public bool Unused2 { get; set; }

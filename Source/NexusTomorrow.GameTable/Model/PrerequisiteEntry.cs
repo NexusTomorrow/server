@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Prerequisite;
+﻿using NexusTomorrow.Game.Static.Prerequisite;
 
 namespace NexusTomorrow.GameTable.Model
 {

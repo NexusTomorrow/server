@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Housing;
+﻿using NexusTomorrow.Game.Static.Housing;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
@@ -50,7 +50,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Housing
             }
         }
 
-        public Identity ResidenceIdentity { get; set; } 
+        public Identity ResidenceIdentity { get; set; }
         public List<Plot> Plots { get; set; } = [];
 
         public void Write(GamePacketWriter writer)

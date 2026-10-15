@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static;
+﻿using NexusTomorrow.Game.Static;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.Auth.Message.Model

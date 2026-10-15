@@ -1,4 +1,4 @@
-namespace NexusTomorrow.Network.Message
+﻿namespace NexusTomorrow.Network.Message
 {
     public enum GameMessageOpcode
     {
@@ -58,7 +58,7 @@ namespace NexusTomorrow.Network.Message
         ServerDatacubeUpdateList        = 0x00E0,
         ServerDatacubeUpdate            = 0x00E1,
         ServerDatacubeVolumeUpdate      = 0x00E2,
-        ClientCastDefaultAttack         = 0x00E3,    
+        ClientCastDefaultAttack         = 0x00E3,
         ClientResurrectRequest          = 0x00E4,
         ServerCharacterDeleteResult     = 0x00E6,
         ServerCharacterDisabled         = 0x00E7,
@@ -244,7 +244,7 @@ namespace NexusTomorrow.Network.Message
         ServerCinematicCameraTransition = 0x0216,
         ServerCinematicCameraSubject    = 0x0217,
         ServerCinematicCamera           = 0x0218,
-        ServerCinematicPlayerControl    = 0x0219,   
+        ServerCinematicPlayerControl    = 0x0219,
         ServerCinematicFullScreenEffectAdd = 0x021A,
         ServerCinematicMissileActorAdd  = 0x021B,
         ServerCinematicVisualEffectAdd  = 0x021C,
@@ -313,7 +313,7 @@ namespace NexusTomorrow.Network.Message
         ClientCustomerSurveySubmit      = 0x033F,
         ClientCharacterDelete           = 0x0352,
         ServerEntityDestroy             = 0x0355,
-        ClientDialogOpened              = 0x0356,  
+        ClientDialogOpened              = 0x0356,
         ServerDialogStart               = 0x0357,
         ServerDialogEnd                 = 0x0358,
         ServerQuestLuaEvent             = 0x0359,
@@ -452,7 +452,7 @@ namespace NexusTomorrow.Network.Message
         ServerGuildInfluenceAndMoney    = 0x048D,
         ServerGuildInfoMessageUpdate    = 0x048F,
         ClientGuildInviteResponse       = 0x0490,
-        ServerGuildInvite               = 0x0491,   
+        ServerGuildInvite               = 0x0491,
         ServerGuildJoin                 = 0x0493,
         ServerGuildRemove               = 0x0495,
         ServerGuildInit                 = 0x0497,
@@ -612,7 +612,7 @@ namespace NexusTomorrow.Network.Message
         ServerMatchingLeftQueue         = 0x0604,
         ClientMatchingTransferIntoMatch = 0x0606,
         ServerMatchingListPlayersQueuedForMap = 0x60A,
-        ServerMatchingMatchVoteKickCancelled = 0x060D, 
+        ServerMatchingMatchVoteKickCancelled = 0x060D,
         ServerMatchingMatchVoteKickFailed = 0x0612,
         ServerMatchingMatchVoteKickBegin = 0x0614,
         ServerMatchingMatchKickCooldownUpdate = 0x0616,
@@ -625,7 +625,7 @@ namespace NexusTomorrow.Network.Message
         ServerMatchingAverageWaitTimeUpdate = 0x0628,
         Server0635                      = 0x0635,
         ServerMovementControl           = 0x0636, // handler sends 0x0635 and 0x063A
-        ClientEntityCommand             = 0x0637, // bidirectional? packet has both read and write handlers 
+        ClientEntityCommand             = 0x0637, // bidirectional? packet has both read and write handlers
         ServerEntityCommand             = 0x0638, // bidirectional? packet has both read and write handlers
         ServerMovementControlRemove     = 0x0639,
         ClientZoneChange                = 0x063A,
@@ -677,7 +677,7 @@ namespace NexusTomorrow.Network.Message
         ServerPathExplorerScavengerHuntClueRemoveByClueId = 0x06B7,
         ServerPathExplorerScavengerHuntClueAddWorldLocation = 0x06B8,
         ServerPathExplorerScavengerHuntClueAddUnitList = 0x06B9,
-        ServerPathMissionActivate       = 0x06BA, 
+        ServerPathMissionActivate       = 0x06BA,
         ServerPathMissionUpdate         = 0x06BB,
         ServerPathInitialise            = 0x06BC,
         ClientPathUnlockRequest         = 0x06BD,
@@ -791,7 +791,7 @@ namespace NexusTomorrow.Network.Message
         ServerSpellCastResult           = 0x07FC,
         ServerSpellConfirmCast          = 0x07FD,
         ServerSpellFinish               = 0x07FE,
-        ServerSpellStart                = 0x07FF, 
+        ServerSpellStart                = 0x07FF,
         ClientSpellStopCast             = 0x0801,
         ClientCancelEffect              = 0x0802,
         ServerSpellCooldownStart        = 0x0804,
@@ -806,7 +806,7 @@ namespace NexusTomorrow.Network.Message
         ServerSpellThresholdCancel      = 0x0815,
         ServerSpellThresholdStart       = 0x0816,
         ServerSpellThresholdUpdate      = 0x0817,
-        ServerSpellExecute              = 0x0818, // executes spells cast by others 
+        ServerSpellExecute              = 0x0818, // executes spells cast by others
         ServerSpellAuraCancel           = 0x0819,
         Server081A                      = 0x081A, // spline related
         Server081B                      = 0x081B, // spline related
@@ -862,7 +862,7 @@ namespace NexusTomorrow.Network.Message
         ServerUnitEnteredCombat         = 0x089A,
         Server089B                      = 0x089B, // mount related
         ServerLootCanLoot               = 0x089F,
-        ServerLootRemove                = 0x08A1, 
+        ServerLootRemove                = 0x08A1,
         ServerLootRoll                  = 0x08A2,
         ServerLootWinner                = 0x08A3,
         ServerLootGrant                 = 0x08A5,

@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Housing;
+﻿using NexusTomorrow.Game.Static.Housing;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 

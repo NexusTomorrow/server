@@ -21,7 +21,7 @@ namespace NexusTomorrow.Network.World.Message.Model.PublicEvent
 
         public uint UnitId { get; set; }
         public List<PublicEventOperation> Operations { get; set; } = [];
-        
+
         public void Write(GamePacketWriter writer)
         {
             writer.Write(UnitId);

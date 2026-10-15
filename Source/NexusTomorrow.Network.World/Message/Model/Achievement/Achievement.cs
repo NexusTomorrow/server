@@ -6,7 +6,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Achievement
     {
         // TODO: Determine the data types for the Data0/Data1 fields for each achievement. This is based on the achievementTypeId
 
-        public ushort AchievementId { get; set; } 
+        public ushort AchievementId { get; set; }
         public uint Data0 { get; set; } // simply counted type: uint number
                                         // checklist type: flags for achievement objectives with index of 0 to 31
         public uint Data1 { get; set; } // checklist type: flags for achievement objectives with index of 32 to 63

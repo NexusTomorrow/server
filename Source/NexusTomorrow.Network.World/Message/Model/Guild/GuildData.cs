@@ -109,7 +109,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild
 
             // This has not been verified to put the bytes in the correct order.
             // May need to reverse the bit order or the byte order.
-            foreach (byte perk in UnlockedPerks.GetBuffer()) 
+            foreach (byte perk in UnlockedPerks.GetBuffer())
                 writer.Write(perk);
 
             writer.Write(ActivePerks.Count);

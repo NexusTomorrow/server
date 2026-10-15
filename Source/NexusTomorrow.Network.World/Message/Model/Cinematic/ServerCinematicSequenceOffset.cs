@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Cinematic
     [Message(GameMessageOpcode.ServerCinematicStartTime)]
     public class ServerCinematicSequenceOffset : IWritable
     {
-        public uint SequenceOffset { get; set; } 
+        public uint SequenceOffset { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

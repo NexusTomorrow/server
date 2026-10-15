@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Chat;
+﻿using NexusTomorrow.Game.Static.Chat;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship

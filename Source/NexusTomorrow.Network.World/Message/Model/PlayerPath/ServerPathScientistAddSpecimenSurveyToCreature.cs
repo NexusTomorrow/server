@@ -15,5 +15,5 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath
             writer.Write(PathScientistSpecimenSurveyId, 14);
             writer.Write(ObjectiveIndex);
         }
-    }   
+    }
 }

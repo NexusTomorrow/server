@@ -14,7 +14,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship
             public string Note { get; set; }
             public float DaysUntilExpired { get; set; }
             public uint Seen { get; set; } // Seems to only be used for flagging seen invites
-            
+
             public void Write(GamePacketWriter writer)
             {
                 writer.Write(AccountFriendInviteId);

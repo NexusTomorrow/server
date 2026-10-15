@@ -54,7 +54,7 @@
         Community_AllPlotsOccupied                  = 53,
         Decor_CannotDonate                          = 54,
         Community_ResidenceNotPlacedInYourCommunity = 55,
-        Community_NotInACommunity                   = 56,   
+        Community_NotInACommunity                   = 56,
         Community_ReservationSuccess                = 57,
         Community_PlotAlreadyReserved               = 58,
         Community_PlotCurrentlyOccupied             = 59,

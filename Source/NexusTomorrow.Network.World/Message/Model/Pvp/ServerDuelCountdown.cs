@@ -2,7 +2,7 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Pvp
 {
-    // Starts the UI countdown. Only need to send to the participants. 
+    // Starts the UI countdown. Only need to send to the participants.
     [Message(GameMessageOpcode.ServerDuelCountdown)]
     public class ServerDuelCountdown : IWritable
     {

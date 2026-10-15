@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild
     {
         public Identity GuildIdentity { get; set; }
         public ulong ItemGuid { get; set; }
-        public uint Count { get; set; } 
+        public uint Count { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

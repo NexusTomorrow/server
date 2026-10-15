@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell
     public class ServerSpellBuffsAdd : IWritable
     {
         public class BuffInfo : IWritable
-        { 
+        {
             public uint ServerUniqueId { get; set; }
             public uint TargetUnitId { get; set; }
             public uint Unused { get; set; }

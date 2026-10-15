@@ -1,4 +1,4 @@
-namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model
 {
     public class SoundContextEntry
     {

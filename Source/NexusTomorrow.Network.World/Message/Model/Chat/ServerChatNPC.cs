@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Chat
     {
         public Channel Channel { get; set; }
         public uint UnitNameLocalizedTextId { get; set; }
-        public uint MessageLocalizedTextId { get; set; } 
+        public uint MessageLocalizedTextId { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

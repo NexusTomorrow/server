@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Reward
             public uint RotationId { get; set; } // Appears to be an ID used to denote a reward offered for some rotation period
                                              // Values seen vary been 0 and ~5600
                                              // Seen multiple times over time with different values in the RewardInfo
-                                             // Not certain how this should be created/managed 
+                                             // Not certain how this should be created/managed
             public uint RewardRotationContentId { get; set; }
             public float ExpirationTime { get; set; } // in days from now
             public RewardRotationRewardType RewardType { get; set; }

@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Guild;
+﻿using NexusTomorrow.Game.Static.Guild;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild

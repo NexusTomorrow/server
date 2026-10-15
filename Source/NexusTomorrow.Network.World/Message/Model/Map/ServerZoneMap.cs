@@ -1,7 +1,7 @@
-using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Map
-{   
+{
     [Message(GameMessageOpcode.ServerZoneMap)]
     public class ServerZoneMap : IWritable
     {

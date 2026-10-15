@@ -6,7 +6,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Utility
     [Message(GameMessageOpcode.ClientRandomRollRequest)]
     public class ClientRandomRollRequest : IReadable
     {
-        // Note that for /roll on the command line, 
+        // Note that for /roll on the command line,
         // the TargetPlayerIdentity's realmId and
         // characterId, as well as Unknown0 are 0.
         // As such, these fields are currently unused.

@@ -63,7 +63,7 @@
         // 58 is unused in PrerequisiteType.tbl
         Spell59                     = 59, // Spell requirements not met
         Spell60                     = 60, // Spell requirements not met
-        PathMissionCount            = 61, // Path mission count is incorrect 
+        PathMissionCount            = 61, // Path mission count is incorrect
         ScanCreature                = 62, // Unable to scan this creature - Probably HasScannedCreature
         Unknown63                   = 63, // Requirements not met
         Unknown64                   = 64, // Requirements not met
@@ -123,7 +123,7 @@
         Unit                        = 115, // Unit requirement not met
         Stealth                     = 116, // Stealth property requirement not met
         PublicEvent117              = 117, // Public event requirement not met
-        PublicEventObjective188     = 118, // Public event objective requirement not met 
+        PublicEventObjective188     = 118, // Public event objective requirement not met
         PublicEventObjectiveObject  = 119, // Public event objective object requirement not met
         PublicEvent120              = 120, // Public event requirement not met
         PublicEvent121              = 121, // Public event requirement not met.
@@ -213,7 +213,7 @@
         Personal2V2ArenaRating205   = 205, // Personal arena 2v2 rating requirement not met
         Personal3V3ArenaRating206   = 206, // Personal arena 3v3 rating requirement not met
         Personal5V5ArenaRating207   = 207, // Personal arena 5v5 rating requirement not met
-        Battlegrounds208            = 208, // Battlegrounds requirement not met 
+        Battlegrounds208            = 208, // Battlegrounds requirement not met
         Warplots209                 = 209, // Warplots requirement not met
         Personal2V2ArenaRating210   = 210, // Personal arena 2v2 rating requirement not met
         Personal3V3ArenaRating211   = 211, // Personal arena 3v3 rating requirement not met
@@ -244,7 +244,7 @@
         AbilityTierPoints           = 236, // Ability tier points requirement not met
         BonusPower                  = 237, // Bonus power requirement not met
         Power                       = 238, // Power requirement not met
-        ActionBar                   = 239, // Action bar does not meet requirements 
+        ActionBar                   = 239, // Action bar does not meet requirements
         Unknown240                  = 240, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown241                  = 241, // Exist in PrerequisiteType.tbl but does not have a description
         LiveEvent242                = 242, // Live event not complete
@@ -300,6 +300,6 @@
         Unknown292                  = 292, // Exist in PrerequisiteType.tbl but does not have a description - Primal Matrix ?
         Unknown293                  = 293, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown294                  = 294, // Exist in PrerequisiteType.tbl but does not have a description
-        Unknown295                  = 295  // Requirements not met           
+        Unknown295                  = 295  // Requirements not met
     }
 }

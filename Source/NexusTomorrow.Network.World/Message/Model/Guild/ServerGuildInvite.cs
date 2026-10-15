@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild
         public string GuildName { get; set; }
         public GuildFlag Flags { get; set; }
         public GuildType GuildType { get; set; }
-        public ulong Unused { get; set; } 
+        public ulong Unused { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

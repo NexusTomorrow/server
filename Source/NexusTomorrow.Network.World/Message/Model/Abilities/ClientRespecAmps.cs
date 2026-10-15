@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Abilities;
+﻿using NexusTomorrow.Game.Static.Abilities;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Abilities

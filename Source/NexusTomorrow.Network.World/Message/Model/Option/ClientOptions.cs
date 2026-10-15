@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Option
     public class ClientOptions : IReadable
     {
         public OptionType Type { get; private set; }
-        public uint NewValue { get; private set; } 
+        public uint NewValue { get; private set; }
 
         public void Read(GamePacketReader reader)
         {

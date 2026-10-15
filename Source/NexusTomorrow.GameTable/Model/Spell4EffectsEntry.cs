@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Spell;
+﻿using NexusTomorrow.Game.Static.Spell;
 
 namespace NexusTomorrow.GameTable.Model
 {

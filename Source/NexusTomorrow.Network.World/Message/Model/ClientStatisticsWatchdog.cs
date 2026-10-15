@@ -16,7 +16,7 @@ namespace NexusTomorrow.Network.World.Message.Model
         public void Read(GamePacketReader reader)
         {
             PropertyHashSeed = reader.ReadULong();
-            PlayerUnitPropertiesHash = reader.ReadULong(64); 
+            PlayerUnitPropertiesHash = reader.ReadULong(64);
             LongestTimeBetweenWatchdogLoops = reader.ReadInt();
             TimeToMiddleOfCircularBuffer = reader.ReadSingle();
             TimeBetweenWatchdogRunsWeightedAverage = reader.ReadSingle();

@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Spell;
+﻿using NexusTomorrow.Game.Static.Spell;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 using NexusTomorrow.Network.World.Message.Static;

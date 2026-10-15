@@ -61,7 +61,7 @@ namespace NexusTomorrow.Network.World.Message.Model
             {
                 KillerCreature.Write(writer);
             }
-            
+
             writer.Write(VictimType, 2u);
             if (VictimType == OpponentType.Player)
             {

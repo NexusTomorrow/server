@@ -6,7 +6,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Achievement
     public class ServerAchievementUpdate : IWritable
     {
         public bool Deleted { get; set; }
-        public List<Achievement> Achievements { get; set; } = []; 
+        public List<Achievement> Achievements { get; set; } = [];
 
         public void Write(GamePacketWriter writer)
         {

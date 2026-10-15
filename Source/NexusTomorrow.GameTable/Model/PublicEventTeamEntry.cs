@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.PublicEvent;
+﻿using NexusTomorrow.Game.Static.PublicEvent;
 
 namespace NexusTomorrow.GameTable.Model
 {

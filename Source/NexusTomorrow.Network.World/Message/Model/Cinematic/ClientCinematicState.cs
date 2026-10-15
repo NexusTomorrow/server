@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Cinematic;
+﻿using NexusTomorrow.Game.Static.Cinematic;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic

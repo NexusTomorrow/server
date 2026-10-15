@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Housing
     public class ServerHousingOwnership : IWritable
     {
         public Identity ResidenceIdentity { get; set; }
-        public OwnershipType Ownership { get; set; } 
+        public OwnershipType Ownership { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

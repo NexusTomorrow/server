@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.PublicEvent
     public class ClientPublicEventRequestScoreboard : IReadable
     {
         public uint EventId { get; private set; }
-        public bool Subscribe { get; private set; } 
+        public bool Subscribe { get; private set; }
 
         public void Read(GamePacketReader reader)
         {

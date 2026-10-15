@@ -10,7 +10,7 @@
         AwaitingUnloadPlayers,
 
         /// <summary>
-        /// Players have been unloaded, waiting to start entity unload. 
+        /// Players have been unloaded, waiting to start entity unload.
         /// </summary>
         AwaitingUnloadEntities,
 

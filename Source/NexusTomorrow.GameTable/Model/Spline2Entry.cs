@@ -1,4 +1,4 @@
-using NexusTomorrow.Game.Static.Entity.Movement.Spline;
+﻿using NexusTomorrow.Game.Static.Entity.Movement.Spline;
 
 namespace NexusTomorrow.GameTable.Model
 {

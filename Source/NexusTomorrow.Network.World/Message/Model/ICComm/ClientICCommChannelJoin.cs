@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.ICComm
     {
         public ICCommChannelType Type { get; private set; }
         public ulong GuildId { get; private set; } // only sent if Type is Guild
-        public string Name { get; private set; } 
+        public string Name { get; private set; }
 
         public void Read(GamePacketReader reader)
         {

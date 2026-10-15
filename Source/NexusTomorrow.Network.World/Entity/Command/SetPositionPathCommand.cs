@@ -1,4 +1,4 @@
-using System.Numerics;
+﻿using System.Numerics;
 using NexusTomorrow.Game.Static.Entity.Movement.Command;
 using NexusTomorrow.Game.Static.Entity.Movement.Spline;
 

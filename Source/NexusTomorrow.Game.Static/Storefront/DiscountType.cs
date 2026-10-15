@@ -1,4 +1,4 @@
-namespace NexusTomorrow.Game.Static.Storefront
+﻿namespace NexusTomorrow.Game.Static.Storefront
 {
     public enum DiscountType
     {

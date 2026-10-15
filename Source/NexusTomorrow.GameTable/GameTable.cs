@@ -189,7 +189,7 @@ namespace NexusTomorrow.GameTable
                                 switch (dataType)
                                 {
                                     case DataType.UInt:
-                                    { 
+                                    {
                                         if (elementType.IsEnum)
                                             array.SetValue(Enum.ToObject(elementType, reader.ReadUInt32()), j);
                                         else

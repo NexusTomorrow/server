@@ -19,6 +19,6 @@
         Cost                        = 22, //multiplier
         CraftIsCritical             = 23, //bool
         AdditiveLimit               = 26, //additive
-        AdditiveTier                = 27, //additive        
+        AdditiveTier                = 27, //additive
     }
 }

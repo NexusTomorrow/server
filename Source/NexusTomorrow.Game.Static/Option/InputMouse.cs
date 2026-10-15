@@ -1,4 +1,4 @@
-namespace NexusTomorrow.Game.Static.Option
+﻿namespace NexusTomorrow.Game.Static.Option
 {
     public enum InputMouse
     {

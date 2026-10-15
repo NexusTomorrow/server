@@ -1,4 +1,4 @@
-namespace NexusTomorrow.Game.Static.Group
+﻿namespace NexusTomorrow.Game.Static.Group
 {
     public enum HarvestLootRule : byte
     {
