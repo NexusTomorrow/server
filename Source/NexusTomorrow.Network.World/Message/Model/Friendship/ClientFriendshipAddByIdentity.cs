@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ClientFriendshipAccountAddByIdentity, Direction.Both)]
+[WireMessage(GameMessageOpcode.ClientFriendshipAccountAddByIdentity, Direction.ClientToServer)]
 public sealed partial class ClientFriendshipAddByIdentity
 {
     public Identity Target { get; set; } = new(); // Match the account from the target's identity

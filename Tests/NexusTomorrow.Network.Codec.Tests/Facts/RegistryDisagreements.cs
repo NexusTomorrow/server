@@ -9,15 +9,11 @@ internal static class RegistryDisagreements
 {
     private const string BitsDiffer = "unsettled: the declaration puts a different number of bits on the wire than the client takes";
     private const string FieldsDiffer = "unsettled: the bits agree, but the client takes them as fields of other widths";
-    private const string Reordered = "unsettled: the client takes these fields in another order";
     private const string PartMissing = "unsettled: the client takes a part the declaration lacks";
-    private const string NoRow = "unsettled: the client has no message with this opcode";
-    private const string WrongDirection = "unsettled: the client does not handle the message in this direction";
     private const string NoArmZero = "unsettled: no union arm answers selector 0, so the empty path is incomplete";
 
     public static IReadOnlyDictionary<string, string> Pinned { get; } = new Dictionary<string, string>(StringComparer.Ordinal)
     {
-        ["0x0094 client to server"] = Reordered, // ClientAuctionCancel
         ["0x00BA server to client"] = FieldsDiffer, // ServerBuybackItemUpdated
         ["0x00C2 client to server"] = BitsDiffer, // ClientCastServiceToken
         ["0x00C6 server to client"] = BitsDiffer, // ServerChallengeResult
@@ -46,7 +42,6 @@ internal static class RegistryDisagreements
         ["0x018E server to client"] = FieldsDiffer, // ServerP2PTradeUpdateItem
         ["0x0194 client to server"] = BitsDiffer, // ClientP2PTradingRemoveItem
         ["0x0197 client to server"] = BitsDiffer, // ClientP2PTradingSetMoney
-        ["0x0198 server to client"] = Reordered, // ServerP2PTradeUpdateMoney
         ["0x01B7 server to client"] = BitsDiffer, // ServerChatFlag
         ["0x01C0 server to client"] = BitsDiffer, // ServerChatList
         ["0x0231 server to client"] = BitsDiffer, // ServerCinematicActorMode
@@ -65,7 +60,6 @@ internal static class RegistryDisagreements
         ["0x0366 server to client"] = BitsDiffer, // ServerDisabledGameplaySystems
         ["0x03A4 server to client"] = BitsDiffer, // ServerFriendshipAccountCharacterZoneChanged
         ["0x03AE server to client"] = BitsDiffer, // ServerFriendshipAccountPrivateNote
-        ["0x03B3 server to client"] = WrongDirection, // ClientFriendshipAddByIdentity
         ["0x03BD client to server"] = BitsDiffer, // ClientFriendshipInviteMarkSeen
         ["0x03D1 server to client"] = FieldsDiffer, // ServerFortuneCards
         ["0x03DB server to client"] = FieldsDiffer, // ServerRealmInfo
@@ -79,7 +73,6 @@ internal static class RegistryDisagreements
         ["0x050B client to server"] = PartMissing, // ClientHousingDecorUpdate
         ["0x050D client to server"] = FieldsDiffer, // ClientHousingChangeInteriorWallpaper
         ["0x0510 client to server"] = FieldsDiffer, // ClientHousingPlugUpdate
-        ["0x0511"] = NoRow, // ClientHousingNeighbourInviteResponse
         ["0x058F client to server"] = FieldsDiffer, // ClientHelloRealm
         ["0x0592 client to server"] = FieldsDiffer, // ClientHelloAuth
         ["0x0599 server to client"] = FieldsDiffer, // ServerPlayerInfoFullResponse
@@ -99,14 +92,11 @@ internal static class RegistryDisagreements
         ["0x0823 client to server"] = PartMissing, // ClientSteamAchievements
         ["0x082A client to server"] = BitsDiffer, // ClientStorefrontPurchaseCharacter
         ["0x084F client to server"] = FieldsDiffer, // ClientCraftingComplexCraft
-        ["0x0851 client to server"] = BitsDiffer, // ClientCraftingCraftItem
-        ["0x0852 client to server"] = BitsDiffer, // ClientCraftingCraftItemAutoCraft
         ["0x0854 server to client"] = FieldsDiffer, // ServerCraftingCurrentCraft
         ["0x0860 server to client"] = FieldsDiffer, // ServerProfessionUpdate
         ["0x08B7 server to client"] = FieldsDiffer, // ServerPathSettlerHubUpdate
         ["0x0909 server to client"] = FieldsDiffer, // ServerEntityThreatListUpdate
         ["0x0954 server to client"] = BitsDiffer, // ServerWarPartyMatchResults
         ["0x0967 server to client"] = BitsDiffer, // ServerAccountCurrencyGrant
-        ["0x776E"] = NoRow, // ClientRecruitmentGuildGetDetailedGuildInfo
     };
 }
