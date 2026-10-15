@@ -5,6 +5,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetRotationFaceUnit)]
 [WireStruct]
+[UnionCase(EntityCommand.SetRotationFaceUnit)]
 public sealed partial class SetRotationFaceUnitCommand : IEntityCommandModel
 {
     [UInt(32)] public uint UnitId { get; set; }

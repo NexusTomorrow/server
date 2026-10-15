@@ -6,6 +6,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetMode)]
 [WireStruct]
+[UnionCase(EntityCommand.SetMode)]
 public sealed partial class SetModeCommand : IEntityCommandModel
 {
     [UInt(32)] public ModeType Mode { get; set; }

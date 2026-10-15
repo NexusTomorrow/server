@@ -5,11 +5,14 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerStoreOffers)]
-public partial class ServerStoreOffers : IWritable
+[WireMessage(GameMessageOpcode.ServerStoreOffers, Direction.ServerToClient)]
+public sealed partial class ServerStoreOffers : IWritable
 {
-    public partial class OfferGroup : IWritable
+    [WireStruct]
+    public sealed partial class OfferGroup : IWritable
     {
-        public partial class Offer : IWritable
+        [WireStruct]
+        public sealed partial class Offer : IWritable
         {
             [WireStruct]
             public sealed partial class OfferCurrencyData : IWritable
@@ -32,16 +35,48 @@ public partial class ServerStoreOffers : IWritable
                 }
             }
 
-            public class OfferItemData : IWritable
+            [WireStruct]
+            public sealed partial class OfferItemData : IWritable
             {
-                public uint Type { get; set; } // Should be 0
-                public ushort AccountItemId { get; set; } // 15
-                public uint Amount { get; set; }
+                /// <summary>
+                /// The item data <see cref="Type"/> selects.
+                /// </summary>
+                public interface IPayload : IWireStruct
+                {
+                }
 
-                public uint Type1Unknown0 { get; set; }
-                public uint Type1Unknown1 { get; set; }
+                [WireStruct]
+                [UnionCase(0)]
+                public sealed partial class AccountItem : IPayload
+                {
+                    [UInt(15)] public ushort AccountItemId { get; set; }
+                    [UInt(32)] public uint Amount { get; set; }
+                }
 
-                public uint Type2Unknown0 { get; set; }
+                [WireStruct]
+                [UnionCase(1)]
+                public sealed partial class UnknownPayload1 : IPayload
+                {
+                    [UInt(32)] public uint Type1Unknown0 { get; set; }
+                    [UInt(32)] public uint Type1Unknown1 { get; set; }
+                }
+
+                [WireStruct]
+                [UnionCase(2)]
+                public sealed partial class UnknownPayload2 : IPayload
+                {
+                    [UInt(32)] public uint Type2Unknown0 { get; set; }
+                }
+
+                [UInt(32)] public uint Type { get; set; } // Should be 0
+                [Union(nameof(Type))] public IPayload Payload { get; set; } = new AccountItem();
+                [NotOnWire] public ushort AccountItemId { get; set; } // 15
+                [NotOnWire] public uint Amount { get; set; }
+
+                [NotOnWire] public uint Type1Unknown0 { get; set; }
+                [NotOnWire] public uint Type1Unknown1 { get; set; }
+
+                [NotOnWire] public uint Type2Unknown0 { get; set; }
 
                 public void Write(GamePacketWriter writer)
                 {
@@ -63,16 +98,16 @@ public partial class ServerStoreOffers : IWritable
                 }
             }
 
-            public uint Id { get; set; }
-            public string Name { get; set; }
-            public string Description { get; set; }
-            public float PricePremium { get; set; }
-            public float PriceAlternative { get; set; }
-            public DisplayFlag DisplayFlags { get; set; }
-            public long Unknown6 { get; set; }
-            public byte Unknown7 { get; set; }
-            public List<OfferCurrencyData> CurrencyData { get; set; } = [];
-            public List<OfferItemData> ItemData { get; set; } = [];
+            [UInt(32)] public uint Id { get; set; }
+            [WideString] public string Name { get; set; }
+            [WideString] public string Description { get; set; }
+            [Float32] public float PricePremium { get; set; }
+            [Float32] public float PriceAlternative { get; set; }
+            [UInt(32)] public DisplayFlag DisplayFlags { get; set; }
+            [UInt(64)] public long Unknown6 { get; set; }
+            [UInt(8)] public byte Unknown7 { get; set; }
+            [Array(CountBits = 32)] public List<OfferCurrencyData> CurrencyData { get; set; } = [];
+            [Array(CountBits = 32)] public List<OfferItemData> ItemData { get; set; } = [];
 
             public void Write(GamePacketWriter writer)
             {
@@ -101,13 +136,18 @@ public partial class ServerStoreOffers : IWritable
             public uint Index { get; set; }
         }
 
-        public uint Id { get; set; }
-        public DisplayFlag DisplayFlags { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public ushort DisplayInfoOverride { get; set; }
-        public List<Offer> Offers { get; set; } = [];
-        public List<Category> Categories { get; set; } = [];
+        [UInt(32)] public uint Id { get; set; }
+        [UInt(32)] public DisplayFlag DisplayFlags { get; set; }
+        [WideString] public string Name { get; set; }
+        [WideString] public string Description { get; set; }
+        [UInt(14)] public ushort DisplayInfoOverride { get; set; }
+        [Array(CountBits = 32)] public List<Offer> Offers { get; set; } = [];
+
+        // The categories go on the wire as two columns, every Id and then every Index, sharing one count.
+        [UInt(32), Count] public uint CategoryCount { get; set; }
+        [Array(CountFrom = nameof(CategoryCount)), UInt(32)] public List<uint> CategoryIds { get; set; } = [];
+        [Array(CountFrom = nameof(CategoryCount)), UInt(32)] public List<uint> CategoryIndexes { get; set; } = [];
+        [NotOnWire] public List<Category> Categories { get; set; } = [];
 
         public void Write(GamePacketWriter writer)
         {
@@ -128,7 +168,7 @@ public partial class ServerStoreOffers : IWritable
         }
     }
 
-    public List<OfferGroup> OfferGroups { get; set; } = [];
+    [Array(CountBits = 32)] public List<OfferGroup> OfferGroups { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

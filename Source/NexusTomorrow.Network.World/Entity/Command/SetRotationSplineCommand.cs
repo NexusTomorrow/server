@@ -1,17 +1,20 @@
 ﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetRotationSpline)]
-public class SetRotationSplineCommand : IEntityCommandModel
+[WireStruct]
+[UnionCase(EntityCommand.SetRotationSpline)]
+public sealed partial class SetRotationSplineCommand : IEntityCommandModel
 {
-    public uint SplineId { get; set; }
-    public ushort Speed { get; set; }
-    public float Position { get; set; }
-    public byte Mode { get; set; }
-    public uint Offset { get; set; }
-    public bool Blend { get; set; }
-    public bool AdjustSpeedToLength { get; set; }
+    [UInt(32)] public uint SplineId { get; set; }
+    [UInt(16)] public ushort Speed { get; set; }
+    [Float32] public float Position { get; set; }
+    [UInt(4)] public byte Mode { get; set; }
+    [UInt(32)] public uint Offset { get; set; }
+    [UInt(1)] public bool Blend { get; set; }
+    [UInt(1)] public bool AdjustSpeedToLength { get; set; }
 
     public void Read(GamePacketReader reader)
     {

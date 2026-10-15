@@ -6,6 +6,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetPosition)]
 [WireStruct]
+[UnionCase(EntityCommand.SetPosition)]
 public sealed partial class SetPositionCommand : IEntityCommandModel
 {
     [Float32] public Vector3 Position { get; set; }

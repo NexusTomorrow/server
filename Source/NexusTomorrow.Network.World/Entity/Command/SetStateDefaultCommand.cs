@@ -5,6 +5,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetStateDefault)]
 [WireStruct]
+[UnionCase(EntityCommand.SetStateDefault)]
 public sealed partial class SetStateDefaultCommand : IEntityCommandModel
 {
     [UInt(1)] public bool Strafe { get; set; }

@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Group;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class GroupMember : IWritable
+[WireStruct]
+public sealed partial class GroupMember : IWritable
 {
     public Identity MemberIdentity { get; set; } = new();
-    public GroupMemberInfoFlags Flags { get; set; }
+    [UInt(32)] public GroupMemberInfoFlags Flags { get; set; }
     public GroupCharacter Member { get; set; }
-    public uint GroupIndex { get; set; }
+    [UInt(32)] public uint GroupIndex { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

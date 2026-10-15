@@ -6,6 +6,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetPositionKeys)]
 [WireStruct]
+[UnionCase(EntityCommand.SetPositionKeys)]
 public sealed partial class SetPositionKeysCommand : IEntityCommandModel
 {
     [UInt(10), Count] public ushort TimesCount { get; set; }

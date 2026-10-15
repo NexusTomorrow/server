@@ -5,6 +5,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetTime)]
 [WireStruct]
+[UnionCase(EntityCommand.SetTime)]
 public sealed partial class SetTimeCommand : IEntityCommandModel
 {
     [UInt(32)] public uint Time { get; set; }

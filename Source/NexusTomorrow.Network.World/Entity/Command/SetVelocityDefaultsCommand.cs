@@ -5,6 +5,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetVelocityDefaults)]
 [WireStruct]
+[UnionCase(EntityCommand.SetVelocityDefaults)]
 public sealed partial class SetVelocityDefaultsCommand : IEntityCommandModel
 {
     [UInt(1)] public bool Blend { get; set; }

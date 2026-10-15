@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Entity.Model;
 
 [WireStruct]
+[UnionCase(EntityType.Trigger)]
 public sealed partial class TriggerEntityModel : IEntityModel
 {
     [WireStruct]

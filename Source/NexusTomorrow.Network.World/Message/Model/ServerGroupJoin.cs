@@ -1,10 +1,12 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerGroupJoin)]
-public class ServerGroupJoin : IWritable
+[WireMessage(GameMessageOpcode.ServerGroupJoin, Direction.ServerToClient)]
+public sealed partial class ServerGroupJoin : IWritable
 {
     public Identity TargetPlayer { get; set; } = new();
     public Group Group { get; set; } = new Group();

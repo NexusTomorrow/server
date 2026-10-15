@@ -6,6 +6,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetRotationFacePosition)]
 [WireStruct]
+[UnionCase(EntityCommand.SetRotationFacePosition)]
 public sealed partial class SetRotationFacePositionCommand : IEntityCommandModel
 {
     [Float32] public Vector3 Position { get; set; }

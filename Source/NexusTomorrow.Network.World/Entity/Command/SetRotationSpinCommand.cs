@@ -6,6 +6,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetRotationSpin)]
 [WireStruct]
+[UnionCase(EntityCommand.SetRotationSpin)]
 public sealed partial class SetRotationSpinCommand : IEntityCommandModel
 {
     [Float32] public Vector3 Rotation { get; set; }

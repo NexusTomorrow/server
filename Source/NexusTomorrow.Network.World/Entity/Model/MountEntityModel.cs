@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Entity.Model;
 
 [WireStruct]
+[UnionCase(EntityType.Mount)]
 public sealed partial class MountEntityModel : IEntityModel
 {
     [UInt(18)] public uint CreatureId { get; set; }

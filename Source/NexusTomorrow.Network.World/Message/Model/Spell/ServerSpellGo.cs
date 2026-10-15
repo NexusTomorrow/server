@@ -6,7 +6,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellGo)]
-public partial class ServerSpellGo : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellGo, Direction.ServerToClient)]
+public sealed partial class ServerSpellGo : IWritable
 {
     [WireStruct]
     public sealed partial class MissileInfo : IWritable
@@ -27,16 +28,16 @@ public partial class ServerSpellGo : IWritable
         }
     }
 
-    public uint ServerUniqueId { get; set; }
-    public bool BIgnoreCooldown { get; set; }
+    [UInt(32)] public uint ServerUniqueId { get; set; }
+    [UInt(1)] public bool BIgnoreCooldown { get; set; }
     public Position PrimaryDestination { get; set; } = new Position();
 
-    public List<TargetInfo> TargetInfoData { get; set; } = [];
-    public List<InitialPosition> InitialPositionData { get; set; } = [];
-    public List<TelegraphPosition> TelegraphPositionData { get; set; } = [];
-    public List<MissileInfo> MissileInfoData { get; set; } = [];
+    [Array(CountBits = 8)] public List<TargetInfo> TargetInfoData { get; set; } = [];
+    [Array(CountBits = 8)] public List<InitialPosition> InitialPositionData { get; set; } = [];
+    [Array(CountBits = 8)] public List<TelegraphPosition> TelegraphPositionData { get; set; } = [];
+    [Array(CountBits = 8)] public List<MissileInfo> MissileInfoData { get; set; } = [];
 
-    public sbyte Phase { get; set; }
+    [SInt(8)] public sbyte Phase { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

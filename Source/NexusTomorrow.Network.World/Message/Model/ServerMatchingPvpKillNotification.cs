@@ -6,13 +6,22 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-// Must create an OpponentPlayer or OpponentCreature for both Killer and Victim
+// The legacy writer needs an OpponentPlayer or OpponentCreature for both Killer and Victim
 
 [Message(GameMessageOpcode.ServerMatchingPvpKillNotification)]
-public partial class ServerMatchingPvpKillNotification : IWritable
+[WireMessage(GameMessageOpcode.ServerMatchingPvpKillNotification, Direction.ServerToClient)]
+public sealed partial class ServerMatchingPvpKillNotification : IWritable
 {
+    /// <summary>
+    /// A killer or victim, a player or a creature as the <see cref="OpponentType"/> before it says.
+    /// </summary>
+    public interface IOpponent : IWireStruct
+    {
+    }
+
     [WireStruct]
-    public sealed partial class OpponentPlayer : IWritable
+    [UnionCase(OpponentType.Player)]
+    public sealed partial class OpponentPlayer : IWritable, IOpponent
     {
         public Identity Identity { get; set; } = new();
         [UInt(5)] public Class Class { get; set; }
@@ -25,7 +34,8 @@ public partial class ServerMatchingPvpKillNotification : IWritable
     }
 
     [WireStruct]
-    public sealed partial class OpponentCreature : IWritable
+    [UnionCase(OpponentType.Creature)]
+    public sealed partial class OpponentCreature : IWritable, IOpponent
     {
         [UInt(32)] public uint UnitId { get; set; }
         [UInt(18)] public uint Creature2Id { get; set; }
@@ -37,16 +47,18 @@ public partial class ServerMatchingPvpKillNotification : IWritable
         }
     }
 
-    public OpponentType KillerType { get; set; }
-    public OpponentPlayer KillerPlayer { get; set; }
-    public OpponentCreature KillerCreature { get; set; }
+    [UInt(2)] public OpponentType KillerType { get; set; }
+    [Union(nameof(KillerType))] public IOpponent Killer { get; set; } = new OpponentPlayer();
+    [NotOnWire] public OpponentPlayer KillerPlayer { get; set; }
+    [NotOnWire] public OpponentCreature KillerCreature { get; set; }
 
-    public OpponentType VictimType { get; set; }
-    public OpponentPlayer VictimPlayer { get; set; }
-    public OpponentCreature VictimCreature { get; set; }
+    [UInt(2)] public OpponentType VictimType { get; set; }
+    [Union(nameof(VictimType))] public IOpponent Victim { get; set; } = new OpponentPlayer();
+    [NotOnWire] public OpponentPlayer VictimPlayer { get; set; }
+    [NotOnWire] public OpponentCreature VictimCreature { get; set; }
 
-    public MatchTeam VictimTeam { get; set; }
-    public PvpDeathReason DeathReason { get; set; }
+    [UInt(2)] public MatchTeam VictimTeam { get; set; }
+    [UInt(3)] public PvpDeathReason DeathReason { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

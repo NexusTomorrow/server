@@ -1,17 +1,20 @@
 ﻿using System.Numerics;
 using NexusTomorrow.Game.Static.Entity.Movement.Command;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetPositionProjectile)]
-public class SetPositionProjectileCommand : IEntityCommandModel
+[WireStruct]
+[UnionCase(EntityCommand.SetPositionProjectile)]
+public sealed partial class SetPositionProjectileCommand : IEntityCommandModel
 {
-    public Vector3 Position { get; set; }
-    public Vector3 Rotation { get; set; }
-    public uint FlightTime { get; set; }
-    public float Gravity { get; set; }
-    public uint Offset { get; set; }
-    public bool Blend { get; set; }
+    [Float32] public Vector3 Position { get; set; }
+    [Float32] public Vector3 Rotation { get; set; }
+    [UInt(32)] public uint FlightTime { get; set; }
+    [Float32] public float Gravity { get; set; }
+    [UInt(32)] public uint Offset { get; set; }
+    [UInt(1)] public bool Blend { get; set; }
 
     public void Read(GamePacketReader reader)
     {

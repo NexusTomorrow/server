@@ -6,6 +6,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetVelocityKeys)]
 [WireStruct]
+[UnionCase(EntityCommand.SetVelocityKeys)]
 public sealed partial class SetVelocityKeysCommand : IEntityCommandModel
 {
     [UInt(10), Count] public ushort TimesCount { get; set; }

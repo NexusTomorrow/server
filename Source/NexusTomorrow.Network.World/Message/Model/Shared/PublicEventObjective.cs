@@ -1,16 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class PublicEventObjective : IWritable
+[WireStruct]
+public sealed partial class PublicEventObjective : IWritable
 {
-    public uint ObjectiveId { get; set; }
+    [UInt(15)] public uint ObjectiveId { get; set; }
     public PublicEventObjectiveStatus ObjectiveStatus { get; set; }
-    public bool Busy { get; set; }
-    public uint ElapsedTimeMs { get; set; }
-    public uint NotificationMode { get; set; }
-    public List<uint> Locations { get; set; } = []; // array of worldLocation2Id
-    public List<MapRegion> MapRegions { get; set; } = [];
+    [UInt(1)] public bool Busy { get; set; }
+    [UInt(32)] public uint ElapsedTimeMs { get; set; }
+    [UInt(32)] public uint NotificationMode { get; set; }
+    [Array(CountBits = 32), UInt(32)] public List<uint> Locations { get; set; } = []; // array of worldLocation2Id
+    [Array(CountBits = 32)] public List<MapRegion> MapRegions { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

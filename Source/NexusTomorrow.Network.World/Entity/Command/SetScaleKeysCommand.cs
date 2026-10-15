@@ -5,6 +5,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetScaleKeys)]
 [WireStruct]
+[UnionCase(EntityCommand.SetScaleKeys)]
 public sealed partial class SetScaleKeysCommand : IEntityCommandModel
 {
     [UInt(8), Count] public byte TimesCount { get; set; }

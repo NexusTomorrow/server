@@ -6,6 +6,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetStateKeys)]
 [WireStruct]
+[UnionCase(EntityCommand.SetStateKeys)]
 public sealed partial class SetStateKeysCommand : IEntityCommandModel
 {
     [UInt(8), Count] public byte TimesCount { get; set; }
