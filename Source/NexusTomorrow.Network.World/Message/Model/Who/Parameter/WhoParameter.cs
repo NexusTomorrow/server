@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Who;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
 
-public class WhoParameter : IReadable
+[WireStruct]
+public sealed partial class WhoParameter : IReadable
 {
-    public WhoParameterType Type { get; private set; }
-    public IWhoParameterData Data { get; private set; }
+    [UInt(4)] public WhoParameterType Type { get; private set; }
+    [Union(nameof(Type))] public IWhoParameterData Data { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

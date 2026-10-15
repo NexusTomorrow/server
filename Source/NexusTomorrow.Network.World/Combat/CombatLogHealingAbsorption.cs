@@ -4,6 +4,7 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
+[UnionCase(CombatLogType.HealingAbsorption)]
 public sealed partial class CombatLogHealingAbsorption : ICombatLog
 {
     [NotOnWire] public CombatLogType Type => CombatLogType.HealingAbsorption;

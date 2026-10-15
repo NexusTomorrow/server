@@ -1,18 +1,20 @@
 ﻿using NexusTomorrow.Game.Static.Story;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Story.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Story;
 
 [Message(GameMessageOpcode.ServerStoryTextCommunicator)]
-public class ServerStoryTextCommunicator : IWritable
+[WireMessage(GameMessageOpcode.ServerStoryTextCommunicator, Direction.ServerToClient)]
+public sealed partial class ServerStoryTextCommunicator : IWritable
 {
     public StoryMessage StoryMessage { get; set; }
-    public uint Creature2Id { get; set; }
-    public uint DurationMs { get; set; } = 10000;
-    public CommunicatorPortraitPlacement PortraitPlacement { get; set; }
-    public CommunicatorOverlay Overlay { get; set; }
-    public CommunicatorBackground Background { get; set; }
+    [UInt(18)] public uint Creature2Id { get; set; }
+    [UInt(32)] public uint DurationMs { get; set; } = 10000;
+    [UInt(2)] public CommunicatorPortraitPlacement PortraitPlacement { get; set; }
+    [UInt(2)] public CommunicatorOverlay Overlay { get; set; }
+    [UInt(3)] public CommunicatorBackground Background { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,8 +1,10 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Game.Static.Who;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
 
 [WireStruct]
+[UnionCase(WhoParameterType.Player)]
 public sealed partial class WhoParameterPlayer : IWhoParameterData
 {
     [WideString] public string PlayerName { get; private set; }

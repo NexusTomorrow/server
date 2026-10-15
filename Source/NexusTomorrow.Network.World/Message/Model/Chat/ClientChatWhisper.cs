@@ -1,23 +1,25 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
 [Message(GameMessageOpcode.ClientChatWhisper)]
-public class ClientChatWhisper : IReadable
+[WireMessage(GameMessageOpcode.ClientChatWhisper, Direction.ClientToServer)]
+public sealed partial class ClientChatWhisper : IReadable
 {
-    public string ToName { get; private set; }
-    public string ToRealmName { get; private set; }
+    [WideString] public string ToName { get; private set; }
+    [WideString] public string ToRealmName { get; private set; }
 
-    public string Message { get; private set; }
-    public List<ChatClientFormat> Formats { get; } = [];
-    public ushort ChatMessageId { get; set; } // incremented by the client
+    [WideString] public string Message { get; private set; }
+    [Array(CountBits = 5)] public List<ChatClientFormat> Formats { get; } = [];
+    [UInt(16)] public ushort ChatMessageId { get; set; } // incremented by the client
 
-    public bool IsAccountWhisper { get; set; }
+    [UInt(1)] public bool IsAccountWhisper { get; set; }
 
     #region Dependency Injection
 
-    private readonly IServiceProvider serviceProvider;
+    [NotOnWire] private readonly IServiceProvider serviceProvider;
 
     public ClientChatWhisper(
         IServiceProvider serviceProvider)
@@ -26,6 +28,11 @@ public class ClientChatWhisper : IReadable
     }
 
     #endregion
+
+    // The generated Read builds each format itself, so it needs no service provider.
+    public ClientChatWhisper()
+    {
+    }
 
     public void Read(GamePacketReader reader)
     {

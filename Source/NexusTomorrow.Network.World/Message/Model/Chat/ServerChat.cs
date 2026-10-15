@@ -1,28 +1,30 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
 [Message(GameMessageOpcode.ServerChat)]
-public class ServerChat : IWritable
+[WireMessage(GameMessageOpcode.ServerChat, Direction.ServerToClient)]
+public sealed partial class ServerChat : IWritable
 {
     public Channel Channel { get; set; }
-    public bool GM { get; set; }
-    public bool Self { get; set; }
-    public bool AutoResponse { get; set; }
+    [UInt(1)] public bool GM { get; set; }
+    [UInt(1)] public bool Self { get; set; }
+    [UInt(1)] public bool AutoResponse { get; set; }
     public Identity From { get; set; }
-    public string FromName { get; set; }
-    public string FromRealm { get; set; }
-    public AccountPresenceState PresenceState { get; set; }
+    [WideString] public string FromName { get; set; }
+    [WideString] public string FromRealm { get; set; }
+    [UInt(3)] public AccountPresenceState PresenceState { get; set; }
 
-    public string Text { get; set; }
-    public List<ChatFormat> Formats { get; set; } = [];
-    public bool CrossFaction { get; set; }
-    public ushort ChatMessageId { get; set; } = 0; // always 0
+    [WideString] public string Text { get; set; }
+    [Array(CountBits = 5)] public List<ChatFormat> Formats { get; set; } = [];
+    [UInt(1)] public bool CrossFaction { get; set; }
+    [UInt(16)] public ushort ChatMessageId { get; set; } = 0; // always 0
 
-    public ulong UnitId { get; set; }
-    public byte PremiumTier { get; set; }
+    [UInt(32)] public ulong UnitId { get; set; }
+    [UInt(8)] public byte PremiumTier { get; set; }
 
     public void Write(GamePacketWriter writer)
     {
