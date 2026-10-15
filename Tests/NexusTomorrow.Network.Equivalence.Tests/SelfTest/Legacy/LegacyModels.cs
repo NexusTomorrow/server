@@ -258,3 +258,100 @@ public sealed class EmptyMessage : IWritable
             writer.Write(Value);
     }
 }
+
+// The seed's shape for a list of union arms: bare arms, each computing the kind written before it.
+public sealed class ArmListMessage : IReadable, IWritable
+{
+    public List<IListArm> Entries { get; set; } = [];
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Entries.Count, 3u);
+        foreach (IListArm arm in Entries)
+        {
+            writer.Write(arm.Kind, 2u);
+            arm.Write(writer);
+        }
+    }
+
+    public void Read(GamePacketReader reader)
+    {
+        uint count = reader.ReadUInt(3u);
+        for (uint i = 0u; i < count; i++)
+        {
+            IListArm arm = ListArms.Create(reader.ReadByte(2u));
+            arm.Read(reader);
+            Entries.Add(arm);
+        }
+    }
+}
+
+// The seed's shape for one union arm whose kind the arm computes, so the message holds no selector member.
+public sealed class ComputedSelectorMessage : IReadable, IWritable
+{
+    public IListArm Arm { get; set; } = new ListArmA();
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Arm.Kind, 2u);
+        Arm.Write(writer);
+    }
+
+    public void Read(GamePacketReader reader)
+    {
+        Arm = ListArms.Create(reader.ReadByte(2u));
+        Arm.Read(reader);
+    }
+}
+
+public interface IListArm : IReadable, IWritable
+{
+    byte Kind { get; }
+}
+
+public static class ListArms
+{
+    public static IListArm Create(byte kind)
+    {
+        return kind switch
+        {
+            0 => new ListArmA(),
+            1 => new ListArmB(),
+            _ => throw new InvalidDataException($"No list arm has the kind {kind}."),
+        };
+    }
+}
+
+public sealed class ListArmA : IListArm
+{
+    public byte Kind => 0;
+
+    public byte A { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(A, 4u);
+    }
+
+    public void Read(GamePacketReader reader)
+    {
+        A = reader.ReadByte(4u);
+    }
+}
+
+public sealed class ListArmB : IListArm
+{
+    public byte Kind => 1;
+
+    public byte B { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(B);
+    }
+
+    public void Read(GamePacketReader reader)
+    {
+        B = reader.ReadByte();
+    }
+}

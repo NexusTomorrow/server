@@ -16,6 +16,23 @@ internal static class WireMembers
     /// <summary>
     /// True when <paramref name="type"/> carries [WireStruct] or [WireMessage].
     /// </summary>
+    /// <summary>
+    /// The union member of a holder whose only wire members are one union and its selector, or null for any other type.
+    /// </summary>
+    public static WireMember? SingleUnionOf(Type type)
+    {
+        List<WireMember> members = [.. Of(type).Where(member => member.Shape != WireShape.Pad)];
+        return members is [var selector, var union] && union.Shape == WireShape.Union && union.Selector == selector.Name ? union : null;
+    }
+
+    /// <summary>
+    /// Whether <paramref name="member"/> selects a union among <paramref name="members"/>; Write sets it from the arm, so a legacy twin may compute it instead of holding it.
+    /// </summary>
+    public static bool IsSelector(WireMember member, IReadOnlyList<WireMember> members)
+    {
+        return members.Any(other => other.Selector == member.Name);
+    }
+
     public static bool IsWireType(Type type)
     {
         return type.IsDefined(typeof(WireStructAttribute), inherit: false) || type.IsDefined(typeof(WireMessageAttribute), inherit: false);
