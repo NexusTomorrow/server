@@ -32,18 +32,21 @@ change that only touches nearby code.
 ## Building and testing
 
 ```powershell
-dotnet format Source/NexusTomorrow.slnx
 dotnet build Source/NexusTomorrow.slnx
+dotnet format Source/NexusTomorrow.slnx
 dotnet test --solution Source/NexusTomorrow.slnx
 ```
+
+`dotnet format` needs a build first: it loads the solution's source generators from the build's
+output, and without them every generated member looks missing.
 
 - Every behaviour change comes with a test. Tests use xUnit v3 on Microsoft Testing Platform and
   live under `Tests/`, in a project named after the one it tests
   (`NexusTomorrow.Cryptography.Tests`).
 - Name a test for the behaviour it checks, such as `SessionKeyIsAlwaysSixtyFourBytes`.
 - CI runs only when a maintainer dispatches the `Tests` workflow, so your pull request shows no
-  checks until a maintainer runs them for it. Before it builds, it checks your commit messages, the
-  formatting, and that no `.cs` or `.md` file holds an em dash.
+  checks until a maintainer runs them for it. Before it builds, it checks your commit messages and
+  that no `.cs` or `.md` file holds an em dash; after the build, it checks the formatting.
 - A workflow change uses only GitHub-owned actions, pinned by full commit SHA with the version in a
   comment, and keeps `permissions: contents: read`.
 
@@ -54,8 +57,8 @@ The style follows Microsoft's
 with a few rules of our own. `.editorconfig` carries every rule an analyser can check, so an editor
 that reads it flags most problems as you type. The build treats every warning as an error, style
 rules included, so a violation fails the build rather than waiting for review. Run
-`dotnet format Source/NexusTomorrow.slnx` before you commit to fix the layout for you; CI checks
-that it would change nothing.
+`dotnet format Source/NexusTomorrow.slnx` after a build and before you commit to fix the layout for
+you; CI checks that it would change nothing.
 
 If a rule genuinely doesn't fit some code, suppress it with its reason rather than working around
 it: in `.editorconfig`, scoped to the files it covers, with a comment above saying why, or with a

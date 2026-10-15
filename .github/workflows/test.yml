@@ -56,11 +56,12 @@ jobs:
       - name: Restore
         run: dotnet restore Source/NexusTomorrow.slnx
 
-      - name: Format
-        run: dotnet format Source/NexusTomorrow.slnx --verify-no-changes --no-restore
-
       - name: Build
         run: dotnet build Source/NexusTomorrow.slnx --configuration Debug --no-restore
+
+      # dotnet format loads source generators from the build's output, so it runs after the build.
+      - name: Format
+        run: dotnet format Source/NexusTomorrow.slnx --verify-no-changes --no-restore
 
       - name: Test
         env:
