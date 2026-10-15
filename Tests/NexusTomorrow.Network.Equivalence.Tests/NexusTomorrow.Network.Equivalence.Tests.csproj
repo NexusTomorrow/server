@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Game.Static\NexusTomorrow.Game.Static.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network.Auth\NexusTomorrow.Network.Auth.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network.Codec\NexusTomorrow.Network.Codec.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network.Codec.Generator\NexusTomorrow.Network.Codec.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network.World\NexusTomorrow.Network.World.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network\NexusTomorrow.Network.csproj" />
+    <!-- The legacy copies share their full names with the converted models, so they are reachable only as legacy::. -->
+    <ProjectReference Include="..\NexusTomorrow.Network.Legacy\NexusTomorrow.Network.Legacy.csproj" Aliases="legacy" />
+  </ItemGroup>
+
+</Project>

@@ -23,6 +23,7 @@
     <Project Path="../Tests/NexusTomorrow.ModelConverter.Tests/NexusTomorrow.ModelConverter.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Codec.Generator.Tests/NexusTomorrow.Network.Codec.Generator.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Codec.Tests/NexusTomorrow.Network.Codec.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Network.Equivalence.Tests/NexusTomorrow.Network.Equivalence.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Legacy/NexusTomorrow.Network.Legacy.csproj" />
   </Folder>
   <Folder Name="/Tools/">
