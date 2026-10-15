@@ -20,9 +20,13 @@
     <Project Path="../Tests/NexusTomorrow.ClientConnector.Tests/NexusTomorrow.ClientConnector.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Cryptography.Tests/NexusTomorrow.Cryptography.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.GameTable.Tests/NexusTomorrow.GameTable.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.ModelConverter.Tests/NexusTomorrow.ModelConverter.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Codec.Generator.Tests/NexusTomorrow.Network.Codec.Generator.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Codec.Tests/NexusTomorrow.Network.Codec.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Legacy/NexusTomorrow.Network.Legacy.csproj" />
+  </Folder>
+  <Folder Name="/Tools/">
+    <Project Path="../Tools/NexusTomorrow.ModelConverter/NexusTomorrow.ModelConverter.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="../Directory.Build.targets" />
