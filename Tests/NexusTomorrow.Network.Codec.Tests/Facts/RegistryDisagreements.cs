@@ -15,16 +15,12 @@ internal static class RegistryDisagreements
     public static IReadOnlyDictionary<string, string> Pinned { get; } = new Dictionary<string, string>(StringComparer.Ordinal)
     {
         ["0x00BA server to client"] = FieldsDiffer, // ServerBuybackItemUpdated
-        ["0x00D3 server to client"] = BitsDiffer, // ServerHideInstanceGameModeDialog
         ["0x00D6 server to client"] = FieldsDiffer, // ServerPublicEventEnd
         ["0x00D8 server to client"] = FieldsDiffer, // ServerCostume
         ["0x0112 server to client"] = FieldsDiffer, // ServerPublicEventStart
         ["0x012E server to client"] = FieldsDiffer, // ServerPetCustomisationList
         ["0x012F server to client"] = FieldsDiffer, // ServerPetCustomisation
-        ["0x0137 server to client"] = BitsDiffer, // ServerPublicEventPersonalStatsUpdate
         ["0x0144 client to server"] = PartMissing, // ClientCharacterAppearanceChange
-        ["0x0154 server to client"] = BitsDiffer, // ServerInstanceResetFailed
-        ["0x0158 server to client"] = BitsDiffer, // ServerShowInstanceRestrictedDialog
         ["0x015A client to server"] = BitsDiffer, // ClientResurrectAccept
         ["0x018E server to client"] = FieldsDiffer, // ServerP2PTradeUpdateItem
         ["0x01B7 server to client"] = BitsDiffer, // ServerChatFlag
@@ -38,10 +34,8 @@ internal static class RegistryDisagreements
         ["0x025E server to client"] = FieldsDiffer, // ServerPlayerCreate
         ["0x033F"] = NoArmZero, // ClientCustomerSurveySubmit
         ["0x033F client to server"] = "unsettled: the declaration puts a different number of bits on the wire than the client takes, and lacks the client's wide string", // ClientCustomerSurveySubmit
-        ["0x0358 server to client"] = BitsDiffer, // ServerDialogEnd
         ["0x03D1 server to client"] = FieldsDiffer, // ServerFortuneCards
         ["0x03DB server to client"] = FieldsDiffer, // ServerRealmInfo
-        ["0x03EE client to server"] = BitsDiffer, // ClientGetRealmTransferDestinations
         ["0x0405 server to client"] = FieldsDiffer, // ServerGroupMemberAdd
         ["0x0424 server to client"] = FieldsDiffer, // ServerGroupRequestJoinResponse
         ["0x046F server to client"] = BitsDiffer, // ServerGuildBankInventoryAdd

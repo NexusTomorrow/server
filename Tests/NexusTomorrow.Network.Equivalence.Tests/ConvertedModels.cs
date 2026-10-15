@@ -28,6 +28,7 @@ internal static class ConvertedModels
     private const string CharacterResultIn6Bits = "the client takes the result in 6 bits where the seed wrote 3; the declaration follows the client";
     private const string NestsMapRegion = "it nests MapRegion, which follows the client where the seed does not";
     private const string NestsPublicEventStats = "it nests PublicEventStats, which follows the client where the seed does not";
+    private const string Unwritten32Bits = "the client takes a 32-bit field that the seed did not write; the declaration follows the client";
     private const uint FloatExactIntegers = (1u << 24) - 1;
 
     private static readonly Assembly s_legacyAssembly = typeof(legacy::NexusTomorrow.Network.World.ServiceCollectionExtensions).Assembly;
@@ -82,11 +83,15 @@ internal static class ConvertedModels
         ["NexusTomorrow.Network.World.Message.Model.Info.ServerDisabledGameplaySystems"] = "the client takes the system type in 3 bits where the seed wrote 8; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.Info.ServerPrerequisiteFailure"] = "the client takes the localized string id in 21 bits where the seed wrote 15; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.Info.ServerRealmInfoResponse"] = "the client takes the realm id in 14 bits where the seed wrote 32; the declaration follows the client",
+        ["NexusTomorrow.Network.World.Message.Model.Instance.ServerHideInstanceGameModeDialog"] = Unwritten32Bits,
+        ["NexusTomorrow.Network.World.Message.Model.Instance.ServerInstanceResetFailed"] = Unwritten32Bits,
+        ["NexusTomorrow.Network.World.Message.Model.Instance.ServerShowInstanceRestrictedDialog"] = Unwritten32Bits,
         ["NexusTomorrow.Network.World.Message.Model.Map.ServerZoneMap"] = "the legacy Write sends Count / 8 as the byte length, from a Count the caller sets apart from the bytes; the declaration sends the bytes' own length",
         ["NexusTomorrow.Network.World.Message.Model.Marketplace.ClientAuctionCancel"] = "the client sends the item id before the auction id, the other way round from the seed; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.Pet.ClientPetSetStance"] = "the client sends the stance in 5 bits where the seed read 8; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.PlayerPath.ServerPathExplorerScavengerHuntClueAddUnitList"] = NoCount,
         ["NexusTomorrow.Network.World.Message.Model.PlayerPath.ServerPathUnlockResult"] = "the client takes the unlocked path mask in 4 bits where the seed wrote 64; the declaration follows the client",
+        ["NexusTomorrow.Network.World.Message.Model.Pregame.ClientGetRealmTransferDestinations"] = "the client sends a 1-bit field that the seed did not read; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.Pregame.ServerCharacterCreate"] = CharacterResultIn6Bits,
         ["NexusTomorrow.Network.World.Message.Model.Pregame.ServerCharacterRenameResult"] = CharacterResultIn6Bits,
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerMapTrackedUnitUpdate"] = "the client takes the public event objective id in 15 bits where the seed wrote 14; the declaration follows the client",
@@ -96,7 +101,7 @@ internal static class ConvertedModels
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventMapRegionUpdate"] = NestsMapRegion,
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventObjectiveNotificationMode"] = "the client takes the objective id in 15 bits where the seed wrote 14; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventObjectiveUpdate"] = "it nests PublicEventObjective, which follows the client where the seed does not",
-        ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventPersonalStatsUpdate"] = "it derives from PublicEventStats, which follows the client where the seed does not",
+        ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventPersonalStatsUpdate"] = "the client takes a 14-bit public event id before the stats that the seed did not write; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventStart"] = "the client takes the reward type in 32 bits where the seed wrote 64, and it nests PublicEventObjective, which follows the client where the seed does not; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventStatsUpdate"] = NestsPublicEventStats,
         ["NexusTomorrow.Network.World.Message.Model.PublicEvent.ServerPublicEventTriggerUiUpdates"] = "the client takes the event id in 32 bits where the seed wrote 14; the declaration follows the client",
@@ -106,6 +111,7 @@ internal static class ConvertedModels
         ["NexusTomorrow.Network.World.Message.Model.Reward.ServerRewardRotationLockedList"] = NestsLockedReward,
         ["NexusTomorrow.Network.World.Message.Model.Reward.ServerRewardRotationLockedRemove"] = NestsLockedReward,
         ["NexusTomorrow.Network.World.Message.Model.Reward.ServerRewardRotationLockedUpdate"] = NestsLockedReward,
+        ["NexusTomorrow.Network.World.Message.Model.ServerDialogEnd"] = Unwritten32Bits,
         ["NexusTomorrow.Network.World.Message.Model.ServerGroupActionResult"] = "the client takes the result in 6 bits where the seed wrote 32; the declaration follows the client",
         ["NexusTomorrow.Network.World.Message.Model.ServerItemAdd"] = NestsItem,
         ["NexusTomorrow.Network.World.Message.Model.ServerItemError"] = "the client takes the error code in 32 bits where the seed wrote 64; the declaration follows the client",
