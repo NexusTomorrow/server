@@ -70,6 +70,18 @@ public sealed class EquivalenceSelfTests
         Assert.Equal("EmptyMessage empty write: the bytes differ from bit 32: declared [000000000000], legacy [00000000]", difference);
     }
 
+    [Fact]
+    public void AUnionSelectorTheLegacyArmComputesNeedsNoTwin()
+    {
+        AssertNone(Check(typeof(ComputedSelectorMessage)));
+    }
+
+    [Fact]
+    public void AHolderOfOneUnionMapsOntoTheBareLegacyArm()
+    {
+        AssertNone(Check(typeof(ArmListMessage)));
+    }
+
     private static List<string> Check(Type declared)
     {
         using ServiceProvider legacyServices = new ServiceCollection().BuildServiceProvider();
