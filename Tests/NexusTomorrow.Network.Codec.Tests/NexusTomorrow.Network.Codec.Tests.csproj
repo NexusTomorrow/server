@@ -22,4 +22,8 @@
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network\NexusTomorrow.Network.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\Source\NexusTomorrow.Network.Codec\Facts\wire-facts-*" Link="Facts\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
