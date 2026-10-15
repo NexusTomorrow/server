@@ -1,0 +1,47 @@
+name: Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      args:
+        description: "Arguments forwarded to the test applications, for example --filter-class *Srp6*"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore Source/NexusTomorrow.slnx
+
+      - name: Build
+        run: dotnet build Source/NexusTomorrow.slnx --configuration Debug --no-restore
+
+      - name: Test
+        env:
+          TEST_ARGS: ${{ inputs.args }}
+        run: |
+          set -f
+          dotnet test --solution Source/NexusTomorrow.slnx --configuration Debug --no-build \
+            --results-directory "$RUNNER_TEMP/test-results" -- --report-trx $TEST_ARGS
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: test-results
+          path: ${{ runner.temp }}/test-results
+          if-no-files-found: warn
