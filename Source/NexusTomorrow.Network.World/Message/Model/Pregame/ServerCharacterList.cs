@@ -1,5 +1,6 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
 using NexusTomorrow.Game.Static.Reputation;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Message.Model.Shared;
@@ -7,16 +8,17 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 [Message(GameMessageOpcode.ServerCharacterList)]
-public class ServerCharacterList : IWritable
+public partial class ServerCharacterList : IWritable
 {
-    public class Character : IWritable
+    public partial class Character : IWritable
     {
         // probably, x, y, z, yaw, pitch
-        public class WorldLocation : IWritable
+        [WireStruct]
+        public sealed partial class WorldLocation : IWritable
         {
             public Position Position { get; set; } = new Position();
-            public float Yaw { get; set; }
-            public float Pitch { get; set; }
+            [Float32] public float Yaw { get; set; }
+            [Float32] public float Pitch { get; set; }
 
             public void Write(GamePacketWriter writer)
             {

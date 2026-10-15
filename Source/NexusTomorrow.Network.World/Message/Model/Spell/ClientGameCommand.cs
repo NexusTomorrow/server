@@ -1,15 +1,17 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ClientGameCommand)]
-public class ClientGameCommand : IReadable
+[WireMessage(GameMessageOpcode.ClientGameCommand, Direction.ClientToServer)]
+public sealed partial class ClientGameCommand : IReadable
 {
-    public uint ClientSpellCastUniqueId { get; private set; }
-    public byte AbilityItemIndex { get; private set; }
-    public byte LimitedActionSetId { get; private set; }
-    public uint TargetUnitId { get; private set; }
+    [UInt(32)] public uint ClientSpellCastUniqueId { get; private set; }
+    [UInt(4)] public byte AbilityItemIndex { get; private set; }
+    [UInt(4)] public byte LimitedActionSetId { get; private set; }
+    [UInt(32)] public uint TargetUnitId { get; private set; }
     public Position TargetPosition { get; private set; } = new Position();
 
     public void Read(GamePacketReader reader)

@@ -1,17 +1,19 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ServerCinematicVisualEffectAdd)]
-public class ServerCinematicVisualEffectAdd : IWritable
+[WireMessage(GameMessageOpcode.ServerCinematicVisualEffectAdd, Direction.ServerToClient)]
+public sealed partial class ServerCinematicVisualEffectAdd : IWritable
 {
-    public uint Delay { get; set; }
-    public uint VisualEffectUniqueId { get; set; }
-    public uint VisualEffectId { get; set; }
-    public uint UnitId { get; set; }
+    [UInt(32)] public uint Delay { get; set; }
+    [UInt(32)] public uint VisualEffectUniqueId { get; set; }
+    [UInt(17)] public uint VisualEffectId { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
     public Position Position { get; set; }
-    public bool RemoveOnCameraEnd { get; set; }
+    [UInt(1)] public bool RemoveOnCameraEnd { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model;
@@ -6,12 +7,13 @@ namespace NexusTomorrow.Network.World.Message.Model;
 // If sent while on the CharacterSelect screen, loads into the Game screen
 // If sent while Game screen is already active, reinitializes player data managers.
 [Message(GameMessageOpcode.ServerChangeWorld)]
-public class ServerChangeWorld : IWritable
+[WireMessage(GameMessageOpcode.ServerChangeWorld, Direction.ServerToClient)]
+public sealed partial class ServerChangeWorld : IWritable
 {
-    public ushort WorldId { get; set; }
+    [UInt(15)] public ushort WorldId { get; set; }
     public Position Position { get; set; }
-    public float Yaw { get; set; }
-    public float Pitch { get; set; }
+    [Float32] public float Yaw { get; set; }
+    [Float32] public float Pitch { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
@@ -8,16 +9,17 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell;
 // Not used when spell casts are initiated by other sources.
 
 [Message(GameMessageOpcode.ServerSpellConfirmCast)]
-public class ServerSpellConfirmCast : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellConfirmCast, Direction.ServerToClient)]
+public sealed partial class ServerSpellConfirmCast : IWritable
 {
-    public uint ClientSpellCastUniqueId { get; set; }
-    public uint CastingId { get; set; }
-    public uint CasterId { get; set; }
+    [UInt(32)] public uint ClientSpellCastUniqueId { get; set; }
+    [UInt(32)] public uint CastingId { get; set; }
+    [UInt(32)] public uint CasterId { get; set; }
     public Position Position { get; set; } = new Position();
-    public float Yaw { get; set; }
+    [Float32] public float Yaw { get; set; }
 
-    public List<InitialPosition> InitialPositionData { get; set; } = [];
-    public List<TelegraphPosition> TelegraphPositionData { get; set; } = [];
+    [Array(CountBits = 8)] public List<InitialPosition> InitialPositionData { get; set; } = [];
+    [Array(CountBits = 8)] public List<TelegraphPosition> TelegraphPositionData { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,15 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Entity.Model;
 
-public class TriggerEntityModel : IEntityModel
+[WireStruct]
+public sealed partial class TriggerEntityModel : IEntityModel
 {
-    public class Bound : IWritable
+    [WireStruct]
+    public sealed partial class Bound : IWritable
     {
-        public byte Type { get; set; }
+        [UInt(2)] public byte Type { get; set; }
         public Position Min { get; set; }
         public Position Lim { get; set; }
-        public float Radius { get; set; }
+        [Float32] public float Radius { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -20,8 +23,8 @@ public class TriggerEntityModel : IEntityModel
         }
     }
 
-    public string Name { get; set; }
-    public List<Bound> Bounds { get; } = [];
+    [WideString] public string Name { get; set; }
+    [Array(CountBits = 8)] public List<Bound> Bounds { get; } = [];
 
     public void Write(GamePacketWriter writer)
     {

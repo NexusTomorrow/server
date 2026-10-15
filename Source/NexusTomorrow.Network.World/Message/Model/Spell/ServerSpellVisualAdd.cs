@@ -1,17 +1,19 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellVisualAdd)]
-public class ServerSpellVisualAdd : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellVisualAdd, Direction.ServerToClient)]
+public sealed partial class ServerSpellVisualAdd : IWritable
 {
-    public uint SpellVisualEffectClientId { get; set; }
-    public uint UnitId { get; set; }
-    public uint VisualEffectId { get; set; }
-    public uint VisualEffectIdSound { get; set; }
-    public uint Spell4VisualId { get; set; }
-    public uint Unk14 { get; set; }
+    [UInt(32)] public uint SpellVisualEffectClientId { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(11)] public uint VisualEffectId { get; set; }
+    [UInt(11)] public uint VisualEffectIdSound { get; set; }
+    [UInt(11)] public uint Spell4VisualId { get; set; }
+    [UInt(32)] public uint Unk14 { get; set; }
     public Position Position { get; set; }
 
     public void Write(GamePacketWriter writer)

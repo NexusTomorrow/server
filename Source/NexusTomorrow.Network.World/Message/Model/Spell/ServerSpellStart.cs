@@ -1,18 +1,21 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellStart)]
-public class ServerSpellStart : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellStart, Direction.ServerToClient)]
+public sealed partial class ServerSpellStart : IWritable
 {
-    public class InitialPosition : IWritable
+    [WireStruct]
+    public sealed partial class InitialPosition : IWritable
     {
-        public uint UnitId { get; set; }
-        public byte TargetFlags { get; set; }
+        [UInt(32)] public uint UnitId { get; set; }
+        [UInt(8)] public byte TargetFlags { get; set; }
         public Position Position { get; set; } = new Position();
-        public float Yaw { get; set; }
-        public float Pitch { get; set; }
+        [Float32] public float Yaw { get; set; }
+        [Float32] public float Pitch { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -24,14 +27,15 @@ public class ServerSpellStart : IWritable
         }
     }
 
-    public class TelegraphPosition : IWritable
+    [WireStruct]
+    public sealed partial class TelegraphPosition : IWritable
     {
-        public ushort TelegraphId { get; set; }
-        public uint AttachedUnitId { get; set; }
-        public byte TargetFlags { get; set; }
+        [UInt(16)] public ushort TelegraphId { get; set; }
+        [UInt(32)] public uint AttachedUnitId { get; set; }
+        [UInt(8)] public byte TargetFlags { get; set; }
         public Position Position { get; set; } = new Position();
-        public float Yaw { get; set; }
-        public float Pitch { get; set; }
+        [Float32] public float Yaw { get; set; }
+        [Float32] public float Pitch { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -44,20 +48,20 @@ public class ServerSpellStart : IWritable
         }
     }
 
-    public uint ServerUniqueId { get; set; }
-    public uint Spell4Id { get; set; }
-    public uint RootSpell4Id { get; set; }
-    public uint ParentSpell4Id { get; set; }
-    public uint CasterId { get; set; }
-    public ushort Unused { get; set; } // Server did send values here but the client does not use them
-    public uint PrimaryTargetId { get; set; }
+    [UInt(32)] public uint ServerUniqueId { get; set; }
+    [UInt(18)] public uint Spell4Id { get; set; }
+    [UInt(18)] public uint RootSpell4Id { get; set; }
+    [UInt(18)] public uint ParentSpell4Id { get; set; }
+    [UInt(32)] public uint CasterId { get; set; }
+    [UInt(16)] public ushort Unused { get; set; } // Server did send values here but the client does not use them
+    [UInt(32)] public uint PrimaryTargetId { get; set; }
     public Position FieldPosition { get; set; } = new Position();
-    public float Yaw { get; set; }
-    public bool UserInitiatedSpellCast { get; set; }
-    public bool UseCreatureOverrides { get; set; }
+    [Float32] public float Yaw { get; set; }
 
-    public List<InitialPosition> InitialPositionData { get; set; } = [];
-    public List<TelegraphPosition> TelegraphPositionData { get; set; } = [];
+    [Array(CountBits = 8)] public List<InitialPosition> InitialPositionData { get; set; } = [];
+    [Array(CountBits = 8)] public List<TelegraphPosition> TelegraphPositionData { get; set; } = [];
+    [UInt(1)] public bool UserInitiatedSpellCast { get; set; }
+    [UInt(1)] public bool UseCreatureOverrides { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

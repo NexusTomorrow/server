@@ -1,19 +1,21 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellGo)]
-public class ServerSpellGo : IWritable
+public partial class ServerSpellGo : IWritable
 {
-    public class MissileInfo : IWritable
+    [WireStruct]
+    public sealed partial class MissileInfo : IWritable
     {
         public Position CasterPosition { get; set; } = new Position();
-        public uint MissileTravelTime { get; set; }
-        public uint TargetId { get; set; }
+        [UInt(32)] public uint MissileTravelTime { get; set; }
+        [UInt(32)] public uint TargetId { get; set; }
         public Position TargetPosition { get; set; } = new Position();
-        public bool HitPosition { get; set; }
+        [UInt(1)] public bool HitPosition { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

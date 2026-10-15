@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ServerCinematicTransitionPosition)]
-public class ServerCinematicTransitionPosition : IWritable
+[WireMessage(GameMessageOpcode.ServerCinematicTransitionPosition, Direction.ServerToClient)]
+public sealed partial class ServerCinematicTransitionPosition : IWritable
 {
-    public uint Delay { get; set; }
+    [UInt(32)] public uint Delay { get; set; }
     public Position Position { get; set; }
 
     public void Write(GamePacketWriter writer)
