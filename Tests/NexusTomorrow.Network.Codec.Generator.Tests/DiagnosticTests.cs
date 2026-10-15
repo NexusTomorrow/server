@@ -318,6 +318,27 @@ public sealed class DiagnosticTests
         Assert.Empty(run.CompilationErrors);
     }
 
+    // A diagnostic on its syntax tree is one path-scoped .editorconfig severities and #pragma can reach; one at a bare file path is not.
+    [Fact]
+    public void ADiagnosticSitsOnTheSyntaxTreeOfItsDeclaration()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            [WireStruct]
+            public partial class Sample
+            {
+                [UInt(14)] public int Value { get; set; }
+            }
+            """);
+
+        Diagnostic diagnostic = AssertSingle(run, "NTC006", DiagnosticSeverity.Warning, "int Value");
+        Assert.True(diagnostic.Location.IsInSource);
+        Assert.Same(run.Compilation.SyntaxTrees.Single(tree => tree.FilePath == "Wire.cs"), diagnostic.Location.SourceTree);
+    }
+
     [Fact]
     public void SIntOnASignedTypeRaisesNothing()
     {

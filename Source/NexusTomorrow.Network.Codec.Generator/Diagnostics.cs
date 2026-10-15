@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
@@ -140,11 +141,19 @@ internal sealed record DiagnosticInfo(string Id, LocationInfo? Location, Equatab
 
     public bool IsError => Diagnostics.ById(Id).DefaultSeverity == DiagnosticSeverity.Error;
 
-    public Diagnostic ToDiagnostic()
+    /// <summary>
+    /// The diagnostic on the syntax tree its file path names, so path-scoped <c>.editorconfig</c> severities and <c>#pragma</c> reach it,
+    /// or at the bare file path when <paramref name="trees"/> has no tree for it.
+    /// </summary>
+    public Diagnostic ToDiagnostic(IReadOnlyDictionary<string, SyntaxTree> trees)
     {
         string[] arguments = new string[Arguments.Count];
         for (int i = 0; i < arguments.Length; i++)
             arguments[i] = Arguments[i];
-        return Diagnostic.Create(Diagnostics.ById(Id), Location?.ToLocation(), arguments);
+
+        Location? location = Location is { } info
+            ? (trees.TryGetValue(info.FilePath, out SyntaxTree? tree) ? Microsoft.CodeAnalysis.Location.Create(tree, info.Span) : info.ToLocation())
+            : null;
+        return Diagnostic.Create(Diagnostics.ById(Id), location, arguments);
     }
 }
