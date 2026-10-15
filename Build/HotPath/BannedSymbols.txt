@@ -1,0 +1,30 @@
+T:System.Linq.Enumerable;LINQ allocates on a hot path: write the loop
+T:System.Activator;Reflection on a hot path: construct the type directly
+M:System.Enum.ToObject(System.Type,System.Object);Boxes the value: cast to the enum instead
+M:System.Enum.ToObject(System.Type,System.Byte);Boxes the value: cast to the enum instead
+M:System.Enum.ToObject(System.Type,System.Int16);Boxes the value: cast to the enum instead
+M:System.Enum.ToObject(System.Type,System.Int32);Boxes the value: cast to the enum instead
+M:System.Enum.ToObject(System.Type,System.Int64);Boxes the value: cast to the enum instead
+M:System.Enum.ToObject(System.Type,System.SByte);Boxes the value: cast to the enum instead
+M:System.Enum.ToObject(System.Type,System.UInt16);Boxes the value: cast to the enum instead
+M:System.Enum.ToObject(System.Type,System.UInt32);Boxes the value: cast to the enum instead
+M:System.Enum.ToObject(System.Type,System.UInt64);Boxes the value: cast to the enum instead
+T:System.Convert;Boxes through IConvertible: use a cast, BitConverter or a span API
+T:System.IO.Stream;Hot-path code reads and writes spans, not streams
+T:System.IO.MemoryStream;Hot-path code reads and writes spans, not streams
+P:System.DateTime.Now;Use the injected clock
+P:System.DateTime.UtcNow;Use the injected clock
+M:System.Threading.Thread.Sleep(System.Int32);Only the timer sleeps
+M:System.Threading.Thread.Sleep(System.TimeSpan);Only the timer sleeps
+P:System.Threading.Tasks.Task`1.Result;Blocks the owner's thread
+M:System.Threading.Tasks.Task.Wait;Blocks the owner's thread
+M:System.Threading.Tasks.Task.Wait(System.Int32);Blocks the owner's thread
+M:System.Threading.Tasks.Task.Wait(System.TimeSpan);Blocks the owner's thread
+M:System.Threading.Tasks.Task.Wait(System.Threading.CancellationToken);Blocks the owner's thread
+M:System.Threading.Tasks.Task.Wait(System.Int32,System.Threading.CancellationToken);Blocks the owner's thread
+M:System.Threading.Tasks.Task.Wait(System.TimeSpan,System.Threading.CancellationToken);Blocks the owner's thread
+M:System.GC.Collect;The tick never forces a collection
+M:System.GC.Collect(System.Int32);The tick never forces a collection
+M:System.GC.Collect(System.Int32,System.GCCollectionMode);The tick never forces a collection
+M:System.GC.Collect(System.Int32,System.GCCollectionMode,System.Boolean);The tick never forces a collection
+M:System.GC.Collect(System.Int32,System.GCCollectionMode,System.Boolean,System.Boolean);The tick never forces a collection

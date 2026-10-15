@@ -1,0 +1,10 @@
+<Project>
+  <!-- A project sets <HotPath>true</HotPath> when its code runs per tick or per message. It then gets
+       the hot-path ban list (RS0030) and the hot-path rules as errors, as the code standard's
+       "Hot paths" section sets out. -->
+  <ItemGroup Condition="'$(HotPath)' == 'true'">
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" PrivateAssets="all" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)Build/HotPath/BannedSymbols.txt" />
+    <GlobalAnalyzerConfigFiles Include="$(MSBuildThisFileDirectory)Build/HotPath/HotPath.globalconfig" />
+  </ItemGroup>
+</Project>

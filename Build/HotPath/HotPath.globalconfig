@@ -1,0 +1,15 @@
+is_global = true
+
+# The code standard's hot-path rules, raised to errors only in projects that set <HotPath>true</HotPath>
+# (Directory.Build.targets adds this file to them).
+dotnet_diagnostic.RS0030.severity = error
+dotnet_diagnostic.CA1825.severity = error
+dotnet_diagnostic.CA1829.severity = error
+dotnet_diagnostic.CA1848.severity = error
+dotnet_diagnostic.CA1851.severity = error
+dotnet_diagnostic.CA1852.severity = error
+dotnet_diagnostic.CA1860.severity = error
+dotnet_diagnostic.CA2014.severity = error
+dotnet_diagnostic.CA2254.severity = error
+dotnet_diagnostic.IDE0250.severity = error
+dotnet_diagnostic.IDE0251.severity = error
