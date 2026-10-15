@@ -8,5 +8,5 @@ namespace NexusTomorrow.Network.World.Message.Model.GalacticArchive;
 [WireMessage(GameMessageOpcode.ClientGalacticArchiveViewed, Direction.ClientToServer)]
 public sealed partial class ClientGalacticArchiveViewed
 {
-    [UInt(32)] public uint ArchiveArticleId { get; private set; }
+    [UInt(14)] public uint ArchiveArticleId { get; private set; }
 }

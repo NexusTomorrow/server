@@ -69,6 +69,6 @@ public sealed partial class ServerQuestLuaEvent
         [Union(nameof(Type))] public ILuaEventData Data { get; set; }
     }
 
-    [UInt(16)] public ushort LuaEventId { get; set; }
+    [UInt(14)] public ushort LuaEventId { get; set; }
     [Array(CountBits = 32)] public List<LuaEvent> LuaEvents { get; set; } = [];
 }

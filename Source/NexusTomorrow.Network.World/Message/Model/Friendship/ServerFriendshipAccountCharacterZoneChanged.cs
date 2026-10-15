@@ -15,5 +15,5 @@ public sealed partial class ServerFriendshipAccountCharacterZoneChanged
         [UInt(15)] public uint WorldZoneId { get; set; }
     }
 
-    [Array(CountBits = 32)] public List<FriendCharacterZoneInfo> ZoneInfos { get; set; }
+    [Array(CountBits = 16)] public List<FriendCharacterZoneInfo> ZoneInfos { get; set; }
 }
