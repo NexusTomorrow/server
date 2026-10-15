@@ -386,3 +386,180 @@ public sealed class ReversedBitArrayMessage : IReadable
         bytes.CopyTo(Flags.GetBuffer(), 0);
     }
 }
+
+// The seed's shape for a payload union: every arm's fields flat on the holder, written by a switch on the kind, with no type per arm.
+public sealed class FlatUnionMessage : IReadable, IWritable
+{
+    public byte Kind { get; set; }
+    public byte A { get; set; }
+    public byte B { get; set; }
+    public byte C { get; set; }
+    public byte Tail { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Kind, 1u);
+        if (Kind == 0)
+        {
+            writer.Write(A, 4u);
+        }
+        else
+        {
+            writer.Write(B);
+            writer.Write(C, 3u);
+        }
+
+        writer.Write(Tail);
+    }
+
+    public void Read(GamePacketReader reader)
+    {
+        Kind = reader.ReadByte(1u);
+        if (Kind == 0)
+        {
+            A = reader.ReadByte(4u);
+        }
+        else
+        {
+            B = reader.ReadByte();
+            C = reader.ReadByte(3u);
+        }
+
+        Tail = reader.ReadByte();
+    }
+}
+
+// The seed's shape for a union kept as one member per arm, SidePlayer or SideCreature, written by the kind.
+public sealed class SlotUnionMessage : IReadable, IWritable
+{
+    public byte SideKind { get; set; }
+    public SlotPlayer? SidePlayer { get; set; }
+    public SlotCreature? SideCreature { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(SideKind, 1u);
+        if (SideKind == 0)
+            SidePlayer!.Write(writer);
+        else
+            SideCreature!.Write(writer);
+    }
+
+    public void Read(GamePacketReader reader)
+    {
+        SideKind = reader.ReadByte(1u);
+        if (SideKind == 0)
+        {
+            SidePlayer = new SlotPlayer();
+            SidePlayer.Read(reader);
+        }
+        else
+        {
+            SideCreature = new SlotCreature();
+            SideCreature.Read(reader);
+        }
+    }
+}
+
+public sealed class SlotPlayer : IReadable, IWritable
+{
+    public byte Level { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Level, 4u);
+    }
+
+    public void Read(GamePacketReader reader)
+    {
+        Level = reader.ReadByte(4u);
+    }
+}
+
+public sealed class SlotCreature : IReadable, IWritable
+{
+    public ushort CreatureId { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(CreatureId, 12u);
+    }
+
+    public void Read(GamePacketReader reader)
+    {
+        CreatureId = reader.ReadUShort(12u);
+    }
+}
+
+// The seed's shape for columns: one list of records, each field written as a column.
+public sealed class RowsMessage : IReadable, IWritable
+{
+    public List<RowEntry> Entries { get; } = [];
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write((uint)Entries.Count, 3u);
+        foreach (RowEntry entry in Entries)
+            writer.Write(entry.Id);
+        foreach (RowEntry entry in Entries)
+            writer.Write(entry.Level, 4u);
+    }
+
+    public void Read(GamePacketReader reader)
+    {
+        uint count = reader.ReadUInt(3u);
+        byte[] ids = new byte[count];
+        for (uint i = 0u; i < count; i++)
+            ids[i] = reader.ReadByte();
+        foreach (byte id in ids)
+            Entries.Add(new RowEntry { Id = id, Level = reader.ReadByte(4u) });
+    }
+}
+
+// A struct, as some of the seed's records are, so the list hands out copies.
+public struct RowEntry
+{
+    public byte Id { get; set; }
+    public byte Level { get; set; }
+}
+
+public enum QuirkMode
+{
+    Fractional = 0,
+    Whole = 1,
+}
+
+// Mismatches, each answered by one pinned rule: the value is named Amount where the declaration says Total, it is kept in a float, and an off-wire Mode
+// that starts at Fractional picks its encoding.
+public sealed class QuirkMessage : IWritable
+{
+    public QuirkMode Mode { get; set; }
+    public float Amount { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        if (Mode == QuirkMode.Whole)
+            writer.Write((uint)Amount);
+        else
+            writer.Write(Amount);
+    }
+}
+
+public sealed class OneWayMessage : IReadable, IWritable
+{
+    public byte Value { get; set; }
+    public byte Tail { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        // Mismatch: 9 bits where the declaration and the Read say 8.
+        writer.Write((ushort)Value, 9u);
+        writer.Write(Tail);
+    }
+
+    public void Read(GamePacketReader reader)
+    {
+        Value = reader.ReadByte();
+        Tail = reader.ReadByte();
+    }
+}

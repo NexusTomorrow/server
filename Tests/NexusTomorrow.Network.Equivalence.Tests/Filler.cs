@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.Equivalence.Tests;
 /// Builds a declared instance with every wire member filled from a seeded <see cref="Random"/>, each value within its declared width, so the generated writer accepts it.
 /// Count and selector members are left unset and pads untouched: the generated Write assigns the first two and writes zeros for the third.
 /// </summary>
-internal static class Filler
+internal sealed class Filler
 {
     private const int MaxCount = 4;
     private const int MaxShortStringLength = 20;
@@ -21,10 +21,18 @@ internal static class Filler
 
     private static readonly ConcurrentDictionary<Type, Type[]> s_arms = new();
 
+    private readonly Func<Type, bool> _skipsArm;
+
+    /// <param name="skipsArm">Union arms never picked: a union whose arms are all skipped fails to fill.</param>
+    public Filler(Func<Type, bool> skipsArm)
+    {
+        _skipsArm = skipsArm;
+    }
+
     /// <summary>
     /// A new <paramref name="type"/> filled from <paramref name="random"/>; <paramref name="seed"/> picks the union arms and the long strings.
     /// </summary>
-    public static object Fill(Type type, Random random, int seed)
+    public object Fill(Type type, Random random, int seed)
     {
         object instance = Activator.CreateInstance(type)!;
         FillMembers(instance, random, seed);
@@ -35,12 +43,12 @@ internal static class Filler
     /// The empty instance of <paramref name="type"/>: zero numbers, empty strings, lists and blobs, the first fitting enum value and the first union arm,
     /// with every nested member built, which the seed's models leave null until a caller sets them.
     /// </summary>
-    public static object Empty(Type type)
+    public object Empty(Type type)
     {
         return Fill(type, new ZeroRandom(), 0);
     }
 
-    private static void FillMembers(object instance, Random random, int seed)
+    private void FillMembers(object instance, Random random, int seed)
     {
         IReadOnlyList<WireMember> members = WireMembers.Of(instance.GetType());
         HashSet<string> selectors = [.. members.Select(member => member.Selector).OfType<string>()];
@@ -68,7 +76,7 @@ internal static class Filler
         }
     }
 
-    private static void FillValue(object instance, WireMember member, Random random, int seed)
+    private void FillValue(object instance, WireMember member, Random random, int seed)
     {
         // A get-only nested structure is filled where it stands, as the generated Read fills it.
         if (member.Encoding == WireEncoding.Struct && !MemberAccess.HasSetter(member.Member))
@@ -81,7 +89,7 @@ internal static class Filler
         MemberAccess.SetValue(member.Member, instance, NextValue(member, random, seed));
     }
 
-    private static void PutElements(object instance, WireMember member, int count, Random random, int seed)
+    private void PutElements(object instance, WireMember member, int count, Random random, int seed)
     {
         object?[] elements = new object?[count];
         for (int i = 0; i < count; i++)
@@ -113,7 +121,7 @@ internal static class Filler
         return (int)Math.Min(MaxCount, largest);
     }
 
-    private static object? NextValue(WireMember member, Random random, int seed)
+    private object? NextValue(WireMember member, Random random, int seed)
     {
         Type type = member.ValueType;
         return member.Encoding switch
@@ -214,18 +222,20 @@ internal static class Filler
     }
 
     /// <summary>
-    /// The arm with index <paramref name="seed"/> modulo the arm count, among the [UnionCase] classes in the declaring type's assembly that implement the union's type, in full-name order.
+    /// The arm with index <paramref name="seed"/> modulo the arm count, among the [UnionCase] classes in the declaring type's assembly that implement the union's type
+    /// and are not skipped, in full-name order.
     /// </summary>
-    private static Type ArmOf(WireMember union, int seed)
+    private Type ArmOf(WireMember union, int seed)
     {
-        Type[] arms = s_arms.GetOrAdd(union.ValueType, unionType =>
+        Type[] all = s_arms.GetOrAdd(union.ValueType, unionType =>
         [
             .. union.Member.DeclaringType!.Assembly.GetTypes()
                 .Where(type => type.IsClass && !type.IsAbstract && type.IsDefined(typeof(UnionCaseAttribute), inherit: false) && unionType.IsAssignableFrom(type))
                 .OrderBy(type => type.FullName, StringComparer.Ordinal),
         ]);
+        Type[] arms = [.. all.Where(arm => !_skipsArm(arm))];
         if (arms.Length == 0)
-            throw new InvalidOperationException($"{union.QualifiedName} has no [UnionCase] arm in its assembly.");
+            throw new InvalidOperationException($"{union.QualifiedName} has no [UnionCase] arm in its assembly that is not skipped.");
 
         return arms[seed % arms.Length];
     }

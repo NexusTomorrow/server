@@ -14,9 +14,6 @@ internal static class WireMembers
     private static readonly ConcurrentDictionary<Type, IReadOnlyList<WireMember>> s_members = new();
 
     /// <summary>
-    /// True when <paramref name="type"/> carries [WireStruct] or [WireMessage].
-    /// </summary>
-    /// <summary>
     /// The union member of a holder whose only wire members are one union and its selector, or null for any other type.
     /// </summary>
     public static WireMember? SingleUnionOf(Type type)
@@ -33,6 +30,9 @@ internal static class WireMembers
         return members.Any(other => other.Selector == member.Name);
     }
 
+    /// <summary>
+    /// True when <paramref name="type"/> carries [WireStruct] or [WireMessage].
+    /// </summary>
     public static bool IsWireType(Type type)
     {
         return type.IsDefined(typeof(WireStructAttribute), inherit: false) || type.IsDefined(typeof(WireMessageAttribute), inherit: false);

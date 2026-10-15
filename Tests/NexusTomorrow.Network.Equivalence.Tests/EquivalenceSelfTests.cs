@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NexusTomorrow.Network.Equivalence.Tests.SelfTest;
 using NexusTomorrow.Network.Equivalence.Tests.SelfTest.Declared;
+using Legacy = NexusTomorrow.Network.Equivalence.Tests.SelfTest.Legacy;
 
 namespace NexusTomorrow.Network.Equivalence.Tests;
 
@@ -97,11 +98,93 @@ public sealed class EquivalenceSelfTests
         Assert.All(differences, difference => Assert.Contains(" read: ReversedBitArrayMessage.Flags[", difference, StringComparison.Ordinal));
     }
 
-    private static List<string> Check(Type declared)
+    [Fact]
+    public void AUnionArmWithoutATwinLandsOnTheHoldersFlatMembers()
+    {
+        AssertNone(Check(typeof(FlatUnionMessage)));
+    }
+
+    [Fact]
+    public void AUnionArmWithATwinLandsInTheHoldersMemberForThatArm()
+    {
+        AssertNone(Check(typeof(SlotUnionMessage)));
+    }
+
+    [Fact]
+    public void ColumnsPinnedAsRowsMatchTheLegacyRecords()
+    {
+        AssertNone(Check(typeof(RowsMessage), Pinned()));
+    }
+
+    [Fact]
+    public void ColumnsWithoutTheirRowsRuleHaveNoTwin()
+    {
+        List<string> differences = Check(typeof(RowsMessage));
+
+        Assert.Contains("RowsMessage empty write: RowsMessage.Ids has no legacy twin", differences);
+        Assert.Contains("RowsMessage empty read: RowsMessage.Levels has no legacy twin", differences);
+    }
+
+    [Fact]
+    public void ALimitAPresetAndARenameTogetherMatchTheLegacyQuirks()
+    {
+        AssertNone(Check(typeof(QuirkMessage), Pinned()));
+    }
+
+    [Fact]
+    public void WithoutTheLimitAnIntegerHeldInAFloatIsCaught()
+    {
+        Assert.NotEmpty(Check(typeof(QuirkMessage), Pinned() with { Limits = new Dictionary<string, Rule>() }));
+    }
+
+    [Fact]
+    public void WithoutThePresetTheLegacyEncodingIsCaught()
+    {
+        Assert.NotEmpty(Check(typeof(QuirkMessage), Pinned() with { Presets = new Dictionary<string, Rule>() }));
+    }
+
+    [Fact]
+    public void WithoutTheRenameTheMemberHasNoTwin()
+    {
+        List<string> differences = Check(typeof(QuirkMessage), Pinned() with { Renames = new Dictionary<(string Type, string Member), Rename>() });
+
+        Assert.Contains("QuirkMessage empty write: QuirkMessage.Total has no legacy twin", differences);
+    }
+
+    [Fact]
+    public void AReadOnlyTypeIsHeldToTheLegacyReadAlone()
+    {
+        Assert.All(Check(typeof(OneWayMessage)), difference => Assert.Contains(" write: the bytes differ from bit ", difference, StringComparison.Ordinal));
+        AssertNone(Check(typeof(OneWayMessage), Pinned()));
+    }
+
+    [Fact]
+    public void ASkippedArmIsNeverFilled()
+    {
+        // UnionArmC's legacy writer is a bit too wide; skipping it checks UnionMessage over its other two arms.
+        AssertNone(Check(typeof(UnionMessage), new Pairing(SelfTestTwins.Of) { SkipsArm = arm => arm == typeof(UnionArmC) }));
+    }
+
+    /// <summary>
+    /// The rules the self-test twins need, one per deliberate legacy quirk.
+    /// </summary>
+    private static Pairing Pinned()
+    {
+        return new Pairing(SelfTestTwins.Of)
+        {
+            ReadOnly = new Dictionary<string, string> { [typeof(OneWayMessage).FullName!] = "its legacy Write puts Value in 9 bits" },
+            Rows = new Dictionary<string, RowColumns> { [typeof(RowsMessage).FullName!] = new("Entries", [("Ids", "Id"), ("Levels", "Level")], "one record per entry") },
+            Limits = new Dictionary<string, Rule> { [typeof(QuirkMessage).FullName!] = new("Amount is a float", value => ((QuirkMessage)value).Total &= (1u << 24) - 1) },
+            Presets = new Dictionary<string, Rule> { [typeof(QuirkMessage).FullName!] = new("Mode picks the encoding", legacy => ((Legacy.QuirkMessage)legacy).Mode = Legacy.QuirkMode.Whole) },
+            Renames = new Dictionary<(string Type, string Member), Rename> { [(typeof(QuirkMessage).FullName!, "Total")] = new("Amount", "the legacy name") },
+        };
+    }
+
+    private static List<string> Check(Type declared, Pairing? pairing = null)
     {
         using ServiceProvider legacyServices = new ServiceCollection().BuildServiceProvider();
         Type legacy = SelfTestTwins.Of(declared) ?? throw new InvalidOperationException($"{declared.Name} has no self-test twin.");
-        return Equivalence.Check(declared, legacy, SelfTestTwins.Of, legacyServices, Seeds);
+        return Equivalence.Check(declared, legacy, pairing ?? new Pairing(SelfTestTwins.Of), legacyServices, Seeds);
     }
 
     private static void AssertNone(List<string> differences)

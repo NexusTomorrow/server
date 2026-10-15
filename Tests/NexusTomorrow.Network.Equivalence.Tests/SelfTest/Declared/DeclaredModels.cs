@@ -157,3 +157,76 @@ public sealed partial class ReversedBitArrayMessage
 {
     [FixedArray(4), UInt(8)] public byte[] Flags { get; set; } = new byte[4];
 }
+
+[WireMessage((GameMessageOpcode)0xFE0C, Direction.Both)]
+public sealed partial class FlatUnionMessage
+{
+    [UInt(1)] public byte Kind { get; set; }
+    [Union(nameof(Kind))] public IFlatArm Payload { get; set; } = new FlatArmA();
+    [UInt(8)] public byte Tail { get; set; }
+}
+
+public interface IFlatArm : IWireStruct
+{
+}
+
+[WireStruct]
+[UnionCase(0)]
+public sealed partial class FlatArmA : IFlatArm
+{
+    [UInt(4)] public byte A { get; set; }
+}
+
+[WireStruct]
+[UnionCase(1)]
+public sealed partial class FlatArmB : IFlatArm
+{
+    [UInt(8)] public byte B { get; set; }
+    [UInt(3)] public byte C { get; set; }
+}
+
+[WireMessage((GameMessageOpcode)0xFE0D, Direction.Both)]
+public sealed partial class SlotUnionMessage
+{
+    [UInt(1)] public byte SideKind { get; set; }
+    [Union(nameof(SideKind))] public ISlotArm Side { get; set; } = new SlotPlayer();
+}
+
+public interface ISlotArm : IWireStruct
+{
+}
+
+[WireStruct]
+[UnionCase(0)]
+public sealed partial class SlotPlayer : ISlotArm
+{
+    [UInt(4)] public byte Level { get; set; }
+}
+
+[WireStruct]
+[UnionCase(1)]
+public sealed partial class SlotCreature : ISlotArm
+{
+    [UInt(12)] public ushort CreatureId { get; set; }
+}
+
+[WireMessage((GameMessageOpcode)0xFE0E, Direction.Both)]
+public sealed partial class RowsMessage
+{
+    [UInt(3), Count] public byte EntryCount { get; set; }
+    [Array(CountFrom = nameof(EntryCount)), UInt(8)] public List<byte> Ids { get; set; } = [];
+    [Array(CountFrom = nameof(EntryCount)), UInt(4)] public List<byte> Levels { get; set; } = [];
+}
+
+[WireMessage((GameMessageOpcode)0xFE0F, Direction.ServerToClient)]
+public sealed partial class QuirkMessage
+{
+    [UInt(32)] public uint Total { get; set; }
+}
+
+[WireMessage((GameMessageOpcode)0xFE10, Direction.Both)]
+public sealed partial class OneWayMessage
+{
+    [UInt(8)] public byte Value { get; set; }
+    [UInt(8)] public byte Tail { get; set; }
+}

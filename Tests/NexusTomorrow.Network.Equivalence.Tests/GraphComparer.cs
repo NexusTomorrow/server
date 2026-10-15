@@ -7,18 +7,18 @@ using System.Reflection;
 namespace NexusTomorrow.Network.Equivalence.Tests;
 
 /// <summary>
-/// Compares a declared instance with a legacy instance member by member, with the twin mapper's name mapping and skips.
+/// Compares a declared instance with a legacy instance member by member, with the twin mapper's name mapping, skips, union flattening, rows and renames.
 /// Numbers compare by value, floats and doubles by bit pattern, strings by ordinal, collections by count then element, a legacy bit array by its buffer's bytes, and union arms must be twins.
 /// </summary>
 internal sealed class GraphComparer
 {
     private const int MaxTextLength = 40;
 
-    private readonly Func<Type, Type?> _twinOf;
+    private readonly Pairing _pairing;
 
-    public GraphComparer(Func<Type, Type?> twinOf)
+    public GraphComparer(Pairing pairing)
     {
-        _twinOf = twinOf;
+        _pairing = pairing;
     }
 
     /// <summary>
@@ -61,20 +61,81 @@ internal sealed class GraphComparer
     {
         Type legacyType = legacy.GetType();
         IReadOnlyList<WireMember> members = WireMembers.Of(declared.GetType());
+        RowColumns? rows = _pairing.RowsOf(declared.GetType());
         foreach (WireMember member in members)
         {
-            if (member.Shape == WireShape.Pad)
+            if (member.Shape == WireShape.Pad || rows?.Holds(member.Name) == true)
                 continue;
 
-            MemberInfo? twin = MemberAccess.Find(legacyType, member.Name);
+            string memberPath = $"{path}.{member.Name}";
+            MemberInfo? twin = MemberAccess.Find(legacyType, _pairing.LegacyNameOf(member));
             if (twin is null)
             {
-                if (!member.IsCount && !WireMembers.IsSelector(member, members))
+                if (member.Shape == WireShape.Union)
+                    CompareArmOnHolder(MemberAccess.GetValue(member.Member, declared), legacy, member.Name, memberPath, differences);
+                else if (!member.IsCount && !WireMembers.IsSelector(member, members))
                     differences.Add($"{member.QualifiedName} has no legacy twin");
                 continue;
             }
 
-            CompareMember(member, MemberAccess.GetValue(member.Member, declared), MemberAccess.GetValue(twin, legacy), $"{path}.{member.Name}", differences);
+            CompareMember(member, MemberAccess.GetValue(member.Member, declared), MemberAccess.GetValue(twin, legacy), memberPath, differences);
+        }
+
+        if (rows is not null)
+            CompareRows(declared, members, legacy, rows, path, differences);
+    }
+
+    /// <summary>
+    /// Compare the arm of a union the legacy holder has no member for with the holder, as the twin mapper puts it there: with the member the holder keeps for
+    /// that arm when the arm has a twin, else member by member with the holder's own members.
+    /// </summary>
+    private void CompareArmOnHolder(object? arm, object legacy, string unionName, string path, List<string> differences)
+    {
+        if (arm is null)
+        {
+            differences.Add($"{path}: null != the arm {legacy.GetType().Name} holds");
+            return;
+        }
+
+        if (_pairing.TwinOf(arm.GetType()) is not { } armTwin)
+        {
+            CompareObject(arm, legacy, path, differences);
+            return;
+        }
+
+        if (Pairing.ArmSlotOf(legacy.GetType(), unionName, armTwin) is { } slot)
+            CompareArms(arm, MemberAccess.GetValue(slot, legacy), path, differences);
+        else
+            differences.Add($"{path}: {legacy.GetType().Name} has no member for arm {arm.GetType().Name}");
+    }
+
+    /// <summary>
+    /// Compare element i of each column with its field of record i of the legacy list.
+    /// </summary>
+    private void CompareRows(object declared, IReadOnlyList<WireMember> members, object legacy, RowColumns rows, string path, List<string> differences)
+    {
+        MemberInfo? list = MemberAccess.Find(legacy.GetType(), rows.LegacyList);
+        object?[] records = list is not null && MemberAccess.GetValue(list, legacy) is IEnumerable items ? [.. items.Cast<object?>()] : [];
+        foreach ((string column, string field) in rows.Columns)
+        {
+            WireMember member = members.Single(candidate => candidate.Name == column);
+            object?[] values = MemberAccess.GetValue(member.Member, declared) is IEnumerable columnItems ? [.. columnItems.Cast<object?>()] : [];
+            string columnPath = $"{path}.{column}";
+            if (values.Length != records.Length)
+            {
+                differences.Add($"{columnPath}.Count: {values.Length} != {records.Length} records in {rows.LegacyList}");
+                continue;
+            }
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                object? record = records[i];
+                MemberInfo? target = record is null ? null : MemberAccess.Find(record.GetType(), field);
+                if (record is null || target is null)
+                    differences.Add($"{columnPath}[{i}]: record {i} of {rows.LegacyList} has no field {field}");
+                else
+                    CompareValues(member.Encoding, values[i], MemberAccess.GetValue(target, record), $"{columnPath}[{i}]", differences);
+            }
         }
     }
 
@@ -86,7 +147,7 @@ internal sealed class GraphComparer
         if (encoding == WireEncoding.Struct)
         {
             // A declared holder of one union compares through to the bare arm the legacy model keeps.
-            if (WireMembers.SingleUnionOf(declared.GetType()) is { } union && _twinOf(declared.GetType()) != legacy.GetType())
+            if (WireMembers.SingleUnionOf(declared.GetType()) is { } union && _pairing.TwinOf(declared.GetType()) != legacy.GetType())
             {
                 CompareArms(MemberAccess.GetValue(union.Member, declared), legacy, $"{path}.{union.Name}", differences);
                 return;
@@ -134,7 +195,7 @@ internal sealed class GraphComparer
         if (!BothPresent(declared, legacy, path, differences))
             return;
 
-        Type? twin = _twinOf(declared.GetType());
+        Type? twin = _pairing.TwinOf(declared.GetType());
         if (twin is null)
             differences.Add($"{path}: {declared.GetType().Name} has no legacy twin");
         else if (legacy.GetType() != twin)

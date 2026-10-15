@@ -27,7 +27,7 @@ public sealed class ConvertedModelsTests
             if (twin is null)
             {
                 // A type only the declaration has is checked through the twinned type that holds it: the mapper and comparer pair its members with
-                // the legacy member's own type, or with the bare arm where the seed keeps a union's arm itself.
+                // the legacy member's own type, with the bare arm where the seed keeps a union's arm itself, or with the holder's own members.
                 if (IsHeldByATwinnedType(type, declared))
                     holders++;
                 else
@@ -35,11 +35,14 @@ public sealed class ConvertedModelsTests
                 continue;
             }
 
-            differences.AddRange(Equivalence.Check(type, twin, ConvertedModels.TwinOf, legacyServices, Seeds));
+            differences.AddRange(Equivalence.Check(type, twin, ConvertedModels.Pairing, legacyServices, Seeds));
             pairs++;
         }
 
-        TestContext.Current.TestOutputHelper?.WriteLine($"Checked {pairs} of {declared.Count} declared types against their legacy twins; {holders} types without a twin checked through the types holding them; {ConvertedModels.Exclusions.Count} excluded.");
+        TestContext.Current.TestOutputHelper?.WriteLine(
+            $"Checked {pairs} of {declared.Count} declared types against their legacy twins, {ConvertedModels.ReadOnly.Count} of them against the legacy Read only; "
+            + $"{holders} types without a twin checked through the types holding them; {ConvertedModels.Exclusions.Count} excluded. "
+            + $"Rules: {ConvertedModels.Rows.Count} rows, {ConvertedModels.Limits.Count} limits, {ConvertedModels.Presets.Count} presets, {ConvertedModels.Renames.Count} renames.");
         if (untwinned.Count > 0)
             Assert.Fail($"These declared types have no legacy twin and no exclusion: {string.Join(", ", untwinned)}");
         if (differences.Count > 0)
@@ -47,11 +50,50 @@ public sealed class ConvertedModelsTests
         Assert.Equal(declared.Count, pairs + holders + ConvertedModels.Exclusions.Count);
     }
 
-    private static bool IsHeldByATwinnedType(Type holder, List<Type> declared)
+    [Fact]
+    public void EveryPinnedRuleNamesADeclaredTypeTheCheckRuns()
     {
-        return declared.Any(type => ConvertedModels.TwinOf(type) is not null
-            && !ConvertedModels.Exclusions.ContainsKey(type.FullName ?? type.Name)
-            && WireMembers.Of(type).Any(member => member.ValueType == holder));
+        var declared = ConvertedModels.DeclaredTypes().ToDictionary(type => type.FullName ?? type.Name, StringComparer.Ordinal);
+        var problems = new List<string>();
+
+        foreach (string name in ConvertedModels.ReadOnly.Keys.Concat(ConvertedModels.Rows.Keys).Concat(ConvertedModels.Limits.Keys).Concat(ConvertedModels.Presets.Keys)
+            .Concat(ConvertedModels.Renames.Keys.Select(key => key.Type)))
+        {
+            if (!declared.ContainsKey(name))
+                problems.Add($"{name} is not a declared type");
+            else if (ConvertedModels.Exclusions.ContainsKey(name))
+                problems.Add($"{name} is excluded, so its rule never runs");
+        }
+
+        foreach ((string name, RowColumns rows) in ConvertedModels.Rows)
+        {
+            if (!declared.TryGetValue(name, out Type? type))
+                continue;
+
+            foreach ((string column, _) in rows.Columns)
+            {
+                if (WireMembers.Of(type).FirstOrDefault(member => member.Name == column) is not { Shape: WireShape.Array, CountFrom: not null })
+                    problems.Add($"{name}.{column} is not a column sharing a count");
+            }
+        }
+
+        foreach (((string name, string member), _) in ConvertedModels.Renames)
+        {
+            if (declared.TryGetValue(name, out Type? type) && WireMembers.Of(type).All(candidate => candidate.Name != member))
+                problems.Add($"{name}.{member} is not a wire member");
+        }
+
+        Assert.Empty(problems);
+    }
+
+    /// <summary>
+    /// Whether a twinned, checked type holds <paramref name="type"/> as a member, an element, or an arm of one of its unions.
+    /// </summary>
+    private static bool IsHeldByATwinnedType(Type type, List<Type> declared)
+    {
+        return declared.Any(holder => ConvertedModels.TwinOf(holder) is not null
+            && !ConvertedModels.Exclusions.ContainsKey(holder.FullName ?? holder.Name)
+            && WireMembers.Of(holder).Any(member => member.ValueType == type || (member.Shape == WireShape.Union && member.ValueType.IsAssignableFrom(type))));
     }
 
     /// <summary>

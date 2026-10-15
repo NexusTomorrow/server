@@ -17,28 +17,32 @@ internal sealed class Equivalence
 
     private readonly Type _declared;
     private readonly Type _legacy;
+    private readonly Pairing _pairing;
     private readonly IServiceProvider _legacyServices;
+    private readonly Filler _filler;
     private readonly TwinMapper _mapper;
     private readonly GraphComparer _comparer;
     private readonly List<string> _differences = [];
 
-    private Equivalence(Type declared, Type legacy, Func<Type, Type?> twinOf, IServiceProvider legacyServices)
+    private Equivalence(Type declared, Type legacy, Pairing pairing, IServiceProvider legacyServices)
     {
         _declared = declared;
         _legacy = legacy;
+        _pairing = pairing;
         _legacyServices = legacyServices;
-        _mapper = new TwinMapper(twinOf, legacyServices);
-        _comparer = new GraphComparer(twinOf);
+        _filler = new Filler(pairing.SkipsArm);
+        _mapper = new TwinMapper(pairing, legacyServices);
+        _comparer = new GraphComparer(pairing);
     }
 
     /// <summary>
     /// Every difference between <paramref name="declared"/> and <paramref name="legacy"/> over the empty instance and seeds 0 to <paramref name="seeds"/> - 1, each prefixed
-    /// with the declared type's name, "empty" or the seed, and the direction. The write check runs when the legacy type is <see cref="IWritable"/>, the read check when it
-    /// is <see cref="IReadable"/>.
+    /// with the declared type's name, "empty" or the seed, and the direction. The write check runs when the legacy type is <see cref="IWritable"/> and the pairing does not
+    /// hold the type to its legacy Read only, the read check when it is <see cref="IReadable"/>. Each filled instance takes the pairing's limits first.
     /// </summary>
-    public static List<string> Check(Type declared, Type legacy, Func<Type, Type?> twinOf, IServiceProvider legacyServices, int seeds)
+    public static List<string> Check(Type declared, Type legacy, Pairing pairing, IServiceProvider legacyServices, int seeds)
     {
-        var equivalence = new Equivalence(declared, legacy, twinOf, legacyServices);
+        var equivalence = new Equivalence(declared, legacy, pairing, legacyServices);
         equivalence.CheckInstance(null);
         for (int seed = 0; seed < seeds; seed++)
             equivalence.CheckInstance(seed);
@@ -51,7 +55,8 @@ internal sealed class Equivalence
         IWireStruct value;
         try
         {
-            object instance = seed.HasValue ? Filler.Fill(_declared, new Random(seed.Value), seed.Value) : Filler.Empty(_declared);
+            object instance = seed.HasValue ? _filler.Fill(_declared, new Random(seed.Value), seed.Value) : _filler.Empty(_declared);
+            _pairing.Limit(instance);
             value = (IWireStruct)instance;
         }
         catch (Exception exception)
@@ -71,7 +76,7 @@ internal sealed class Equivalence
             return;
         }
 
-        if (typeof(IWritable).IsAssignableFrom(_legacy))
+        if (typeof(IWritable).IsAssignableFrom(_legacy) && !_pairing.IsReadOnly(_declared))
             CheckWrite(label, value, bytes);
         if (typeof(IReadable).IsAssignableFrom(_legacy))
             CheckRead(label, bytes);
@@ -129,6 +134,7 @@ internal sealed class Equivalence
         try
         {
             legacyRead = ActivatorUtilities.CreateInstance(_legacyServices, _legacy);
+            _pairing.Preset(_declared, legacyRead);
             using var stream = new MemoryStream(bytes, writable: false);
             using var reader = new GamePacketReader(stream);
             ((IReadable)legacyRead).Read(reader);
