@@ -5,7 +5,8 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.Auth.Message.Model;
 
 [Message(GameMessageOpcode.ClientHelloAuth)]
-public partial class ClientHelloAuth : IReadable
+[WireMessage(GameMessageOpcode.ClientHelloAuth, Direction.ClientToServer)]
+public sealed partial class ClientHelloAuth : IReadable
 {
     [WireStruct]
     public sealed partial class HardwareInformation : IReadable
@@ -77,17 +78,17 @@ public partial class ClientHelloAuth : IReadable
         }
     }
 
-    public uint Build { get; private set; }
-    public ulong CryptKeyInteger { get; private set; }
-    public string AccountString { get; private set; }
+    [UInt(32)] public uint Build { get; private set; }
+    [UInt(64)] public ulong CryptKeyInteger { get; private set; }
+    [TerminatedWideString] public string AccountString { get; private set; }
     public NetworkGuid UUID_1 { get; } = new();
     public NetworkGuid GameToken { get; } = new();
-    public uint InetAddress { get; private set; }
-    public Language Language { get; private set; }
-    public uint GameMode { get; private set; }
-    public uint Unused { get; private set; }
+    [UInt(32)] public uint InetAddress { get; private set; }
+    [UInt(32)] public Language Language { get; private set; }
+    [UInt(32)] public uint GameMode { get; private set; }
+    [UInt(32)] public uint Unused { get; private set; }
     public HardwareInformation Hardware { get; } = new();
-    public uint RealmDataCenterId { get; private set; }
+    [UInt(32)] public uint RealmDataCenterId { get; private set; }
 
     public void Read(GamePacketReader reader)
     {
