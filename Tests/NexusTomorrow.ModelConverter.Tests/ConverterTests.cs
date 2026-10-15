@@ -402,6 +402,32 @@ public sealed class ConverterTests
         Assert.Contains("union", holder.Reason, StringComparison.Ordinal);
     }
 
+    // dotnet format orders plain usings first, then aliases; the codec using joins the plain ones.
+    [Fact]
+    public void TheCodecUsingJoinsThePlainUsingsBeforeAnAlias()
+    {
+        ConversionResult result = ConverterHarness.Convert("""
+            using System.Text;
+            using Builder = System.Text.StringBuilder;
+
+            namespace Tests;
+
+            public class Sample : IWritable
+            {
+                public uint Value { get; set; }
+
+                public void Write(GamePacketWriter writer)
+                {
+                    writer.Write(Value);
+                }
+            }
+            """);
+
+        ConverterHarness.AssertInOrder(
+            ConverterHarness.Converted(result),
+            "using System.Text; using NexusTomorrow.Network.Codec; using Builder = System.Text.StringBuilder;");
+    }
+
     // An attribute on a type binds its arguments in the type's scope, where a member named Direction hides the enum.
     [Fact]
     public void AMemberNamedDirectionQualifiesTheDirectionEnum()

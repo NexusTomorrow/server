@@ -183,7 +183,7 @@ internal static class DeclarationRewriter
     }
 
     /// <summary>
-    /// Add a using directive in order (System first, then ordinal) when the file lacks it.
+    /// Add a using directive in order (System first, then ordinal, then the aliases and static usings) when the file lacks it.
     /// </summary>
     private static CompilationUnitSyntax AddUsing(CompilationUnitSyntax unit, string name, string eol)
     {
@@ -195,7 +195,7 @@ internal static class DeclarationRewriter
         if (unit.Usings.Count == 0)
             directive = directive.WithTrailingTrivia(SyntaxFactory.EndOfLine(eol), SyntaxFactory.EndOfLine(eol));
         int index = 0;
-        while (index < unit.Usings.Count && Precedes(unit.Usings[index].Name?.ToString() ?? "", name))
+        while (index < unit.Usings.Count && unit.Usings[index] is { Alias: null, StaticKeyword.RawKind: 0 } existing && Precedes(existing.Name?.ToString() ?? "", name))
             index++;
 
         if (index == 0 && unit.Usings.Count > 0)
