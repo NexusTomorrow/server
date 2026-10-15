@@ -96,7 +96,7 @@ internal static class ConvertedModels
         ["NexusTomorrow.Network.World.Message.Model.Shared.StatValueUpdate"] = "the legacy Write picks a float or a uint cast from Type, which is not on the wire; the declaration is the float opcode's layout",
         ["NexusTomorrow.Network.World.Message.Model.Shared.TargetInfo"] = NestsEffectInfo,
         ["NexusTomorrow.Network.World.Message.Model.Spell.ServerSpellExecute"] = NestsEffectInfo,
-        ["NexusTomorrow.Network.World.Message.Model.Spell.ServerSpellGo"] = NestsEffectInfo,
+        ["NexusTomorrow.Network.World.Message.Model.Spell.ServerSpellGo"] = "the legacy Write puts the sbyte Phase through Write(int), 32 sign-extended bits, where the client facts give the 8 declared; it also nests EffectInfo, whose payload union the name mapping cannot follow",
         ["NexusTomorrow.Network.World.Message.Model.Spell.ServerSpellList"] = NestsEffectInfo,
         ["NexusTomorrow.Network.World.Message.Model.Spell.SpellInit"] = NestsEffectInfo,
         ["NexusTomorrow.Network.World.Message.Model.Support.Survey+ChallengesSurvey"] = ReadShortThrows,

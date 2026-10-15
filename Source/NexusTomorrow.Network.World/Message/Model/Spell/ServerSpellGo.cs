@@ -37,8 +37,7 @@ public sealed partial class ServerSpellGo : IWritable
     [Array(CountBits = 8)] public List<TelegraphPosition> TelegraphPositionData { get; set; } = [];
     [Array(CountBits = 8)] public List<MissileInfo> MissileInfoData { get; set; } = [];
 
-    [UInt(8)] public sbyte Phase { get; set; }
-    [Pad(24)] public Pad PhaseHigh { get; }
+    [SInt(8)] public sbyte Phase { get; set; }
 
     public void Write(GamePacketWriter writer)
     {
