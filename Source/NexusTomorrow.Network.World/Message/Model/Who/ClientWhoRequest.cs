@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Who.Parameter;
 
 namespace NexusTomorrow.Network.World.Message.Model.Who;
@@ -6,12 +7,13 @@ namespace NexusTomorrow.Network.World.Message.Model.Who;
 // If no parameters are sent, send a who response for the current zone with sensible parameters
 // Can get sent multiple sets of parameters that AND and OR together
 [Message(GameMessageOpcode.ClientWhoRequest)]
-public class ClientWhoRequest : IReadable
+[WireMessage(GameMessageOpcode.ClientWhoRequest, Direction.ClientToServer)]
+public sealed partial class ClientWhoRequest : IReadable
 {
-    public List<WhoParameter> Parameters { get; private set; } = [];
-    public List<uint> ParameterGroupCounts { get; private set; } = []; // Number of ANDed parameters in each parameter group
-                                                                       // Each new group count is another set of ANDed parameters
-                                                                       // Collectively each parameter group gets ORed with the other groups
+    [Array(CountBits = 32)] public List<WhoParameter> Parameters { get; private set; } = [];
+    [Array(CountBits = 32), UInt(32)] public List<uint> ParameterGroupCounts { get; private set; } = []; // Number of ANDed parameters in each parameter group
+                                                                                                         // Each new group count is another set of ANDed parameters
+                                                                                                         // Collectively each parameter group gets ORed with the other groups
 
     public void Read(GamePacketReader reader)
     {
