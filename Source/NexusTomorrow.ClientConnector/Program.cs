@@ -55,7 +55,15 @@ namespace NexusTomorrow.ClientConnector
                 .AddJsonFile(jsonFile, false)
                 .Build();
 
-            LaunchClient(configuration.Get<ClientConfiguration>() ?? throw new InvalidDataException($"{jsonFile} holds no client configuration."));
+            LaunchClient(ReadConfiguration(configuration));
+        }
+
+        /// <summary>
+        /// Bind <see cref="ClientConfiguration"/> from the supplied configuration.
+        /// </summary>
+        internal static ClientConfiguration ReadConfiguration(IConfiguration configuration)
+        {
+            return configuration.Get<ClientConfiguration>() ?? throw new InvalidDataException($"{jsonFile} holds no client configuration.");
         }
 
         private static void LaunchClient(ClientConfiguration config)

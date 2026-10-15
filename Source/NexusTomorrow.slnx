@@ -15,7 +15,9 @@
     <Project Path="NexusTomorrow.Shared/NexusTomorrow.Shared.csproj" />
   </Folder>
   <Folder Name="/Tests/">
+    <Project Path="../Tests/NexusTomorrow.ClientConnector.Tests/NexusTomorrow.ClientConnector.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Cryptography.Tests/NexusTomorrow.Cryptography.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.GameTable.Tests/NexusTomorrow.GameTable.Tests.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="../Directory.Packages.props" />

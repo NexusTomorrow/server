@@ -13,4 +13,8 @@
     <ProjectReference Include="..\NexusTomorrow.Shared\NexusTomorrow.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="NexusTomorrow.ClientConnector.Tests" />
+  </ItemGroup>
+
 </Project>
