@@ -13,5 +13,4 @@ public sealed partial class ServerItemError
 {
     [UInt(64)] public ulong ItemGuid { get; set; }
     [UInt(32)] public GenericError ErrorCode { get; set; }
-    [Pad(32)] public Pad ErrorCodeHigh { get; }
 }

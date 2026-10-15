@@ -7,6 +7,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell;
 [WireMessage(GameMessageOpcode.ServerSpellVisualEffectRemoveFromUnit, Direction.ServerToClient)]
 public sealed partial class ServerSpellVisualEffectRemoveFromUnit
 {
-    [UInt(18)] public uint TargetUnitId { get; set; }
+    [UInt(32)] public uint TargetUnitId { get; set; }
 }
 

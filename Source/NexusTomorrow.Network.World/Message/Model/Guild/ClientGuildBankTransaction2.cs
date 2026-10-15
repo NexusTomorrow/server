@@ -10,7 +10,7 @@ public sealed partial class ClientGuildBankTransaction2
     public Identity GuildIdentity { get; private set; } = new Identity();
     [UInt(64)] public ulong SourceItemGuid { get; private set; }
     [UInt(64)] public ulong DestinationItemGuid { get; private set; } // Sent if bag slot already contains an item, otherwise 0
-    [UInt(32)] public uint SourceItem2Id { get; private set; }
+    [UInt(18)] public uint SourceItem2Id { get; private set; }
     public ItemLocation Destination { get; private set; } = new ItemLocation();
     public ItemLocation Source { get; private set; } = new ItemLocation();
     [UInt(1)] public bool UseFirstFreeSlot { get; private set; }

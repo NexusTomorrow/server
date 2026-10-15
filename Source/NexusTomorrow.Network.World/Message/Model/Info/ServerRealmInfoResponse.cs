@@ -6,6 +6,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Info;
 [WireMessage(GameMessageOpcode.ServerRealmInfoResponse, Direction.ServerToClient)]
 public sealed partial class ServerRealmInfoResponse
 {
-    [UInt(32)] public uint RealmId { get; set; }
+    [UInt(14)] public ushort RealmId { get; set; }
     [WideString] public string RealmName { get; set; }
 }

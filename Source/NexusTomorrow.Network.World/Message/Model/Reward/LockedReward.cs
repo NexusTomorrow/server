@@ -12,5 +12,4 @@ public sealed partial class LockedReward
     [UInt(32)] public uint RewardId { get; set; } // RewardRotationItemId, RewardRotationEssenceId, RewardRotationModifierId
     [UInt(8)] public RewardRotationRewardType RewardType { get; set; }
     [UInt(32)] public GrantedRewardFlags RewardedFlags { get; set; }
-    [Pad(32)] public Pad RewardedFlagsHigh { get; }
 }

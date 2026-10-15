@@ -9,5 +9,5 @@ public sealed partial class ServerMapTrackedUnitUpdate
 {
     [UInt(32)] public uint TrackedUnitId { get; set; }
     [Float32] public Vector3 Position { get; set; }
-    [UInt(14)] public uint PublicEventObjectiveId { get; set; }
+    [UInt(15)] public uint PublicEventObjectiveId { get; set; }
 }

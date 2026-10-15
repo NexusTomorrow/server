@@ -9,5 +9,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 public sealed partial class ServerGuildClassification
 {
     public Identity GuildIdentity { get; set; }
-    [UInt(14)] public GuildClassification Classification { get; set; }
+    [UInt(3)] public GuildClassification Classification { get; set; }
 }
