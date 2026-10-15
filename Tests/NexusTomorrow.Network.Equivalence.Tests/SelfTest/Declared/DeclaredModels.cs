@@ -237,3 +237,15 @@ public sealed partial class TrailingWidthMessage
     [UInt(8)] public byte Head { get; set; }
     [UInt(13)] public ushort Last { get; set; }
 }
+
+[WireMessage((GameMessageOpcode)0xFE12, Direction.ClientToServer)]
+public sealed partial class OverrunMessage
+{
+    [UInt(8)] public byte Head { get; set; }
+}
+
+[WireMessage((GameMessageOpcode)0xFE13, Direction.ClientToServer)]
+public sealed partial class InterfaceFreeMessage
+{
+    [UInt(8)] public byte Value { get; set; }
+}

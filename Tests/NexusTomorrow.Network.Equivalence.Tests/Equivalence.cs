@@ -24,6 +24,8 @@ internal sealed class Equivalence
 
     private readonly Type _declared;
     private readonly Type _legacy;
+    private readonly MethodInfo? _legacyWrite;
+    private readonly MethodInfo? _legacyRead;
     private readonly Pairing _pairing;
     private readonly IServiceProvider _legacyServices;
     private readonly Filler _filler;
@@ -35,6 +37,8 @@ internal sealed class Equivalence
     {
         _declared = declared;
         _legacy = legacy;
+        _legacyWrite = LegacyWriteOf(legacy);
+        _legacyRead = LegacyReadOf(legacy);
         _pairing = pairing;
         _legacyServices = legacyServices;
         _filler = new Filler(pairing.SkipsArm);
@@ -44,8 +48,9 @@ internal sealed class Equivalence
 
     /// <summary>
     /// Every difference between <paramref name="declared"/> and <paramref name="legacy"/> over the empty instance and seeds 0 to <paramref name="seeds"/> - 1, each prefixed
-    /// with the declared type's name, "empty" or the seed, and the direction. The write check runs when the legacy type is <see cref="IWritable"/> and the pairing does not
-    /// hold the type to its legacy Read only, the read check when it is <see cref="IReadable"/>. Each filled instance takes the pairing's limits first.
+    /// with the declared type's name, "empty" or the seed, and the direction. The write check runs when the legacy type has a <c>Write(GamePacketWriter)</c>, unless the
+    /// pairing holds the type or a type in the instance to its legacy Read only; the read check runs when it has a <c>Read(GamePacketReader)</c>. A legacy type with
+    /// neither has nothing to check here (see <see cref="CanCheck"/>). Each filled instance takes the pairing's limits first.
     /// </summary>
     public static List<string> Check(Type declared, Type legacy, Pairing pairing, IServiceProvider legacyServices, int seeds)
     {
@@ -54,6 +59,33 @@ internal sealed class Equivalence
         for (int seed = 0; seed < seeds; seed++)
             equivalence.CheckInstance(seed);
         return equivalence._differences;
+    }
+
+    /// <summary>
+    /// Whether <paramref name="legacy"/> writes or reads itself, so a pair with it checks something. The seed declares some readers without
+    /// <see cref="IReadable"/> (<c>ClientMatchingQueueRandomParty</c>), so the methods decide, not the interfaces.
+    /// </summary>
+    public static bool CanCheck(Type legacy)
+    {
+        return LegacyWriteOf(legacy) is not null || LegacyReadOf(legacy) is not null;
+    }
+
+    /// <summary>
+    /// Whether <paramref name="legacy"/> reads itself.
+    /// </summary>
+    public static bool Reads(Type legacy)
+    {
+        return LegacyReadOf(legacy) is not null;
+    }
+
+    private static MethodInfo? LegacyWriteOf(Type legacy)
+    {
+        return legacy.GetMethod("Write", BindingFlags.Instance | BindingFlags.Public, [typeof(GamePacketWriter)]);
+    }
+
+    private static MethodInfo? LegacyReadOf(Type legacy)
+    {
+        return legacy.GetMethod("Read", BindingFlags.Instance | BindingFlags.Public, [typeof(GamePacketReader)]);
     }
 
     private void CheckInstance(int? seed)
@@ -85,9 +117,9 @@ internal sealed class Equivalence
             return;
         }
 
-        if (typeof(IWritable).IsAssignableFrom(_legacy) && !_pairing.IsReadOnly(_declared))
+        if (_legacyWrite is not null && !_pairing.HoldsReadOnly(value))
             CheckWrite(label, value, bytes, bits);
-        if (typeof(IReadable).IsAssignableFrom(_legacy))
+        if (_legacyRead is not null)
             CheckRead(label, bytes, bits);
     }
 
@@ -113,7 +145,7 @@ internal sealed class Equivalence
         long legacyBits;
         try
         {
-            (legacyBytes, legacyBits) = WriteLegacy((IWritable)twin);
+            (legacyBytes, legacyBits) = WriteLegacy(twin, _legacyWrite!);
         }
         catch (Exception exception)
         {
@@ -147,9 +179,9 @@ internal sealed class Equivalence
         {
             legacyRead = ActivatorUtilities.CreateInstance(_legacyServices, _legacy);
             _pairing.Preset(_declared, legacyRead);
-            using var stream = new MemoryStream(bytes, writable: false);
+            using var stream = new BodyStream(bytes);
             using var reader = new GamePacketReader(stream);
-            ((IReadable)legacyRead).Read(reader);
+            _legacyRead!.Invoke(legacyRead, [reader]);
 
             long read = BitsRead(reader, stream);
             if (read != bits)
@@ -193,18 +225,19 @@ internal sealed class Equivalence
     /// The legacy body and its length in bits: the bytes it finished plus the bits of the byte it had begun, which equal bodies can differ in when the
     /// last field's width differs and its high bits are zero.
     /// </summary>
-    private static (byte[] Bytes, long Bits) WriteLegacy(IWritable value)
+    private static (byte[] Bytes, long Bits) WriteLegacy(object value, MethodInfo write)
     {
         using var stream = new MemoryStream();
         using var writer = new GamePacketWriter(stream);
-        value.Write(writer);
+        write.Invoke(value, [writer]);
         long bits = (stream.Length * 8) + (byte)s_writerBitPosition.GetValue(writer)!;
         writer.FlushBits();
         return (stream.ToArray(), bits);
     }
 
     /// <summary>
-    /// The bits the legacy reader took: the bytes it has taken, less the bits it has not reached in the last of them.
+    /// The bits the legacy reader took: the bytes it has taken, less the bits it has not reached in the last of them. The body throws on a byte past its
+    /// end (<see cref="BodyStream"/>), so the count never stalls at the end while the reader goes on.
     /// </summary>
     private static long BitsRead(GamePacketReader reader, Stream stream)
     {

@@ -16,12 +16,13 @@ internal sealed record Pairing(Func<Type, Type?> TwinOf)
     private static readonly Dictionary<(string Type, string Member), Rename> s_noRenames = [];
 
     /// <summary>
-    /// Union arms the filler never picks: each is excluded or checked one way on its own, so the unions holding it are checked over their other arms.
+    /// Union arms the filler never picks: each is excluded on its own, so the unions holding it are checked over their other arms.
     /// </summary>
     public Func<Type, bool> SkipsArm { get; init; } = _ => false;
 
     /// <summary>
-    /// Types checked against the legacy Read only, with the reason: their legacy Write puts different bits on the wire than their legacy Read takes.
+    /// Types checked against the legacy Read only, with the reason: their legacy Write puts different bits on the wire than their legacy Read takes. An instance
+    /// holding one anywhere is checked against the legacy Read only too, so a read-only union arm still has its selector checked through its holders' reads.
     /// </summary>
     public IReadOnlyDictionary<string, string> ReadOnly { get; init; } = s_noReasons;
 
@@ -49,6 +50,17 @@ internal sealed record Pairing(Func<Type, Type?> TwinOf)
     public bool IsReadOnly(Type declared)
     {
         return declared.FullName is { } fullName && ReadOnly.ContainsKey(fullName);
+    }
+
+    /// <summary>
+    /// Whether the graph under <paramref name="root"/> holds an instance of a read-only type, <paramref name="root"/> included.
+    /// </summary>
+    public bool HoldsReadOnly(object root)
+    {
+        bool found = false;
+        if (ReadOnly.Count > 0)
+            Visit(root, instance => found |= IsReadOnly(instance.GetType()));
+        return found;
     }
 
     public RowColumns? RowsOf(Type declared)

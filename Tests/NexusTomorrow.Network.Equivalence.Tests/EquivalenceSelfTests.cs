@@ -164,7 +164,10 @@ public sealed class EquivalenceSelfTests
     [Fact]
     public void AReadOnlyTypeIsHeldToTheLegacyReadAlone()
     {
-        Assert.All(Check(typeof(OneWayMessage)), difference => Assert.Contains(" write: the bytes differ from bit ", difference, StringComparison.Ordinal));
+        List<string> differences = Check(typeof(OneWayMessage));
+
+        Assert.NotEmpty(differences);
+        Assert.All(differences, difference => Assert.Contains(" write: the bytes differ from bit ", difference, StringComparison.Ordinal));
         AssertNone(Check(typeof(OneWayMessage), Pinned()));
     }
 
@@ -173,6 +176,39 @@ public sealed class EquivalenceSelfTests
     {
         // UnionArmC's legacy writer is a bit too wide; skipping it checks UnionMessage over its other two arms.
         AssertNone(Check(typeof(UnionMessage), new Pairing(SelfTestTwins.Of) { SkipsArm = arm => arm == typeof(UnionArmC) }));
+    }
+
+    [Fact]
+    public void AnInstanceHoldingAReadOnlyArmIsCheckedOnReadAlone()
+    {
+        // UnionArmC's legacy writer is a bit too wide but its reader is right, so the instances holding it still have their selector read back.
+        var pairing = new Pairing(SelfTestTwins.Of) { ReadOnly = new Dictionary<string, string> { [typeof(UnionArmC).FullName!] = "its legacy Write puts C in 7 bits" } };
+
+        AssertNone(Check(typeof(UnionMessage), pairing));
+    }
+
+    [Fact]
+    public void ALegacyReaderThatRunsPastTheBodyIsCaught()
+    {
+        List<string> differences = Check(typeof(OverrunMessage));
+
+        Assert.Equal(Seeds + 1, differences.Count);
+        Assert.All(differences, difference => Assert.Contains(" read: the legacy reader threw EndOfStreamException", difference, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void ALegacyReaderWithoutIReadableIsStillChecked()
+    {
+        List<string> differences = Check(typeof(InterfaceFreeMessage));
+
+        Assert.Contains("InterfaceFreeMessage empty read: the legacy reader read 7 bits of the 8 written", differences);
+    }
+
+    [Fact]
+    public void ALegacyTypeWithNeitherMethodChecksNothing()
+    {
+        Assert.False(Equivalence.CanCheck(typeof(Legacy.RowEntry)));
+        Assert.True(Equivalence.CanCheck(typeof(Legacy.InterfaceFreeMessage)));
     }
 
     /// <summary>

@@ -19,6 +19,10 @@ internal static class ConvertedModels
     private const string NoCount = "the legacy Write leaves out the 32-bit count the client facts put before the elements; the declaration writes it";
     private const string NestsItem = "it nests Item, whose legacy Write sends Glyphs.Count as the count of Unknown88";
     private const string FloatHeldInteger = "the legacy model keeps this integer in a float, which holds every integer below 2^24 exactly";
+    private const string ByteEnumIn14Bits = "the legacy Read takes 14 bits into a byte-backed enum, and Enum.ToObject keeps the low 8, so these bits change nothing";
+    private const string SelectorSwitch = "the legacy Write switches on the selector to pick the fields it writes, and each arm's fields differ in width or name, so a wrong case value writes another arm's fields and fails the write check";
+    private const string ModifierTypeSwitch = "the legacy Write switches on ModifierType between a float and a uint cast, so a wrong Discrete value fails the write check; AdditiveScalar and MultiplicativeScalar write the same float, so their values are the RewardModifierValueType members of the arms' names";
+    private const string InitialStatList = "the legacy Write replaces every element of SomeStatList with a new UnknownStruct0 before writing it, so only its initial values reach the wire";
     private const uint FloatExactIntegers = (1u << 24) - 1;
 
     private static readonly Assembly s_legacyAssembly = typeof(legacy::NexusTomorrow.Network.World.ServiceCollectionExtensions).Assembly;
@@ -101,15 +105,12 @@ internal static class ConvertedModels
         ["NexusTomorrow.Network.World.Message.Model.ServerEntityStatUpdateInteger+IntegerStatValue"] = new(
             FloatHeldInteger,
             value => ((Model.ServerEntityStatUpdateInteger.IntegerStatValue)value).Value &= FloatExactIntegers),
-        ["NexusTomorrow.Network.World.Message.Model.Shared.GroupCharacter+UnknownStruct0"] = new(
-            "the legacy Write replaces every element of SomeStatList with a new UnknownStruct0 before writing it, so only its initial values reach the wire",
-            value =>
-            {
-                var stat = (Model.Shared.GroupCharacter.UnknownStruct0)value;
-                var initial = new Model.Shared.GroupCharacter.UnknownStruct0();
-                stat.Unknown6 = initial.Unknown6;
-                stat.Unknown7 = initial.Unknown7;
-            }),
+        ["NexusTomorrow.Network.World.Message.Model.ServerGroupMemberStatUpdate"] = new(
+            InitialStatList,
+            value => Initialize(((Model.ServerGroupMemberStatUpdate)value).SomeStatList)),
+        ["NexusTomorrow.Network.World.Message.Model.Shared.GroupCharacter"] = new(
+            InitialStatList,
+            value => Initialize(((Model.Shared.GroupCharacter)value).SomeStatList)),
         ["NexusTomorrow.Network.World.Message.Model.Shared.StatValueInitial+DataValue"] = new(
             FloatHeldInteger,
             value => ((Model.Shared.StatValueInitial.DataValue)value).Value &= FloatExactIntegers),
@@ -142,11 +143,48 @@ internal static class ConvertedModels
     };
 
     /// <summary>
-    /// The pairing the production check runs with: a union arm that is excluded or checked one way is never filled into the unions holding it.
+    /// Pads under the read check, by the declaring type's full name and the pad's name, each with what the legacy Read does with those bits. The generated Write
+    /// sends a pad as zeros, so the read check never hands the legacy Read anything else there.
+    /// </summary>
+    public static IReadOnlyDictionary<(string Type, string Pad), string> ZeroFedPads { get; } = new Dictionary<(string Type, string Pad), string>
+    {
+        [("NexusTomorrow.Network.World.Message.Model.ClientMatchingRoleCheckResponse", "RolesHigh")] = "the legacy Read takes 64 bits into the int-backed Role, and Enum.ToObject keeps the low 32, so these bits change nothing",
+        [("NexusTomorrow.Network.World.Message.Model.Marketplace.Filter.EquippableByAuctionFilter", "ClassIdHigh")] = ByteEnumIn14Bits,
+        [("NexusTomorrow.Network.World.Message.Model.Marketplace.Filter.EquippableByAuctionFilter", "RaceIdHigh")] = ByteEnumIn14Bits,
+        [("NexusTomorrow.Network.World.Message.Model.Option.ClientCombatLogDisableOthers", "Reserved")] = "the legacy Read sets the flag when any of the 32 bits is set, where the declaration reads bit 0 alone; stage 3 declares the client's 32-bit field",
+        [("NexusTomorrow.Network.World.Message.Model.Shared.CraftStats", "Reserved")] = "the legacy Read shifts past these 8 bits without keeping them",
+        [("NexusTomorrow.Network.World.Message.Model.Who.Parameter.WhoParameterClass", "ClassIdHigh")] = ByteEnumIn14Bits,
+        [("NexusTomorrow.Network.World.Message.Model.Who.Parameter.WhoParameterCombo", "ClassIdHigh")] = ByteEnumIn14Bits,
+        [("NexusTomorrow.Network.World.Message.Model.Who.Parameter.WhoParameterCombo", "RaceIdHigh")] = ByteEnumIn14Bits,
+        [("NexusTomorrow.Network.World.Message.Model.Who.Parameter.WhoParameterRace", "RaceIdHigh")] = ByteEnumIn14Bits,
+    };
+
+    /// <summary>
+    /// Union holders whose selector the legacy model stores and no legacy Read checks, by full name, each with how its [UnionCase] values were checked instead.
+    /// The mapper copies the declared selector, which the generated Write takes from the arm's [UnionCase], onto the stored legacy member, so a legacy Write
+    /// that does not branch on it cannot tell a wrong case value.
+    /// </summary>
+    public static IReadOnlyDictionary<string, string> UncheckedSelectors { get; } = new Dictionary<string, string>(StringComparer.Ordinal)
+    {
+        ["NexusTomorrow.Network.World.Message.Model.Reward.ServerPremiumRewards+RewardProperty"] = ModifierTypeSwitch,
+        ["NexusTomorrow.Network.World.Message.Model.Reward.ServerPremiumRewards+RewardProperty+RewardOwnerMultiplier"] = ModifierTypeSwitch,
+        ["NexusTomorrow.Network.World.Message.Model.ServerEntityCreate"] = "the legacy Write sends Type and then the model, without branching; 25 of the 37 arm values are the EntityType the seed's entity classes pair with the model they build (5f7c530b, each class's Type and BuildEntityModel), and the other 12, models the seed never builds, are the EntityType member of the model's name; stage 3 checks those 12 in the client",
+        ["NexusTomorrow.Network.World.Message.Model.ServerEntityCreate+UnknownStructureA8"] = SelectorSwitch,
+        ["NexusTomorrow.Network.World.Message.Model.ServerEntityCreate+UnknownStructureC8"] = SelectorSwitch,
+        ["NexusTomorrow.Network.World.Message.Model.ServerEntityCreate+WorldPlacement"] = SelectorSwitch,
+        ["NexusTomorrow.Network.World.Message.Model.ServerMatchingPvpKillNotification"] = "the legacy Write picks the player or the creature member of each side by its type, so a wrong case value writes the member the mapping leaves empty and fails the write check",
+        ["NexusTomorrow.Network.World.Message.Model.ServerStoreOffers+OfferGroup+Offer+OfferItemData"] = SelectorSwitch,
+        ["NexusTomorrow.Network.World.Message.Model.Shared.EffectInfo"] = SelectorSwitch,
+        ["NexusTomorrow.Network.World.Message.Model.Shared.PublicEventObjectiveStatus"] = SelectorSwitch,
+        ["NexusTomorrow.Network.World.Message.Model.Shared.StatValueInitial"] = "the legacy Write switches on Type between a uint cast, the float's own bits, and a uint cast followed by Data, so a wrong case value writes another encoding or length and fails the write check for any value but zero",
+    };
+
+    /// <summary>
+    /// The pairing the production check runs with: an excluded union arm is never filled into the unions holding it.
     /// </summary>
     public static Pairing Pairing { get; } = new(TwinOf)
     {
-        SkipsArm = arm => arm.FullName is { } fullName && (Exclusions.ContainsKey(fullName) || ReadOnly.ContainsKey(fullName)),
+        SkipsArm = arm => arm.FullName is { } fullName && Exclusions.ContainsKey(fullName),
         ReadOnly = ReadOnly,
         Rows = Rows,
         Limits = Limits,
@@ -190,5 +228,15 @@ internal static class ConvertedModels
     {
         for (int i = 0; i < values.Count; i++)
             values[i] &= mask;
+    }
+
+    private static void Initialize(Model.Shared.GroupCharacter.UnknownStruct0[] stats)
+    {
+        var initial = new Model.Shared.GroupCharacter.UnknownStruct0();
+        foreach (Model.Shared.GroupCharacter.UnknownStruct0 stat in stats)
+        {
+            stat.Unknown6 = initial.Unknown6;
+            stat.Unknown7 = initial.Unknown7;
+        }
     }
 }

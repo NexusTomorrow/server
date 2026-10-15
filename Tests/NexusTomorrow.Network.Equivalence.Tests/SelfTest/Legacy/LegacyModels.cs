@@ -582,3 +582,28 @@ public sealed class TrailingWidthMessage : IReadable, IWritable
         Last = reader.ReadUShort(14u);
     }
 }
+
+public sealed class OverrunMessage : IReadable
+{
+    public byte Head { get; set; }
+    public uint Extra { get; set; }
+
+    // Mismatch: Extra is a trailing field the declaration lacks, so the reader asks for 32 bits past the end of every body.
+    public void Read(GamePacketReader reader)
+    {
+        Head = reader.ReadByte();
+        Extra = reader.ReadUInt();
+    }
+}
+
+// Reads itself without IReadable, as some seed models do.
+public sealed class InterfaceFreeMessage
+{
+    public byte Value { get; set; }
+
+    // Mismatch: 7 bits where the declaration says 8.
+    public void Read(GamePacketReader reader)
+    {
+        Value = reader.ReadByte(7u);
+    }
+}

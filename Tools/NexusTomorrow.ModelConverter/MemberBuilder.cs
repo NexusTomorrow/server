@@ -237,6 +237,8 @@ internal sealed class MemberBuilder
     /// <summary>
     /// The attribute for a scalar of <paramref name="type"/> written at <paramref name="bits"/>; a width past the type's size
     /// declares the type's size and leaves the rest as <paramref name="padBits"/>, the zeros the legacy writer emits for a non-negative value.
+    /// A signed integer written wider than its type is refused: the legacy writer sign-extends it, which a pad of zeros cannot declare. An enum is
+    /// not refused, as the legacy writer converts it with ToUInt64, which throws for a negative value.
     /// </summary>
     internal static bool TryScalar(ITypeSymbol type, string encoding, int bits, out string attribute, out int padBits)
     {
@@ -252,6 +254,8 @@ internal sealed class MemberBuilder
                 {
                     int? size = IntegerSize(type);
                     if (size is not int typeBits || bits < 1 || bits > 64)
+                        return false;
+                    if (bits > typeBits && type.TypeKind != TypeKind.Enum && type.SpecialType is SpecialType.System_SByte or SpecialType.System_Int16 or SpecialType.System_Int32)
                         return false;
 
                     attribute = $"UInt({Math.Min(bits, typeBits)})";

@@ -227,17 +227,24 @@ internal sealed class Filler
     /// </summary>
     private Type ArmOf(WireMember union, int seed)
     {
-        Type[] all = s_arms.GetOrAdd(union.ValueType, unionType =>
+        Type[] arms = [.. ArmsOf(union).Where(arm => !_skipsArm(arm))];
+        if (arms.Length == 0)
+            throw new InvalidOperationException($"{union.QualifiedName} has no [UnionCase] arm in its assembly that is not skipped.");
+
+        return arms[seed % arms.Length];
+    }
+
+    /// <summary>
+    /// Every arm of <paramref name="union"/>: the [UnionCase] classes in the declaring type's assembly that implement the union's type, in full-name order.
+    /// </summary>
+    public static Type[] ArmsOf(WireMember union)
+    {
+        return s_arms.GetOrAdd(union.ValueType, unionType =>
         [
             .. union.Member.DeclaringType!.Assembly.GetTypes()
                 .Where(type => type.IsClass && !type.IsAbstract && type.IsDefined(typeof(UnionCaseAttribute), inherit: false) && unionType.IsAssignableFrom(type))
                 .OrderBy(type => type.FullName, StringComparer.Ordinal),
         ]);
-        Type[] arms = [.. all.Where(arm => !_skipsArm(arm))];
-        if (arms.Length == 0)
-            throw new InvalidOperationException($"{union.QualifiedName} has no [UnionCase] arm in its assembly that is not skipped.");
-
-        return arms[seed % arms.Length];
     }
 
     /// <summary>

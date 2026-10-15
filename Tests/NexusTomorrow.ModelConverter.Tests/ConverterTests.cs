@@ -34,8 +34,8 @@ public sealed class ConverterTests
             "public void Write(GamePacketWriter writer)");
     }
 
-    // The legacy writer's overloads default to the argument type's size, and an enum to 64 bits, which an
-    // int-backed enum declares as its 32 bits plus 32 bits of zeros.
+    // The legacy writer's overloads default to their parameter's size: a uint, ulong, byte, float or double to its own, and an enum to 64 bits,
+    // which an int-backed enum declares as its 32 bits plus 32 bits of zeros.
     [Fact]
     public void DefaultWidthsComeFromTheChosenOverload()
     {
@@ -56,7 +56,6 @@ public sealed class ConverterTests
                 public float Ratio { get; set; }
                 public double Precise { get; set; }
                 public Mode Current { get; set; }
-                public short Offset { get; set; }
 
                 public void Write(GamePacketWriter writer)
                 {
@@ -66,7 +65,6 @@ public sealed class ConverterTests
                     writer.Write(Ratio);
                     writer.Write(Precise);
                     writer.Write(Current);
-                    writer.Write(Offset);
                 }
             }
             """);
@@ -80,9 +78,31 @@ public sealed class ConverterTests
             "[Float32] public float Ratio",
             "[Float64] public double Precise",
             "[UInt(32)] public Mode Current",
-            "[Pad(32)] public Pad CurrentHigh { get; }",
-            "[UInt(16)] public short Offset",
-            "[Pad(16)] public Pad OffsetHigh { get; }");
+            "[Pad(32)] public Pad CurrentHigh { get; }");
+    }
+
+    // A short has no overload of its own, so Write(int) takes it and sign-extends it to 32 bits; zeros above it would be wrong for a negative value.
+    [Fact]
+    public void ASignedValueWrittenWiderThanItsTypeStaysLegacy()
+    {
+        ConversionResult result = ConverterHarness.Convert("""
+            namespace Tests;
+
+            public class Sample : IWritable
+            {
+                public short Offset { get; set; }
+
+                public void Write(GamePacketWriter writer)
+                {
+                    writer.Write(Offset);
+                }
+            }
+            """);
+
+        TypeOutcome outcome = ConverterHarness.Outcome(result, "Tests.Sample");
+        Assert.False(outcome.Converted);
+        Assert.Contains("Offset is UInt at 32 bits", outcome.Reason, StringComparison.Ordinal);
+        Assert.Empty(result.Rewritten);
     }
 
     [Fact]
