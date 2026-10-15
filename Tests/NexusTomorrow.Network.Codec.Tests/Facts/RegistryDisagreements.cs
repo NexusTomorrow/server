@@ -72,7 +72,6 @@ internal static class RegistryDisagreements
         ["0x03EE client to server"] = BitsDiffer, // ClientGetRealmTransferDestinations
         ["0x0405 server to client"] = FieldsDiffer, // ServerGroupMemberAdd
         ["0x0424 server to client"] = FieldsDiffer, // ServerGroupRequestJoinResponse
-        ["0x0453 client to server"] = BitsDiffer, // ClientGroupRequestJoinResponse
         ["0x046F server to client"] = BitsDiffer, // ServerGuildBankInventoryAdd
         ["0x0487 server to client"] = BitsDiffer, // ServerGuildEventLogChange
         ["0x0493 server to client"] = FieldsDiffer, // ServerGuildJoin
@@ -93,7 +92,6 @@ internal static class RegistryDisagreements
         ["0x0667 server to client"] = FieldsDiffer, // ServerPathScientistExperimentationInvoke
         ["0x066A client to server"] = FieldsDiffer, // ClientPathMissionAttemptScientistExperimentation
         ["0x06BC server to client"] = FieldsDiffer, // ServerPathInitialise
-        ["0x06F6 server to client"] = BitsDiffer, // ServerPublicEventBombStatus
         ["0x0768 server to client"] = FieldsDiffer, // ServerRecruitmentGuildDemands
         ["0x076A server to client"] = FieldsDiffer, // ServerRecruitmentGuildDetails
         ["0x07A1 server to client"] = FieldsDiffer, // ServerNewRealm

@@ -11,4 +11,6 @@ public sealed partial class ClientGroupRequestJoinResponse
     [UInt(1)] public bool AcceptedRequest { get; set; }
 
     [WideString] public string InviteeName { get; set; }
+
+    [UInt(1)] public bool Unknown3 { get; set; }
 }
