@@ -10,7 +10,7 @@ namespace NexusTomorrow.MapGenerator;
 
 internal static class MapGenerator
 {
-    private static readonly ILogger log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger s_log = LogManager.GetCurrentClassLogger();
 
 #if DEBUG
     private const string Title = "NexusTomorrow: Map Generator (DEBUG)";
@@ -33,7 +33,7 @@ internal static class MapGenerator
         ParserResult<Parameters> parserResult = Parser.Default.ParseArguments<Parameters>(args);
         parserResult.WithParsed(parameters => ParameterOk(parameters, provider, parserResult));
 
-        log.Info("Finished!");
+        s_log.Info("Finished!");
     }
 
     private static void ParameterOk(Parameters parameters, IServiceProvider provider, ParserResult<Parameters> parserResult)
@@ -43,8 +43,8 @@ internal static class MapGenerator
 
         if (!parameters.Extract && !parameters.Generate)
         {
-            log.Warn("Please specify the Extract or Generate parameter");
-            log.Info(GetHelp(parserResult));
+            s_log.Warn("Please specify the Extract or Generate parameter");
+            s_log.Info(GetHelp(parserResult));
             return;
         }
 
@@ -54,15 +54,15 @@ internal static class MapGenerator
                 throw new DirectoryNotFoundException(parameters.OutputDir);
         }
 
-        provider.GetRequiredService<ArchiveManager>().Initialise(parameters.PatchPath);
-        provider.GetRequiredService<GameTableManager>().Initialise();
+        provider.GetRequiredService<ArchiveManager>().Initialize(parameters.PatchPath);
+        provider.GetRequiredService<GameTableManager>().Initialize();
 
         if (parameters.Extract)
-            provider.GetRequiredService<ExtractionManager>().Initialise(parameters.OutputDir);
+            provider.GetRequiredService<ExtractionManager>().Initialize(parameters.OutputDir);
         if (parameters.Generate)
         {
             GenerationManager generationManager = provider.GetRequiredService<GenerationManager>();
-            generationManager.Initialise(parameters.OutputDir);
+            generationManager.Initialize(parameters.OutputDir);
 
             DateTime start = DateTime.UtcNow;
             if (parameters.WorldId.HasValue)
@@ -71,7 +71,7 @@ internal static class MapGenerator
                 generationManager.GenerateWorlds(true);
 
             TimeSpan span = DateTime.UtcNow - start;
-            log.Info($"Generated base maps in {span.TotalSeconds}s.");
+            s_log.Info($"Generated base maps in {span.TotalSeconds}s.");
         }
     }
 

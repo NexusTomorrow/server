@@ -9,7 +9,7 @@ public class TextFilterLanguage : ITextFilterLanguage
 {
     public Language Language { get; }
 
-    private readonly ImmutableDictionary<TextFilterClass, ImmutableList<string>> words;
+    private readonly ImmutableDictionary<TextFilterClass, ImmutableList<string>> _words;
 
     /// <summary>
     /// Create a new <see cref="ITextFilterLanguage"/> class with the specified <see cref="Static.Language"/> and collection of <see cref="WordFilterEntry"/>'s.
@@ -18,7 +18,7 @@ public class TextFilterLanguage : ITextFilterLanguage
     {
         Language = language;
 
-        words = entries
+        _words = entries
             .Select(e => e.UserTextFilterClassEnum)
             .Distinct()
             .ToImmutableDictionary(k => (TextFilterClass)k, k => entries
@@ -32,7 +32,7 @@ public class TextFilterLanguage : ITextFilterLanguage
     /// </summary>
     public bool IsTextValid(string text, TextFilterClass filterClass)
     {
-        if (!words.TryGetValue(filterClass, out ImmutableList<string>? filerWords))
+        if (!_words.TryGetValue(filterClass, out ImmutableList<string>? filerWords))
             return false;
 
         return !filerWords.Any(w => text.Contains(w, StringComparison.InvariantCultureIgnoreCase));

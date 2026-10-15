@@ -12,6 +12,6 @@ public enum ReportPlayerSource
     PvpMatch = 0x7,
     TradeRequest = 0x8,
     AccountFriendRequest = 0x9,
-    NeighbourRequest = 0xA,
+    NeighborRequest = 0xA,
     Overturn = 0xB
 };

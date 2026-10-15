@@ -3,7 +3,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pet;
 
-[Message(GameMessageOpcode.ServerPetCustomisation)]
+[Message(GameMessageOpcode.ServerPetCustomization)]
 public class ServerPetCustomisation : IWritable
 {
     public PetCustomisation PetCustomisation { get; set; }

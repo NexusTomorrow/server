@@ -9,46 +9,46 @@ namespace NexusTomorrow.MapGenerator;
 
 public sealed class ArchiveManager
 {
-    private static readonly ILogger log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger s_log = LogManager.GetCurrentClassLogger();
 
-    private static readonly string[] localisationIndexes =
+    private static readonly string[] s_localizationIndexes =
     [
         "ClientDataEN.index",
         "ClientDataFR.index",
         "ClientDataDE.index"
     ];
 
-    private Archive? mainArchive;
+    private Archive? _mainArchive;
 
     /// <summary>
     /// Main client ClientData archive.
     /// </summary>
-    /// <exception cref="InvalidOperationException"><see cref="Initialise"/> has not loaded it.</exception>
-    public Archive MainArchive => mainArchive ?? throw new InvalidOperationException($"{nameof(MainArchive)} is not loaded; call {nameof(Initialise)} first.");
+    /// <exception cref="InvalidOperationException"><see cref="Initialize"/> has not loaded it.</exception>
+    public Archive MainArchive => _mainArchive ?? throw new InvalidOperationException($"{nameof(MainArchive)} is not loaded; call {nameof(Initialize)} first.");
 
     /// <summary>
     /// Collection of client localisation archives.
     /// </summary>
-    public List<Archive> LocalisationArchives { get; } = [];
+    public List<Archive> LocalizationArchives { get; } = [];
 
-    public void Initialise(string patchPath)
+    public void Initialize(string patchPath)
     {
-        log.Info("Loading archives...");
+        s_log.Info("Loading archives...");
 
         // CoreData archive only applicable to Steam client
         ArchiveFile? coreDataArchive = null;
         if (File.Exists(Path.Combine(patchPath, "CoreData.archive")))
             coreDataArchive = ArchiveFileBase.FromFile(Path.Combine(patchPath, "CoreData.archive")) as ArchiveFile;
 
-        mainArchive = Archive.FromFile(Path.Combine(patchPath, "ClientData.index"), coreDataArchive);
+        _mainArchive = Archive.FromFile(Path.Combine(patchPath, "ClientData.index"), coreDataArchive);
 
-        foreach (string localisationArchivePath in localisationIndexes
+        foreach (string localisationArchivePath in s_localizationIndexes
             .Select(i => Path.Combine(patchPath, i)))
         {
             if (!File.Exists(localisationArchivePath))
                 continue;
 
-            LocalisationArchives.Add(Archive.FromFile(localisationArchivePath, coreDataArchive));
+            LocalizationArchives.Add(Archive.FromFile(localisationArchivePath, coreDataArchive));
         }
     }
 }

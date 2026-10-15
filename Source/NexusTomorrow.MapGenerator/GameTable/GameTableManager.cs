@@ -8,29 +8,25 @@ namespace NexusTomorrow.MapGenerator.GameTable;
 
 public sealed class GameTableManager
 {
-    private GameTable<WorldEntry>? world;
+    private GameTable<WorldEntry>? _world;
 
     /// <summary>
     /// World table from the main client archive.
     /// </summary>
-    /// <exception cref="InvalidOperationException"><see cref="Initialise"/> has not loaded it.</exception>
-    public GameTable<WorldEntry> World => world ?? throw new InvalidOperationException($"{nameof(World)} is not loaded; call {nameof(Initialise)} first.");
+    /// <exception cref="InvalidOperationException"><see cref="Initialize"/> has not loaded it.</exception>
+    public GameTable<WorldEntry> World => _world ?? throw new InvalidOperationException($"{nameof(World)} is not loaded; call {nameof(Initialize)} first.");
 
-    #region Dependency Injection
-
-    private readonly ArchiveManager archiveManager;
+    private readonly ArchiveManager _archiveManager;
 
     public GameTableManager(
         ArchiveManager archiveManager)
     {
-        this.archiveManager = archiveManager;
+        _archiveManager = archiveManager;
     }
 
-    #endregion
-
-    public void Initialise()
+    public void Initialize()
     {
-        world = LoadGameTable<WorldEntry>("World.tbl");
+        _world = LoadGameTable<WorldEntry>("World.tbl");
     }
 
     /// <summary>
@@ -39,10 +35,10 @@ public sealed class GameTableManager
     private GameTable<T> LoadGameTable<T>(string name) where T : class, new()
     {
         string filePath = Path.Combine("DB", name);
-        if (!(archiveManager.MainArchive.IndexFile.FindEntry(filePath) is IArchiveFileEntry file))
+        if (!(_archiveManager.MainArchive.IndexFile.FindEntry(filePath) is IArchiveFileEntry file))
             throw new FileNotFoundException();
 
-        using (Stream archiveStream = archiveManager.MainArchive.OpenFileStream(file))
+        using (Stream archiveStream = _archiveManager.MainArchive.OpenFileStream(file))
         using (var memoryStream = new MemoryStream())
         {
             archiveStream.CopyTo(memoryStream);

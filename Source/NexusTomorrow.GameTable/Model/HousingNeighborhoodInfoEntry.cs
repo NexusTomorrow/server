@@ -1,6 +1,6 @@
 ﻿namespace NexusTomorrow.GameTable.Model;
 
-public class HousingNeighbourhoodInfoEntry
+public class HousingNeighborhoodInfoEntry
 {
     public uint Id;
     public uint BaseCost;

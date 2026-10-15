@@ -10,7 +10,7 @@ namespace NexusTomorrow.ClientConnector;
 
 internal static class Program
 {
-    private const string jsonFile = "config.json";
+    private const string JsonFile = "config.json";
 
     [DllImport("kernel32.dll")]
     private static extern bool CreateProcess(
@@ -28,7 +28,7 @@ internal static class Program
 
     public static void Main()
     {
-        if (!File.Exists(jsonFile))
+        if (!File.Exists(JsonFile))
         {
             Console.Write("Type in your host name: ");
             string? hostName = Console.ReadLine();
@@ -48,11 +48,11 @@ internal static class Program
                 Language = language
             };
 
-            File.WriteAllText(jsonFile, JsonConvert.SerializeObject(clientConfig));
+            File.WriteAllText(JsonFile, JsonConvert.SerializeObject(clientConfig));
         }
 
         IConfigurationRoot configuration = new ConfigurationBuilder()
-            .AddJsonFile(jsonFile, false)
+            .AddJsonFile(JsonFile, false)
             .Build();
 
         LaunchClient(ReadConfiguration(configuration));
@@ -64,12 +64,12 @@ internal static class Program
     internal static ClientConfiguration ReadConfiguration(IConfiguration configuration)
     {
         ClientConfiguration config = configuration.Get<ClientConfiguration>()
-            ?? throw new InvalidDataException($"{jsonFile} holds no client configuration.");
+            ?? throw new InvalidDataException($"{JsonFile} holds no client configuration.");
 
         if (string.IsNullOrWhiteSpace(config.HostName))
-            throw new InvalidDataException($"{jsonFile} has no {nameof(ClientConfiguration.HostName)}.");
+            throw new InvalidDataException($"{JsonFile} has no {nameof(ClientConfiguration.HostName)}.");
         if (string.IsNullOrWhiteSpace(config.Language))
-            throw new InvalidDataException($"{jsonFile} has no {nameof(ClientConfiguration.Language)}.");
+            throw new InvalidDataException($"{JsonFile} has no {nameof(ClientConfiguration.Language)}.");
 
         return config;
     }

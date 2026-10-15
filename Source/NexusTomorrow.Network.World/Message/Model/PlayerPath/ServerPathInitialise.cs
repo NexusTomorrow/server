@@ -4,7 +4,7 @@ using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[Message(GameMessageOpcode.ServerPathInitialise)]
+[Message(GameMessageOpcode.ServerPathInitialize)]
 public class ServerPathInitialise : IWritable
 {
     public Path ActivePath { get; set; }

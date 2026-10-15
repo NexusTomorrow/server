@@ -4,28 +4,28 @@ namespace NexusTomorrow.GameTable;
 
 public class GameTableLoader
 {
-    private readonly List<Type> gameTables = [];
-    private readonly List<Language> textTables = [];
+    private readonly List<Type> _gameTables = [];
+    private readonly List<Language> _textTables = [];
 
     public IEnumerable<Type> GetGameTables()
     {
-        return gameTables;
+        return _gameTables;
     }
 
     public IEnumerable<Language> GetTextTables()
     {
-        return textTables;
+        return _textTables;
     }
 
     public GameTableLoader AddTextTable(Language language)
     {
-        textTables.Add(language);
+        _textTables.Add(language);
         return this;
     }
 
     public GameTableLoader AddGameTable<T>() where T : class
     {
-        gameTables.Add(typeof(T));
+        _gameTables.Add(typeof(T));
         return this;
     }
 }

@@ -8,9 +8,9 @@ namespace NexusTomorrow.MapGenerator;
 
 public sealed class ExtractionManager
 {
-    private static readonly ILogger log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger s_log = LogManager.GetCurrentClassLogger();
 
-    private static readonly string[] languageFiles =
+    private static readonly string[] s_languageFiles =
     [
         "en-US.bin",
         "de-DE.bin",
@@ -18,27 +18,23 @@ public sealed class ExtractionManager
         "en-GB.bin"
     ];
 
-    private string? outputDir;
+    private string? _outputDir;
 
-    #region Dependency Injection
-
-    private readonly ArchiveManager archiveManager;
+    private readonly ArchiveManager _archiveManager;
 
     public ExtractionManager(
         ArchiveManager archiveManager)
     {
-        this.archiveManager = archiveManager;
+        _archiveManager = archiveManager;
     }
 
-    #endregion
-
-    public void Initialise(string outputDir)
+    public void Initialize(string outputDir)
     {
-        log.Info("Extracting GameTables...");
+        s_log.Info("Extracting GameTables...");
 
-        this.outputDir = Path.Combine(outputDir, "tbl");
+        _outputDir = Path.Combine(outputDir, "tbl");
 
-        Directory.CreateDirectory(this.outputDir);
+        Directory.CreateDirectory(_outputDir);
 
         ExtractGameTables();
         ExtractLanguageFiles();
@@ -50,8 +46,8 @@ public sealed class ExtractionManager
     private void ExtractGameTables()
     {
         string searchPattern = Path.Combine("DB", "*.tbl");
-        foreach (IArchiveFileEntry fileEntry in archiveManager.MainArchive.IndexFile.GetFiles(searchPattern))
-            ExtractFile(archiveManager.MainArchive, fileEntry);
+        foreach (IArchiveFileEntry fileEntry in _archiveManager.MainArchive.IndexFile.GetFiles(searchPattern))
+            ExtractFile(_archiveManager.MainArchive, fileEntry);
     }
 
     /// <summary>
@@ -59,9 +55,9 @@ public sealed class ExtractionManager
     /// </summary>
     private void ExtractLanguageFiles()
     {
-        foreach (Archive archive in archiveManager.LocalisationArchives)
+        foreach (Archive archive in _archiveManager.LocalizationArchives)
         {
-            foreach (IArchiveFileEntry fileEntry in languageFiles
+            foreach (IArchiveFileEntry fileEntry in s_languageFiles
                 .Select(archive.IndexFile.FindEntry)
                 .OfType<IArchiveFileEntry>())
             {
@@ -75,10 +71,10 @@ public sealed class ExtractionManager
     /// </summary>
     private void ExtractFile(Archive archive, IArchiveFileEntry fileEntry)
     {
-        if (outputDir == null)
-            throw new InvalidOperationException($"{nameof(outputDir)} is not set; call {nameof(Initialise)} first.");
+        if (_outputDir == null)
+            throw new InvalidOperationException($"{nameof(_outputDir)} is not set; call {nameof(Initialize)} first.");
 
-        string filePath = Path.Combine(outputDir, fileEntry.FileName);
+        string filePath = Path.Combine(_outputDir, fileEntry.FileName);
 
         using (Stream archiveStream = archive.OpenFileStream(fileEntry))
         using (FileStream fileStream = File.OpenWrite(filePath))
@@ -86,6 +82,6 @@ public sealed class ExtractionManager
             archiveStream.CopyTo(fileStream);
         }
 
-        log.Info($"Extracted {fileEntry.FileName}...");
+        s_log.Info($"Extracted {fileEntry.FileName}...");
     }
 }

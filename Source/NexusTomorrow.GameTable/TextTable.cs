@@ -9,13 +9,13 @@ public class TextTable
 {
     public TextTableEntry[] Entries { get; }
 
-    private readonly int[] lookup;
+    private readonly int[] _lookup;
 
     [JsonConstructor]
     public TextTable(IEnumerable<TextTableEntry> entries)
     {
         Entries = [.. entries];
-        lookup = BuildLookup(Entries);
+        _lookup = BuildLookup(Entries);
     }
 
     public TextTable(string path)
@@ -23,13 +23,13 @@ public class TextTable
         using (FileStream stream = File.OpenRead(path))
             Entries = Read(stream);
 
-        lookup = BuildLookup(Entries);
+        _lookup = BuildLookup(Entries);
     }
 
     public TextTable(Stream stream)
     {
         Entries = Read(stream);
-        lookup = BuildLookup(Entries);
+        _lookup = BuildLookup(Entries);
     }
 
     private static TextTableEntry[] Read(Stream inputStream)
@@ -99,10 +99,10 @@ public class TextTable
     /// </summary>
     public string? GetEntry(uint id)
     {
-        if (id >= lookup.Length)
+        if (id >= _lookup.Length)
             return null;
 
-        int lookupId = lookup[id];
+        int lookupId = _lookup[id];
         if (lookupId == -1)
             return null;
 

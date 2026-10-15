@@ -2,20 +2,20 @@
 
 public class Arc4Provider
 {
-    private uint i;
-    private uint j;
-    private readonly byte[] s;
+    private uint _i;
+    private uint _j;
+    private readonly byte[] _s;
 
     public Arc4Provider(byte[] key)
     {
-        i = 0;
-        j = 0;
-        s = [.. Enumerable.Range(0, 256).Select(i => (byte)i)];
+        _i = 0;
+        _j = 0;
+        _s = [.. Enumerable.Range(0, 256).Select(i => (byte)i)];
 
         for (uint index = 0u, index2 = 0u; index < 256u; index++)
         {
-            index2 = (index2 + key[index % key.Length] + s[index]) & 0xFF;
-            Swap(s, index, index2);
+            index2 = (index2 + key[index % key.Length] + _s[index]) & 0xFF;
+            Swap(_s, index, index2);
         }
     }
 
@@ -33,11 +33,11 @@ public class Arc4Provider
     {
         for (uint index = 0u; index < buffer.Length; index++)
         {
-            i = (i + 1) & 0xFF;
-            j = (j + s[i]) & 0xFF;
-            Swap(s, i, j);
+            _i = (_i + 1) & 0xFF;
+            _j = (_j + _s[_i]) & 0xFF;
+            Swap(_s, _i, _j);
 
-            buffer[index] = (byte)((buffer[index]) ^ s[(s[j] + s[i]) & 0xFF]);
+            buffer[index] = (byte)((buffer[index]) ^ _s[(_s[_j] + _s[_i]) & 0xFF]);
         }
     }
 

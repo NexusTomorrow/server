@@ -5,5 +5,5 @@ public enum MatchStatus
     InProgress,
     Finished,
     Cleanup,
-    Finalised
+    Finalized
 }

@@ -1,7 +1,7 @@
 ﻿namespace NexusTomorrow.GameTable.Static;
 
 [Flags]
-public enum CharacterCustomisationEntryFlags
+public enum CharacterCustomizationEntryFlags
 {
     None = 0x00,
     Disabled = 0x01,

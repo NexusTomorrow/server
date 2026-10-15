@@ -1,6 +1,6 @@
 ﻿namespace NexusTomorrow.Game.Static.Housing;
 
-public enum NeighbourResult
+public enum NeighborResult
 {
     Add = 0,
     UpdatePermissions = 1,

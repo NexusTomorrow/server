@@ -1,6 +1,6 @@
 ﻿namespace NexusTomorrow.Game.Static.Housing;
 
-public enum NeighbourPermissionLevel
+public enum NeighborPermissionLevel
 {
     Normal = 0,
     Roommate = 1,

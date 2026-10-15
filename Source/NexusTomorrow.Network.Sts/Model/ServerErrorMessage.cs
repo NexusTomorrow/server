@@ -4,11 +4,11 @@ namespace NexusTomorrow.Network.Sts.Model;
 
 public class ServerErrorMessage : IWritable
 {
-    private readonly int code;
+    private readonly int _code;
 
     public ServerErrorMessage(int code)
     {
-        this.code = code;
+        _code = code;
     }
 
     public void Write(XmlWriter writer)
@@ -16,7 +16,7 @@ public class ServerErrorMessage : IWritable
         writer.WriteStartElement("Error");
 
         writer.WriteStartAttribute("code");
-        writer.WriteValue(code);
+        writer.WriteValue(_code);
         writer.WriteEndAttribute();
 
         writer.WriteStartAttribute("server");

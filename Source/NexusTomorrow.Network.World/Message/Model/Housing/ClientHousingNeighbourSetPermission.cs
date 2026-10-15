@@ -10,12 +10,12 @@ public class ClientHousingNeighbourSetPermission : IReadable
 {
     public Identity Identity { get; private set; } = new();
     public string Name { get; private set; }
-    public NeighbourPermissionLevel Permissions { get; private set; }
+    public NeighborPermissionLevel Permissions { get; private set; }
 
     public void Read(GamePacketReader reader)
     {
         Identity.Read(reader);
         Name = reader.ReadWideString();
-        Permissions = reader.ReadEnum<NeighbourPermissionLevel>(32u);
+        Permissions = reader.ReadEnum<NeighborPermissionLevel>(32u);
     }
 }

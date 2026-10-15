@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pet;
 
-[Message(GameMessageOpcode.ServerPetCustomisationFailed)]
+[Message(GameMessageOpcode.ServerPetCustomizationFailed)]
 public class ServerPetCustomisationFailed : IWritable
 {
     public PetCustomizeResult Reason { get; set; }

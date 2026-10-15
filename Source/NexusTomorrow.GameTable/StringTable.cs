@@ -4,24 +4,24 @@ namespace NexusTomorrow.GameTable;
 
 public class StringTable : IDisposable
 {
-    private readonly MemoryStream stream;
-    private readonly BinaryReader reader;
+    private readonly MemoryStream _stream;
+    private readonly BinaryReader _reader;
 
     public StringTable(byte[] buffer)
     {
-        stream = new MemoryStream(buffer);
-        reader = new BinaryReader(stream, Encoding.Unicode);
+        _stream = new MemoryStream(buffer);
+        _reader = new BinaryReader(_stream, Encoding.Unicode);
     }
 
     public void Dispose()
     {
-        reader.Dispose();
-        stream.Dispose();
+        _reader.Dispose();
+        _stream.Dispose();
     }
 
     public string GetEntry(uint offset)
     {
-        stream.Position = offset;
-        return reader.ReadWideString();
+        _stream.Position = offset;
+        return _reader.ReadWideString();
     }
 }

@@ -1,9 +1,9 @@
 ﻿namespace NexusTomorrow.Game.Static.Housing;
 
-// Moves from Initialising -> ClearingPlot -> Starting -> InProgress -> Finishing -> Complete
+// Moves from Initializing -> ClearingPlot -> Starting -> InProgress -> Finishing -> Complete
 public enum BuildState
 {
-    Initialising = 0,
+    Initializing = 0,
     Complete = 1,
     ClearingPlot = 2,
     Starting = 3,

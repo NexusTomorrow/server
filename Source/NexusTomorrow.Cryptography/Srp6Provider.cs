@@ -17,31 +17,32 @@ public sealed class Srp6Provider
         0x76, 0x65, 0x25, 0x9C, 0x4C, 0x31, 0xA2, 0x9E, 0x0B, 0x3C, 0xFF, 0x75, 0x87, 0x61, 0x72, 0x60,
         0xE8, 0xC5, 0x8F, 0xFA, 0x0A, 0xF8, 0x33, 0x9C, 0xD6, 0x8D, 0xB3, 0xAD, 0xB9, 0x0A, 0xAF, 0xEE ], true);
 
-    private readonly byte[] I;
-    private readonly BigInteger v;
-    private readonly BigInteger s;
-    private BigInteger A;
-    private BigInteger b;
-    private BigInteger B;
-    private BigInteger u;
-    private BigInteger S;
-    private BigInteger M1;
-    private BigInteger M2;
-    private BigInteger K;
+    // Each field carries its RFC 5054 symbol.
+    private readonly byte[] _identity; // I
+    private readonly BigInteger _verifier; // v
+    private readonly BigInteger _salt; // s
+    private BigInteger _clientPublicEphemeral; // A
+    private BigInteger _serverPrivateEphemeral; // b
+    private BigInteger _serverPublicEphemeral; // B
+    private BigInteger _scramblingParameter; // u
+    private BigInteger _sharedSecret; // S
+    private BigInteger _clientEvidence; // M1
+    private BigInteger _serverEvidence; // M2
+    private BigInteger _sessionKey; // K
 
-    public static byte[] GenerateVerifier(byte[] s, string I, string p)
+    public static byte[] GenerateVerifier(byte[] salt, string identity, string password)
     {
         using var sha256 = SHA256.Create();
-        byte[] P = sha256.ComputeHash(Encoding.UTF8.GetBytes($"{I}:{p}"));
-        BigInteger x = Hash(true, new BigInteger(s, true), new BigInteger(P, true));
+        byte[] P = sha256.ComputeHash(Encoding.UTF8.GetBytes($"{identity}:{password}"));
+        BigInteger x = Hash(true, new BigInteger(salt, true), new BigInteger(P, true));
         return BigInteger.ModPow(g, x, N).ToByteArray();
     }
 
-    public Srp6Provider(string I, byte[] s, byte[] v)
+    public Srp6Provider(string identity, byte[] salt, byte[] verifier)
     {
-        this.I = Encoding.UTF8.GetBytes(I);
-        this.s = new BigInteger(s, true);
-        this.v = new BigInteger(v, true);
+        _identity = Encoding.UTF8.GetBytes(identity);
+        _salt = new BigInteger(salt, true);
+        _verifier = new BigInteger(verifier, true);
     }
 
     /// <summary>
@@ -49,10 +50,10 @@ public sealed class Srp6Provider
     /// </summary>
     public byte[] GenerateServerCredentials()
     {
-        b = RandomProvider.GetUnsignedBigInteger(128u);
+        _serverPrivateEphemeral = RandomProvider.GetUnsignedBigInteger(128u);
         BigInteger k = Hash(true, N, g);
-        B = (k * v + BigInteger.ModPow(g, b, N)) % N;
-        return B.ToByteArray(true);
+        _serverPublicEphemeral = (k * _verifier + BigInteger.ModPow(g, _serverPrivateEphemeral, N)) % N;
+        return _serverPublicEphemeral.ToByteArray(true);
     }
 
     /// <summary>
@@ -64,27 +65,27 @@ public sealed class Srp6Provider
         if (a % N == BigInteger.Zero)
             throw new CryptographicException();
 
-        A = a;
-        u = Hash(true, A, B);
-        S = BigInteger.ModPow(A * BigInteger.ModPow(v, u, N), b, N);
+        _clientPublicEphemeral = a;
+        _scramblingParameter = Hash(true, _clientPublicEphemeral, _serverPublicEphemeral);
+        _sharedSecret = BigInteger.ModPow(_clientPublicEphemeral * BigInteger.ModPow(_verifier, _scramblingParameter, N), _serverPrivateEphemeral, N);
     }
 
     public byte[] CalculateSessionKey()
     {
-        if (S == BigInteger.Zero)
+        if (_sharedSecret == BigInteger.Zero)
             throw new CryptographicException("Missing data from previous operations: S");
 
-        byte[] sessionKey = DeriveSessionKey(S);
-        K = new BigInteger(sessionKey, true);
+        byte[] sessionKey = DeriveSessionKey(_sharedSecret);
+        _sessionKey = new BigInteger(sessionKey, true);
         return sessionKey;
     }
 
     /// <summary>
     /// Derive the session key from the shared secret S.
     /// </summary>
-    internal static byte[] DeriveSessionKey(BigInteger S)
+    internal static byte[] DeriveSessionKey(BigInteger sharedSecret)
     {
-        return ShaInterleave(S);
+        return ShaInterleave(sharedSecret);
     }
 
     /// <summary>
@@ -92,18 +93,18 @@ public sealed class Srp6Provider
     /// </summary>
     public bool VerifyClientEvidenceMessage(byte[] clientM1)
     {
-        if (A == BigInteger.Zero || B == BigInteger.Zero || S == BigInteger.Zero)
+        if (_clientPublicEphemeral == BigInteger.Zero || _serverPublicEphemeral == BigInteger.Zero || _sharedSecret == BigInteger.Zero)
             throw new CryptographicException("Missing data from previous operations: A, B, S");
 
         using var sha256 = SHA256.Create();
-        byte[] IHash = sha256.ComputeHash(I);
+        byte[] IHash = sha256.ComputeHash(_identity);
         BigInteger serverM1 = Hash(false, Hash(false, N) ^ Hash(false, g),
-            new BigInteger(IHash, true), s, A, B, K);
+            new BigInteger(IHash, true), _salt, _clientPublicEphemeral, _serverPublicEphemeral, _sessionKey);
 
         if (!clientM1.SequenceEqual(serverM1.ToByteArray(true)))
             return false;
 
-        M1 = new BigInteger(clientM1, true);
+        _clientEvidence = new BigInteger(clientM1, true);
         return true;
     }
 
@@ -112,12 +113,12 @@ public sealed class Srp6Provider
     /// </summary>
     public byte[] CalculateServerEvidenceMessage()
     {
-        if (A == BigInteger.Zero || M1 == BigInteger.Zero || K == BigInteger.Zero)
+        if (_clientPublicEphemeral == BigInteger.Zero || _clientEvidence == BigInteger.Zero || _sessionKey == BigInteger.Zero)
             throw new CryptographicException("Missing data from previous operations: A, M1, K");
 
-        M2 = Hash(true, A, M1, K);
+        _serverEvidence = Hash(true, _clientPublicEphemeral, _clientEvidence, _sessionKey);
 
-        byte[] M2Bytes = M2.ToByteArray(true);
+        byte[] M2Bytes = _serverEvidence.ToByteArray(true);
         ReverseBytesAsUInt32(M2Bytes);
         return M2Bytes;
     }

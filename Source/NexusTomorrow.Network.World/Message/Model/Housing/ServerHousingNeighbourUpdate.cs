@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Housing;
 public class ServerHousingNeighbourUpdate : IWritable
 {
     public Neighbour Neighbour { get; set; }
-    public NeighbourResult Result { get; set; }
+    public NeighborResult Result { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

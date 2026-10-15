@@ -7,53 +7,53 @@ namespace NexusTomorrow.GameTable;
 
 public class GameTable<T> where T : class, new()
 {
-    private const int minimumBufferSize = 1024;
-    private const int maximumBufferSize = 16 * 1024;
-    private const int recordSizeMultiplier = 32; // How many records do we want buffered.
+    private const int MinimumBufferSize = 1024;
+    private const int MaximumBufferSize = 16 * 1024;
+    private const int RecordSizeMultiplier = 32; // How many records do we want buffered.
 
     public T[] Entries { get; }
 
-    private readonly GameTableHeader header;
-    private readonly int[] lookup;
+    private readonly GameTableHeader _header;
+    private readonly int[] _lookup;
 
-    private static readonly Dictionary<FieldInfo, GameTableFieldArrayAttribute?> attributeCache;
-    private static readonly int headerSize;
-    private static readonly int fieldSize;
-    private static readonly int bufferSize;
+    private static readonly Dictionary<FieldInfo, GameTableFieldArrayAttribute?> s_attributeCache;
+    private static readonly int s_headerSize;
+    private static readonly int s_fieldSize;
+    private static readonly int s_bufferSize;
 
     static GameTable()
     {
-        attributeCache = [];
+        s_attributeCache = [];
         foreach (FieldInfo modelField in typeof(T).GetFields())
         {
             GameTableFieldArrayAttribute? attribute = modelField.GetCustomAttribute<GameTableFieldArrayAttribute>();
-            attributeCache.Add(modelField, attribute);
+            s_attributeCache.Add(modelField, attribute);
         }
 
-        headerSize = Marshal.SizeOf<GameTableHeader>();
-        fieldSize = Marshal.SizeOf<GameTableField>();
+        s_headerSize = Marshal.SizeOf<GameTableHeader>();
+        s_fieldSize = Marshal.SizeOf<GameTableField>();
 
-        bufferSize = fieldSize * recordSizeMultiplier;
-        if (bufferSize < minimumBufferSize)
-            bufferSize = minimumBufferSize;
-        if (bufferSize > maximumBufferSize)
-            bufferSize = maximumBufferSize;
+        s_bufferSize = s_fieldSize * RecordSizeMultiplier;
+        if (s_bufferSize < MinimumBufferSize)
+            s_bufferSize = MinimumBufferSize;
+        if (s_bufferSize > MaximumBufferSize)
+            s_bufferSize = MaximumBufferSize;
     }
 
     public GameTable(string path)
     {
         using (FileStream stream = File.OpenRead(path))
-            (header, Entries, lookup) = Read(stream);
+            (_header, Entries, _lookup) = Read(stream);
     }
 
     public GameTable(Stream stream)
     {
-        (header, Entries, lookup) = Read(stream);
+        (_header, Entries, _lookup) = Read(stream);
     }
 
     private static (GameTableHeader Header, T[] Entries, int[] Lookup) Read(Stream inputStream)
     {
-        using (var stream = new BufferedStream(inputStream, bufferSize))
+        using (var stream = new BufferedStream(inputStream, s_bufferSize))
         using (var reader = new BinaryReader(stream))
         {
             if (reader.BaseStream.Remaining() < Marshal.SizeOf<GameTableHeader>())
@@ -61,7 +61,7 @@ public class GameTable<T> where T : class, new()
 
             // header
             ReadOnlySpan<GameTableHeader> headerSpan
-                = MemoryMarshal.Cast<byte, GameTableHeader>(reader.ReadBytes(headerSize));
+                = MemoryMarshal.Cast<byte, GameTableHeader>(reader.ReadBytes(s_headerSize));
 
             GameTableHeader header = headerSpan[0];
 
@@ -69,9 +69,9 @@ public class GameTable<T> where T : class, new()
                 throw new InvalidDataException();
 
             // fields
-            stream.Position = headerSize + (int)header.FieldOffset;
+            stream.Position = s_headerSize + (int)header.FieldOffset;
             ReadOnlySpan<GameTableField> fields = MemoryMarshal.Cast<byte, GameTableField>(
-                reader.ReadBytes(fieldSize * (int)header.FieldCount));
+                reader.ReadBytes(s_fieldSize * (int)header.FieldCount));
 
             ValidateModelFields(fields);
 
@@ -89,14 +89,14 @@ public class GameTable<T> where T : class, new()
     [Conditional("DEBUG")]
     private static void ValidateModelFields(ReadOnlySpan<GameTableField> fields)
     {
-        FieldInfo[] modelFields = [.. attributeCache.Keys];
+        FieldInfo[] modelFields = [.. s_attributeCache.Keys];
         if (modelFields.Length != fields.Length)
         {
             // models with arrays will not have the correct number of fields, compensate for this
             uint fieldCount = 0u;
             foreach (FieldInfo modelField in modelFields)
             {
-                GameTableFieldArrayAttribute? attribute = attributeCache[modelField];
+                GameTableFieldArrayAttribute? attribute = s_attributeCache[modelField];
                 if (attribute != null)
                     fieldCount += attribute.Length;
                 else
@@ -139,7 +139,7 @@ public class GameTable<T> where T : class, new()
         int fieldIndex = 0;
         foreach (FieldInfo modelField in modelFields)
         {
-            GameTableFieldArrayAttribute? attribute = attributeCache[modelField];
+            GameTableFieldArrayAttribute? attribute = s_attributeCache[modelField];
             if (attribute != null)
             {
                 Type elementType = GetElementType(modelField);
@@ -164,23 +164,23 @@ public class GameTable<T> where T : class, new()
         uint recordSize = (uint)(header.RecordSize * header.RecordCount);
 
         // build string table
-        reader.BaseStream.Position = headerSize + (uint)header.RecordOffset + recordSize;
+        reader.BaseStream.Position = s_headerSize + (uint)header.RecordOffset + recordSize;
         int stringTableSize = (int)(header.TotalRecordSize - header.RecordSize * header.RecordCount);
         using (var stringTable = new StringTable(reader.ReadBytes(stringTableSize)))
         {
             for (int i = 0; i < (int)header.RecordCount; i++)
             {
-                long recordStartPosition = headerSize + (long)header.RecordOffset + (long)header.RecordSize * i;
+                long recordStartPosition = s_headerSize + (long)header.RecordOffset + (long)header.RecordSize * i;
                 if (reader.BaseStream.Position != recordStartPosition)
                     reader.BaseStream.Position = recordStartPosition;
 
                 var entry = new T();
 
                 int fieldIndex = 0;
-                FieldInfo[] typeFields = [.. attributeCache.Keys];
+                FieldInfo[] typeFields = [.. s_attributeCache.Keys];
                 foreach (FieldInfo modelField in typeFields)
                 {
-                    GameTableFieldArrayAttribute? attribute = attributeCache[modelField];
+                    GameTableFieldArrayAttribute? attribute = s_attributeCache[modelField];
                     if (attribute != null)
                     {
                         Type elementType = GetElementType(modelField);
@@ -268,10 +268,10 @@ public class GameTable<T> where T : class, new()
 
     public T? GetEntry(ulong id)
     {
-        if (id >= header.MaxId)
+        if (id >= _header.MaxId)
             return null;
 
-        int lookupId = lookup[id];
+        int lookupId = _lookup[id];
         if (lookupId == -1)
             return null;
 

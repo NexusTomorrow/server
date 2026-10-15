@@ -3,7 +3,7 @@
 public class ChnkCell : IReadable
 {
     // data size for each flag
-    private static readonly int[] dataSize =
+    private static readonly int[] s_dataSize =
     [
         722,
         16,
@@ -95,7 +95,7 @@ public class ChnkCell : IReadable
                     }
                 // unhandled flag, skip data
                 default:
-                    reader.ReadBytes(dataSize[i]);
+                    reader.ReadBytes(s_dataSize[i]);
                     break;
             }
         }

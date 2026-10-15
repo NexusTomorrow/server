@@ -12,29 +12,29 @@ public class PacketCrypt
     private const ulong CryptMultiplier = 0xAA7F8EA9u;
     private const ulong CryptKeyInitialValue = 0x718DA9074F2DEB91u;
 
-    private readonly byte[] key;
-    private readonly ulong keyValue;
+    private readonly byte[] _key;
+    private readonly ulong _keyValue;
 
     public PacketCrypt(ulong keyInteger)
     {
-        key = new byte[CryptKeySize];
+        _key = new byte[CryptKeySize];
 
         ulong keyVal = CryptKeyInitialValue;
         ulong v2 = (keyVal + keyInteger) * CryptMultiplier;
         for (int i = 0; i < CryptKeySize; i += 8)
         {
-            Buffer.BlockCopy(BitConverter.GetBytes(v2), 0, key, i, 8);
+            Buffer.BlockCopy(BitConverter.GetBytes(v2), 0, _key, i, 8);
             keyVal = (keyVal + v2) * CryptMultiplier;
             v2 = (keyInteger + v2) * CryptMultiplier;
         }
 
-        keyValue = keyVal;
+        _keyValue = keyVal;
     }
 
     public byte[] Decrypt(byte[] buffer, int length)
     {
         byte[] outputBytes = new byte[length];
-        byte[] state = [.. BitConverter.GetBytes(keyValue).Reverse()];
+        byte[] state = [.. BitConverter.GetBytes(_keyValue).Reverse()];
 
         uint v4 = CryptMultiplier2 * (uint)length;
         uint v9 = 0;
@@ -45,7 +45,7 @@ public class PacketCrypt
             if (stateIndex == 0) // each 8 iteration.
                 v9 = (v4++ & 0xF) * 8;
 
-            byte test = (byte)(state[7 - stateIndex] ^ buffer[i] ^ key[v9 + stateIndex]);
+            byte test = (byte)(state[7 - stateIndex] ^ buffer[i] ^ _key[v9 + stateIndex]);
             outputBytes[i] = test;
 
             // only difference between encrypt and decrypt
@@ -58,7 +58,7 @@ public class PacketCrypt
     public byte[] Encrypt(byte[] buffer, int length)
     {
         byte[] outputBytes = new byte[length];
-        byte[] state = BitConverter.GetBytes(keyValue);
+        byte[] state = BitConverter.GetBytes(_keyValue);
 
         uint v4 = CryptMultiplier2 * (uint)length;
         uint v9 = 0;
@@ -69,7 +69,7 @@ public class PacketCrypt
             if (stateIndex == 0) // each 8 iteration.
                 v9 = (v4++ & 0xF) * 8;
 
-            outputBytes[i] = (byte)(state[stateIndex] ^ buffer[i] ^ key[v9 + stateIndex]);
+            outputBytes[i] = (byte)(state[stateIndex] ^ buffer[i] ^ _key[v9 + stateIndex]);
 
             // only difference between encrypt and decrypt.
             state[stateIndex] = outputBytes[i];

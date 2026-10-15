@@ -5,16 +5,16 @@ namespace NexusTomorrow.Shared;
 
 public class Factory<T> : IFactory<T> where T : class
 {
-    private readonly IServiceProvider sp;
+    private readonly IServiceProvider _serviceProvider;
 
     public Factory(
         IServiceProvider sp)
     {
-        this.sp = sp;
+        _serviceProvider = sp;
     }
 
     public T Resolve()
     {
-        return sp.GetRequiredService<T>();
+        return _serviceProvider.GetRequiredService<T>();
     }
 }

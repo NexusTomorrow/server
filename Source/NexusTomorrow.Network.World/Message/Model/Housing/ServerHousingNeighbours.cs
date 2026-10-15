@@ -2,7 +2,7 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[Message(GameMessageOpcode.ServerHousingNeighbours)]
+[Message(GameMessageOpcode.ServerHousingNeighbors)]
 public class ServerHousingNeighbours : IWritable
 {
     public List<Neighbour> Neighbours { get; set; } = [];

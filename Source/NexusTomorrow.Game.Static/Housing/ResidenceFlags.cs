@@ -5,5 +5,5 @@ public enum ResidenceFlags
 {
     None = 0,
     HideGroundClutter = 1,
-    HideNeighbourSkyplots = 2
+    HideNeighborSkyplots = 2
 }

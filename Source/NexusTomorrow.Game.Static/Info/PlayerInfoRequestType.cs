@@ -6,7 +6,7 @@ public enum PlayerInfoRequestType
     Social = 1, // server responds with Basic
     Friend = 2,
     Rival = 3,
-    Neighbour = 4,
+    Neighbor = 4,
     Loot = 5, // not seen in sniffs but would assume respond with Basic
     BankLog = 8, // server responds with Basic
     Maker = 9, // server responds with Basic

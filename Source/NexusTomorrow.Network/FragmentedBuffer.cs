@@ -2,7 +2,7 @@
 
 public class FragmentedBuffer
 {
-    public bool IsComplete => data.Length == offset;
+    public bool IsComplete => _data.Length == _offset;
 
     public byte[] Data
     {
@@ -10,16 +10,16 @@ public class FragmentedBuffer
         {
             if (!IsComplete)
                 throw new InvalidOperationException();
-            return data;
+            return _data;
         }
     }
 
-    private uint offset;
-    private readonly byte[] data;
+    private uint _offset;
+    private readonly byte[] _data;
 
     public FragmentedBuffer(uint size)
     {
-        data = new byte[size];
+        _data = new byte[size];
     }
 
     public void Populate(GamePacketReader reader)
@@ -28,21 +28,21 @@ public class FragmentedBuffer
             throw new InvalidOperationException();
 
         uint remaining = reader.BytesRemaining;
-        if (remaining < data.Length - offset)
+        if (remaining < _data.Length - _offset)
         {
             // not enough data, push entire frame into packet
             byte[] newData = reader.ReadBytes(remaining);
-            Buffer.BlockCopy(newData, 0, data, (int)offset, (int)remaining);
+            Buffer.BlockCopy(newData, 0, _data, (int)_offset, (int)remaining);
 
-            offset += (uint)newData.Length;
+            _offset += (uint)newData.Length;
         }
         else
         {
             // enough data, push required frame into packet
-            byte[] newData = reader.ReadBytes((uint)data.Length - offset);
-            Buffer.BlockCopy(newData, 0, data, (int)offset, newData.Length);
+            byte[] newData = reader.ReadBytes((uint)_data.Length - _offset);
+            Buffer.BlockCopy(newData, 0, _data, (int)_offset, newData.Length);
 
-            offset += (uint)newData.Length;
+            _offset += (uint)newData.Length;
         }
     }
 }

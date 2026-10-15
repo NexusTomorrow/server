@@ -2,7 +2,7 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[Message(GameMessageOpcode.ClientHousingNeighbourInviteResponse)]
+[Message(GameMessageOpcode.ClientHousingNeighborInviteResponse)]
 public class ClientHousingNeighbourInviteResponse : IReadable
 {
     public bool Accept { get; private set; }
