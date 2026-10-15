@@ -36,7 +36,8 @@ The solution is `Source/NexusTomorrow.slnx`, and the tests live under `Tests/`.
 
 ## Requirements
 
-- The .NET 10 SDK. `global.json` pins `10.0.300` and accepts any later feature band.
+- The .NET 10 SDK from the 10.0.4xx band. `global.json` pins `10.0.400` and takes the latest
+  patch in that band, so local builds and CI run the same compiler and analysers.
 - Your own WildStar 16042 client. No client files, tables or maps are distributed here.
 - Windows, to run `ClientConnector`. The solution builds on Windows and Linux; CI builds it on
   Ubuntu.

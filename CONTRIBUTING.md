@@ -47,33 +47,54 @@ dotnet test --solution Source/NexusTomorrow.slnx
 
 ## Code style
 
-`.editorconfig` carries the formatting, and an editor that reads it handles most of this for you.
-The points it can't enforce:
+The style follows Microsoft's
+[C# coding conventions](https://learn.microsoft.com/dotnet/csharp/fundamentals/coding-style/coding-conventions),
+with a few rules of our own. `.editorconfig` carries every rule an analyser can check, so an editor
+that reads it flags most problems as you type. Run `dotnet format` before you commit to fix the
+layout for you.
 
-- **Spelling:** British English in identifiers, comments and commit messages (`initialise`,
-  `customisation`, `neighbourhood`).
+### Naming
+
+- **Spelling:** American English in identifiers (`Initialize`, `Color`). A message or table field
+  takes the client's own name where the client has one. Spelling in comments and prose is up to
+  you.
+- **Case:** PascalCase for types, members and constants, with an `I` prefix on interfaces;
+  camelCase for parameters and locals.
+- **Fields:** `_camelCase` for private and internal fields. Static ones are `s_camelCase` (and
+  `t_camelCase` for `[ThreadStatic]`), so every touch of shared state stands out where it happens.
+- **`this.`:** never. The `_` prefix already tells a field from a parameter.
+
+### Layout
+
+- **Namespaces** are file-scoped, with `using` directives above them and `System` first.
+- **Braces** follow the Allman style. Leave them off only when every branch of an `if`/`else`
+  chain is a single line.
+- **No column alignment** and no `#region`. Trailing commas are welcome in enums and multi-line
+  initialisers.
+- **Fields** come first in a type. Visibility is always written out, as the first modifier.
+- **Attributes** on types and methods go one per line.
+
+### Language
+
 - **Nullable reference types** are on in every project, and nullable warnings are errors. A lookup
   that can miss returns `T?`, and its callers handle the miss. Use `!` only where a null is
   impossible, with a comment naming why.
 - **Required configuration** is validated where it is bound, because the configuration binder
   ignores `required`.
-- **Braces:** Allman style, with no braces round a single-line body.
-- **Namespaces** are block-scoped, never file-scoped.
-- **Documentation:** a `/// <summary>` on every public member, interface members included. Private
-  members and test methods need none.
-- **Naming:** PascalCase for types and public members; lowerCamel for locals, parameters and
-  non-public fields, with no `_` prefix. `this.` only to tell a field from a parameter of the same
-  name.
 - **`var`** only when the type is plain on the same line, as with `new` or a cast.
-- **Enums:** values aligned on the `=`, in value order, with no comma after the last.
-- **Attributes** sit on their own line, except on parameters.
-- **Member order:** constants and static fields, instance fields (readonly first), properties,
-  constructors, interface implementations, other members, nested types. Injected fields and the
-  constructor that sets them sit in `#region Dependency Injection`.
+- **Classes** are `sealed` unless they're built for inheritance, and fields are `readonly` whenever
+  they can be.
 - **Modern C#** where it reads better or is safer: collection expressions, `is null`, property
   patterns, `required` and `init`, `FrozenDictionary` and `ImmutableArray` for data built once. No
   primary constructors on services or managers.
 - **Packages:** versions live only in `Directory.Packages.props`, pinned exactly.
+
+### Documentation
+
+Every public type and member gets a `/// <summary>`. Data declarations are the exception: game
+table row models and enums document the type, and a member only when its name can't carry its
+meaning (units, a bit layout, why an unknown value is still unknown). Private members and test
+methods need none.
 
 ### Comments
 
@@ -88,14 +109,18 @@ file is UTF-8 with a byte order mark; other text files have none.
 
 ## Commit messages
 
-The headline is one past-tense sentence ending in a full stop. Any further points go straight
-under it as past-tense `- ` lines, with no blank line between:
+Write the headline in the imperative mood, with no full stop, in 72 characters or fewer. Leave a
+blank line under it, then add any further points as `- ` lines, also in the imperative:
 
 ```text
-Validated the client connector's configuration where it is bound.
-- Threw InvalidDataException naming the missing key when config.json lacks a host name or language.
-- Stopped writing a config.json from an empty answer.
+Validate the client connector's configuration where it is bound
+
+- Throw InvalidDataException naming the missing key when config.json lacks a host name or language.
+- Stop writing a config.json from an empty answer.
 ```
+
+The blank line matters: git treats everything above the first blank line as the subject, so
+without it `git log --oneline` and GitHub run the whole message together as the title.
 
 `git blame` skips the repository-wide formatting commits listed in `.git-blame-ignore-revs`. GitHub
 does this on its own; to do it locally, run:
