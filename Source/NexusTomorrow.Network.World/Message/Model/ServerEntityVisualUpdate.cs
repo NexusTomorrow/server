@@ -4,9 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerEntityVisualUpdate)]
 [WireMessage(GameMessageOpcode.ServerEntityVisualUpdate, Direction.ServerToClient)]
-public sealed partial class ServerEntityVisualUpdate : IWritable
+public sealed partial class ServerEntityVisualUpdate
 {
     [UInt(32)] public uint UnitId { get; set; }
     [UInt(5)] public byte Race { get; set; }
@@ -18,18 +17,4 @@ public sealed partial class ServerEntityVisualUpdate : IWritable
     [UInt(1)] public bool Unknown6 { get; set; }
 
     [Array(CountBits = 32)] public List<ItemVisual> ItemVisuals { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(UnitId);
-        writer.Write(Race, 5u);
-        writer.Write(Sex, 2u);
-        writer.Write(CreatureId, 18u);
-        writer.Write(DisplayInfo, 17u);
-        writer.Write(OutfitInfo, 15u);
-        writer.Write(ItemColorSetId);
-        writer.Write(Unknown6);
-        writer.Write(ItemVisuals.Count);
-        ItemVisuals.ForEach(u => u.Write(writer));
-    }
 }

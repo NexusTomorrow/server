@@ -4,12 +4,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Challenges;
 
-[Message(GameMessageOpcode.ServerChallengeUpdate)]
 [WireMessage(GameMessageOpcode.ServerChallengeUpdate, Direction.ServerToClient)]
-public sealed partial class ServerChallengeUpdate : IWritable
+public sealed partial class ServerChallengeUpdate
 {
     [WireStruct]
-    public sealed partial class Challenge : IWritable
+    public sealed partial class Challenge
     {
         [UInt(14)] public uint ChallengeId { get; set; }
         [UInt(4)] public ChallengeType Type { get; set; }
@@ -33,45 +32,7 @@ public sealed partial class ServerChallengeUpdate : IWritable
         [UInt(32)] public uint TimeAreaFailDt { get; set; }
         [UInt(32)] public uint TimeTotalAreaFail { get; set; } // typically 10 seconds
         [FixedArray(3), UInt(32)] public uint[] TierGoalCount { get; set; } = new uint[3];
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(ChallengeId, 14u);
-            writer.Write(Type, 4u);
-            writer.Write(TargetGroupId);
-            writer.Write(QualifyCount);
-            writer.Write(QualityTotal);
-            writer.Write(CurrentCount);
-            writer.Write(GoalCount);
-            writer.Write(ObjectiveCompletion);
-            writer.Write(CurrentTier);
-            writer.Write(LastRewardTier);
-            writer.Write(CompletionCount);
-            writer.Write(Unlocked);
-            writer.Write(Activated);
-            writer.Write(OnCooldown);
-            writer.Write(LeftArea);
-            writer.Write(TimeActivatedDt);
-            writer.Write(TimeTotalActive);
-            writer.Write(TimeCooldownDt);
-            writer.Write(TimeTotalCooldown);
-            writer.Write(TimeAreaFailDt);
-            writer.Write(TimeTotalAreaFail);
-            foreach (uint tier in TierGoalCount)
-            {
-                writer.Write(tier);
-            }
-        }
     }
 
     [Array(CountBits = 32)] public List<Challenge> ActiveChallenges { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(ActiveChallenges.Count);
-        foreach (Challenge challenge in ActiveChallenges)
-        {
-            challenge.Write(writer);
-        }
-    }
 }

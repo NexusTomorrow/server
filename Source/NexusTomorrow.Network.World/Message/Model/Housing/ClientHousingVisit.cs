@@ -4,22 +4,12 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[Message(GameMessageOpcode.ClientHousingVisit)]
 [WireMessage(GameMessageOpcode.ClientHousingVisit, Direction.ClientToServer)]
-public sealed partial class ClientHousingVisit : IReadable
+public sealed partial class ClientHousingVisit
 {
     [UInt(64)] public ulong Unused { get; private set; } // always 0
     public Identity IdentityToVisit { get; } = new(); // can be a player Identity or a residence Identity
     [WideString] public string PlayerToVisitName { get; private set; }
     public Identity CommunityToVisitIdentity { get; } = new();
     [WideString] public string CommunityToVisitName { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        Unused = reader.ReadULong();
-        IdentityToVisit.Read(reader);
-        PlayerToVisitName = reader.ReadWideString();
-        CommunityToVisitIdentity.Read(reader);
-        CommunityToVisitName = reader.ReadWideString();
-    }
 }

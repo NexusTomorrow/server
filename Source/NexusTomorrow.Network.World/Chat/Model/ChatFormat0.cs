@@ -9,14 +9,4 @@ public sealed partial class ChatFormat0 : IChatFormatModel
 {
     [NotOnWire] public ChatFormatType Type => ChatFormatType.Format0;
     [UInt(1)] public bool Unknown { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        Unknown = reader.ReadBit();
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Unknown);
-    }
 }

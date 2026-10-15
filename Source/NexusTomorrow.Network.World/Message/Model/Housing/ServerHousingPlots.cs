@@ -5,12 +5,11 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[Message(GameMessageOpcode.ServerHousingPlots)]
 [WireMessage(GameMessageOpcode.ServerHousingPlots, Direction.ServerToClient)]
-public sealed partial class ServerHousingPlots : IWritable
+public sealed partial class ServerHousingPlots
 {
     [WireStruct]
-    public sealed partial class Plot : IWritable
+    public sealed partial class Plot
     {
         [UInt(32)] public uint PlotPropertyIndex { get; set; }
         [UInt(32)] public uint PlugItemId { get; set; }
@@ -30,37 +29,8 @@ public sealed partial class ServerHousingPlots : IWritable
             Array.Fill(HousingContributionTotals, 0u);
             Array.Fill(HousingDecayTotals, 0u);
         }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(PlotPropertyIndex);
-            writer.Write(PlugItemId);
-            writer.Write(PlugFacing, 32u);
-            writer.Write(PlotInfoId);
-
-            for (uint i = 0u; i < HousingContributionTotals.Length; i++)
-                writer.Write(HousingContributionTotals[i]);
-
-            for (uint i = 0u; i < HousingDecayTotals.Length; i++)
-                writer.Write(HousingDecayTotals[i]);
-
-            writer.Write(HousingUpkeepCharges);
-            writer.Write(HousingUpkeepTime);
-            writer.Write(BuildState, 3u);
-            writer.Write(BuildStage);
-            writer.Write(BuildBonus);
-            writer.Write(BuildStartTime);
-        }
     }
 
     public Identity ResidenceIdentity { get; set; }
     [Array(CountBits = 32)] public List<Plot> Plots { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        ResidenceIdentity.Write(writer);
-
-        writer.Write(Plots.Count);
-        Plots.ForEach(p => p.Write(writer));
-    }
 }

@@ -5,12 +5,11 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
-[Message(GameMessageOpcode.ServerCreddOperationHistory)]
 [WireMessage(GameMessageOpcode.ServerCreddOperationHistory, Direction.ServerToClient)]
-public sealed partial class ServerCreddOperationHistory : IWritable
+public sealed partial class ServerCreddOperationHistory
 {
     [WireStruct]
-    public sealed partial class CreddOperationHistoryEntry : IWritable
+    public sealed partial class CreddOperationHistoryEntry
     {
         [UInt(32)] public AccountOperation Operation { get; set; }
         [Pad(32)] public Pad OperationHigh { get; }
@@ -20,24 +19,7 @@ public sealed partial class ServerCreddOperationHistory : IWritable
         public Identity Unused { get; set; }
         [UInt(64)] public ulong AccountFriendId { get; set; }
         [UInt(64)] public ulong MoneyAmount { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Operation);
-            writer.Write(IsInitiator);
-            writer.Write(LogAge);
-            Transactor.Write(writer);
-            Unused.Write(writer);
-            writer.Write(AccountFriendId);
-            writer.Write(MoneyAmount);
-        }
     }
 
     [Array(CountBits = 32)] public List<CreddOperationHistoryEntry> HistoryEntries { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(HistoryEntries.Count);
-        HistoryEntries.ForEach(entry => entry.Write(writer));
-    }
 }

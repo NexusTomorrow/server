@@ -12,11 +12,4 @@ public sealed partial class CombatLogLifesteal : ICombatLog
     [UInt(32)] public uint UnitId { get; set; }
     [UInt(32)] public uint HealthStolen { get; set; }
     [UInt(32)] public uint Absorption { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(UnitId);
-        writer.Write(HealthStolen);
-        writer.Write(Absorption);
-    }
 }

@@ -4,18 +4,17 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerStoreOffers)]
 [WireMessage(GameMessageOpcode.ServerStoreOffers, Direction.ServerToClient)]
-public sealed partial class ServerStoreOffers : IWritable
+public sealed partial class ServerStoreOffers
 {
     [WireStruct]
-    public sealed partial class OfferGroup : IWritable
+    public sealed partial class OfferGroup
     {
         [WireStruct]
-        public sealed partial class Offer : IWritable
+        public sealed partial class Offer
         {
             [WireStruct]
-            public sealed partial class OfferCurrencyData : IWritable
+            public sealed partial class OfferCurrencyData
             {
                 [UInt(5)] public byte CurrencyId { get; set; } // 5
                 [Float32] public float Price { get; set; }
@@ -23,20 +22,10 @@ public sealed partial class ServerStoreOffers : IWritable
                 [Float32] public float DiscountValue { get; set; }
                 [UInt(64)] public long DiscountTimeRemaining { get; set; }
                 [UInt(64)] public long TimeSinceExpiry { get; set; }
-
-                public void Write(GamePacketWriter writer)
-                {
-                    writer.Write(CurrencyId, 5u);
-                    writer.Write(Price);
-                    writer.Write(DiscountType, 2u);
-                    writer.Write(DiscountValue);
-                    writer.Write(DiscountTimeRemaining);
-                    writer.Write(TimeSinceExpiry);
-                }
             }
 
             [WireStruct]
-            public sealed partial class OfferItemData : IWritable
+            public sealed partial class OfferItemData
             {
                 /// <summary>
                 /// The item data <see cref="Type"/> selects.
@@ -70,32 +59,6 @@ public sealed partial class ServerStoreOffers : IWritable
 
                 [UInt(32)] public uint Type { get; set; } // Should be 0
                 [Union(nameof(Type))] public IPayload Payload { get; set; } = new AccountItem();
-                [NotOnWire] public ushort AccountItemId { get; set; } // 15
-                [NotOnWire] public uint Amount { get; set; }
-
-                [NotOnWire] public uint Type1Unknown0 { get; set; }
-                [NotOnWire] public uint Type1Unknown1 { get; set; }
-
-                [NotOnWire] public uint Type2Unknown0 { get; set; }
-
-                public void Write(GamePacketWriter writer)
-                {
-                    writer.Write(Type);
-                    switch (Type)
-                    {
-                        case 0:
-                            writer.Write(AccountItemId, 15u);
-                            writer.Write(Amount);
-                            break;
-                        case 1:
-                            writer.Write(Type1Unknown0);
-                            writer.Write(Type1Unknown1);
-                            break;
-                        case 2:
-                            writer.Write(Type2Unknown0);
-                            break;
-                    }
-                }
             }
 
             [UInt(32)] public uint Id { get; set; }
@@ -108,32 +71,6 @@ public sealed partial class ServerStoreOffers : IWritable
             [UInt(8)] public byte Unknown7 { get; set; }
             [Array(CountBits = 32)] public List<OfferCurrencyData> CurrencyData { get; set; } = [];
             [Array(CountBits = 32)] public List<OfferItemData> ItemData { get; set; } = [];
-
-            public void Write(GamePacketWriter writer)
-            {
-                writer.Write(Id);
-                writer.WriteStringWide(Name);
-                writer.WriteStringWide(Description);
-
-                writer.Write(PricePremium);
-                writer.Write(PriceAlternative);
-
-                writer.Write(DisplayFlags, 32u);
-                writer.Write(Unknown6);
-                writer.Write(Unknown7);
-
-                writer.Write(CurrencyData.Count);
-                CurrencyData.ForEach(e => e.Write(writer));
-
-                writer.Write(ItemData.Count);
-                ItemData.ForEach(e => e.Write(writer));
-            }
-        }
-
-        public struct Category
-        {
-            public uint Id { get; set; }
-            public uint Index { get; set; }
         }
 
         [UInt(32)] public uint Id { get; set; }
@@ -147,32 +84,7 @@ public sealed partial class ServerStoreOffers : IWritable
         [UInt(32), Count] public uint CategoryCount { get; set; }
         [Array(CountFrom = nameof(CategoryCount)), UInt(32)] public List<uint> CategoryIds { get; set; } = [];
         [Array(CountFrom = nameof(CategoryCount)), UInt(32)] public List<uint> CategoryIndexes { get; set; } = [];
-        [NotOnWire] public List<Category> Categories { get; set; } = [];
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Id);
-            writer.Write(DisplayFlags, 32u);
-            writer.WriteStringWide(Name);
-            writer.WriteStringWide(Description);
-            writer.Write(DisplayInfoOverride, 14u);
-
-            writer.Write(Offers.Count);
-            Offers.ForEach(e => e.Write(writer));
-
-            writer.Write(Categories.Count);
-            foreach (Category category in Categories)
-                writer.Write(category.Id);
-            foreach (Category category in Categories)
-                writer.Write(category.Index);
-        }
     }
 
     [Array(CountBits = 32)] public List<OfferGroup> OfferGroups { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(OfferGroups.Count);
-        OfferGroups.ForEach(e => e.Write(writer));
-    }
 }

@@ -14,22 +14,4 @@ public sealed partial class SetRotationSpinCommand : IEntityCommandModel
     [PackedFloat] public float Spin { get; set; }
     [UInt(32)] public uint Offset { get; set; }
     [UInt(1)] public bool Blend { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        Rotation = reader.ReadVector3();
-        FlightTime = reader.ReadUInt();
-        Spin = reader.ReadPackedFloat();
-        Offset = reader.ReadUInt();
-        Blend = reader.ReadBit();
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.WriteVector3(Rotation);
-        writer.Write(FlightTime);
-        writer.WritePackedFloat(Spin);
-        writer.Write(Offset);
-        writer.Write(Blend);
-    }
 }

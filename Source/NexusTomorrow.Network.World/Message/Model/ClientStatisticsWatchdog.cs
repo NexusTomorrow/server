@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ClientStatisticsWatchdog)]
 [WireMessage(GameMessageOpcode.ClientStatisticsWatchdog, Direction.ClientToServer)]
-public sealed partial class ClientStatisticsWatchdog : IReadable
+public sealed partial class ClientStatisticsWatchdog
 {
     [UInt(64)] public ulong PropertyHashSeed { get; private set; }
     [UInt(64)] public ulong PlayerUnitPropertiesHash { get; private set; } // Client iterates over the entire Property array of the player's unit to calculate this hash.
@@ -14,15 +13,4 @@ public sealed partial class ClientStatisticsWatchdog : IReadable
     [Float32] public float TimeBetweenWatchdogRunsWeightedAverage { get; private set; }
     [Float32] public float WatchdogWeightedAverageError { get; private set; }
     [UInt(32)] public uint UnknownPlayerPositionRelated { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        PropertyHashSeed = reader.ReadULong();
-        PlayerUnitPropertiesHash = reader.ReadULong(64);
-        LongestTimeBetweenWatchdogLoops = reader.ReadInt();
-        TimeToMiddleOfCircularBuffer = reader.ReadSingle();
-        TimeBetweenWatchdogRunsWeightedAverage = reader.ReadSingle();
-        WatchdogWeightedAverageError = reader.ReadSingle();
-        UnknownPlayerPositionRelated = reader.ReadUInt();
-    }
 }

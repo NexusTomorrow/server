@@ -23,31 +23,4 @@ public sealed partial class PlayerEntityModel : IEntityModel
     [UInt(3)] public PvPFlag PvPFlag { get; set; }
     [UInt(8)] public byte Unknown4C { get; set; }
     [UInt(14)] public ushort Title { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Id);
-        writer.Write(RealmId, 14);
-        writer.WriteStringWide(Name);
-        writer.Write(Race, 5);
-        writer.Write(Class, 5);
-        writer.Write(Sex, 2);
-        writer.Write(GroupId);
-
-        writer.Write((byte)PetIdList.Count);
-        PetIdList.ForEach(e => writer.Write(e));
-
-        writer.WriteStringWide(GuildName);
-        writer.Write(GuildType, 4u);
-
-        writer.Write((byte)GuildIds.Count, 5);
-        GuildIds.ForEach(e => writer.Write(e));
-
-        writer.Write(Bones.Count, 6);
-        Bones.ForEach(e => writer.Write(e));
-
-        writer.Write(PvPFlag, 3);
-        writer.Write(Unknown4C);
-        writer.Write(Title, 14);
-    }
 }

@@ -5,9 +5,8 @@ using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
 
 namespace NexusTomorrow.Network.World.Message.Model.Info;
 
-[Message(GameMessageOpcode.ServerPlayerInfoFullResponse)]
 [WireMessage(GameMessageOpcode.ServerPlayerInfoFullResponse, Direction.ServerToClient)]
-public sealed partial class ServerPlayerInfoFullResponse : IWritable
+public sealed partial class ServerPlayerInfoFullResponse
 {
     public PlayerInfoBase BaseData { get; set; }
     [UInt(1)] public bool IsClassPathSet { get; set; } = true;
@@ -17,15 +16,4 @@ public sealed partial class ServerPlayerInfoFullResponse : IWritable
     [UInt(32)] public uint Level { get; set; }
     [UInt(1)] public bool IsLastLoggedOnInDaysSet { get; set; }
     [Float32] public float LastLoggedInDays { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        BaseData.Write(writer);
-        writer.Write(IsClassPathSet);
-        writer.Write(Path, 3u);
-        writer.Write(Class, 14u);
-        writer.Write(Level);
-        writer.Write(IsLastLoggedOnInDaysSet);
-        writer.Write(LastLoggedInDays);
-    }
 }

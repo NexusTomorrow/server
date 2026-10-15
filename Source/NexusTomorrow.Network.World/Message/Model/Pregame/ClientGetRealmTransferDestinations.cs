@@ -5,12 +5,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 // Sent when the lua function CharacterScreenLib::GetRealmTransferDestinations is called
 // Response from ServerTransferDestinationRealmList
-[Message(GameMessageOpcode.ClientGetRealmTransferDestinations)]
 [WireMessage(GameMessageOpcode.ClientGetRealmTransferDestinations, Direction.ClientToServer)]
-public sealed partial class ClientGetRealmTransferDestinations : IReadable
+public sealed partial class ClientGetRealmTransferDestinations
 {
-    public void Read(GamePacketReader reader)
-    {
-        // Zero byte messages
-    }
 }

@@ -4,16 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[Message(GameMessageOpcode.ServerGuildEventLogDeleteEntry)]
 [WireMessage(GameMessageOpcode.ServerGuildEventLogDeleteEntry, Direction.ServerToClient)]
-public sealed partial class ServerGuildEventLogDeleteEntry : IWritable
+public sealed partial class ServerGuildEventLogDeleteEntry
 {
     public Identity GuildIdentity { get; set; }
     [UInt(64)] public ulong EventLogId { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        GuildIdentity.Write(writer);
-        writer.Write(EventLogId);
-    }
 }

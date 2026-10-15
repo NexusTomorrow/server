@@ -11,12 +11,4 @@ public sealed partial class PinataLootEntityModel : IEntityModel
     [UInt(32)] public uint ItemId { get; set; }
     [UInt(32)] public uint ItemCount { get; set; }
     [UInt(4)] public byte LootType { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(CreatureId, 18u);
-        writer.Write(ItemId);
-        writer.Write(ItemCount);
-        writer.Write(LootType, 4);
-    }
 }

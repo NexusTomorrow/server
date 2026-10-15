@@ -6,32 +6,20 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class GroupCharacter : IWritable
+public sealed partial class GroupCharacter
 {
     [WireStruct]
-    public sealed partial class UnknownStruct0 : IWritable
+    public sealed partial class UnknownStruct0
     {
         [UInt(16)] public ushort Unknown6 { get; set; } = 0;
         [UInt(8)] public byte Unknown7 { get; set; } = 48;
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Unknown6);
-            writer.Write(Unknown7);
-        }
     }
 
     [WireStruct]
-    public sealed partial class UnknownStruct1 : IWritable
+    public sealed partial class UnknownStruct1
     {
         [UInt(15)] public ushort Unknown30 { get; set; }
         [UInt(16)] public ushort Unknown31 { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Unknown30, 15u);
-            writer.Write(Unknown31);
-        }
     }
 
     [WideString] public string Name { get; set; }
@@ -75,58 +63,4 @@ public sealed partial class GroupCharacter : IWritable
     [UInt(32)] public uint Unknown29 { get; set; }
 
     [Array(CountBits = 32)] public List<UnknownStruct1> UnknownStruct1List { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.WriteStringWide(Name);
-        writer.Write(Faction, 14u);
-        writer.Write(Race, 14u);
-        writer.Write(Class, 14u);
-        writer.Write(Sex, 2u);
-        writer.Write(Level, 7u);
-        writer.Write(EffectiveLevel, 7u);
-        writer.Write(Path, 3u);
-        writer.Write(Unknown4, 17u);
-        writer.Write(GroupMemberId);
-
-        for (int i = 0; i < 5; ++i)
-        {
-            SomeStatList[i] = new UnknownStruct0();
-            SomeStatList[i].Write(writer);
-        }
-
-        if (MentoringTarget == null)
-        {
-            writer.Write((ushort)0, 14u);
-            writer.Write((ulong)0);
-        }
-        else
-        {
-            MentoringTarget.Write(writer);
-        }
-
-        writer.Write(Unknown10);
-        writer.Write(Unknown11);
-        writer.Write(Unknown12);
-        writer.Write(Unknown13);
-        writer.Write(Unknown14);
-        writer.Write(Unknown15);
-        writer.Write(Unknown16);
-        writer.Write(Unknown17);
-        writer.Write(Unknown18);
-        writer.Write(Unknown19);
-        writer.Write(Unknown20);
-        writer.Write(Unknown21);
-        writer.Write(Unknown22);
-        writer.Write(Realm, 14u);
-        writer.Write(WorldZoneId, 15u);
-        writer.Write(MapId);
-        writer.Write(PhaseId);
-        writer.Write(SyncedToGroup);
-        writer.Write(Unknown28);
-        writer.Write(Unknown29);
-
-        writer.Write(UnknownStruct1List.Count);
-        UnknownStruct1List.ForEach(i => i.Write(writer));
-    }
 }

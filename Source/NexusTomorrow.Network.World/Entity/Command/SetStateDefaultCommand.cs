@@ -9,14 +9,4 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 public sealed partial class SetStateDefaultCommand : IEntityCommandModel
 {
     [UInt(1)] public bool Strafe { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        Strafe = reader.ReadBit();
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Strafe);
-    }
 }

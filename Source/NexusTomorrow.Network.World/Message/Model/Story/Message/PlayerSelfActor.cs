@@ -7,14 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Story.Message;
 [UnionCase(StoryTextSourceType.PlayerSelf)]
 public sealed partial class PlayerSelfActor : Actor
 {
-    [NotOnWire] public override StoryTextSourceType Type => StoryTextSourceType.PlayerSelf;
     [UInt(32)] public uint PlayerUnitId { get; set; } // not used by the client
     [UInt(32)] public new uint TokenReplacementValue { get => base.TokenReplacementValue; set => base.TokenReplacementValue = value; }
     [NarrowString] public new string TokenName { get => base.TokenName; set => base.TokenName = value; }
-
-    public override void Write(GamePacketWriter writer)
-    {
-        writer.Write(PlayerUnitId);
-        base.Write(writer);
-    }
 }

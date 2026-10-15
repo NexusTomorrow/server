@@ -5,13 +5,13 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireStruct]
-public sealed partial class GuildData : IWritable
+public sealed partial class GuildData
 {
     [WireStruct]
-    public sealed partial class Info : IWritable
+    public sealed partial class Info
     {
         [WireStruct]
-        public sealed partial class PvPRating : IWritable
+        public sealed partial class PvPRating
         {
             [UInt(32)] public uint Wins { get; set; }
             [UInt(32)] public uint Losses { get; set; }
@@ -19,16 +19,6 @@ public sealed partial class GuildData : IWritable
             [UInt(32)] public uint Rating { get; set; }
             [UInt(32)] public uint PvpSeason { get; set; }
             [UInt(32)] public uint KFactor { get; set; }
-
-            public void Write(GamePacketWriter writer)
-            {
-                writer.Write(Wins);
-                writer.Write(Losses);
-                writer.Write(Draws);
-                writer.Write(Rating);
-                writer.Write(PvpSeason);
-                writer.Write(KFactor);
-            }
         }
 
         [WideString] public string MessageOfTheDay { get; set; }
@@ -36,28 +26,13 @@ public sealed partial class GuildData : IWritable
         [UInt(3)] public GuildQueueState QueueState { get; set; }
         public PvPRating PvPRatings { get; set; } = new();
         [Float32] public float GuildCreationDateInDays { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.WriteStringWide(MessageOfTheDay);
-            writer.WriteStringWide(GuildInfo);
-            writer.Write(QueueState, 3u);
-            PvPRatings.Write(writer);
-            writer.Write(GuildCreationDateInDays);
-        }
     }
 
     [WireStruct]
-    public sealed partial class ActivePerk : IWritable
+    public sealed partial class ActivePerk
     {
         [UInt(14)] public GuildPerk Perk { get; set; } // Is the guildPerkId, see guildPerk tbl or GuildPerk enum
         [Float32] public float EndTime { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Perk, 14u);
-            writer.Write(EndTime);
-        }
     }
 
     [UInt(64)] public ulong GuildId { get; set; }
@@ -86,38 +61,4 @@ public sealed partial class GuildData : IWritable
     [Array(CountBits = 32)] public List<ActivePerk> ActivePerks { get; set; } = [];
 
     public Info GuildInfo { get; set; } = new();
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(GuildId);
-        writer.WriteStringWide(GuildName);
-        writer.Write(Flags, 32u);
-        writer.Write(Type, 4u);
-
-        foreach (GuildRank rank in Ranks)
-            rank.Write(writer);
-
-        GuildStandard.Write(writer);
-
-        writer.Write(MemberCount);
-        writer.Write(OnlineMemberCount);
-        writer.Write(Influence);
-        writer.Write(BonusInfluenceRemaining);
-        writer.Write(Money);
-        writer.Write(WarCoins);
-        writer.Write(BankTabCount);
-
-        foreach (string str in BankTabNames)
-            writer.WriteStringWide(str);
-
-        // This has not been verified to put the bytes in the correct order.
-        // May need to reverse the bit order or the byte order.
-        foreach (byte perk in UnlockedPerks)
-            writer.Write(perk);
-
-        writer.Write(ActivePerks.Count);
-        ActivePerks.ForEach(c => c.Write(writer));
-
-        GuildInfo.Write(writer);
-    }
 }

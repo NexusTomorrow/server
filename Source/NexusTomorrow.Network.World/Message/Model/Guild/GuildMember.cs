@@ -7,7 +7,7 @@ using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireStruct]
-public sealed partial class GuildMember : IWritable
+public sealed partial class GuildMember
 {
     public Identity PlayerIdentity { get; set; }
     [UInt(32)] public uint Rank { get; set; }
@@ -25,22 +25,4 @@ public sealed partial class GuildMember : IWritable
     [WideString] public string Note { get; set; }
     [UInt(32)] public uint RecruitmentAvailability { get; set; } // Only bit 2 is used
     [UInt(32)] public int CommunityReservedPlotIndex { get; set; } = -1;
-
-    public void Write(GamePacketWriter writer)
-    {
-        PlayerIdentity.Write(writer);
-        writer.Write(Rank);
-        writer.WriteStringWide(Name);
-        writer.Write(Sex, 2u);
-        writer.Write(Class, 32u);
-        writer.Write(Path, 32u);
-        writer.Write(Level);
-        writer.Write(LastLogoutTimeDays);
-        writer.Write(PvpWins);
-        writer.Write(PvpLosses);
-        writer.Write(PvpDraws);
-        writer.WriteStringWide(Note);
-        writer.Write(RecruitmentAvailability);
-        writer.Write(CommunityReservedPlotIndex);
-    }
 }

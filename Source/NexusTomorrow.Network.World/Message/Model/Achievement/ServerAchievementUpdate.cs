@@ -3,17 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Achievement;
 
-[Message(GameMessageOpcode.ServerAchievementUpdate)]
 [WireMessage(GameMessageOpcode.ServerAchievementUpdate, Direction.ServerToClient)]
-public sealed partial class ServerAchievementUpdate : IWritable
+public sealed partial class ServerAchievementUpdate
 {
     [UInt(1)] public bool Deleted { get; set; }
     [Array(CountBits = 32)] public List<Achievement> Achievements { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Deleted);
-        writer.Write(Achievements.Count);
-        Achievements.ForEach(a => a.Write(writer));
-    }
 }

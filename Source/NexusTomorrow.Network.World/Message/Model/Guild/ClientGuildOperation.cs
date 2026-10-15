@@ -5,9 +5,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[Message(GameMessageOpcode.ClientGuildOperation)]
 [WireMessage(GameMessageOpcode.ClientGuildOperation, Direction.ClientToServer)]
-public partial class ClientGuildOperation : IReadable
+public partial class ClientGuildOperation
 {
     /// <summary>
     /// The operation's 64-bit argument; each narrower view reads its low bytes.
@@ -26,16 +25,4 @@ public partial class ClientGuildOperation : IReadable
     public OperationData Data { get; private set; } = new();
     [WideString] public string TextValue { get; private set; } // Client has this named as "Who", but it is used for Player Names, Rank Names, Notes, MOTD, and other stuff
     [UInt(6)] public GuildOperation Operation { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        GuildIdentity.Read(reader);
-        Rank = reader.ReadUInt();
-        Data = new OperationData
-        {
-            UInt64Data = reader.ReadULong()
-        };
-        TextValue = reader.ReadWideString();
-        Operation = reader.ReadEnum<GuildOperation>(6u);
-    }
 }

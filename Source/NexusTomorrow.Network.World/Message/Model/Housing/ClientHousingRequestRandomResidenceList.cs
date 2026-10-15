@@ -3,12 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[Message(GameMessageOpcode.ClientHousingRequestRandomResidenceList)]
 [WireMessage(GameMessageOpcode.ClientHousingRequestRandomResidenceList, Direction.ClientToServer)]
-public sealed partial class ClientHousingRequestRandomResidenceList : IReadable
+public sealed partial class ClientHousingRequestRandomResidenceList
 {
-    public void Read(GamePacketReader reader)
-    {
-        // Zero byte message
-    }
 }

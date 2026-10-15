@@ -3,11 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerMatchingMatchExited)]
 [WireMessage(GameMessageOpcode.ServerMatchingMatchExited, Direction.ServerToClient)]
-public sealed partial class ServerMatchingMatchExited : IWritable
+public sealed partial class ServerMatchingMatchExited
 {
-    public void Write(GamePacketWriter writer)
-    {
-    }
 }

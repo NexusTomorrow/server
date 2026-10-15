@@ -10,14 +10,4 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 public sealed partial class SetStateCommand : IEntityCommandModel
 {
     [UInt(32)] public StateFlags State { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        State = reader.ReadEnum<StateFlags>(32);
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(State, 32);
-    }
 }

@@ -5,16 +5,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[Message(GameMessageOpcode.ServerGuildFlagsUpdate)]
 [WireMessage(GameMessageOpcode.ServerGuildFlagsUpdate, Direction.ServerToClient)]
-public sealed partial class ServerGuildFlagsUpdate : IWritable
+public sealed partial class ServerGuildFlagsUpdate
 {
     public Identity GuildIdentity { get; set; }
     [UInt(32)] public GuildFlag Flags { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        GuildIdentity.Write(writer);
-        writer.Write(Flags, 32u);
-    }
 }

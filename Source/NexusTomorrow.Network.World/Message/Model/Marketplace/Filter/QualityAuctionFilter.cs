@@ -10,10 +10,4 @@ public sealed partial class QualityAuctionFilter : IAuctionFilter
 {
     [UInt(4)] public Quality Minimum { get; private set; }
     [UInt(4)] public Quality Maximum { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        Minimum = reader.ReadEnum<Quality>(4u);
-        Maximum = reader.ReadEnum<Quality>(4u);
-    }
 }

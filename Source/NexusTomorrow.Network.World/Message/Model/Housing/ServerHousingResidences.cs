@@ -5,12 +5,11 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[Message(GameMessageOpcode.ServerHousingResidences)]
 [WireMessage(GameMessageOpcode.ServerHousingResidences, Direction.ServerToClient)]
-public sealed partial class ServerHousingResidences : IWritable
+public sealed partial class ServerHousingResidences
 {
     [WireStruct]
-    public sealed partial class Residence : IWritable
+    public sealed partial class Residence
     {
         public Identity ResidenceIdentity { get; set; }
         [UInt(64)] public ulong NeighbourhoodId { get; set; }
@@ -33,38 +32,7 @@ public sealed partial class ServerHousingResidences : IWritable
         [UInt(32)] public uint NeighbourGardenSplit { get; set; }
         [Pad(512)] public Pad Unknown { get; } // 64 bytes of unknown meaning, sent as zeros
         [UInt(1)] public bool ResidenceDeleted { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            ResidenceIdentity.Write(writer);
-            writer.Write(NeighbourhoodId);
-            writer.Write(CharacterIdOwner);
-            writer.Write(GuildIdOwner);
-            writer.Write(Type, 14u);
-            writer.Write(TileId);
-            writer.WriteStringWide(Name);
-            writer.Write(PropertyInfoId, 32u);
-            writer.Write(ResidenceInfoId);
-            writer.Write(WallpaperExterior);
-            writer.Write(Entryway);
-            writer.Write(Roof);
-            writer.Write(Door);
-            writer.Write(Sky);
-            writer.Write(Music);
-            writer.Write(Ground);
-            writer.Write(Flags, 32u);
-            writer.Write(NeighbourHarvestSplit);
-            writer.Write(NeighbourGardenSplit);
-            writer.WriteBytes(new byte[64]); // sniffs show data here but unknown what it is for
-            writer.Write(ResidenceDeleted);
-        }
     }
 
     [Array(CountBits = 32)] public List<Residence> Residences { get; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Residences.Count);
-        Residences.ForEach(r => r.Write(writer));
-    }
 }

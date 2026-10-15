@@ -21,19 +21,4 @@ public sealed partial class CombatLogReflect : ICombatLog
     [UInt(3)] public DamageType DamageType { get; set; } // 3u
     [UInt(8)] public SpellEffectType EffectType { get; set; } // 8u
     public CombatLogCastData CastData { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(DamageAmount);
-        writer.Write(RawDamage);
-        writer.Write(Shield);
-        writer.Write(Overkill);
-        writer.Write(Glance);
-        writer.Write(BTargetVulnerable);
-        writer.Write(BKilled);
-        writer.Write(BPeriodic);
-        writer.Write(DamageType, 3u);
-        writer.Write(EffectType, 8u);
-        CastData.Write(writer);
-    }
 }

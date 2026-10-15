@@ -3,22 +3,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[Message(GameMessageOpcode.ServerCinematicMissileActorAdd)]
 [WireMessage(GameMessageOpcode.ServerCinematicMissileActorAdd, Direction.ServerToClient)]
-public sealed partial class ServerCinematicMissileActorAdd : IWritable
+public sealed partial class ServerCinematicMissileActorAdd
 {
     [UInt(32)] public uint Delay { get; set; }
     [UInt(32)] public uint MissileActorUnitId { get; set; }
     [UInt(32)] public uint FromUnitId { get; set; }
     [UInt(32)] public uint ToUnitId { get; set; }
     [UInt(32)] public uint Spell4ClientMissileId { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Delay);
-        writer.Write(MissileActorUnitId);
-        writer.Write(FromUnitId);
-        writer.Write(ToUnitId);
-        writer.Write(Spell4ClientMissileId);
-    }
 }

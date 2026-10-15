@@ -15,33 +15,4 @@ public sealed partial class SetVelocityKeysCommand : IEntityCommandModel
     [UInt(2)] public byte Type { get; set; }
     [UInt(32)] public uint Offset { get; set; }
     [UInt(1)] public bool Blend { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        uint count = reader.ReadUShort(10u);
-        for (int i = 0; i < count; i++)
-            Times.Add(reader.ReadUInt());
-
-        for (int i = 0; i < count; i++)
-            Velocities.Add(reader.ReadPackedVector3());
-
-        Type = reader.ReadByte(2u);
-        Offset = reader.ReadUInt();
-        Blend = reader.ReadBit();
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Times.Count, 10u);
-
-        foreach (uint time in Times)
-            writer.Write(time);
-
-        foreach (Vector3 velocity in Velocities)
-            writer.WritePackedVector3(velocity);
-
-        writer.Write(Type, 2u);
-        writer.Write(Offset);
-        writer.Write(Blend);
-    }
 }

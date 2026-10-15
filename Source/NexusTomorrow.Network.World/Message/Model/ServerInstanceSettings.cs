@@ -4,9 +4,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerInstanceSettings)]
 [WireMessage(GameMessageOpcode.ServerInstanceSettings, Direction.ServerToClient)]
-public sealed partial class ServerInstanceSettings : IWritable
+public sealed partial class ServerInstanceSettings
 {
     [Flags]
     public enum WorldSetting
@@ -20,12 +19,4 @@ public sealed partial class ServerInstanceSettings : IWritable
     [UInt(32)] public uint PrimeLevel { get; set; }
     [UInt(8)] public WorldSetting Flags { get; set; }
     [UInt(32)] public uint ClientEntitySendUpdateInterval { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Difficulty, 2u);
-        writer.Write(PrimeLevel);
-        writer.Write(Flags, 8u);
-        writer.Write(ClientEntitySendUpdateInterval);
-    }
 }

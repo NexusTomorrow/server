@@ -3,14 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[Message(GameMessageOpcode.ServerPathSoldierHoldoutDeath)]
 [WireMessage(GameMessageOpcode.ServerPathSoldierHoldoutDeath, Direction.ServerToClient)]
-public sealed partial class ServerPathSoldierHoldoutDeath : IWritable
+public sealed partial class ServerPathSoldierHoldoutDeath
 {
     [UInt(14)] public ushort PathSoldierEventId { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(PathSoldierEventId, 14);
-    }
 }

@@ -6,9 +6,8 @@ using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[Message(GameMessageOpcode.ServerCinematicActorAdd)]
 [WireMessage(GameMessageOpcode.ServerCinematicActorAdd, Direction.ServerToClient)]
-public sealed partial class ServerCinematicActorAdd : IWritable
+public sealed partial class ServerCinematicActorAdd
 {
     [UInt(32)] public uint Delay { get; set; }
     [UInt(16)] public EntityCreateFlag CreateFlags { get; set; }
@@ -19,17 +18,4 @@ public sealed partial class ServerCinematicActorAdd : IWritable
     public Position Position { get; set; }
     [UInt(64)] public ulong ActivePropId { get; set; }
     [UInt(32)] public uint WorldSocketId { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Delay);
-        writer.Write(CreateFlags, 16u);
-        writer.Write(TextureLevelOfDetailBias);
-        writer.Write(UnitId);
-        writer.Write(Creature2Id);
-        writer.Write(MovementMode, 32u);
-        Position.Write(writer);
-        writer.Write(ActivePropId);
-        writer.Write(WorldSocketId);
-    }
 }

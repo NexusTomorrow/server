@@ -4,9 +4,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerResurrectionShow)]
 [WireMessage(GameMessageOpcode.ServerResurrectionShow, Direction.ServerToClient)]
-public sealed partial class ServerResurrectionShow : IWritable
+public sealed partial class ServerResurrectionShow
 {
     [UInt(32)] public uint GhostId { get; set; }
     [UInt(32)] public uint RezCost { get; set; }
@@ -26,16 +25,4 @@ public sealed partial class ServerResurrectionShow : IWritable
     [UInt(32)] public uint TimeUntilWakeHereMs { get; set; }
 
     [UInt(32)] public uint TimeUntilForceRezMs { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(GhostId);
-        writer.Write(RezCost);
-        writer.Write(TimeUntilRezMs);
-        writer.Write(Dead);
-        writer.Write(ShowRezFlags, 8u);
-        writer.Write(HasCasterRezRequest);
-        writer.Write(TimeUntilWakeHereMs);
-        writer.Write(TimeUntilForceRezMs);
-    }
 }

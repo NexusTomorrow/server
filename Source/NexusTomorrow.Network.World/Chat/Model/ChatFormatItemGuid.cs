@@ -9,14 +9,4 @@ public sealed partial class ChatFormatItemGuid : IChatFormatModel
 {
     [NotOnWire] public ChatFormatType Type => ChatFormatType.ItemGuid;
     [UInt(64)] public ulong ItemGuid { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        ItemGuid = reader.ReadULong();
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(ItemGuid);
-    }
 }

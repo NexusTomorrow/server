@@ -3,7 +3,6 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[Message(GameMessageOpcode.ServerHousingDefaultResidenceNameUpdate)]
 [WireMessage(GameMessageOpcode.ServerHousingDefaultResidenceNameUpdate, Direction.ServerToClient)]
 public sealed partial class ServerHousingDefaultResidenceNameUpdate : Neighbourhood
 {

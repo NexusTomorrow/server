@@ -5,22 +5,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pet;
 
-[Message(GameMessageOpcode.ServerPetCustomizationFailed)]
 [WireMessage(GameMessageOpcode.ServerPetCustomizationFailed, Direction.ServerToClient)]
-public sealed partial class ServerPetCustomisationFailed : IWritable
+public sealed partial class ServerPetCustomisationFailed
 {
     [UInt(4)] public PetCustomizeResult Reason { get; set; }
     [UInt(2)] public PetType Type { get; set; }
     [UInt(32)] public uint PetUnitId { get; set; }
     [UInt(16)] public ushort FlairSlotIndex { get; set; }
     [UInt(14)] public ushort PetFlairId { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Reason, 4u);
-        writer.Write(Type, 2u);
-        writer.Write(PetUnitId, 32u);
-        writer.Write(FlairSlotIndex);
-        writer.Write(PetFlairId, 14u);
-    }
 }

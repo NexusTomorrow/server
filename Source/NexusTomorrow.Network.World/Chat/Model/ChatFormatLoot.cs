@@ -9,14 +9,4 @@ public sealed partial class ChatFormatLoot : IChatFormatModel
 {
     [NotOnWire] public ChatFormatType Type => ChatFormatType.Loot;
     [UInt(32)] public uint LootUnitId { get; set; } // must match loot sent in ServerLootNotification (0x8A6)
-
-    public void Read(GamePacketReader reader)
-    {
-        LootUnitId = reader.ReadUInt();
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(LootUnitId);
-    }
 }

@@ -5,12 +5,11 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
-[Message(GameMessageOpcode.ServerMailAvailable)]
 [WireMessage(GameMessageOpcode.ServerMailAvailable, Direction.ServerToClient)]
-public sealed partial class ServerMailAvailable : IWritable
+public sealed partial class ServerMailAvailable
 {
     [WireStruct]
-    public sealed partial class Attachment : IWritable
+    public sealed partial class Attachment
     {
         [UInt(18)] public uint Item2Id { get; set; }
         [UInt(32)] public uint StackCount { get; set; }
@@ -21,27 +20,10 @@ public sealed partial class ServerMailAvailable : IWritable
         [UInt(18)] public uint Unknown7 { get; set; }
         [FixedArray(5), UInt(32)] public uint[] Item2IdMicrochip { get; set; } = new uint[5];
         [FixedArray(8), UInt(32)] public uint[] Item2IdGlyph { get; set; } = new uint[8];
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Item2Id, 18u);
-            writer.Write(StackCount);
-            writer.Write(Charges);
-            writer.Write(ItemRandomCircuitData);
-            writer.Write(ItemRandomGlyphData);
-            writer.Write(ThresholdData);
-            writer.Write(Unknown7, 18u);
-
-            for (uint i = 0u; i < Item2IdMicrochip.Length; i++)
-                writer.Write(Item2IdMicrochip[i]);
-
-            for (uint i = 0u; i < Item2IdGlyph.Length; i++)
-                writer.Write(Item2IdGlyph[i]);
-        }
     }
 
     [WireStruct]
-    public sealed partial class Mail : IWritable
+    public sealed partial class Mail
     {
         [UInt(64)] public ulong MailId { get; set; }
         [UInt(32)] public SenderType SenderType { get; set; }
@@ -58,37 +40,8 @@ public sealed partial class ServerMailAvailable : IWritable
         [UInt(32)] public MailFlag Flags { get; set; }
         public Identity Sender { get; set; } = new();
         [Array(CountBits = 32)] public List<Attachment> Attachments { get; set; } = [];
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(MailId);
-            writer.Write(SenderType, 32);
-            writer.Write(ContentType, 14);
-            writer.WriteStringWide(Subject);
-            writer.WriteStringWide(Message);
-            writer.Write(SubjectStringId, 21);
-            writer.Write(BodyStringId, 21);
-            writer.Write(FromCreatureId, 18);
-            writer.Write(CurrencySentType, 4);
-            writer.Write(CurrencySentAmount);
-            writer.Write(CostOnDeliveryAmount);
-            writer.Write(ExpiryTimeInDays);
-            writer.Write(Flags, 32);
-            Sender.Write(writer);
-
-            writer.Write(Attachments.Count);
-            Attachments.ForEach(v => v.Write(writer));
-        }
     }
 
     [UInt(1)] public bool NewMail { get; set; } = true;
     [Array(CountBits = 32)] public List<Mail> MailList { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(NewMail);
-
-        writer.Write(MailList.Count);
-        MailList.ForEach(v => v.Write(writer));
-    }
 }

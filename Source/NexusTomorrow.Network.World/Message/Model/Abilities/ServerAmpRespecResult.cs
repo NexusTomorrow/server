@@ -6,18 +6,10 @@ namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
 // Originally called Eldan Augmentations. See eldanAugmentation tbl for information
 // One count, then every SpecIndex, then every Result: element i of each list is one AMP's result.
-[Message(GameMessageOpcode.ServerAmpRespecResult)]
 [WireMessage(GameMessageOpcode.ServerAmpRespecResult, Direction.ServerToClient)]
-public sealed partial class ServerAmpRespecResult : IWritable
+public sealed partial class ServerAmpRespecResult
 {
     [UInt(7), Count] public byte ResultCount { get; set; }
     [Array(CountFrom = nameof(ResultCount)), UInt(3)] public List<ushort> SpecIndexes { get; set; } = [];
     [Array(CountFrom = nameof(ResultCount)), UInt(3)] public List<LimitedActionSetResult> Results { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(SpecIndexes.Count, 7u);
-        SpecIndexes.ForEach(specIndex => writer.Write(specIndex, 3u));
-        Results.ForEach(result => writer.Write(result, 3u));
-    }
 }

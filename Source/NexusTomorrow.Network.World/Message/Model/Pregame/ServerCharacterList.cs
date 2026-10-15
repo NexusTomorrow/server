@@ -7,27 +7,19 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-[Message(GameMessageOpcode.ServerCharacterList)]
 [WireMessage(GameMessageOpcode.ServerCharacterList, Direction.ServerToClient)]
-public sealed partial class ServerCharacterList : IWritable
+public sealed partial class ServerCharacterList
 {
     [WireStruct]
-    public sealed partial class Character : IWritable
+    public sealed partial class Character
     {
         // probably, x, y, z, yaw, pitch
         [WireStruct]
-        public sealed partial class WorldLocation : IWritable
+        public sealed partial class WorldLocation
         {
             public Position Position { get; set; } = new Position();
             [Float32] public float Yaw { get; set; }
             [Float32] public float Pitch { get; set; }
-
-            public void Write(GamePacketWriter writer)
-            {
-                Position.Write(writer);
-                writer.Write(Yaw);
-                writer.Write(Pitch);
-            }
         }
 
         [UInt(64)] public ulong Id { get; set; }
@@ -52,48 +44,6 @@ public sealed partial class ServerCharacterList : IWritable
         [Array(CountFrom = nameof(CustomisationCount)), UInt(32)] public List<uint> Values { get; } = [];
         [Array(CountBits = 32), Float32] public List<float> Bones { get; } = [];
         [Float32] public float LastLoggedOutDays { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Id);
-            writer.WriteStringWide(Name);
-            writer.Write(Sex, 2);
-            writer.Write(Race, 5);
-            writer.Write(Class, 5);
-            writer.Write(Faction);
-            writer.Write(Level);
-
-            writer.Write(Appearance.Count);
-            foreach (ItemVisual item in Appearance)
-                item.Write(writer);
-
-            writer.Write(Gear.Count);
-            foreach (ItemVisual item in Gear)
-                item.Write(writer);
-
-            writer.Write(WorldId, 15);
-            writer.Write(WorldZoneId, 15);
-            writer.Write(RealmId, 14);
-
-            Location.Write(writer);
-
-            writer.Write(Path, 3);
-            writer.Write(IsLocked);
-            writer.Write(RequiresRename);
-            writer.Write(GearMask);
-
-            writer.Write(Labels.Count, 4);
-            for (int i = 0; i < Labels.Count; i++)
-                writer.Write(Labels[i]);
-            for (int i = 0; i < Labels.Count; i++)
-                writer.Write(Values[i]);
-
-            writer.Write(Bones.Count);
-            foreach (float value in Bones)
-                writer.Write(value);
-
-            writer.Write(LastLoggedOutDays);
-        }
     }
 
     [UInt(64)] public ulong ServerTime { get; set; }
@@ -108,32 +58,4 @@ public sealed partial class ServerCharacterList : IWritable
     [UInt(32)] public uint AdditionalCount { get; set; }
     [UInt(14)] public Faction FactionRestriction { get; set; }
     [UInt(1)] public bool FreeLevel50 { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(ServerTime);
-        writer.Write(Characters.Count);
-
-        foreach (Character character in Characters)
-            character.Write(writer);
-
-        writer.Write(EnabledCharacterCreationIds.Count);
-        foreach (uint value in EnabledCharacterCreationIds)
-            writer.Write(value);
-
-        writer.Write(DisabledCharacterCreationIds.Count);
-        foreach (uint value in DisabledCharacterCreationIds)
-            writer.Write(value);
-
-        writer.Write(RealmId, 14);
-
-        CharacterRemoveIdentity.Write(writer);
-
-        writer.Write(CharacterRemoveTime);
-        writer.Write(CharacterReservationCount);
-        writer.Write(MaxNumberCharacters);
-        writer.Write(AdditionalCount);
-        writer.Write(FactionRestriction, 14);
-        writer.Write(FreeLevel50);
-    }
 }

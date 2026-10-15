@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[Message(GameMessageOpcode.ServerCinematicCameraSpline)]
 [WireMessage(GameMessageOpcode.ServerCinematicCameraSpline, Direction.ServerToClient)]
-public sealed partial class ServerCinematicCameraSpline : IWritable
+public sealed partial class ServerCinematicCameraSpline
 {
     [UInt(32)] public uint Delay { get; set; }
     [UInt(32)] public uint SplineId { get; set; }
@@ -13,14 +12,4 @@ public sealed partial class ServerCinematicCameraSpline : IWritable
     [Float32] public float Speed { get; set; }
     [UInt(1)] public bool Target { get; set; }
     [UInt(1)] public bool UseRotation { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Delay);
-        writer.Write(SplineId);
-        writer.Write(SplineMode);
-        writer.Write(Speed);
-        writer.Write(Target);
-        writer.Write(UseRotation);
-    }
 }

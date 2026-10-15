@@ -12,11 +12,4 @@ public sealed partial class CombatLogPet : ICombatLog
     [UInt(1)] public bool BDismissed { get; set; }
     [UInt(1)] public bool BKilled { get; set; }
     public CombatLogCastData CastData { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(BDismissed);
-        writer.Write(BKilled);
-        CastData.Write(writer);
-    }
 }

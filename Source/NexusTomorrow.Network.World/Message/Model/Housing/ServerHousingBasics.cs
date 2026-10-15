@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[Message(GameMessageOpcode.ServerHousingBasics)]
 [WireMessage(GameMessageOpcode.ServerHousingBasics, Direction.ServerToClient)]
-public sealed partial class ServerHousingBasics : IWritable
+public sealed partial class ServerHousingBasics
 {
     [Flags]
     public enum ResidencePrivacyLevelFlags
@@ -19,11 +18,4 @@ public sealed partial class ServerHousingBasics : IWritable
     [UInt(64)] public ulong ResidenceId { get; set; }
     [UInt(64)] public ulong NeighbourhoodId { get; set; }
     [UInt(32)] public ResidencePrivacyLevelFlags PrivacyLevel { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(ResidenceId);
-        writer.Write(NeighbourhoodId);
-        writer.Write(PrivacyLevel, 32u);
-    }
 }

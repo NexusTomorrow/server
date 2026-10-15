@@ -3,16 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerP2PTradeUpdateMoney)]
 [WireMessage(GameMessageOpcode.ServerP2PTradeUpdateMoney, Direction.ServerToClient)]
-public sealed partial class ServerP2PTradeUpdateMoney : IWritable
+public sealed partial class ServerP2PTradeUpdateMoney
 {
     [UInt(64)] public ulong Credits { get; set; }
     [UInt(32)] public uint UnitId { get; set; } // UnitId of whichever trade partner updated their money offer
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Credits);
-        writer.Write(UnitId);
-    }
 }

@@ -14,13 +14,4 @@ public sealed partial class CombatLogExperience : ICombatLog
     [UInt(32)] public uint RestXp { get; set; }
     [UInt(32)] public uint ElderPoints { get; set; }
     [UInt(32)] public uint RestElderPoints { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(UnitId);
-        writer.Write(Xp);
-        writer.Write(RestXp);
-        writer.Write(ElderPoints);
-        writer.Write(RestElderPoints);
-    }
 }

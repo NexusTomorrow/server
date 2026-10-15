@@ -15,26 +15,4 @@ public sealed partial class SetRotationSplineCommand : IEntityCommandModel
     [UInt(32)] public uint Offset { get; set; }
     [UInt(1)] public bool Blend { get; set; }
     [UInt(1)] public bool AdjustSpeedToLength { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        SplineId = reader.ReadUInt();
-        Speed = reader.ReadUShort();
-        Position = reader.ReadUInt();
-        Mode = reader.ReadByte(4u);
-        Offset = reader.ReadUInt();
-        Blend = reader.ReadBit();
-        AdjustSpeedToLength = reader.ReadBit();
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(SplineId);
-        writer.Write(Speed);
-        writer.Write(Position);
-        writer.Write(Mode, 4u);
-        writer.Write(Offset);
-        writer.Write(Blend);
-        writer.Write(AdjustSpeedToLength);
-    }
 }

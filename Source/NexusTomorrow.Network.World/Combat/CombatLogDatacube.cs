@@ -13,11 +13,4 @@ public sealed partial class CombatLogDatacube : ICombatLog
     [UInt(32)] public uint UnitId { get; set; }
     [UInt(3)] public DatacubeType DatacubeType { get; set; } // 3u
     [UInt(1)] public bool HasPieces { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(UnitId);
-        writer.Write(DatacubeType, 3u);
-        writer.Write(HasPieces);
-    }
 }

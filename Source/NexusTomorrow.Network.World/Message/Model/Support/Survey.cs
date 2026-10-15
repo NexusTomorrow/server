@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Support;
 
-public interface ISurvey : IReadable, IWireStruct
+public interface ISurvey : IWireStruct
 {
 };
 
@@ -29,15 +29,6 @@ public partial class Survey
 
         // No fourth question given
         [UInt(8)] public short Unused { get; set; }
-
-        public void Read(GamePacketReader reader)
-        {
-            ObjectId = reader.ReadShort(32);
-            Fun = reader.ReadShort(8);
-            Diffuculty = reader.ReadShort(8);
-            Reward = reader.ReadShort(8);
-            Unused = reader.ReadShort(8);
-        }
     }
 
     [WireStruct]
@@ -59,15 +50,6 @@ public partial class Survey
 
         // No fourth question given
         [UInt(8)] public short Unused { get; set; }
-
-        public void Read(GamePacketReader reader)
-        {
-            ObjectId = reader.ReadShort(32);
-            Fun = reader.ReadShort(8);
-            Diffuculty = reader.ReadShort(8);
-            WantMore = reader.ReadShort(8);
-            Unused = reader.ReadShort(8);
-        }
     }
 
     [WireStruct]
@@ -89,15 +71,6 @@ public partial class Survey
 
         // No fourth question given
         [UInt(8)] public short Unused { get; set; }
-
-        public void Read(GamePacketReader reader)
-        {
-            ObjectId = reader.ReadShort(32);
-            Fun = reader.ReadShort(8);
-            Diffuculty = reader.ReadShort(8);
-            WantMore = reader.ReadShort(8);
-            Unused = reader.ReadShort(8);
-        }
     }
 
     [WireStruct]
@@ -118,15 +91,6 @@ public partial class Survey
 
         // No fourth question given
         [UInt(8)] public short Unused { get; set; }
-
-        public void Read(GamePacketReader reader)
-        {
-            Level = reader.ReadShort(32);
-            Fun = reader.ReadShort(8);
-            Diffuculty = reader.ReadShort(8);
-            TimeSpend = reader.ReadShort(8);
-            Unused = reader.ReadShort(8);
-        }
     }
 
     [WireStruct]
@@ -147,15 +111,6 @@ public partial class Survey
 
         // No fourth question given
         [UInt(8)] public short Unused { get; set; }
-
-        public void Read(GamePacketReader reader)
-        {
-            ChallengeId = reader.ReadShort(32);
-            Fun = reader.ReadShort(8);
-            TargetAmount = reader.ReadShort(8);
-            Reward = reader.ReadShort(8);
-            Unused = reader.ReadShort(8);
-        }
     }
 
 }

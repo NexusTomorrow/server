@@ -3,14 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
-[Message(GameMessageOpcode.ServerOmnibitsWeeklyBonus)]
 [WireMessage(GameMessageOpcode.ServerOmnibitsWeeklyBonus, Direction.ServerToClient)]
-public sealed partial class ServerOmnibitsWeeklyBonus : IWritable
+public sealed partial class ServerOmnibitsWeeklyBonus
 {
     [UInt(32)] public uint OmnibitsWeeklylBonusEarned { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(OmnibitsWeeklylBonusEarned);
-    }
 }

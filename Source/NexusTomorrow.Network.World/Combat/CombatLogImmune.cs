@@ -10,9 +10,4 @@ public sealed partial class CombatLogImmune : ICombatLog
     [NotOnWire] public CombatLogType Type => CombatLogType.Immune;
 
     public CombatLogCastData CastData { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        CastData.Write(writer);
-    }
 }

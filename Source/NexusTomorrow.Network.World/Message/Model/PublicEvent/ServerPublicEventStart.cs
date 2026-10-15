@@ -5,9 +5,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
-[Message(GameMessageOpcode.ServerPublicEventStart)]
 [WireMessage(GameMessageOpcode.ServerPublicEventStart, Direction.ServerToClient)]
-public sealed partial class ServerPublicEventStart : IWritable
+public sealed partial class ServerPublicEventStart
 {
     [UInt(14)] public uint PublicEventId { get; set; }
     [UInt(14)] public PublicEventTeam PublicEventTeamId { get; set; }
@@ -19,27 +18,4 @@ public sealed partial class ServerPublicEventStart : IWritable
     [Pad(32)] public Pad RewardTypeHigh { get; }
     [FixedArray(3), UInt(32)] public uint[] RewardThreshold { get; set; } = new uint[3];
     [UInt(14)] public uint WorldSocketId { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(PublicEventId, 14);
-        writer.Write(PublicEventTeamId, 14);
-        writer.Write(ElapsedTimeMs);
-        writer.Write(Busy);
-
-        writer.Write(Objectives.Count);
-        foreach (PublicEventObjective objective in Objectives)
-            objective.Write(writer);
-
-        writer.Write(Locations.Count);
-        foreach (uint location in Locations)
-            writer.Write(location);
-
-        writer.Write(RewardType);
-
-        foreach (uint threshold in RewardThreshold)
-            writer.Write(threshold);
-
-        writer.Write(WorldSocketId, 14u);
-    }
 }

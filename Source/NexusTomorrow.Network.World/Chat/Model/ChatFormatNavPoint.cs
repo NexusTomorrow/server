@@ -11,18 +11,4 @@ public sealed partial class ChatFormatNavPoint : IChatFormatModel
     [UInt(14)] public ushort MapZoneId { get; set; }
     [Float32] public float X { get; set; }
     [Float32] public float Y { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        MapZoneId = reader.ReadUShort(14u);
-        X = reader.ReadSingle();
-        Y = reader.ReadSingle();
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(MapZoneId, 14u);
-        writer.Write(X);
-        writer.Write(Y);
-    }
 }

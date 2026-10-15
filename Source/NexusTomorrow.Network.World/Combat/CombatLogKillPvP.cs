@@ -10,9 +10,4 @@ public sealed partial class CombatLogKillPvP : ICombatLog
     [NotOnWire] public CombatLogType Type => CombatLogType.KillPvP;
 
     public CombatLogCastData CastData { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        CastData.Write(writer);
-    }
 }

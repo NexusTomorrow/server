@@ -4,14 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerBuybackItemUpdated)]
 [WireMessage(GameMessageOpcode.ServerBuybackItemUpdated, Direction.ServerToClient)]
-public sealed partial class ServerBuybackItemUpdated : IWritable
+public sealed partial class ServerBuybackItemUpdated
 {
     public BuybackItem BuybackItem { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        BuybackItem.Write(writer);
-    }
 }

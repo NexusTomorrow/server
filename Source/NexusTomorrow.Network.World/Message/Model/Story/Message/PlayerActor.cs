@@ -9,7 +9,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Story.Message;
 [UnionCase(StoryTextSourceType.Player)]
 public sealed partial class PlayerActor : Actor
 {
-    [NotOnWire] public override StoryTextSourceType Type => StoryTextSourceType.Player;
     [UInt(32)] public uint UnitId { get; set; }
     [WideString] public string Name { get; set; }
     [UInt(32)] public uint Level { get; set; }
@@ -21,18 +20,4 @@ public sealed partial class PlayerActor : Actor
     [UInt(14)] public ushort TitleId { get; set; }
     [UInt(32)] public new uint TokenReplacementValue { get => base.TokenReplacementValue; set => base.TokenReplacementValue = value; }
     [NarrowString] public new string TokenName { get => base.TokenName; set => base.TokenName = value; }
-
-    public override void Write(GamePacketWriter writer)
-    {
-        writer.Write(UnitId);
-        writer.WriteStringWide(Name);
-        writer.Write(Level);
-        writer.Write(Gender, 2u);
-        writer.Write(Race, 5u);
-        writer.Write(Class, 5u);
-        writer.Write(Faction, 14u);
-        writer.Write(Path, 3u);
-        writer.Write(TitleId, 14u);
-        base.Write(writer);
-    }
 }

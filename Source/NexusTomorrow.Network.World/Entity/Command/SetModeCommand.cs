@@ -10,14 +10,4 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 public sealed partial class SetModeCommand : IEntityCommandModel
 {
     [UInt(32)] public ModeType Mode { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        Mode = reader.ReadEnum<ModeType>(32);
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Mode, 32);
-    }
 }

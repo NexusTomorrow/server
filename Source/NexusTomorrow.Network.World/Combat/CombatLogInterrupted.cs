@@ -13,11 +13,4 @@ public sealed partial class CombatLogInterrupted : ICombatLog
     [UInt(18)] public uint InterruptingSpellId { get; set; } // 18u
     [UInt(9)] public CastResult CastResult { get; set; } // 9u
     public CombatLogCastData CastData { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(InterruptingSpellId, 18u);
-        writer.Write(CastResult, 9u);
-        CastData.Write(writer);
-    }
 }

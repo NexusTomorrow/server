@@ -3,14 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ClientBuybackItemFromVendor)]
 [WireMessage(GameMessageOpcode.ClientBuybackItemFromVendor, Direction.ClientToServer)]
-public sealed partial class ClientBuybackItemFromVendor : IReadable
+public sealed partial class ClientBuybackItemFromVendor
 {
     [UInt(32)] public uint UniqueId { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        UniqueId = reader.ReadUInt();
-    }
 }

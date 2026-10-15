@@ -6,9 +6,8 @@ using NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
-[Message(GameMessageOpcode.ClientAuctionsByFilterRequest)]
 [WireMessage(GameMessageOpcode.ClientAuctionsByFilterRequest, Direction.ClientToServer)]
-public sealed partial class ClientAuctionsByFilterRequest : IReadable
+public sealed partial class ClientAuctionsByFilterRequest
 {
     // Only one of the four fields below will be filled out depedning on the search type
     // Family, Category, Type, or by item(s)
@@ -23,30 +22,4 @@ public sealed partial class ClientAuctionsByFilterRequest : IReadable
     [UInt(3)] public AuctionSort AuctionSort { get; private set; }
     [UInt(8)] public Property SortPropertyId { get; private set; } // required if AuctionSort is Property
     [UInt(32)] public uint Page { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        Item2FamilyId = reader.ReadUInt(14u);
-        Item2CategoryId = reader.ReadUInt(14u);
-        Item2TypeId = reader.ReadUInt(14u);
-
-        uint count = reader.ReadUInt();
-        for (uint i = 0; i < count; i++)
-        {
-            Item2Ids.Add(reader.ReadUInt());
-        }
-
-        count = reader.ReadUInt();
-        for (uint i = 0; i < count; i++)
-        {
-            var filter = new AuctionFilter();
-            filter.Read(reader);
-            Filters.Add(filter);
-        }
-
-        ReverseSort = reader.ReadUInt();
-        AuctionSort = reader.ReadEnum<AuctionSort>(3u);
-        SortPropertyId = reader.ReadEnum<Property>(8u);
-        Page = reader.ReadUInt();
-    }
 }

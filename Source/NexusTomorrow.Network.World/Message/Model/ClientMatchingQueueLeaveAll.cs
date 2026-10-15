@@ -3,12 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ClientMatchingQueueLeaveAll)]
 [WireMessage(GameMessageOpcode.ClientMatchingQueueLeaveAll, Direction.ClientToServer)]
-public sealed partial class ClientMatchingQueueLeaveAll : IReadable
+public sealed partial class ClientMatchingQueueLeaveAll
 {
-    public void Read(GamePacketReader reader)
-    {
-        // deliberately empty
-    }
 }

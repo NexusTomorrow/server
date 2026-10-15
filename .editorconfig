@@ -136,15 +136,15 @@ dotnet_diagnostic.CA1707.severity = none
 [Source/NexusTomorrow.Network.Codec.Generator/**.cs]
 dotnet_diagnostic.RS2008.severity = none
 
-# Replaced in Part B: the codec's converter rewrites these wire models and retires these primitives,
-# so they keep the seed's names and analyzer findings until then. Network.World and Network.Auth
-# switch their analyzers off in their project files. The legacy snapshot keeps the seed's names until
+# Replaced in Part B: these wire models are declarations that keep the seed's member names until
+# stage 3's last task brings them under the analyzers; Network.World and Network.Auth switch their
+# analyzers off in their project files until then. The legacy snapshot keeps the seed's names until
 # stage 3 deletes it with the primitives. Part B deletes each section as its files go.
 [{Source/NexusTomorrow.Network.World/**.cs,Source/NexusTomorrow.Network.Auth/**.cs,Source/NexusTomorrow.Network/Message/Model/**.cs,Tests/NexusTomorrow.Network.Legacy/**.cs}]
 dotnet_diagnostic.IDE1006.severity = none
 
-# The legacy snapshot copies Network's message models while referencing Network for the legacy
-# reader and writer, so its copies shadow the originals there; the copies are the ones it compares.
+# The legacy snapshot copies Network's message models and NetworkGuid while referencing Network for the
+# legacy reader and writer, so its copies shadow the originals there; the copies are the ones it compares.
 [Tests/NexusTomorrow.Network.Legacy/**.cs]
 dotnet_diagnostic.CS0436.severity = none
 

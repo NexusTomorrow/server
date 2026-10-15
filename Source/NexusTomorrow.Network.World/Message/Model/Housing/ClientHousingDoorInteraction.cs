@@ -4,14 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[Message(GameMessageOpcode.ClientHousingDoorInteraction)]
 [WireMessage(GameMessageOpcode.ClientHousingDoorInteraction, Direction.ClientToServer)]
-public sealed partial class ClientHousingDoorInteraction : IReadable
+public sealed partial class ClientHousingDoorInteraction
 {
     public Identity ResidenceIdentity { get; } = new();
-
-    public void Read(GamePacketReader reader)
-    {
-        ResidenceIdentity.Read(reader);
-    }
 }

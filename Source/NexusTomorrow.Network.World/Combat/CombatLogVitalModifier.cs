@@ -14,12 +14,4 @@ public sealed partial class CombatLogVitalModifier : ICombatLog
     [UInt(5)] public Vital VitalModified { get; set; }
     [UInt(1)] public bool BShowCombatLog { get; set; }
     public CombatLogCastData CastData { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Amount);
-        writer.Write(VitalModified, 5u);
-        writer.Write(BShowCombatLog);
-        CastData.Write(writer);
-    }
 }

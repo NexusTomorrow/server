@@ -13,30 +13,4 @@ public sealed partial class SetModeKeysCommand : IEntityCommandModel
     [Array(CountFrom = nameof(TimesCount)), UInt(32)] public List<uint> Times { get; set; } = [];
     [Array(CountFrom = nameof(TimesCount)), UInt(32)] public List<ModeType> Modes { get; set; } = [];
     [UInt(32)] public uint Offset { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        uint Count = reader.ReadByte();
-
-        for (int i = 0; i < Count; i++)
-            Times.Add(reader.ReadUInt());
-
-        for (int i = 0; i < Count; i++)
-            Modes.Add(reader.ReadEnum<ModeType>(32));
-
-        Offset = reader.ReadUInt();
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Times.Count, 8u);
-
-        foreach (uint u in Times)
-            writer.Write(u);
-
-        foreach (ModeType u in Modes)
-            writer.Write(u, 32);
-
-        writer.Write(Offset);
-    }
 }

@@ -8,9 +8,4 @@ namespace NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
 public sealed partial class BuyoutMaxAuctionFilter : IAuctionFilter
 {
     [UInt(64)] public ulong BuyoutPrice { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        BuyoutPrice = reader.ReadULong();
-    }
 }

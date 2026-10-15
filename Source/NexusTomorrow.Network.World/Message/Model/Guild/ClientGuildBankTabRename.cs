@@ -3,7 +3,6 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[Message(GameMessageOpcode.ClientGuildBankTabRename)]
 [WireMessage(GameMessageOpcode.ClientGuildBankTabRename, Direction.ClientToServer)]
 public sealed partial class ClientGuildBankTabRename : ClientGuildOperation
 {

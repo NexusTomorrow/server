@@ -4,9 +4,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
-[Message(GameMessageOpcode.ClientMailSend)]
 [WireMessage(GameMessageOpcode.ClientMailSend, Direction.ClientToServer)]
-public sealed partial class ClientMailSend : IReadable
+public sealed partial class ClientMailSend
 {
     [WideString] public string Name { get; private set; }
     [WideString] public string Realm { get; private set; }
@@ -17,19 +16,4 @@ public sealed partial class ClientMailSend : IReadable
     [UInt(2)] public DeliverySpeed DeliverySpeed { get; private set; }
     [UInt(32)] public uint MailboxUnitId { get; private set; }
     [FixedArray(10), UInt(64)] public ulong[] Items { get; private set; } = new ulong[10];
-
-    public void Read(GamePacketReader reader)
-    {
-        Name = reader.ReadWideString();
-        Realm = reader.ReadWideString();
-        Subject = reader.ReadWideString();
-        Message = reader.ReadWideString();
-        CreditsSent = reader.ReadULong();
-        CashOnDeliveryAmount = reader.ReadULong();
-        DeliverySpeed = reader.ReadEnum<DeliverySpeed>(2u);
-        MailboxUnitId = reader.ReadUInt();
-
-        for (uint i = 0; i < 10; i++)
-            Items[i] = reader.ReadULong();
-    }
 }

@@ -3,14 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
-[Message(GameMessageOpcode.ServerAuctionBidPosted)]
 [WireMessage(GameMessageOpcode.ServerAuctionBidPosted, Direction.ServerToClient)]
-public sealed partial class ServerAuctionBidPosted : IWritable
+public sealed partial class ServerAuctionBidPosted
 {
     public AuctionInfo Auction { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        Auction.Write(writer);
-    }
 }

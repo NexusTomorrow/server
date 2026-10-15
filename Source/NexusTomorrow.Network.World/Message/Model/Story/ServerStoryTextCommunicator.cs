@@ -5,9 +5,8 @@ using NexusTomorrow.Network.World.Message.Model.Story.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Story;
 
-[Message(GameMessageOpcode.ServerStoryTextCommunicator)]
 [WireMessage(GameMessageOpcode.ServerStoryTextCommunicator, Direction.ServerToClient)]
-public sealed partial class ServerStoryTextCommunicator : IWritable
+public sealed partial class ServerStoryTextCommunicator
 {
     public StoryMessage StoryMessage { get; set; }
     [UInt(18)] public uint Creature2Id { get; set; }
@@ -15,14 +14,4 @@ public sealed partial class ServerStoryTextCommunicator : IWritable
     [UInt(2)] public CommunicatorPortraitPlacement PortraitPlacement { get; set; }
     [UInt(2)] public CommunicatorOverlay Overlay { get; set; }
     [UInt(3)] public CommunicatorBackground Background { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        StoryMessage.Write(writer);
-        writer.Write(Creature2Id, 18u);
-        writer.Write(DurationMs);
-        writer.Write(PortraitPlacement, 2u);
-        writer.Write(Overlay, 2u);
-        writer.Write(Background, 3u);
-    }
 }

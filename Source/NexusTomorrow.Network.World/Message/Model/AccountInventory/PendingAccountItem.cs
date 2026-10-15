@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 [WireStruct]
-public sealed partial class PendingAccountItem : IWritable
+public sealed partial class PendingAccountItem
 {
     [UInt(64)] public ulong PendingItemGroupId { get; set; } // never seen to be used
     [UInt(32)] public uint AccountItemId { get; set; }
@@ -17,18 +17,4 @@ public sealed partial class PendingAccountItem : IWritable
     [UInt(5)] public byte Unknown { get; set; } // only see values 6 and 7 in sniffs, value of 6 means item is not giftable
     [UInt(64)] public ulong Unused6 { get; set; }
     public Identity Unused7 { get; set; } = new();
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(PendingItemGroupId);
-        writer.Write(AccountItemId);
-        writer.Write(Unused2);
-        writer.WriteStringWide(TransactionId);
-        writer.Write(Unused3);
-        Unused4.Write(writer);
-        writer.Write(Unused5);
-        writer.Write(Unknown, 5u);
-        writer.Write(Unused6);
-        Unused7.Write(writer);
-    }
 }

@@ -10,9 +10,4 @@ public sealed partial class CombatLogDelayDeath : ICombatLog
     [NotOnWire] public CombatLogType Type => CombatLogType.DelayDeath;
 
     public CombatLogCastData CastData { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        CastData.Write(writer);
-    }
 }

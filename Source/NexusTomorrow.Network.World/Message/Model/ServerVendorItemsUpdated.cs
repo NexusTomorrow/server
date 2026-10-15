@@ -4,39 +4,25 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerVendorItemsUpdated)]
 [WireMessage(GameMessageOpcode.ServerVendorItemsUpdated, Direction.ServerToClient)]
-public sealed partial class ServerVendorItemsUpdated : IWritable
+public sealed partial class ServerVendorItemsUpdated
 {
     [WireStruct]
-    public sealed partial class Category : IWritable
+    public sealed partial class Category
     {
         [UInt(32)] public uint Index { get; set; }
         [UInt(32)] public uint LocalisedTextId { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Index);
-            writer.Write(LocalisedTextId);
-        }
     }
 
     [WireStruct]
-    public sealed partial class Item : IWritable
+    public sealed partial class Item
     {
         [WireStruct]
-        public sealed partial class ItemExtraCost : IWritable
+        public sealed partial class ItemExtraCost
         {
             [UInt(3)] public ItemExtraCostType ExtraCostType { get; set; }
             [UInt(32)] public uint Quantity { get; set; }
             [UInt(32)] public uint ItemOrCurrencyId { get; set; }
-
-            public void Write(GamePacketWriter writer)
-            {
-                writer.Write(ExtraCostType, 3);
-                writer.Write(Quantity);
-                writer.Write(ItemOrCurrencyId);
-            }
         }
 
         [UInt(32)] public uint Index { get; set; }
@@ -52,23 +38,6 @@ public sealed partial class ServerVendorItemsUpdated : IWritable
         [UInt(32)] public uint UnknownA { get; set; }
         public ItemExtraCost ExtraCost1 { get; set; }
         public ItemExtraCost ExtraCost2 { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Index);
-            writer.Write(Unknown1, 4);
-            writer.Write(ItemId);
-            writer.Write(Unknown3);
-            writer.Write(Unknown4);
-            writer.Write(Unknown5, 17);
-            writer.Write(Unknown6);
-            writer.Write(CategoryIndex);
-            writer.Write(Unknown8);
-            writer.Write(Unknown9);
-            writer.Write(UnknownA);
-            ExtraCost1.Write(writer);
-            ExtraCost2.Write(writer);
-        }
     }
 
     [UInt(32)] public uint Guid { get; set; }
@@ -79,20 +48,4 @@ public sealed partial class ServerVendorItemsUpdated : IWritable
     [UInt(1)] public bool Unknown2 { get; set; }
     [UInt(1)] public bool Unknown3 { get; set; }
     [UInt(1)] public bool Unknown4 { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Guid);
-
-        writer.Write(Categories.Count);
-        Categories.ForEach(c => c.Write(writer));
-        writer.Write(Items.Count);
-        Items.ForEach(i => i.Write(writer));
-
-        writer.Write(SellPriceMultiplier);
-        writer.Write(BuyPriceMultiplier);
-        writer.Write(Unknown2);
-        writer.Write(Unknown3);
-        writer.Write(Unknown4);
-    }
 }

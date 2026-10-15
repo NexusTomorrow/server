@@ -6,18 +6,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 // Sent either the player's identity or the player's name, never both
-[Message(GameMessageOpcode.ClientHousingNeighbourSetPermission)]
 [WireMessage(GameMessageOpcode.ClientHousingNeighbourSetPermission, Direction.ClientToServer)]
-public sealed partial class ClientHousingNeighbourSetPermission : IReadable
+public sealed partial class ClientHousingNeighbourSetPermission
 {
     public Identity Identity { get; private set; } = new();
     [WideString] public string Name { get; private set; }
     [UInt(32)] public NeighborPermissionLevel Permissions { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        Identity.Read(reader);
-        Name = reader.ReadWideString();
-        Permissions = reader.ReadEnum<NeighborPermissionLevel>(32u);
-    }
 }

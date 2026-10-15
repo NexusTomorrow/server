@@ -29,9 +29,9 @@ internal static class ConvertedModels
 
     private static readonly Assembly[] s_declaringAssemblies =
     [
-        typeof(GamePacketWriter).Assembly,
-        typeof(NexusTomorrow.Network.Auth.ServiceCollectionExtensions).Assembly,
-        typeof(NexusTomorrow.Network.World.ServiceCollectionExtensions).Assembly,
+        typeof(NexusTomorrow.Network.WireMessages).Assembly,
+        typeof(NexusTomorrow.Network.Auth.WireMessages).Assembly,
+        typeof(NexusTomorrow.Network.World.WireMessages).Assembly,
     ];
 
     /// <summary>

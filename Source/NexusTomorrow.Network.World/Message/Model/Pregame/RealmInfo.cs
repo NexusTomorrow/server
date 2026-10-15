@@ -6,23 +6,15 @@ using NexusTomorrow.Network.World.Message.Static;
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 [WireStruct]
-public partial class RealmInfo : IWritable
+public partial class RealmInfo
 {
     [WireStruct]
-    public sealed partial class AccountRealmData : IWritable
+    public sealed partial class AccountRealmData
     {
         [UInt(14)] public ushort RealmId { get; set; }
         [UInt(32)] public uint CharacterCount { get; set; }
         [WideString] public string LastPlayedCharacter { get; set; }
         [UInt(64)] public ulong LastPlayedTime { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(RealmId, 14u);
-            writer.Write(CharacterCount);
-            writer.WriteStringWide(LastPlayedCharacter);
-            writer.Write(LastPlayedTime);
-        }
     }
 
     [UInt(32)] public uint RealmId { get; set; }
@@ -39,22 +31,4 @@ public partial class RealmInfo : IWritable
     [UInt(16)] public ushort Unused4 { get; set; }
     [UInt(16)] public ushort Unused5 { get; set; }
     [UInt(16)] public ushort Unused6 { get; set; }
-
-    public virtual void Write(GamePacketWriter writer)
-    {
-        writer.Write(RealmId);
-        writer.WriteStringWide(RealmName);
-        writer.Write(RealmNoteStringId);
-        writer.Write(Flags, 32u);
-        writer.Write(Type, 2u);
-        writer.Write(Status, 3u);
-        writer.Write(Population, 3u);
-        writer.Write(Unused1);
-        writer.WriteBytes(Unused2, 16u);
-        AccountRealmInfo.Write(writer);
-        writer.Write(Unused3);
-        writer.Write(Unused4);
-        writer.Write(Unused5);
-        writer.Write(Unused6);
-    }
 }

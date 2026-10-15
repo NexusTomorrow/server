@@ -15,13 +15,4 @@ public sealed partial class CombatLogHeal : ICombatLog
     [UInt(32)] public uint Absorption { get; set; } // not used by client
     [UInt(8)] public SpellEffectType EffectType { get; set; } // 8u
     public CombatLogCastData CastData { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(HealAmount);
-        writer.Write(Overheal);
-        writer.Write(Absorption);
-        writer.Write(EffectType, 8u);
-        CastData.Write(writer);
-    }
 }

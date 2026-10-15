@@ -4,16 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[Message(GameMessageOpcode.ClientHousingVendorList)]
 [WireMessage(GameMessageOpcode.ClientHousingVendorList, Direction.ClientToServer)]
-public sealed partial class ClientHousingVendorList : IReadable
+public sealed partial class ClientHousingVendorList
 {
     public Identity ResidenceIdentity { get; private set; } = new();
     [UInt(2)] public byte ResidenceIsBroker { get; private set; } // 0 = normal residences, 1 is when is ResidenceType.Broker
-
-    public void Read(GamePacketReader reader)
-    {
-        ResidenceIdentity.Read(reader);
-        ResidenceIsBroker = reader.ReadByte(2u);
-    }
 }

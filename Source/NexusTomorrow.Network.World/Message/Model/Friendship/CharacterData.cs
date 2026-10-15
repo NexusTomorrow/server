@@ -7,7 +7,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
 [WireStruct]
-public sealed partial class CharacterData : IWritable
+public sealed partial class CharacterData
 {
     [WideString] public string Name { get; set; } = "";
     public Identity PlayerIdentity { get; set; } = new();
@@ -20,17 +20,5 @@ public sealed partial class CharacterData : IWritable
     [UInt(32)] public uint Level { get; set; }
     [UInt(15)] public ushort WorldZoneId { get; set; }
     [UInt(14)] public Faction Faction { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.WriteStringWide(Name);
-        PlayerIdentity.Write(writer);
-        writer.Write(Class, 14u);
-        writer.Write(Race, 14u);
-        writer.Write(Path, 32);
-        writer.Write(Level);
-        writer.Write(WorldZoneId, 15u);
-        writer.Write(Faction, 14u);
-    }
 }
 

@@ -11,10 +11,4 @@ public sealed partial class CombatLogBuildSwitch : ICombatLog
 
     [UInt(32)] public uint UnitId { get; set; }
     [UInt(3)] public byte NewSpecIndex { get; set; } // 3u
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(UnitId);
-        writer.Write(NewSpecIndex, 3u);
-    }
 }

@@ -5,10 +5,10 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [WireStruct]
-public sealed partial class SpellEffectResult : IWritable
+public sealed partial class SpellEffectResult
 {
     [WireStruct]
-    public sealed partial class AdditionalEffectResult : IWritable
+    public sealed partial class AdditionalEffectResult
     {
         [UInt(32)] public uint RawDamage { get; set; }
         [UInt(32)] public uint Amount { get; set; }
@@ -18,18 +18,6 @@ public sealed partial class SpellEffectResult : IWritable
         [UInt(32)] public uint GlanceOrAbsorb { get; set; }
         [UInt(32)] public uint Overkill { get; set; }
         [UInt(3)] public CombatResult CombatResult { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(RawDamage);
-            writer.Write(Amount);
-            writer.Write(Overheal);
-            writer.Write(Absorption);
-            writer.Write(Shield);
-            writer.Write(GlanceOrAbsorb);
-            writer.Write(Overkill);
-            writer.Write(CombatResult, 3u);
-        }
     }
 
     [UInt(32)] public uint RawDamage { get; set; }
@@ -44,21 +32,4 @@ public sealed partial class SpellEffectResult : IWritable
     [UInt(3)] public DamageType DamageType { get; set; }
 
     [Array(CountBits = 8)] public List<AdditionalEffectResult> AdditionaEffectResults { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(RawDamage);
-        writer.Write(RawScaledDamage);
-        writer.Write(AbsorbedAmount);
-        writer.Write(ShieldAbsorbAmount);
-        writer.Write(AdjustedDamage);
-        writer.Write(OverkillAmount);
-        writer.Write(Glance);
-        writer.Write(KilledTarget);
-        writer.Write(CombatResult, 4u);
-        writer.Write(DamageType, 3u);
-
-        writer.Write(AdditionaEffectResults.Count, 8u);
-        AdditionaEffectResults.ForEach(u => u.Write(writer));
-    }
 }

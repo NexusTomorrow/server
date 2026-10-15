@@ -4,14 +4,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ClientMatchingMatchInitiateLookingForReplacements)]
 [WireMessage(GameMessageOpcode.ClientMatchingMatchInitiateLookingForReplacements, Direction.ClientToServer)]
-public sealed partial class ClientMatchingMatchInitiateLookingForReplacements : IReadable
+public sealed partial class ClientMatchingMatchInitiateLookingForReplacements
 {
     [UInt(32)] public Role Roles { get; private set; } // Roles being looked for
-
-    public void Read(GamePacketReader reader)
-    {
-        Roles = reader.ReadEnum<Role>(32u);
-    }
 }

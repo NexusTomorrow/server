@@ -3,14 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
-[Message(GameMessageOpcode.ServerMapTrackedUnitDisable)]
 [WireMessage(GameMessageOpcode.ServerMapTrackedUnitDisable, Direction.ServerToClient)]
-public sealed partial class ServerMapTrackedUnitDisable : IWritable
+public sealed partial class ServerMapTrackedUnitDisable
 {
     [UInt(32)] public uint TrackedUnitId { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(TrackedUnitId);
-    }
 }

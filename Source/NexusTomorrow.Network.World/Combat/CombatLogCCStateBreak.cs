@@ -12,10 +12,4 @@ public sealed partial class CombatLogCCStateBreak : ICombatLog
 
     [UInt(32)] public uint CasterId { get; set; }
     [UInt(5)] public CCState State { get; set; } // 5u
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(CasterId);
-        writer.Write(State, 5u);
-    }
 }

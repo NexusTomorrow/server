@@ -4,12 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Instance;
 
 // Not seen in sniffs but there is lua UI code for handling the triggered event
-[Message(GameMessageOpcode.ServerShowInstanceRestrictedDialog)]
 [WireMessage(GameMessageOpcode.ServerShowInstanceRestrictedDialog, Direction.ServerToClient)]
-public sealed partial class ServerShowInstanceRestrictedDialog : IWritable
+public sealed partial class ServerShowInstanceRestrictedDialog
 {
-    public void Write(GamePacketWriter writer)
-    {
-        // Zero byte message
-    }
 }

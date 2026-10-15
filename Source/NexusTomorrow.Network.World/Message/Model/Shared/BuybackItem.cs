@@ -5,7 +5,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class BuybackItem : IWritable
+public sealed partial class BuybackItem
 {
     [UInt(32)] public uint UniqueId { get; set; }
     [UInt(18)] public uint ItemId { get; set; }
@@ -20,24 +20,4 @@ public sealed partial class BuybackItem : IWritable
     [FixedArray(2), UInt(64)] public ulong[] CurrencyAmount { get; set; } = new ulong[2];
     [FixedArray(2), UInt(4)] public CurrencyType[] CurrencyTypeId { get; set; } = new CurrencyType[2];
     [UInt(32)] public uint UnkE { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(UniqueId);
-        writer.Write(ItemId, 18u);
-        writer.Write(Quantity);
-        writer.Write(Unk3);
-        writer.Write(Unk4);
-        writer.Write(Unk5);
-        writer.Write(Unk6);
-        writer.Write(Unk7, 18u);
-        writer.WriteBytes(Unk8, 20u);
-        writer.WriteBytes(Unk9, 32u);
-
-        writer.Write(CurrencyAmount, 2u);
-        foreach (CurrencyType type in CurrencyTypeId)
-            writer.Write(type, 4u);
-
-        writer.Write(UnkE);
-    }
 }

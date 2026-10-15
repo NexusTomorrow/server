@@ -9,14 +9,4 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 public sealed partial class SetMoveDefaultsCommand : IEntityCommandModel
 {
     [UInt(1)] public bool Blend { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        Blend = reader.ReadBit();
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Blend);
-    }
 }

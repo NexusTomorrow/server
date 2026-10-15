@@ -3,11 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerPlayerEnteredWorld)]
 [WireMessage(GameMessageOpcode.ServerPlayerEnteredWorld, Direction.ServerToClient)]
-public sealed partial class ServerPlayerEnteredWorld : IWritable
+public sealed partial class ServerPlayerEnteredWorld
 {
-    public void Write(GamePacketWriter writer)
-    {
-    }
 }

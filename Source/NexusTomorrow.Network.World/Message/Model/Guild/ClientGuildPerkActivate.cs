@@ -3,7 +3,6 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[Message(GameMessageOpcode.ClientGuildPerkActivate)]
 [WireMessage(GameMessageOpcode.ClientGuildPerkActivate, Direction.ClientToServer)]
 public sealed partial class ClientGuildPerkActivate : ClientGuildOperation
 {

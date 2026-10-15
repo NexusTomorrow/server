@@ -4,14 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[Message(GameMessageOpcode.ServerProfessionUpdate)]
 [WireMessage(GameMessageOpcode.ServerProfessionUpdate, Direction.ServerToClient)]
-public sealed partial class ServerProfessionUpdate : IWritable
+public sealed partial class ServerProfessionUpdate
 {
     public TradeskillInfo Tradeskill { get; set; } = new TradeskillInfo();
-
-    public void Write(GamePacketWriter writer)
-    {
-        Tradeskill.Write(writer);
-    }
 }

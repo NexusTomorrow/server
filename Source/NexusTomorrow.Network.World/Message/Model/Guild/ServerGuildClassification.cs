@@ -5,16 +5,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[Message(GameMessageOpcode.ServerGuildClassification)]
 [WireMessage(GameMessageOpcode.ServerGuildClassification, Direction.ServerToClient)]
-public sealed partial class ServerGuildClassification : IWritable
+public sealed partial class ServerGuildClassification
 {
     public Identity GuildIdentity { get; set; }
     [UInt(14)] public GuildClassification Classification { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        GuildIdentity.Write(writer);
-        writer.Write(Classification, 14u);
-    }
 }

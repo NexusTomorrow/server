@@ -8,9 +8,8 @@ namespace NexusTomorrow.Network.World.Message.Model.Chat;
 // If there was an item linked, the client used this data to go through the previous message specifed by
 // ChatMesssageId and replaces any Formats of type ItemGuid with ItemFull.
 
-[Message(GameMessageOpcode.ServerChatAccept)]
 [WireMessage(GameMessageOpcode.ServerChatAccept, Direction.ServerToClient)]
-public sealed partial class ServerChatAccept : IWritable
+public sealed partial class ServerChatAccept
 {
     [UInt(16)] public ushort ChatMessageId { get; set; } // used to match the original ClientChat message
     [UInt(1)] public bool GM { get; set; }
@@ -19,19 +18,4 @@ public sealed partial class ServerChatAccept : IWritable
     [WideString] public string RealmName { get; set; }
     [UInt(32)] public uint UnitId { get; set; }
     [UInt(8)] public byte PremiumTier { get; set; } = 1;
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(ChatMessageId);
-        writer.Write(GM);
-
-        writer.Write(Formats.Count, 5u);
-        Formats.ForEach(format => format.Write(writer));
-
-        writer.WriteStringWide(SenderName);
-        writer.WriteStringWide(RealmName);
-
-        writer.Write(UnitId);
-        writer.Write(PremiumTier, 8u);
-    }
 }

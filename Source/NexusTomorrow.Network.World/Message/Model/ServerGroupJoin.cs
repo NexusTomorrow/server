@@ -4,16 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerGroupJoin)]
 [WireMessage(GameMessageOpcode.ServerGroupJoin, Direction.ServerToClient)]
-public sealed partial class ServerGroupJoin : IWritable
+public sealed partial class ServerGroupJoin
 {
     public Identity TargetPlayer { get; set; } = new();
     public Group Group { get; set; } = new Group();
-
-    public void Write(GamePacketWriter writer)
-    {
-        TargetPlayer.Write(writer);
-        Group.Write(writer);
-    }
 }

@@ -11,13 +11,4 @@ public sealed partial class VehicleEntityModel : IEntityModel
     [UInt(18)] public uint CreatureId { get; set; }
     [UInt(14)] public ushort UnitVehicleId { get; set; }
     [Array(CountBits = 3)] public List<VehiclePassenger> Passengers { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(CreatureId, 18u);
-        writer.Write(UnitVehicleId, 14u);
-
-        writer.Write((byte)Passengers.Count, 3u);
-        Passengers.ForEach(p => p.Write(writer));
-    }
 }

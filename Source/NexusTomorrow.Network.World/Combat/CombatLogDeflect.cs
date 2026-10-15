@@ -11,10 +11,4 @@ public sealed partial class CombatLogDeflect : ICombatLog
 
     [UInt(1)] public bool BMultiHit { get; set; }
     public CombatLogCastData CastData { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(BMultiHit);
-        CastData.Write(writer);
-    }
 }

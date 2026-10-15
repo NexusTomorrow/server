@@ -11,10 +11,4 @@ public sealed partial class CombatLogMount : ICombatLog
 
     [UInt(1)] public bool BDismounted { get; set; }
     public CombatLogCastData CastData { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(BDismounted);
-        CastData.Write(writer);
-    }
 }

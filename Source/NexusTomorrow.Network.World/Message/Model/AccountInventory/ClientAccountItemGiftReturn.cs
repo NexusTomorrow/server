@@ -3,14 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.AccountInventory;
 
-[Message(GameMessageOpcode.ClientAccountItemGiftReturn)]
 [WireMessage(GameMessageOpcode.ClientAccountItemGiftReturn, Direction.ClientToServer)]
-public sealed partial class ClientAccountItemGiftReturn : IReadable
+public sealed partial class ClientAccountItemGiftReturn
 {
     [WideString] public string TransactionId { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        TransactionId = reader.ReadWideString();
-    }
 }

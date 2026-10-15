@@ -11,10 +11,4 @@ public sealed partial class CombatLogStealth : ICombatLog
 
     [UInt(32)] public uint UnitId { get; set; }
     [UInt(1)] public bool BExiting { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(UnitId);
-        writer.Write(BExiting);
-    }
 }

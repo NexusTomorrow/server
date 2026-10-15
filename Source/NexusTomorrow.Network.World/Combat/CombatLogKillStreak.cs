@@ -12,11 +12,4 @@ public sealed partial class CombatLogKillStreak : ICombatLog
     [UInt(32)] public uint UnitId { get; set; }
     [UInt(5)] public CombatMomentumStat StatType { get; set; } // 5u
     [UInt(32)] public uint StreakAmount { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(UnitId);
-        writer.Write(StatType, 5u);
-        writer.Write(StreakAmount);
-    }
 }

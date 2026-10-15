@@ -8,9 +8,4 @@ namespace NexusTomorrow.Network.World.Entity.Model;
 public sealed partial class WorldUnitEntityModel : IEntityModel
 {
     [UInt(1)] public bool Unknown0 { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Unknown0);
-    }
 }

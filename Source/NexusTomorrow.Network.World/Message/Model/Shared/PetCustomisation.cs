@@ -5,7 +5,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class PetCustomisation : IWritable
+public sealed partial class PetCustomisation
 {
     public const byte MaxCustomisationFlairs = 4;
 
@@ -19,15 +19,5 @@ public sealed partial class PetCustomisation : IWritable
     {
         for (int i = 0; i < SlotFlairIds.Length; i++)
             SlotFlairIds[i] = 0;
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(PetType, 2u);
-        writer.Write(PetObjectId);
-        writer.WriteStringWide(PetName);
-
-        foreach (uint slot in SlotFlairIds)
-            writer.Write(slot);
     }
 }

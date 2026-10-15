@@ -4,14 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ClientItemDelete)]
 [WireMessage(GameMessageOpcode.ClientItemDelete, Direction.ClientToServer)]
-public sealed partial class ClientItemDelete : IReadable
+public sealed partial class ClientItemDelete
 {
     public ItemLocation From { get; } = new();
-
-    public void Read(GamePacketReader reader)
-    {
-        From.Read(reader);
-    }
 }

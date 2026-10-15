@@ -4,16 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[Message(GameMessageOpcode.ServerHousingNeighbourUpdate)]
 [WireMessage(GameMessageOpcode.ServerHousingNeighbourUpdate, Direction.ServerToClient)]
-public sealed partial class ServerHousingNeighbourUpdate : IWritable
+public sealed partial class ServerHousingNeighbourUpdate
 {
     public Neighbour Neighbour { get; set; }
     [UInt(7)] public NeighborResult Result { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        Neighbour.Write(writer);
-        writer.Write(Result, 7u);
-    }
 }

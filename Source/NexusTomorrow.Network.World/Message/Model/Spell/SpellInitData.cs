@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [WireStruct]
-public sealed partial class SpellInit : IWritable
+public sealed partial class SpellInit
 {
     [UInt(32)] public uint CasterUnitId { get; set; }
     [UInt(32)] public uint TargetUnitId { get; set; }
@@ -15,22 +15,4 @@ public sealed partial class SpellInit : IWritable
     [Array(CountBits = 32)] public List<TargetInfo> TargetInfoData { get; set; } = [];
     [Array(CountBits = 8)] public List<InitialPosition> InitialPositionData { get; set; } = [];
     [Array(CountBits = 8)] public List<TelegraphPosition> TelegraphPositionData { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(CasterUnitId);
-        writer.Write(TargetUnitId);
-        writer.Write(ServerSpellCastUniqueId);
-        writer.Write(Spell4Id, 18u);
-        writer.Write(BIgnoreCooldown);
-
-        writer.Write(TargetInfoData.Count, 32u);
-        TargetInfoData.ForEach(u => u.Write(writer));
-
-        writer.Write(InitialPositionData.Count, 8u);
-        InitialPositionData.ForEach(u => u.Write(writer));
-
-        writer.Write(TelegraphPositionData.Count, 8u);
-        TelegraphPositionData.ForEach(u => u.Write(writer));
-    }
 }

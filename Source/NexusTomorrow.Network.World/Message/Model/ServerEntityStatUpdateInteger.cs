@@ -7,11 +7,10 @@ namespace NexusTomorrow.Network.World.Message.Model;
 
 /// <summary>
 /// Sent to set an integer stat. The layout matches <see cref="ServerEntityStatUpdateFloat"/> except that the value is an integer,
-/// so the declaration carries it in <see cref="IntegerStat"/>; the legacy <see cref="Stat"/> stays for the legacy writer.
+/// which <see cref="IntegerStat"/> carries.
 /// </summary>
-[Message(GameMessageOpcode.ServerEntityStatUpdateInteger)]
 [WireMessage(GameMessageOpcode.ServerEntityStatUpdateInteger, Direction.ServerToClient)]
-public sealed partial class ServerEntityStatUpdateInteger : IWritable
+public sealed partial class ServerEntityStatUpdateInteger
 {
     [WireStruct]
     public sealed partial class IntegerStatValue
@@ -22,11 +21,4 @@ public sealed partial class ServerEntityStatUpdateInteger : IWritable
 
     [UInt(32)] public uint UnitId { get; set; }
     public IntegerStatValue IntegerStat { get; set; } = new();
-    [NotOnWire] public StatValueUpdate Stat { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(UnitId);
-        Stat.Write(writer);
-    }
 }

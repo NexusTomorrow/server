@@ -3,18 +3,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[Message(GameMessageOpcode.ClientCraftingSimpleCraft)]
 [WireMessage(GameMessageOpcode.ClientCraftingSimpleCraft, Direction.ClientToServer)]
-public sealed partial class ClientCraftingSimpleCraft : IReadable
+public sealed partial class ClientCraftingSimpleCraft
 {
     [UInt(32)] public uint ClientSpellcastUniqueId { get; private set; }
     [UInt(32)] public uint CraftingStationUnitId { get; private set; }
     [UInt(32)] public uint TradeskillSchematic2Id { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        ClientSpellcastUniqueId = reader.ReadUInt();
-        CraftingStationUnitId = reader.ReadUInt();
-        TradeskillSchematic2Id = reader.ReadUInt();
-    }
 }

@@ -4,12 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Pvp;
 
 // Can only be sent after dueling has begun with ServerDuelStart (0x895)
-[Message(GameMessageOpcode.ClientDuelForfeit)]
 [WireMessage(GameMessageOpcode.ClientDuelForfeit, Direction.ClientToServer)]
-public sealed partial class ClientDuelForfeit : IReadable
+public sealed partial class ClientDuelForfeit
 {
-    public void Read(GamePacketReader reader)
-    {
-        // Zero byte message
-    }
 }

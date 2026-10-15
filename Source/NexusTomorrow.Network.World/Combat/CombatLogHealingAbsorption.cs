@@ -10,9 +10,4 @@ public sealed partial class CombatLogHealingAbsorption : ICombatLog
     [NotOnWire] public CombatLogType Type => CombatLogType.HealingAbsorption;
 
     [UInt(32)] public uint Amount { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Amount);
-    }
 }

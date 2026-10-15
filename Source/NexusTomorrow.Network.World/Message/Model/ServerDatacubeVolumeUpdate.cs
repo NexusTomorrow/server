@@ -4,14 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerDatacubeVolumeUpdate)]
 [WireMessage(GameMessageOpcode.ServerDatacubeVolumeUpdate, Direction.ServerToClient)]
-public sealed partial class ServerDatacubeVolumeUpdate : IWritable
+public sealed partial class ServerDatacubeVolumeUpdate
 {
     public Datacube DatacubeVolumeData { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        DatacubeVolumeData.Write(writer);
-    }
 }

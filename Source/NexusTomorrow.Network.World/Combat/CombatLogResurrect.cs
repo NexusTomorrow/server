@@ -10,9 +10,4 @@ public sealed partial class CombatLogResurrect : ICombatLog
     [NotOnWire] public CombatLogType Type => CombatLogType.Resurrect;
 
     [UInt(32)] public uint UnitId { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(UnitId);
-    }
 }

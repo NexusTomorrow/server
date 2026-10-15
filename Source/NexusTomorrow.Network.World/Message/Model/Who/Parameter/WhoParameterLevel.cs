@@ -9,10 +9,4 @@ public sealed partial class WhoParameterLevel : IWhoParameterData
 {
     [UInt(32)] public uint BottomLevel { get; private set; }
     [UInt(32)] public uint TopLevel { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        BottomLevel = reader.ReadUInt();
-        TopLevel = reader.ReadUInt();
-    }
 }

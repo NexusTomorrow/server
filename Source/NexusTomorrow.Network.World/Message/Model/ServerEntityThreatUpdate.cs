@@ -7,18 +7,10 @@ namespace NexusTomorrow.Network.World.Message.Model;
 /// Values from this packet are stored against the entity object in the client.
 /// This is different from <see cref="ServerEntityThreatListUpdate"/> where values are stored in a "global" threat list which is only used for the current target.
 /// </summary>
-[Message(GameMessageOpcode.ServerEntityThreatUpdate)]
 [WireMessage(GameMessageOpcode.ServerEntityThreatUpdate, Direction.ServerToClient)]
-public sealed partial class ServerEntityThreatUpdate : IWritable
+public sealed partial class ServerEntityThreatUpdate
 {
     [UInt(32)] public uint UnitId { get; set; }
     [UInt(32)] public uint TargetId { get; set; }
     [UInt(32)] public uint ThreatLevel { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(UnitId);
-        writer.Write(TargetId);
-        writer.Write(ThreatLevel);
-    }
 }

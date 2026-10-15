@@ -11,16 +11,4 @@ public sealed partial class SetVelocityCommand : IEntityCommandModel
 {
     [PackedFloat] public Vector3 Velocity { get; set; }
     [UInt(1)] public bool Blend { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        Velocity = reader.ReadPackedVector3();
-        Blend = reader.ReadBit();
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.WritePackedVector3(Velocity);
-        writer.Write(Blend);
-    }
 }

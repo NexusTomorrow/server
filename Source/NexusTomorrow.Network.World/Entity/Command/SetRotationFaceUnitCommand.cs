@@ -10,16 +10,4 @@ public sealed partial class SetRotationFaceUnitCommand : IEntityCommandModel
 {
     [UInt(32)] public uint UnitId { get; set; }
     [UInt(1)] public bool Blend { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        UnitId = reader.ReadUInt();
-        Blend = reader.ReadBit();
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(UnitId);
-        writer.Write(Blend);
-    }
 }

@@ -4,16 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[Message(GameMessageOpcode.ServerGuildPerkUnlocked)]
 [WireMessage(GameMessageOpcode.ServerGuildPerkUnlocked, Direction.ServerToClient)]
-public sealed partial class ServerGuildPerkUnlocked : IWritable
+public sealed partial class ServerGuildPerkUnlocked
 {
     public Identity GuildIdentity { get; set; }
     [UInt(14)] public ushort GuildPerkId { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        GuildIdentity.Write(writer);
-        writer.Write(GuildPerkId, 14u);
-    }
 }

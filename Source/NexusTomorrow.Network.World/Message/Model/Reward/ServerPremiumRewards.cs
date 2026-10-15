@@ -4,9 +4,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Reward;
 
-[Message(GameMessageOpcode.ServerPremiumRewards)]
 [WireMessage(GameMessageOpcode.ServerPremiumRewards, Direction.ServerToClient)]
-public sealed partial class ServerPremiumRewards : IWritable
+public sealed partial class ServerPremiumRewards
 {
     /// <summary>
     /// A reward modifier's value: a float for the scalar <see cref="RewardModifierValueType"/> values, an integer for <see cref="RewardModifierValueType.Discrete"/>.
@@ -37,70 +36,23 @@ public sealed partial class ServerPremiumRewards : IWritable
     }
 
     [WireStruct]
-    public sealed partial class RewardProperty : IWritable
+    public sealed partial class RewardProperty
     {
         [WireStruct]
-        public sealed partial class RewardOwnerMultiplier : IWritable
+        public sealed partial class RewardOwnerMultiplier
         {
             [UInt(4)] public RewardModifierOwner OwnerType { get; set; }
             [UInt(32)] public uint OwnerId { get; set; }
             [UInt(2)] public RewardModifierValueType ModifierType { get; set; }
             [Union(nameof(ModifierType))] public IModifierValue Payload { get; set; } = new AdditiveScalarValue();
-            [NotOnWire] public float Value { get; set; }
-
-            public void Write(GamePacketWriter writer)
-            {
-                writer.Write(OwnerType, 4u);
-                writer.Write(OwnerId);
-                writer.Write(ModifierType, 2u);
-
-                switch (ModifierType)
-                {
-                    case RewardModifierValueType.AdditiveScalar:
-                    case RewardModifierValueType.MultiplicativeScalar:
-                        writer.Write(Value);
-                        break;
-                    case RewardModifierValueType.Discrete:
-                        writer.Write((uint)Value);
-                        break;
-                }
-            }
         }
 
         [UInt(6)] public RewardPropertyType RewardPropertyId { get; set; }
         [UInt(32)] public uint Data { get; set; }
         [UInt(2)] public RewardModifierValueType ModifierType { get; set; }
         [Union(nameof(ModifierType))] public IModifierValue Payload { get; set; } = new AdditiveScalarValue();
-        [NotOnWire] public float Value { get; set; }
         [Array(CountBits = 8)] public List<RewardOwnerMultiplier> OwnerMultipliers { get; set; } = [];
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(RewardPropertyId, 6u);
-            writer.Write(Data);
-            writer.Write(ModifierType, 2u);
-
-            switch (ModifierType)
-            {
-                case RewardModifierValueType.AdditiveScalar:
-                case RewardModifierValueType.MultiplicativeScalar:
-                    writer.Write(Value);
-                    break;
-                case RewardModifierValueType.Discrete:
-                    writer.Write((uint)Value);
-                    break;
-            }
-
-            writer.Write(OwnerMultipliers.Count, 8u);
-            OwnerMultipliers.ForEach(u => u.Write(writer));
-        }
     }
 
     [Array(CountBits = 8)] public List<RewardProperty> Properties { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write((byte)Properties.Count);
-        Properties.ForEach(u => u.Write(writer));
-    }
 }

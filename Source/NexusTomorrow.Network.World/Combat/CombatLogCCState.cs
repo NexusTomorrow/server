@@ -16,14 +16,4 @@ public sealed partial class CombatLogCCState : ICombatLog
     [UInt(4)] public CCStateApplyRulesResult Result { get; set; } // 4u
     [UInt(14)] public ushort CcStateDiminishingReturnsId { get; set; } // 14u
     public CombatLogCastData CastData { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(State, 5u);
-        writer.Write(BRemoved);
-        writer.Write(InterruptArmorTaken);
-        writer.Write(Result, 4u);
-        writer.Write(CcStateDiminishingReturnsId, 14u);
-        CastData.Write(writer);
-    }
 }

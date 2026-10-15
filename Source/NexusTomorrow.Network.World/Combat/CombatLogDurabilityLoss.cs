@@ -11,10 +11,4 @@ public sealed partial class CombatLogDurabilityLoss : ICombatLog
 
     [UInt(32)] public uint UnitId { get; set; }
     [Float32] public float Amount { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(UnitId);
-        writer.Write(Amount);
-    }
 }

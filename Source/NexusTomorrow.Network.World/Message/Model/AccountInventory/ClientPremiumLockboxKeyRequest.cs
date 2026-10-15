@@ -3,12 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.AccountInventory;
 
-[Message(GameMessageOpcode.ClientPremiumLockboxKeyRequest)]
 [WireMessage(GameMessageOpcode.ClientPremiumLockboxKeyRequest, Direction.ClientToServer)]
-public sealed partial class ClientPremiumLockboxKeyRequest : IReadable
+public sealed partial class ClientPremiumLockboxKeyRequest
 {
-    public void Read(GamePacketReader reader)
-    {
-        // zero byte message
-    }
 }

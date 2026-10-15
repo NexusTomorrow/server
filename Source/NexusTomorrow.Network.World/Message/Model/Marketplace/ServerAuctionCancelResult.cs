@@ -4,16 +4,9 @@ using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
-[Message(GameMessageOpcode.ServerAuctionCancelResult)]
 [WireMessage(GameMessageOpcode.ServerAuctionCancelResult, Direction.ServerToClient)]
-public sealed partial class ServerAuctionCancelResult : IWritable
+public sealed partial class ServerAuctionCancelResult
 {
     public AuctionInfo Auction { get; set; }
     [UInt(8)] public GenericError Result { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        Auction.Write(writer);
-        writer.Write(Result, 8u);
-    }
 }

@@ -3,14 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ClientToggleWeapons)]
 [WireMessage(GameMessageOpcode.ClientToggleWeapons, Direction.ClientToServer)]
-public sealed partial class ClientToggleWeapons : IReadable
+public sealed partial class ClientToggleWeapons
 {
     [UInt(1)] public bool ToggleState { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        ToggleState = reader.ReadBit();
-    }
 }

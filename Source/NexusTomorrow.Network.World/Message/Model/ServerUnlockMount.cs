@@ -3,15 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerUnlockMount)]
 [WireMessage(GameMessageOpcode.ServerUnlockMount, Direction.ServerToClient)]
-public sealed partial class ServerUnlockMount : IWritable
+public sealed partial class ServerUnlockMount
 {
     [UInt(18)] public uint Spell4Id { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Spell4Id, 18u);
-    }
 }
 

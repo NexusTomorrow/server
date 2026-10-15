@@ -5,19 +5,13 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class PublicEventObjectiveStatus : IWritable
+public sealed partial class PublicEventObjectiveStatus
 {
     [WireStruct]
-    public sealed partial class VirtualItem : IWritable
+    public sealed partial class VirtualItem
     {
         [UInt(14)] public uint ItemId { get; set; }
         [UInt(32)] public uint Count { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(ItemId, 14);
-            writer.Write(Count);
-        }
     }
 
     /// <summary>
@@ -64,37 +58,4 @@ public sealed partial class PublicEventObjectiveStatus : IWritable
     [UInt(32)] public uint UnkState { get; set; }
     [UInt(3)] public PublicEventObjectiveDataType DataType { get; set; }
     [Union(nameof(DataType))] public IPayload Payload { get; set; } = new EmptyData();
-    [NotOnWire] public PublicEventTeam ControllingTeam { get; set; }
-    [NotOnWire] public PublicEventTeam CapturingTeam { get; set; }
-    [NotOnWire] public List<VirtualItem> VirtualItems { get; set; } = [];
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Status, 32u);
-        writer.Write(ObjectiveData);
-        writer.Write(DynamicMax);
-        writer.Write(Count);
-        writer.Write(UnkState);
-        writer.Write(DataType, 3);
-
-        switch (DataType)
-        {
-            case PublicEventObjectiveDataType.Empty:
-                writer.Write((byte)0);
-                break;
-            case PublicEventObjectiveDataType.CapturePointDefend:
-                writer.Write(ControllingTeam, 32u);
-                break;
-            case PublicEventObjectiveDataType.CapturePoint:
-                writer.Write(CapturingTeam, 32u);
-                break;
-            case PublicEventObjectiveDataType.VirtualItemDepot:
-                {
-                    writer.Write(VirtualItems.Count);
-                    foreach (VirtualItem item in VirtualItems)
-                        item.Write(writer);
-                    break;
-                }
-        }
-    }
 }

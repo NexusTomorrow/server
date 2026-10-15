@@ -4,22 +4,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
-[Message(GameMessageOpcode.ServerChatJoin)]
 [WireMessage(GameMessageOpcode.ServerChatJoin, Direction.ServerToClient)]
-public sealed partial class ServerChatJoin : IWritable
+public sealed partial class ServerChatJoin
 {
     public Channel Channel { get; set; }
     [WideString] public string Name { get; set; }
     [UInt(32)] public uint MemberCount { get; set; }
     [UInt(32)] public ChatChannelMemberFlags Flags { get; set; }
     [UInt(32)] public uint Order { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        Channel.Write(writer);
-        writer.WriteStringWide(Name);
-        writer.Write(MemberCount);
-        writer.Write(Flags, 32u);
-        writer.Write(Order);
-    }
 }

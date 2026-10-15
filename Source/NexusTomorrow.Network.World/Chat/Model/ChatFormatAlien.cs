@@ -9,14 +9,4 @@ public sealed partial class ChatFormatAlien : IChatFormatModel
 {
     [NotOnWire] public ChatFormatType Type => ChatFormatType.Alien;
     [UInt(14)] public uint RandomTextSeed { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        RandomTextSeed = reader.ReadUShort(14u);
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(RandomTextSeed);
-    }
 }

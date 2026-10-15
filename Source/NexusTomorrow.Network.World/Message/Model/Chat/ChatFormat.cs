@@ -6,18 +6,10 @@ using NexusTomorrow.Network.World.Chat;
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
 [WireStruct]
-public partial class ChatFormat : IWritable
+public partial class ChatFormat
 {
     [UInt(4)] public ChatFormatType Type { get; set; }
     [UInt(16)] public ushort StartIndex { get; set; }
     [UInt(16)] public ushort StopIndex { get; set; }
     [Union(nameof(Type))] public IChatFormatModel Model { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Type, 4u);
-        writer.Write(StartIndex);
-        writer.Write(StopIndex);
-        Model.Write(writer);
-    }
 }

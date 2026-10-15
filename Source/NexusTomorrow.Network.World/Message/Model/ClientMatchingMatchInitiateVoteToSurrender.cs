@@ -4,12 +4,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ClientMatchingMatchInitiateVoteToSurrender)]
 [WireMessage(GameMessageOpcode.ClientMatchingMatchInitiateVoteToSurrender, Direction.ClientToServer)]
-public sealed partial class ClientMatchingMatchInitiateVoteToSurrender : IReadable
+public sealed partial class ClientMatchingMatchInitiateVoteToSurrender
 {
-    public void Read(GamePacketReader reader)
-    {
-        // Zero size message
-    }
 }

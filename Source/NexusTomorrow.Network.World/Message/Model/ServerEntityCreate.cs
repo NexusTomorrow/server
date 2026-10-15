@@ -9,14 +9,13 @@ using NexusTomorrow.Network.World.Message.Model.Spell;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerEntityCreate)]
 [WireMessage(GameMessageOpcode.ServerEntityCreate, Direction.ServerToClient)]
-public sealed partial class ServerEntityCreate : IWritable
+public sealed partial class ServerEntityCreate
 {
     #region Unknown Structures
 
     [WireStruct]
-    public sealed partial class UnknownStructureA8 : IWritable
+    public sealed partial class UnknownStructureA8
     {
         /// <summary>
         /// The payload <see cref="Type"/> selects; only cases 0 and 1 have a known layout.
@@ -41,27 +40,10 @@ public sealed partial class ServerEntityCreate : IWritable
 
         [UInt(2)] public byte Type { get; set; }
         [Union(nameof(Type))] public IPayload Payload { get; set; } = new Flag();
-        [NotOnWire] public bool Unknown0 { get; set; }
-        [NotOnWire] public uint Unknown1 { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Type, 2);
-
-            switch (Type)
-            {
-                case 0:
-                    writer.Write(Unknown0);
-                    break;
-                case 1:
-                    writer.Write(Unknown1, 17u);
-                    break;
-            }
-        }
     }
 
     [WireStruct]
-    public sealed partial class WorldPlacement : IWritable
+    public sealed partial class WorldPlacement
     {
         /// <summary>
         /// The payload <see cref="Type"/> selects; only cases 0 and 1 have a known layout.
@@ -87,29 +69,10 @@ public sealed partial class ServerEntityCreate : IWritable
 
         [UInt(2)] public byte Type { get; set; }
         [Union(nameof(Type))] public IPayload Payload { get; set; } = new Flag();
-        [NotOnWire] public bool Unknown0 { get; set; }
-        [NotOnWire] public ulong ActivePropId { get; set; }
-        [NotOnWire] public ushort SocketId { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Type, 2u);
-
-            switch (Type)
-            {
-                case 0:
-                    writer.Write(Unknown0);
-                    break;
-                case 1:
-                    writer.Write(ActivePropId);
-                    writer.Write(SocketId, 14u);
-                    break;
-            }
-        }
     }
 
     [WireStruct]
-    public sealed partial class UnknownStructureC8 : IWritable
+    public sealed partial class UnknownStructureC8
     {
         /// <summary>
         /// The payload <see cref="Type"/> selects; only cases 0 and 1 have a known layout.
@@ -135,25 +98,6 @@ public sealed partial class ServerEntityCreate : IWritable
 
         [UInt(2)] public byte Type { get; set; }
         [Union(nameof(Type))] public IPayload Payload { get; set; } = new Flag();
-        [NotOnWire] public bool Unknown0 { get; set; }
-        [NotOnWire] public uint Unknown1 { get; set; }
-        [NotOnWire] public uint Unknown2 { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Type, 2);
-
-            switch (Type)
-            {
-                case 0:
-                    writer.Write(Unknown0);
-                    break;
-                case 1:
-                    writer.Write(Unknown1);
-                    writer.Write(Unknown2, 18);
-                    break;
-            }
-        }
     }
 
     #endregion
@@ -179,47 +123,4 @@ public sealed partial class ServerEntityCreate : IWritable
     [UInt(14)] public ushort MiniMapMarker { get; set; }
     [UInt(17)] public uint DisplayInfo { get; set; }
     [UInt(15)] public ushort OutfitInfo { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Guid);
-        writer.Write(Type, 6);
-        EntityModel.Write(writer);
-        writer.Write(CreateFlags, 8);
-
-        writer.Write((byte)Stats.Count, 5);
-        Stats.ForEach(o => o.Write(writer));
-
-        writer.Write(Time);
-
-        writer.Write((byte)Commands.Count, 5);
-        foreach (INetworkEntityCommand command in Commands)
-        {
-            writer.Write(command.Command, 5);
-            command.Model.Write(writer);
-        }
-
-        writer.Write((byte)Properties.Count);
-        Properties.ForEach(o => o.Write(writer));
-
-        writer.Write((byte)VisibleItems.Count, 7);
-        VisibleItems.ForEach(o => o.Write(writer));
-
-        writer.Write((short)SpellInitData.Count, 9);
-        SpellInitData.ForEach(o => o.Write(writer));
-
-        writer.Write(CurrentSpellUniqueId);
-        writer.Write(Faction1, 14);
-        writer.Write(Faction2, 14);
-        writer.Write(UnitTagOwner);
-        writer.Write(GroupTagOwner);
-
-        UnknownA8.Write(writer);
-        WorldPlacementData.Write(writer);
-        UnknownC8.Write(writer);
-
-        writer.Write(MiniMapMarker, 14);
-        writer.Write(DisplayInfo, 17);
-        writer.Write(OutfitInfo, 15);
-    }
 }

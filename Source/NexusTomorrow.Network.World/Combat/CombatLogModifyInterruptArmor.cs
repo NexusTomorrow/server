@@ -11,10 +11,4 @@ public sealed partial class CombatLogModifyInterruptArmor : ICombatLog
 
     [UInt(32)] public uint Amount { get; set; }
     public CombatLogCastData CastData { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Amount);
-        CastData.Write(writer);
-    }
 }

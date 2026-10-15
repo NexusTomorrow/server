@@ -3,7 +3,6 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[Message(GameMessageOpcode.ServerGuildResult2)]
 [WireMessage(GameMessageOpcode.ServerGuildResult2, Direction.ServerToClient)]
 public sealed partial class ServerGuildResult2 : ServerGuildResult
 {

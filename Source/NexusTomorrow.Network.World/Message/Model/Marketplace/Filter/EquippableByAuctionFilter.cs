@@ -15,12 +15,4 @@ public sealed partial class EquippableByAuctionFilter : IAuctionFilter
     [Pad(6)] public Pad ClassIdHigh { get; }
     [UInt(14)] public Faction FactionId { get; private set; }
     [UInt(32)] public uint Level { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        RaceId = reader.ReadEnum<Race>(14u);
-        ClassId = reader.ReadEnum<Class>(14u);
-        FactionId = reader.ReadEnum<Faction>(14u);
-        Level = reader.ReadUInt();
-    }
 }

@@ -8,9 +8,4 @@ namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
 public sealed partial class WhoParameterZone : IWhoParameterData
 {
     [UInt(15)] public ushort WorldZoneId { get; private set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        WorldZoneId = reader.ReadUShort(15u);
-    }
 }

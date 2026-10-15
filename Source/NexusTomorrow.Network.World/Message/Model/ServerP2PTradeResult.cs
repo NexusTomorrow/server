@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerP2PTradeResult)]
 [WireMessage(GameMessageOpcode.ServerP2PTradeResult, Direction.ServerToClient)]
-public sealed partial class ServerP2PTradeResult : IWritable
+public sealed partial class ServerP2PTradeResult
 {
     public enum P2PTradeResult
     {
@@ -32,10 +31,4 @@ public sealed partial class ServerP2PTradeResult : IWritable
 
     [UInt(5)] public P2PTradeResult Result { get; set; }
     [UInt(1)] public bool Cancelled { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(Result, 5);
-        writer.Write(Cancelled);
-    }
 }

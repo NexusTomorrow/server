@@ -11,16 +11,4 @@ public sealed partial class SetPositionCommand : IEntityCommandModel
 {
     [Float32] public Vector3 Position { get; set; }
     [UInt(1)] public bool Blend { get; set; }
-
-    public void Read(GamePacketReader reader)
-    {
-        Position = reader.ReadVector3();
-        Blend = reader.ReadBit();
-    }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.WriteVector3(Position);
-        writer.Write(Blend);
-    }
 }

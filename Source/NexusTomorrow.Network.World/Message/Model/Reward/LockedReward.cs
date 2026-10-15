@@ -5,7 +5,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Reward;
 
 [WireStruct]
-public sealed partial class LockedReward : IWritable
+public sealed partial class LockedReward
 {
     [UInt(3)] public RewardRotationContentType ContentType { get; set; }
     [UInt(32)] public uint RewardRotationContentId { get; set; }
@@ -13,13 +13,4 @@ public sealed partial class LockedReward : IWritable
     [UInt(8)] public RewardRotationRewardType RewardType { get; set; }
     [UInt(32)] public GrantedRewardFlags RewardedFlags { get; set; }
     [Pad(32)] public Pad RewardedFlagsHigh { get; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(ContentType, 3u);
-        writer.Write(RewardRotationContentId);
-        writer.Write(RewardId);
-        writer.Write(RewardType, 8u);
-        writer.Write(RewardedFlags);
-    }
 }

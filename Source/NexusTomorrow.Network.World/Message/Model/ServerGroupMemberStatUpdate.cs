@@ -4,9 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[Message(GameMessageOpcode.ServerGroupMemberStatUpdate)]
 [WireMessage(GameMessageOpcode.ServerGroupMemberStatUpdate, Direction.ServerToClient)]
-public sealed partial class ServerGroupMemberStatUpdate : IWritable
+public sealed partial class ServerGroupMemberStatUpdate
 {
     [UInt(64)] public ulong GroupId { get; set; }
     public Identity TargetPlayer { get; set; } = new();
@@ -35,39 +34,4 @@ public sealed partial class ServerGroupMemberStatUpdate : IWritable
     [UInt(32)] public uint PhaseFlags1 { get; set; }
     [UInt(32)] public uint PhaseFlags2 { get; set; }
     [UInt(3)] public Game.Static.PlayerPath.Path Path { get; set; }
-
-    public void Write(GamePacketWriter writer)
-    {
-        writer.Write(GroupId);
-        TargetPlayer.Write(writer);
-
-        writer.Write(Level, 7);
-        writer.Write(EffectiveLevel, 7);
-
-        writer.Write(Unk1, 17);
-        writer.Write(GroupMemberId);
-
-        for (int i = 0; i < 5; ++i)
-        {
-            SomeStatList[i] = new GroupCharacter.UnknownStruct0();
-            SomeStatList[i].Write(writer);
-        }
-
-        writer.WritePackedFloat(Health);
-        writer.WritePackedFloat(HealthMax);
-        writer.WritePackedFloat(Shield);
-        writer.WritePackedFloat(ShieldMax);
-        writer.WritePackedFloat(InterruptArmor);
-        writer.WritePackedFloat(InterruptArmorMax);
-        writer.WritePackedFloat(Absorption);
-        writer.WritePackedFloat(AbsorptionMax);
-        writer.WritePackedFloat(Mana);
-        writer.WritePackedFloat(ManaMax);
-        writer.WritePackedFloat(HealingAbsorb);
-        writer.WritePackedFloat(HealingAbsorbMax);
-
-        writer.Write(PhaseFlags1);
-        writer.Write(PhaseFlags2);
-        writer.Write(Path, 3);
-    }
 }
