@@ -783,6 +783,168 @@ public sealed class DiagnosticTests
         Assert.DoesNotContain("Tests.Sample.g.cs", run.GeneratedSources);
     }
 
+    // Write sets a selector from its union's arm, so a second union on one selector would overwrite it
+    // and be read back as the first union's arm.
+    [Fact]
+    public void TwoUnionsSharingASelectorRaiseNtc004()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            public interface IArm : IWireStruct
+            {
+            }
+
+            [WireStruct]
+            [UnionCase(0)]
+            public sealed partial class Zero : IArm
+            {
+            }
+
+            [WireStruct]
+            public sealed partial class Holder
+            {
+                [UInt(8)] public byte Selector { get; set; }
+
+                [Union(nameof(Selector))] public IArm First { get; set; } = new Zero();
+
+                [Union(nameof(Selector))] public IArm Second { get; set; } = new Zero();
+            }
+            """);
+
+        Diagnostic diagnostic = AssertSingle(run, "NTC004", DiagnosticSeverity.Error, "IArm Second");
+        Assert.Contains("already selects 'First'", MessageOf(diagnostic));
+        Assert.DoesNotContain("Tests.Holder.g.cs", run.GeneratedSources);
+    }
+
+    [Fact]
+    public void ClassMarkedBothStructAndMessageRaisesNtc012()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+            using NexusTomorrow.Network.Message;
+
+            namespace Tests;
+
+            [WireStruct]
+            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            public sealed partial class Sample
+            {
+                [UInt(8)] public byte Value { get; set; }
+            }
+            """);
+
+        Diagnostic diagnostic = AssertSingle(run, "NTC012", DiagnosticSeverity.Error, "class Sample");
+        Assert.Contains("not both", MessageOf(diagnostic));
+        Assert.DoesNotContain("Tests.Sample.g.cs", run.GeneratedSources);
+    }
+
+    [Fact]
+    public void AbstractMessageRaisesNtc012()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+            using NexusTomorrow.Network.Message;
+
+            namespace Tests;
+
+            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            public abstract partial class Sample
+            {
+                [UInt(8)] public byte Value { get; set; }
+            }
+            """);
+
+        AssertSingle(run, "NTC012", DiagnosticSeverity.Error, "class Sample");
+        Assert.DoesNotContain("Tests.Sample.g.cs", run.GeneratedSources);
+    }
+
+    [Fact]
+    public void WireTypeWithoutAParameterlessConstructorRaisesNtc012()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            [WireStruct]
+            public sealed partial class Sample
+            {
+                public Sample(byte value)
+                {
+                    Value = value;
+                }
+
+                [UInt(8)] public byte Value { get; set; }
+            }
+            """);
+
+        Diagnostic diagnostic = AssertSingle(run, "NTC012", DiagnosticSeverity.Error, "class Sample");
+        Assert.Contains("constructor without parameters", MessageOf(diagnostic));
+    }
+
+    [Fact]
+    public void AbstractWireStructHeldAsAMemberRaisesNtc009()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            [WireStruct]
+            public abstract partial class Shape
+            {
+                [UInt(8)] public byte Kind { get; set; }
+            }
+
+            [WireStruct]
+            public sealed partial class Holder
+            {
+                public Shape Body { get; set; } = null!;
+            }
+            """);
+
+        Diagnostic diagnostic = AssertSingle(run, "NTC009", DiagnosticSeverity.Error, "Shape Body");
+        Assert.Contains("hold an abstract type as a [Union]", MessageOf(diagnostic));
+    }
+
+    // A type that emits nothing has no Read or Write, so a type that nests it, or derives from it, must
+    // emit nothing too rather than fail inside its generated source.
+    [Fact]
+    public void TypesBuiltOnATypeWithAnErrorGetNoSourceAndTheBuildFailsOnlyAtTheDeclaration()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            [WireStruct]
+            public partial class Broken
+            {
+                public byte Missing { get; set; }
+            }
+
+            [WireStruct]
+            public sealed partial class Holder
+            {
+                public Broken Inner { get; set; } = new();
+            }
+
+            [WireStruct]
+            public sealed partial class Child : Broken
+            {
+                [UInt(8)] public byte Extra { get; set; }
+            }
+            """);
+
+        AssertSingle(run, "NTC001", DiagnosticSeverity.Error, "byte Missing");
+        Assert.DoesNotContain("Tests.Holder.g.cs", run.GeneratedSources);
+        Assert.DoesNotContain("Tests.Child.g.cs", run.GeneratedSources);
+        Assert.Empty(run.CompilationErrors);
+    }
+
     private static void AssertHas(GeneratorRun run, string id, DiagnosticSeverity severity, string pointsAt)
     {
         int line = GeneratorHarness.LineOf(run.Source, pointsAt);

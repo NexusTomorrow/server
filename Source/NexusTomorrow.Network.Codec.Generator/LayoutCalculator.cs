@@ -85,9 +85,15 @@ internal sealed class LayoutCalculator
                     }
 
                 case MemberShape.Blob:
-                    builder.AddPart(WirePartShapes.Blob, builder.Widths.Count, -1);
-                    builder.Widths.Add((byte)member.BlobLengthBits);
-                    break;
+                    {
+                        // Only a message, which starts on a byte boundary, holds an aligned blob (NTC011), so the empty path's bits so far fix the alignment.
+                        int misalignment = builder.Bits % 8;
+                        if (member.BlobAlign && misalignment != 0)
+                            builder.Widths.Add((byte)(8 - misalignment));
+                        builder.AddPart(WirePartShapes.Blob, builder.Widths.Count, -1);
+                        builder.Widths.Add((byte)member.BlobLengthBits);
+                        break;
+                    }
                 case MemberShape.Pad:
                     for (int remaining = member.PadBits; remaining > 0; remaining -= 64)
                         builder.Widths.Add((byte)System.Math.Min(64, remaining));
@@ -139,7 +145,7 @@ internal sealed class LayoutCalculator
     }
 
     /// <summary>
-    /// The bits one element takes on the empty path, as the client's size function counts it, or -1 when that path is incomplete.
+    /// The bits one element takes on the empty path, or -1 when that path is incomplete.
     /// </summary>
     public int EmptyElementBits(ValueModel value)
     {
@@ -157,7 +163,8 @@ internal sealed class LayoutCalculator
     }
 
     /// <summary>
-    /// A lower bound on the bits any one element takes: its empty path up to and including the first union selector, which every arm follows.
+    /// A lower bound on the bits any one element takes: its empty path up to and including the first union selector, which every arm follows,
+    /// less each terminated string's terminator, since a reader takes a count of 0 as the empty string (BitReader.ReadTerminatedWideString).
     /// </summary>
     public int GuaranteedBits(ValueModel value)
     {
@@ -167,6 +174,8 @@ internal sealed class LayoutCalculator
         int bits = 0;
         for (int i = 0; i < end && i < layout.Widths.Count; i++)
             bits += layout.Widths[i];
+        foreach (PartModel terminated in layout.Parts.Where(part => part.Shape == WirePartShapes.TerminatedWideString && part.At + 1 < end))
+            bits -= layout.Widths[terminated.At + 1];
         return bits;
     }
 
@@ -186,6 +195,8 @@ internal sealed class LayoutCalculator
         public bool IsFixed { get; set; } = true;
 
         public bool IsComplete { get; set; } = true;
+
+        public int Bits => Widths.Sum(width => (int)width);
 
         public void AddPart(int shape, int at, int elementBits)
         {

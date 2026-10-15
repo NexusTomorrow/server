@@ -44,28 +44,41 @@ public sealed class WireGenerator : IIncrementalGenerator
                 types[model.FullName] = model;
         }
 
+        var failed = new HashSet<string>(StringComparer.Ordinal);
         foreach (TypeModel? model in messages)
         {
-            if (model is not null)
-                types[model.FullName] = model;
+            if (model is null)
+                continue;
+
+            if (types.ContainsKey(model.FullName))
+            {
+                production.ReportDiagnostic(Diagnostic.Create(Diagnostics.BadType, model.Location?.ToLocation(), model.Name, "a type is a [WireStruct] or a [WireMessage], not both, because a message is never nested"));
+                failed.Add(model.FullName);
+            }
+
+            types[model.FullName] = model;
         }
 
-        var layouts = new LayoutCalculator(types);
-        HashSet<string> brokenHolders = CheckUnions(production, types.Values, layouts);
-
-        var registry = new List<(TypeModel Type, MessageModel Message)>();
-        var claimed = new Dictionary<(ushort Opcode, int Direction), string>();
-        foreach (TypeModel type in types.Values.OrderBy(type => type.FullName, StringComparer.Ordinal))
+        List<TypeModel> ordered = [.. types.Values.OrderBy(type => type.FullName, StringComparer.Ordinal)];
+        foreach (TypeModel type in ordered)
         {
-            bool failed = false;
             foreach (DiagnosticInfo diagnostic in type.Diagnostics)
             {
                 production.ReportDiagnostic(diagnostic.ToDiagnostic());
-                failed |= diagnostic.IsError;
+                if (diagnostic.IsError)
+                    failed.Add(type.FullName);
             }
+        }
 
-            failed |= brokenHolders.Contains(type.FullName);
-            if (failed)
+        var layouts = new LayoutCalculator(types);
+        failed.UnionWith(CheckUnions(production, ordered, layouts));
+        FailDependents(ordered, failed);
+
+        var registry = new List<(TypeModel Type, MessageModel Message)>();
+        var claimed = new Dictionary<(ushort Opcode, int Direction), string>();
+        foreach (TypeModel type in ordered)
+        {
+            if (failed.Contains(type.FullName))
                 continue;
 
             production.AddSource(HintName(type.FullName), SourceEmitter.EmitType(type, layouts));
@@ -95,12 +108,12 @@ public sealed class WireGenerator : IIncrementalGenerator
     }
 
     /// <summary>
-    /// Report every union with no arm, with two arms for one value, or with an arm whose value its selector cannot hold, and return the full names of the types that hold one, so they emit nothing.
+    /// Report every union with no arm, with an arm its selector cannot carry, or with two arms its selector cannot tell apart, and return the full names of the types that hold one, so they emit nothing.
     /// </summary>
     private static HashSet<string> CheckUnions(SourceProductionContext production, IEnumerable<TypeModel> types, LayoutCalculator layouts)
     {
         var brokenHolders = new HashSet<string>(StringComparer.Ordinal);
-        var duplicated = new Dictionary<string, bool>(StringComparer.Ordinal);
+        var reported = new HashSet<(string UnionType, ulong Label)>();
         foreach (TypeModel type in types)
         {
             foreach (MemberModel member in type.Members.Where(member => member.Shape == MemberShape.Union))
@@ -114,30 +127,29 @@ public sealed class WireGenerator : IIncrementalGenerator
                     continue;
                 }
 
-                if (!duplicated.TryGetValue(unionType, out bool duplicate))
-                {
-                    foreach (IGrouping<ulong, TypeModel> claim in arms.GroupBy(arm => arm.UnionCaseValue).Where(group => group.Count() > 1))
-                    {
-                        string text = string.Format(CultureInfo.InvariantCulture, "{0} arms of {1} claim the selector value {2}: {3}", claim.Count(), unionType.Replace("global::", ""), CaseText(claim.Key), string.Join(", ", claim.Select(arm => arm.Name)));
-                        production.ReportDiagnostic(Diagnostic.Create(Diagnostics.Duplicate, claim.Last().Location?.ToLocation(), text));
-                        duplicate = true;
-                    }
-
-                    duplicated[unionType] = duplicate;
-                }
-
-                if (duplicate)
-                    brokenHolders.Add(type.FullName);
-
                 MemberModel? selector = type.Members.FirstOrDefault(candidate => candidate.Name == member.UnionSelector);
                 if (selector?.Value?.Scalar is not { } scalar)
                     continue;
 
-                foreach (TypeModel arm in arms.Where(arm => !ModelBuilder.CaseFits(arm.UnionCaseValue, scalar.Encoding, scalar.Bits)))
+                foreach (TypeModel arm in arms.Where(arm => !UnionCases.Fits(arm.UnionCaseValue, scalar)))
                 {
                     string bits = scalar.Bits.ToString(CultureInfo.InvariantCulture);
-                    production.ReportDiagnostic(Diagnostic.Create(Diagnostics.ValueTooWide, selector.Location?.ToLocation(), selector.Name, type.Name, bits, "the [UnionCase] of " + arm.Name, CaseText(arm.UnionCaseValue)));
+                    production.ReportDiagnostic(Diagnostic.Create(Diagnostics.ValueTooWide, selector.Location?.ToLocation(), selector.Name, type.Name, bits, "the [UnionCase] of " + arm.Name, UnionCases.ValueText(arm.UnionCaseValue)));
                     brokenHolders.Add(type.FullName);
+                }
+
+                IEnumerable<IGrouping<ulong, TypeModel>> claims = arms
+                    .Where(arm => UnionCases.Fits(arm.UnionCaseValue, scalar))
+                    .GroupBy(arm => UnionCases.Label(arm.UnionCaseValue, scalar))
+                    .Where(group => group.Count() > 1);
+                foreach (IGrouping<ulong, TypeModel> claim in claims)
+                {
+                    brokenHolders.Add(type.FullName);
+                    if (!reported.Add((unionType, claim.Key)))
+                        continue;
+
+                    string text = string.Format(CultureInfo.InvariantCulture, "{0} arms of {1} claim the selector value {2}: {3}", claim.Count(), unionType.Replace("global::", ""), UnionCases.LabelText(claim.First().UnionCaseValue, scalar), string.Join(", ", claim.Select(arm => arm.Name)));
+                    production.ReportDiagnostic(Diagnostic.Create(Diagnostics.Duplicate, claim.Last().Location?.ToLocation(), text));
                 }
             }
         }
@@ -146,12 +158,34 @@ public sealed class WireGenerator : IIncrementalGenerator
     }
 
     /// <summary>
-    /// A sign-extended [UnionCase] value as its declaration wrote it.
+    /// Add to <paramref name="failed"/> every type whose generated code would call into a type that emits nothing: through its base, a member, an element, or an abstract class it holds as a union.
     /// </summary>
-    private static string CaseText(ulong value)
+    private static void FailDependents(List<TypeModel> types, HashSet<string> failed)
     {
-        long signed = unchecked((long)value);
-        return signed < 0 ? signed.ToString(CultureInfo.InvariantCulture) : value.ToString(CultureInfo.InvariantCulture);
+        bool changed = true;
+        while (changed)
+        {
+            changed = false;
+            foreach (TypeModel type in types)
+            {
+                if (!failed.Contains(type.FullName) && DependenciesOf(type).Any(failed.Contains))
+                    changed |= failed.Add(type.FullName);
+            }
+        }
+    }
+
+    private static IEnumerable<string> DependenciesOf(TypeModel type)
+    {
+        if (type.WireBase is not null)
+            yield return type.WireBase;
+
+        foreach (MemberModel member in type.Members)
+        {
+            if (member.Value?.StructType is { } structType)
+                yield return structType;
+            if (member.Shape == MemberShape.Union && member.UnionType is not null)
+                yield return member.UnionType;
+        }
     }
 
     private static string HintName(string fullName)

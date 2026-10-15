@@ -47,7 +47,7 @@ public sealed class WireLayout
     public bool IsComplete { get; }
 
     /// <summary>
-    /// The field widths on the empty path, in wire order; a string header counts as two widths (flag, length) and a vector as three.
+    /// The field widths on the empty path, in wire order; a string header counts as two widths (flag, length), a vector as three, and an aligned blob's alignment as one width of the bits that reach the next byte.
     /// </summary>
     public ImmutableArray<byte> EmptyPathWidths { get; }
 

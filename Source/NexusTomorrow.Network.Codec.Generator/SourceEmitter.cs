@@ -261,7 +261,7 @@ internal static class SourceEmitter
         writer.Line($"{member.Name} = {SelectorValue(selector.Name, scalar)} switch");
         writer.Line("{");
         foreach (TypeModel arm in layouts.ArmsOf(member.UnionType))
-            writer.Line($"    {CaseLabel(arm.UnionCaseValue, scalar)} => new {arm.FullName}(),");
+            writer.Line($"    {UnionCases.Literal(arm.UnionCaseValue, scalar)} => new {arm.FullName}(),");
         writer.Line($"    _ => throw new {Codec}.CodecException(\"No arm of {Plain(member.UnionType)} has the selector value \" + {selector.Name} + \".\"),");
         writer.Line("};");
         writer.Line($"{member.Name}.Read(ref reader);");
@@ -532,20 +532,14 @@ internal static class SourceEmitter
     }
 
     /// <summary>
-    /// The selector widened to long when signed and ulong when not, matching <see cref="CaseLabel"/>.
+    /// The selector as <see cref="UnionCases.Label"/> numbers it: widened to long for a [SInt] selector, and for a [UInt] one read through the unsigned type of its size, as its Write puts it on the wire.
     /// </summary>
     private static string SelectorValue(string selector, ScalarModel scalar)
     {
         string integer = scalar.IsEnum ? $"({scalar.IntegerType}){selector}" : selector;
-        return scalar.IsSigned ? $"(long){integer}" : $"(ulong){integer}";
-    }
-
-    /// <summary>
-    /// A sign-extended [UnionCase] value as a constant of the type <see cref="SelectorValue"/> produces; WireGenerator has proved it fits the selector.
-    /// </summary>
-    private static string CaseLabel(ulong value, ScalarModel scalar)
-    {
-        return scalar.IsSigned ? unchecked((long)value).ToString(CultureInfo.InvariantCulture) + "L" : Num(value) + "UL";
+        if (scalar.Encoding == ScalarEncoding.SInt)
+            return $"(long){integer}";
+        return scalar.IsSigned ? $"unchecked((ulong)({scalar.UnsignedType}){integer})" : $"(ulong){integer}";
     }
 
     private static string StringMethod(StringEncoding encoding)

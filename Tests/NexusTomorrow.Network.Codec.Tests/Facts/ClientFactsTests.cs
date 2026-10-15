@@ -11,16 +11,24 @@ public sealed class ClientFactsTests
         return T.Layout;
     }
 
+    private static int OpcodeOf(string line)
+    {
+        using var row = JsonDocument.Parse(line);
+        return row.RootElement.GetProperty("op").GetInt32();
+    }
+
     [Fact]
     public void TheTableHoldsTheRowsItsMetaClaimsInOpcodeOrder()
     {
         using var meta = JsonDocument.Parse(File.ReadAllText(WireFacts.MetaPath));
         Dictionary<int, WireFactsRow> rows = WireFacts.Load(WireFacts.TablePath);
+        int[] fileOrder = [.. File.ReadLines(WireFacts.TablePath).Where(line => line.Length > 0).Select(OpcodeOf)];
 
         Assert.Equal(1, meta.RootElement.GetProperty("schema").GetInt32());
         Assert.Equal(16042, meta.RootElement.GetProperty("build").GetInt32());
         Assert.Equal(meta.RootElement.GetProperty("rows").GetInt32(), rows.Count);
-        Assert.Equal([.. rows.Keys.Order()], [.. rows.Keys]);
+        Assert.Equal(rows.Count, fileOrder.Length);
+        Assert.Equal([.. fileOrder.Order()], fileOrder);
         Assert.All(rows.Keys, opcode => Assert.InRange(opcode, 0, ushort.MaxValue));
     }
 
@@ -36,7 +44,7 @@ public sealed class ClientFactsTests
     }
 
     [Fact]
-    public void TheBehaviourFixturesUseOpcodesTheClientDoesNotHave()
+    public void TheBehaviorFixturesUseOpcodesTheClientDoesNotHave()
     {
         Dictionary<int, WireFactsRow> rows = WireFacts.Load(WireFacts.TablePath);
 

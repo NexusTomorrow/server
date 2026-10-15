@@ -43,6 +43,14 @@ internal static class ModelBuilder
             diagnostics.Add(DiagnosticInfo.Create(Diagnostics.BadType, typeLocation, typeName, "a wire type must be a class, not a record"));
         if (generic)
             diagnostics.Add(DiagnosticInfo.Create(Diagnostics.BadType, typeLocation, typeName, "a wire type cannot be generic or nested in a generic type"));
+        if (isMessage && type.IsAbstract)
+            diagnostics.Add(DiagnosticInfo.Create(Diagnostics.BadType, typeLocation, typeName, "a [WireMessage] cannot be abstract, because the registry creates it by opcode"));
+
+        // Generated code creates a nested type, a union arm or a message with new(); an abstract type is only ever a base or a union.
+        bool creatable = type.InstanceConstructors.Any(constructor => constructor.Parameters.Length == 0
+            && constructor.DeclaredAccessibility is Accessibility.Public or Accessibility.Internal or Accessibility.ProtectedOrInternal);
+        if (!type.IsAbstract && !creatable)
+            diagnostics.Add(DiagnosticInfo.Create(Diagnostics.BadType, typeLocation, typeName, "a wire type needs a public or internal constructor without parameters"));
 
         var containingTypes = new List<ContainingTypeModel>();
         for (INamedTypeSymbol? containing = type.ContainingType; containing is not null; containing = containing.ContainingType)
@@ -50,7 +58,7 @@ internal static class ModelBuilder
 
         string? wireBase = null;
         LayoutModel? wireBaseLayout = null;
-        if (type.BaseType is { } baseType && HasAttribute(baseType, WireNames.WireStruct))
+        if (type.BaseType is { } baseType && (HasAttribute(baseType, WireNames.WireStruct) || HasAttribute(baseType, WireNames.WireMessage)))
         {
             wireBase = baseType.ToDisplayString(s_fullName);
             if (!baseType.Locations.Any(location => location.IsInSource))
@@ -437,7 +445,7 @@ internal static class ModelBuilder
                 return null;
             }
 
-            var model = new ScalarModel(floating.Encoding, floating.Bits, typeDisplay, null, null, false, false, false, isVector3);
+            var model = new ScalarModel(floating.Encoding, floating.Bits, typeDisplay, null, null, false, false, false, isVector3, floating.Bits);
             return new ValueModel(ValueKind.Scalar, model, StringEncoding.None, null, null);
         }
 
@@ -461,6 +469,13 @@ internal static class ModelBuilder
 
         if (type is INamedTypeSymbol named && HasAttribute(named, WireNames.WireStruct))
         {
+            if (named.IsAbstract)
+            {
+                Report("a [WireStruct] member's type cannot be abstract; hold an abstract type as a [Union]");
+                reported = true;
+                return null;
+            }
+
             LayoutModel? metadataLayout = named.Locations.Any(l => l.IsInSource) ? null : ReadLayoutData(named);
             return new ValueModel(ValueKind.Struct, null, StringEncoding.None, typeDisplay, metadataLayout);
         }
@@ -479,7 +494,7 @@ internal static class ModelBuilder
                 return null;
             }
 
-            return new ScalarModel(encoding, 1, typeDisplay, null, null, false, false, true, false);
+            return new ScalarModel(encoding, 1, typeDisplay, null, null, false, false, true, false, 1);
         }
 
         INamedTypeSymbol? enumType = type is INamedTypeSymbol { TypeKind: TypeKind.Enum } named ? named : null;
@@ -530,11 +545,12 @@ internal static class ModelBuilder
             }
         }
 
-        return new ScalarModel(encoding, bits, typeDisplay, integer.Keyword, integer.Unsigned, integer.Signed, enumType is not null, false, false);
+        return new ScalarModel(encoding, bits, typeDisplay, integer.Keyword, integer.Unsigned, integer.Signed, enumType is not null, false, false, integer.Size);
     }
 
     private static void CheckReferences(List<MemberModel> members, string typeName, List<DiagnosticInfo> diagnostics)
     {
+        var selectors = new Dictionary<string, string>(StringComparer.Ordinal);
         for (int i = 0; i < members.Count; i++)
         {
             MemberModel member = members[i];
@@ -557,6 +573,11 @@ internal static class ModelBuilder
                 problem = "is not a [Count] member";
             else if (member.Shape == MemberShape.Union && (members[targetIndex] is not { Shape: MemberShape.Value, Settable: true, Value.Scalar: { IsBool: false, IntegerType: not null } }))
                 problem = "is not a settable integer or enum member with [UInt] or [SInt]";
+            else if (member.Shape == MemberShape.Union && selectors.TryGetValue(target, out string? other))
+                problem = $"already selects '{other}', and Write sets a selector from one union's arm";
+
+            if (member.Shape == MemberShape.Union)
+                selectors[target] = member.Name;
 
             if (problem is not null)
                 diagnostics.Add(DiagnosticInfo.Create(Diagnostics.BadReference, member.Location, member.Name, typeName, target, problem));
@@ -692,24 +713,6 @@ internal static class ModelBuilder
             default:
                 return false;
         }
-    }
-
-    /// <summary>
-    /// Whether a sign-extended [UnionCase] value fits a selector of <paramref name="bits"/> bits in <paramref name="encoding"/>.
-    /// </summary>
-    public static bool CaseFits(ulong value, ScalarEncoding encoding, int bits)
-    {
-        if (bits == 64)
-            return true;
-
-        if (encoding == ScalarEncoding.SInt)
-        {
-            long signed = unchecked((long)value);
-            long limit = 1L << (bits - 1);
-            return signed >= -limit && signed < limit;
-        }
-
-        return value >> bits == 0;
     }
 
     /// <summary>

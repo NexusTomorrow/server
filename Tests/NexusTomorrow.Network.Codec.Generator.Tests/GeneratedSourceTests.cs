@@ -334,6 +334,180 @@ public sealed class GeneratedSourceTests
         Assert.Equal("Minus", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
     }
 
+    // A [UInt] selector on a signed type carries its value's unsigned bits: 200 in an 8-bit sbyte
+    // selector is -56 in memory and 200 on the wire, and an sbyte enum's -1 is 255 on the wire.
+    [Fact]
+    public void AFullWidthUIntSelectorOnASignedTypeRoundTripsEveryCase()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            public enum Kind : sbyte
+            {
+                Negative = -1,
+                Zero = 0,
+            }
+
+            public interface IArm : IWireStruct
+            {
+            }
+
+            [WireStruct]
+            [UnionCase(0)]
+            public sealed partial class Low : IArm
+            {
+            }
+
+            [WireStruct]
+            [UnionCase(200)]
+            public sealed partial class High : IArm
+            {
+            }
+
+            public interface IShape : IWireStruct
+            {
+            }
+
+            [WireStruct]
+            [UnionCase(Kind.Zero)]
+            public sealed partial class ZeroShape : IShape
+            {
+            }
+
+            [WireStruct]
+            [UnionCase(Kind.Negative)]
+            public sealed partial class NegativeShape : IShape
+            {
+            }
+
+            [WireStruct]
+            public sealed partial class NumberHolder
+            {
+                [UInt(8)] public sbyte Selector { get; set; }
+
+                [Union(nameof(Selector))] public IArm Arm { get; set; } = new Low();
+            }
+
+            [WireStruct]
+            public sealed partial class EnumHolder
+            {
+                [UInt(8)] public Kind Selector { get; set; }
+
+                [Union(nameof(Selector))] public IShape Shape { get; set; } = new ZeroShape();
+            }
+
+            public static class Probe
+            {
+                public static string RoundTrip()
+                {
+                    byte[] numberBytes = new byte[1];
+                    var numberWriter = new BitWriter(numberBytes);
+                    new NumberHolder { Arm = new High() }.Write(ref numberWriter);
+                    var numberRead = new NumberHolder();
+                    var numberReader = new BitReader(numberBytes);
+                    numberRead.Read(ref numberReader);
+
+                    byte[] enumBytes = new byte[1];
+                    var enumWriter = new BitWriter(enumBytes);
+                    new EnumHolder { Shape = new NegativeShape() }.Write(ref enumWriter);
+                    var enumRead = new EnumHolder();
+                    var enumReader = new BitReader(enumBytes);
+                    enumRead.Read(ref enumReader);
+
+                    return $"{numberBytes[0]} {numberRead.Arm.GetType().Name} {enumBytes[0]} {enumRead.Shape.GetType().Name}";
+                }
+            }
+            """);
+
+        Assert.Empty(run.Diagnostics);
+        Assert.Empty(run.CompilationErrors);
+        Assert.Equal("200 High 255 NegativeShape", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
+    }
+
+    [Fact]
+    public void AMessageDerivingFromAMessageCarriesTheBaseFieldsFirst()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+            using NexusTomorrow.Network.Message;
+
+            namespace Tests;
+
+            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            public partial class Parent
+            {
+                [UInt(8)] public byte First { get; set; }
+            }
+
+            [WireMessage(GameMessageOpcode.ServerChat, Direction.ServerToClient)]
+            public sealed partial class Child : Parent
+            {
+                [UInt(8)] public byte Second { get; set; }
+            }
+
+            public static class Probe
+            {
+                public static string RoundTrip()
+                {
+                    byte[] bytes = new byte[2];
+                    var writer = new BitWriter(bytes);
+                    var written = new Child { First = 1, Second = 2 };
+                    written.Write(ref writer);
+                    var read = new Child();
+                    var reader = new BitReader(bytes);
+                    read.Read(ref reader);
+                    return $"{bytes[0]} {bytes[1]} {written.MeasureBits()} {read.First} {read.Second}";
+                }
+            }
+            """);
+
+        Assert.Empty(run.Diagnostics);
+        Assert.Empty(run.CompilationErrors);
+        Assert.Equal("1 2 16 1 2", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
+    }
+
+    // A reader takes a terminated string's count of 0 as "", so an element holding one guarantees only
+    // its 16-bit count, and the count check must not reject two such elements in 32 bits.
+    [Fact]
+    public void ElementsWithEmptyTerminatedStringsSentAsCountsAloneRead()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using System.Collections.Generic;
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            [WireStruct]
+            public sealed partial class Note
+            {
+                [TerminatedWideString] public string Text { get; set; } = "";
+            }
+
+            [WireStruct]
+            public sealed partial class Notes
+            {
+                [Array(CountBits = 8)] public List<Note> Items { get; } = [];
+            }
+
+            public static class Probe
+            {
+                public static int ReadTwo()
+                {
+                    var notes = new Notes();
+                    var reader = new BitReader(new byte[] { 0x02, 0x00, 0x00, 0x00, 0x00 });
+                    notes.Read(ref reader);
+                    return notes.Items.Count;
+                }
+            }
+            """);
+
+        Assert.Empty(run.Diagnostics);
+        Assert.Empty(run.CompilationErrors);
+        Assert.Equal(2, GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "ReadTwo"));
+    }
+
     private static string WritePathOf(string generated)
     {
         int start = generated.IndexOf("void Write(", StringComparison.Ordinal);

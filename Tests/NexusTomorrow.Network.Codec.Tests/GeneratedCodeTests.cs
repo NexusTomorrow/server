@@ -11,10 +11,12 @@ public sealed class GeneratedCodeTests
         return T.Layout;
     }
 
+    // The buffer starts as 0xFF, as a rented one may, so every zero bit in a result was written.
     private static byte[] WriteAll(IWireStruct value)
     {
         int bits = value.MeasureBits();
         byte[] buffer = new byte[(bits + 7) / 8];
+        Array.Fill(buffer, (byte)0xFF);
         var writer = new BitWriter(buffer);
         value.Write(ref writer);
         Assert.Equal(bits, writer.BitPosition);
@@ -181,8 +183,10 @@ public sealed class GeneratedCodeTests
     [Fact]
     public void ACountLargerThanTheBodyFailsTheReadBeforeAnyElementIsMade()
     {
-        // A 3-bit count of 7 18-bit ids in a one-byte body.
-        Assert.Throws<CodecException>(() => ReadAll<CollectionsFixture>([0x07]));
+        // A 3-bit count of 7 18-bit ids in a one-byte body; reading the first id would also fail, so the message pins the count check.
+        CodecException exception = Assert.Throws<CodecException>(() => ReadAll<CollectionsFixture>([0x07]));
+
+        Assert.Contains("asks for more elements than the body holds", exception.Message);
     }
 
     [Fact]
@@ -239,6 +243,20 @@ public sealed class GeneratedCodeTests
 
         Assert.Equal([0x03, 0x06, 0x00, 0x00, 0x00, 0xAA, 0xBB], bytes);
         Assert.Equal([0xAA, 0xBB], ReadAll<EnvelopeFixture>(bytes).Payload);
+    }
+
+    [Fact]
+    public void AnAlignedBlobsAlignmentIsAWidthOnTheEmptyPath()
+    {
+        var empty = new EnvelopeFixture();
+        WireLayout layout = LayoutOf<EnvelopeFixture>();
+
+        Assert.Equal([5, 3, 32], layout.EmptyPathWidths);
+        Assert.Equal(40, layout.EmptyPathBits);
+        Assert.Equal(layout.EmptyPathBits, empty.MeasureBits());
+        Assert.Equal(5, WriteAll(empty).Length);
+        Assert.Equal([WirePartShape.Blob], layout.Parts.Select(part => part.Shape));
+        Assert.Equal(2, layout.Parts[0].At);
     }
 
     [Fact]

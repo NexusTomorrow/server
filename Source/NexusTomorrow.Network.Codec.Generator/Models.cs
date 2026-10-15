@@ -48,7 +48,8 @@ internal enum CollectionKind
 /// <param name="IntegerType">For an enum, its underlying type; otherwise the integral type itself, or null for bool and floats.</param>
 /// <param name="UnsignedType">The unsigned type of <paramref name="IntegerType"/>'s size, through which a signed value reaches the wire.</param>
 /// <param name="IsSigned">True when <paramref name="IntegerType"/> is signed.</param>
-internal sealed record ScalarModel(ScalarEncoding Encoding, int Bits, string ClrType, string? IntegerType, string? UnsignedType, bool IsSigned, bool IsEnum, bool IsBool, bool IsVector3);
+/// <param name="TypeBits">The size of <paramref name="IntegerType"/> in bits; for bool and floats, <paramref name="Bits"/>.</param>
+internal sealed record ScalarModel(ScalarEncoding Encoding, int Bits, string ClrType, string? IntegerType, string? UnsignedType, bool IsSigned, bool IsEnum, bool IsBool, bool IsVector3, int TypeBits);
 
 /// <summary>
 /// What one value is: a scalar, a string, or a [WireStruct] type (with its layout when it comes from another assembly).

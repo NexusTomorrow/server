@@ -16,7 +16,7 @@ public readonly record struct WirePart
     public required int At { get; init; }
 
     /// <summary>
-    /// For an array, the bits one element takes on the empty path, as the client's size function counts it; -1 for other parts or when that path is incomplete.
+    /// For an array, the bits one element takes on the empty path; -1 for other parts or when that path is incomplete.
     /// </summary>
     public required int ElementBits { get; init; }
 }
