@@ -64,8 +64,9 @@ public sealed class DiagnosticTests
         AssertSingle(run, "NTC002", DiagnosticSeverity.Error, type + " Value");
     }
 
+    // A warning, not an error: a sentinel member that is never sent is suppressed deliberately, and the type still generates.
     [Fact]
-    public void EnumValueWiderThanTheWidthRaisesNtc003()
+    public void EnumValueWiderThanTheWidthWarnsWithNtc003AndStillGenerates()
     {
         GeneratorRun run = GeneratorHarness.Run("""
             using NexusTomorrow.Network.Codec;
@@ -85,8 +86,10 @@ public sealed class DiagnosticTests
             }
             """);
 
-        Diagnostic diagnostic = AssertSingle(run, "NTC003", DiagnosticSeverity.Error, "Mode Current");
+        Diagnostic diagnostic = AssertSingle(run, "NTC003", DiagnosticSeverity.Warning, "Mode Current");
         Assert.Contains("Mode.Eight = 8", MessageOf(diagnostic));
+        Assert.Contains("Tests.Sample.g.cs", run.GeneratedSources);
+        Assert.Empty(run.CompilationErrors);
     }
 
     [Fact]
@@ -706,7 +709,7 @@ public sealed class DiagnosticTests
     }
 
     [Fact]
-    public void UnionCaseTheSelectorCannotHoldRaisesNtc003AndTheHolderGetsNoSource()
+    public void UnionCaseTheSelectorCannotHoldRaisesNtc013AndTheHolderGetsNoSource()
     {
         GeneratorRun run = GeneratorHarness.Run("""
             using NexusTomorrow.Network.Codec;
@@ -738,7 +741,7 @@ public sealed class DiagnosticTests
             }
             """);
 
-        Diagnostic diagnostic = AssertSingle(run, "NTC003", DiagnosticSeverity.Error, "sbyte Selector");
+        Diagnostic diagnostic = AssertSingle(run, "NTC013", DiagnosticSeverity.Error, "sbyte Selector");
         Assert.Contains("the [UnionCase] of Wide = 200", MessageOf(diagnostic));
         Assert.DoesNotContain("Tests.Holder.g.cs", run.GeneratedSources);
     }
@@ -908,6 +911,35 @@ public sealed class DiagnosticTests
 
         Diagnostic diagnostic = AssertSingle(run, "NTC009", DiagnosticSeverity.Error, "Shape Body");
         Assert.Contains("hold an abstract type as a [Union]", MessageOf(diagnostic));
+    }
+
+    [Fact]
+    public void AMessageHoldingAnAlignedBlobCannotBeNestedAndRaisesNtc009()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using NexusTomorrow.Network.Codec;
+            using NexusTomorrow.Network.Message;
+
+            namespace Tests;
+
+            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            public sealed partial class Envelope
+            {
+                [Blob(32, Align = true)] public byte[] Payload { get; set; } = [];
+            }
+
+            [WireStruct]
+            public sealed partial class Holder
+            {
+                [UInt(3)] public byte Prefix { get; set; }
+
+                public Envelope Inner { get; set; } = new();
+            }
+            """);
+
+        Diagnostic diagnostic = AssertSingle(run, "NTC009", DiagnosticSeverity.Error, "Envelope Inner");
+        Assert.Contains("holds an aligned blob", MessageOf(diagnostic));
+        Assert.DoesNotContain("Tests.Holder.g.cs", run.GeneratedSources);
     }
 
     // A type that emits nothing has no Read or Write, so a type that nests it, or derives from it, must

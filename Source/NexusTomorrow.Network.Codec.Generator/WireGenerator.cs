@@ -52,7 +52,7 @@ public sealed class WireGenerator : IIncrementalGenerator
 
             if (types.ContainsKey(model.FullName))
             {
-                production.ReportDiagnostic(Diagnostic.Create(Diagnostics.BadType, model.Location?.ToLocation(), model.Name, "a type is a [WireStruct] or a [WireMessage], not both, because a message is never nested"));
+                production.ReportDiagnostic(Diagnostic.Create(Diagnostics.BadType, model.Location?.ToLocation(), model.Name, "a type is a [WireStruct] or a [WireMessage], not both; a message nests as it is"));
                 failed.Add(model.FullName);
             }
 
@@ -134,7 +134,7 @@ public sealed class WireGenerator : IIncrementalGenerator
                 foreach (TypeModel arm in arms.Where(arm => !UnionCases.Fits(arm.UnionCaseValue, scalar)))
                 {
                     string bits = scalar.Bits.ToString(CultureInfo.InvariantCulture);
-                    production.ReportDiagnostic(Diagnostic.Create(Diagnostics.ValueTooWide, selector.Location?.ToLocation(), selector.Name, type.Name, bits, "the [UnionCase] of " + arm.Name, UnionCases.ValueText(arm.UnionCaseValue)));
+                    production.ReportDiagnostic(Diagnostic.Create(Diagnostics.CaseTooWide, selector.Location?.ToLocation(), selector.Name, type.Name, bits, arm.Name, UnionCases.ValueText(arm.UnionCaseValue)));
                     brokenHolders.Add(type.FullName);
                 }
 

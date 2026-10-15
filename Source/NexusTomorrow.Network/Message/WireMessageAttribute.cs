@@ -3,8 +3,8 @@
 namespace NexusTomorrow.Network.Message;
 
 /// <summary>
-/// Marks a partial class as a message: a layout with an opcode and the direction it travels, which starts the body and is never nested. The generator implements <see cref="IWireMessage"/> for it.
-/// A class carries this or [WireStruct], not both; a message may derive from a [WireStruct] or another message.
+/// Marks a partial class as a message: a layout with an opcode and the direction it travels. The generator implements <see cref="IWireMessage"/> for it.
+/// A class carries this or [WireStruct], not both; a message may derive from a [WireStruct] or another message, and may be nested in another layout unless it holds an aligned blob.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class WireMessageAttribute : Attribute

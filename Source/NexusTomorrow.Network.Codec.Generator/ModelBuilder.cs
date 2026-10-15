@@ -467,11 +467,19 @@ internal static class ModelBuilder
             return new ValueModel(ValueKind.String, null, encoding, null, null);
         }
 
-        if (type is INamedTypeSymbol named && HasAttribute(named, WireNames.WireStruct))
+        if (type is INamedTypeSymbol named && (HasAttribute(named, WireNames.WireStruct) || HasAttribute(named, WireNames.WireMessage)))
         {
             if (named.IsAbstract)
             {
                 Report("a [WireStruct] member's type cannot be abstract; hold an abstract type as a [Union]");
+                reported = true;
+                return null;
+            }
+
+            // An aligned blob counts on starting at a byte boundary, which a message nested at any bit offset does not.
+            if (HoldsAlignedBlob(named))
+            {
+                Report($"{named.Name} holds an aligned blob, so it cannot be nested; only a message at the start of a body can align");
                 reported = true;
                 return null;
             }
@@ -533,16 +541,13 @@ internal static class ModelBuilder
         if (encoding == ScalarEncoding.UInt && integer.Signed && bits < integer.Size && enumType is null)
             diagnostics.Add(DiagnosticInfo.Create(Diagnostics.NarrowSignedUInt, location, name, typeName, integer.Keyword, Text(bits)));
 
+        // NTC003 is a warning: the member stays in the layout, and writing a value that does not fit throws.
         if (enumType is not null)
         {
-            foreach (IFieldSymbol field in enumType.GetMembers().OfType<IFieldSymbol>())
-            {
-                if (!field.HasConstantValue || field.ConstantValue is null || Fits(field.ConstantValue, encoding, bits))
-                    continue;
-
-                diagnostics.Add(DiagnosticInfo.Create(Diagnostics.ValueTooWide, location, name, typeName, Text(bits), enumType.Name + "." + field.Name, Convert.ToString(field.ConstantValue, CultureInfo.InvariantCulture) ?? ""));
-                return null;
-            }
+            IFieldSymbol? tooWide = enumType.GetMembers().OfType<IFieldSymbol>()
+                .FirstOrDefault(field => field.HasConstantValue && field.ConstantValue is not null && !Fits(field.ConstantValue, encoding, bits));
+            if (tooWide is not null)
+                diagnostics.Add(DiagnosticInfo.Create(Diagnostics.ValueTooWide, location, name, typeName, Text(bits), enumType.Name + "." + tooWide.Name, Convert.ToString(tooWide.ConstantValue, CultureInfo.InvariantCulture) ?? ""));
         }
 
         return new ScalarModel(encoding, bits, typeDisplay, integer.Keyword, integer.Unsigned, integer.Signed, enumType is not null, false, false, integer.Size);
@@ -721,6 +726,20 @@ internal static class ModelBuilder
     private static TypedConstant ArgumentOf(AttributeData attribute, int index)
     {
         return index < attribute.ConstructorArguments.Length ? attribute.ConstructorArguments[index] : default;
+    }
+
+    private static bool HoldsAlignedBlob(INamedTypeSymbol type)
+    {
+        for (INamedTypeSymbol? current = type; current is not null; current = current.BaseType)
+        {
+            foreach (ISymbol member in current.GetMembers())
+            {
+                if (FindAttribute(member.GetAttributes(), WireNames.Blob) is { } blob && NamedBool(blob, "Align"))
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool IsPartial(INamedTypeSymbol type, CancellationToken cancellationToken)

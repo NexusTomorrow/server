@@ -21,10 +21,13 @@ internal static class Diagnostics
         "Member '{0}' of '{1}' declares {2} bits, which its type {3} cannot hold or which is outside 1 to {4}",
         Category, DiagnosticSeverity.Error, isEnabledByDefault: true);
 
+    /// <summary>
+    /// A warning, so a sentinel member that is never sent can be suppressed deliberately; the generated Write throws if one is.
+    /// </summary>
     public static readonly DiagnosticDescriptor ValueTooWide = new(
-        "NTC003", "Value does not fit the declared width",
-        "Member '{0}' of '{1}' is {2} bits wide, but {3} = {4} needs more",
-        Category, DiagnosticSeverity.Error, isEnabledByDefault: true);
+        "NTC003", "Enum value does not fit the declared width",
+        "Member '{0}' of '{1}' is {2} bits wide, but {3} = {4} needs more; writing it throws",
+        Category, DiagnosticSeverity.Warning, isEnabledByDefault: true);
 
     public static readonly DiagnosticDescriptor BadReference = new(
         "NTC004", "Count or selector reference is wrong",
@@ -71,6 +74,11 @@ internal static class Diagnostics
         "'{0}': {1}",
         Category, DiagnosticSeverity.Error, isEnabledByDefault: true);
 
+    public static readonly DiagnosticDescriptor CaseTooWide = new(
+        "NTC013", "Union case does not fit its selector",
+        "Member '{0}' of '{1}' is {2} bits wide, but the [UnionCase] of {3} = {4} needs more, so that arm could never be read back",
+        Category, DiagnosticSeverity.Error, isEnabledByDefault: true);
+
     public static DiagnosticDescriptor ById(string id)
     {
         return id switch
@@ -87,6 +95,7 @@ internal static class Diagnostics
             "NTC010" => NoArms,
             "NTC011" => AlignedBlobInStruct,
             "NTC012" => BadType,
+            "NTC013" => CaseTooWide,
             _ => throw new ArgumentOutOfRangeException(nameof(id), id, "Unknown diagnostic id."),
         };
     }

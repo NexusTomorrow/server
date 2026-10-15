@@ -426,6 +426,50 @@ public sealed class GeneratedSourceTests
         Assert.Equal("200 High 255 NegativeShape", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
     }
 
+    // The client nests whole message bodies in a list (ServerMissileActorListAdd carries ServerMissileActorAdd bodies).
+    [Fact]
+    public void AMessageNestedInAnotherRoundTrips()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using System.Collections.Generic;
+            using NexusTomorrow.Network.Codec;
+            using NexusTomorrow.Network.Message;
+
+            namespace Tests;
+
+            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            public sealed partial class Item
+            {
+                [UInt(5)] public byte Value { get; set; }
+            }
+
+            [WireMessage(GameMessageOpcode.ServerChat, Direction.ServerToClient)]
+            public sealed partial class Items
+            {
+                [Array(CountBits = 3)] public List<Item> Entries { get; set; } = [];
+            }
+
+            public static class Probe
+            {
+                public static string RoundTrip()
+                {
+                    var written = new Items { Entries = [new Item { Value = 9 }, new Item { Value = 30 }] };
+                    byte[] bytes = new byte[2];
+                    var writer = new BitWriter(bytes);
+                    written.Write(ref writer);
+                    var read = new Items();
+                    var reader = new BitReader(bytes);
+                    read.Read(ref reader);
+                    return $"{written.MeasureBits()} {read.Entries.Count} {read.Entries[0].Value} {read.Entries[1].Value}";
+                }
+            }
+            """);
+
+        Assert.Empty(run.Diagnostics);
+        Assert.Empty(run.CompilationErrors);
+        Assert.Equal("13 2 9 30", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
+    }
+
     [Fact]
     public void AMessageDerivingFromAMessageCarriesTheBaseFieldsFirst()
     {
