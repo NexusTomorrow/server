@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class CreatureLevelEntry
 {
-    public class CreatureLevelEntry
-    {
-        public uint Id;
-        [GameTableFieldArray(100)]
-        public float[] UnitPropertyValue = [];
-    }
+    public uint Id;
+    [GameTableFieldArray(100)]
+    public float[] UnitPropertyValue = [];
 }

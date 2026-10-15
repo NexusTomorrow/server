@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class PathEpisodeEntry
 {
-    public class PathEpisodeEntry
-    {
-        public uint Id;
-        public uint LocalizedTextIdName;
-        public uint LocalizedTextIdSummary;
-        public uint WorldId;
-        public uint WorldZoneId;
-        public uint PathTypeEnum;
-    }
+    public uint Id;
+    public uint LocalizedTextIdName;
+    public uint LocalizedTextIdSummary;
+    public uint WorldId;
+    public uint WorldZoneId;
+    public uint PathTypeEnum;
 }

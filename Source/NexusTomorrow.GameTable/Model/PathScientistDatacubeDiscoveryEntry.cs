@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class PathScientistDatacubeDiscoveryEntry
 {
-    public class PathScientistDatacubeDiscoveryEntry
-    {
-        public uint Id;
-        public uint WorldZoneId;
-    }
+    public uint Id;
+    public uint WorldZoneId;
 }

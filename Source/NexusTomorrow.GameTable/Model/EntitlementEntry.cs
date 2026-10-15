@@ -1,14 +1,13 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class EntitlementEntry
 {
-    public class EntitlementEntry
-    {
-        public uint Id;
-        public uint MaxCount;
-        public uint Flags;
-        public uint Spell4IdPersistentBuff;
-        public uint CharacterTitleId;
-        public uint LocalizedTextIdName;
-        public uint LocalizedTextIdDescription;
-        public string ButtonIcon = string.Empty;
-    }
+    public uint Id;
+    public uint MaxCount;
+    public uint Flags;
+    public uint Spell4IdPersistentBuff;
+    public uint CharacterTitleId;
+    public uint LocalizedTextIdName;
+    public uint LocalizedTextIdDescription;
+    public string ButtonIcon = string.Empty;
 }

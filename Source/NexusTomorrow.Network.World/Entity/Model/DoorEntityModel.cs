@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.Network.World.Entity.Model
-{
-    public class DoorEntityModel : IEntityModel
-    {
-        public uint CreatureId { get; set; }
+﻿namespace NexusTomorrow.Network.World.Entity.Model;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(CreatureId, 18u);
-        }
+public class DoorEntityModel : IEntityModel
+{
+    public uint CreatureId { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(CreatureId, 18u);
     }
 }

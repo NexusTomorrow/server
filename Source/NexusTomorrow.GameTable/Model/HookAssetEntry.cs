@@ -1,15 +1,14 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class HookAssetEntry
 {
-    public class HookAssetEntry
-    {
-        public uint Id;
-        public string Asset = string.Empty;
-        public float Scale;
-        public float OffsetX;
-        public float OffsetY;
-        public float OffsetZ;
-        public float RotationX;
-        public float RotationY;
-        public float RotationZ;
-    }
+    public uint Id;
+    public string Asset = string.Empty;
+    public float Scale;
+    public float OffsetX;
+    public float OffsetY;
+    public float OffsetZ;
+    public float RotationX;
+    public float RotationY;
+    public float RotationZ;
 }

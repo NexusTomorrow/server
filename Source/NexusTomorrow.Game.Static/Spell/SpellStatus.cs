@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Spell
+﻿namespace NexusTomorrow.Game.Static.Spell;
+
+public enum SpellStatus
 {
-    public enum SpellStatus
-    {
-        Initiating,
-        Casting,
-        Executing,
-        Finished
-    }
+    Initiating,
+    Casting,
+    Executing,
+    Finished
 }

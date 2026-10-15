@@ -1,15 +1,14 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ClientEventEntry
 {
-    public class ClientEventEntry
-    {
-        public uint Id;
-        public string Description = string.Empty;
-        public uint WorldId;
-        public uint EventTypeEnum;
-        public uint EventData;
-        public uint PrerequisiteId;
-        public uint Priority;
-        public uint DelayMS;
-        public uint ClientEventActionId;
-    }
+    public uint Id;
+    public string Description = string.Empty;
+    public uint WorldId;
+    public uint EventTypeEnum;
+    public uint EventData;
+    public uint PrerequisiteId;
+    public uint Priority;
+    public uint DelayMS;
+    public uint ClientEventActionId;
 }

@@ -1,20 +1,19 @@
 ﻿using NexusTomorrow.Game.Static.Friendship;
 using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Friendship
-{
-    [Message(GameMessageOpcode.ClientFriendshipRemoveByName)]
-    public class ClientFriendshipRemoveByName : IReadable
-    {
-        public string Name { get; private set; }
-        public string RealmName { get; private set; }
-        public FriendshipType Type { get; private set; }
+namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-        public void Read(GamePacketReader reader)
-        {
-            Name      = reader.ReadWideString();
-            RealmName = reader.ReadWideString();
-            Type      = reader.ReadEnum<FriendshipType>(4u);
-        }
+[Message(GameMessageOpcode.ClientFriendshipRemoveByName)]
+public class ClientFriendshipRemoveByName : IReadable
+{
+    public string Name { get; private set; }
+    public string RealmName { get; private set; }
+    public FriendshipType Type { get; private set; }
+
+    public void Read(GamePacketReader reader)
+    {
+        Name = reader.ReadWideString();
+        RealmName = reader.ReadWideString();
+        Type = reader.ReadEnum<FriendshipType>(4u);
     }
 }

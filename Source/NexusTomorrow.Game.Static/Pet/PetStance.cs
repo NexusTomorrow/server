@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.Game.Static.Pet
+﻿namespace NexusTomorrow.Game.Static.Pet;
+
+public enum PetStance
 {
-    public enum PetStance
-    {
-        Assist     = 0x0,
-        Stay       = 0x1,
-        Passive    = 0x2,
-        Defensive  = 0x3,
-        Aggressive = 0x4,
-    };
-}
+    Assist = 0x0,
+    Stay = 0x1,
+    Passive = 0x2,
+    Defensive = 0x3,
+    Aggressive = 0x4,
+};

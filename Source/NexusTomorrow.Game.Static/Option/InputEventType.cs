@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.Game.Static.Option
+﻿namespace NexusTomorrow.Game.Static.Option;
+
+public enum InputEventType
 {
-    public enum InputEventType
-    {
-        Raw         = 0,
-        Click       = 1,
-        Hold        = 2,
-        DoubleClick = 3,
-        DoubleHold  = 4,
-        Rapid       = 5
-    }
+    Raw = 0,
+    Click = 1,
+    Hold = 2,
+    DoubleClick = 3,
+    DoubleHold = 4,
+    Rapid = 5
 }

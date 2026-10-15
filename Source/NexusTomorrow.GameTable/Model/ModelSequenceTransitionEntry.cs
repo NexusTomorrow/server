@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ModelSequenceTransitionEntry
 {
-    public class ModelSequenceTransitionEntry
-    {
-        public uint Id;
-        public uint ModelSequenceIdFrom;
-        public uint ModelSequenceIdTo;
-        public uint ModelSequenceIdTransition;
-    }
+    public uint Id;
+    public uint ModelSequenceIdFrom;
+    public uint ModelSequenceIdTo;
+    public uint ModelSequenceIdTransition;
 }

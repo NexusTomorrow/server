@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class MapZoneHexEntry
 {
-    public class MapZoneHexEntry
-    {
-        public uint Id;
-        public uint MapZoneId;
-        public uint Pos0;
-        public uint Pos1;
-        public uint Flags;
-    }
+    public uint Id;
+    public uint MapZoneId;
+    public uint Pos0;
+    public uint Pos1;
+    public uint Flags;
 }

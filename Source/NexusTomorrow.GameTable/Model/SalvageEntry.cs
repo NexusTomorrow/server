@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class SalvageEntry
 {
-    public class SalvageEntry
-    {
-        public uint Id;
-        public uint Item2TypeId;
-        public uint Level;
-    }
+    public uint Id;
+    public uint Item2TypeId;
+    public uint Level;
 }

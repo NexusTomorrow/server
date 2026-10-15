@@ -1,7 +1,6 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ModelBoneSetEntry
 {
-    public class ModelBoneSetEntry
-    {
-        public uint Id;
-    }
+    public uint Id;
 }

@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class SpellCoolDownEntry
 {
-    public class SpellCoolDownEntry
-    {
-        public uint Id;
-        public uint CooldownTime;
-    }
+    public uint Id;
+    public uint CooldownTime;
 }

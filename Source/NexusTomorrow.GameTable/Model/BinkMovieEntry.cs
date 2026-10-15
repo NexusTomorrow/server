@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class BinkMovieEntry
 {
-    public class BinkMovieEntry
-    {
-        public uint Id;
-        public string BinkMovieAssetPath = string.Empty;
-        public uint Flags;
-    }
+    public uint Id;
+    public string BinkMovieAssetPath = string.Empty;
+    public uint Flags;
 }

@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class PositionalRequirementEntry
 {
-    public class PositionalRequirementEntry
-    {
-        public uint Id;
-        public uint AngleCenter;
-        public uint AngleRange;
-        public uint Flags;
-    }
+    public uint Id;
+    public uint AngleCenter;
+    public uint AngleRange;
+    public uint Flags;
 }

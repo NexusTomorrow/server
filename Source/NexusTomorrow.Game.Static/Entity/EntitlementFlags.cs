@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Entity
+﻿namespace NexusTomorrow.Game.Static.Entity;
+
+[Flags]
+public enum EntitlementFlags
 {
-    [Flags]
-    public enum EntitlementFlags
-    {
-        None      = 0,
-        Character = 1,
-        Disabled  = 2
-    }
+    None = 0,
+    Character = 1,
+    Disabled = 2
 }

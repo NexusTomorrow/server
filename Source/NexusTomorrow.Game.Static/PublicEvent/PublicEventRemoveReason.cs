@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.PublicEvent
+﻿namespace NexusTomorrow.Game.Static.PublicEvent;
+
+public enum PublicEventRemoveReason
 {
-    public enum PublicEventRemoveReason
-    {
-        Logout,
-        Success,
-        Failure,
-        LeftArea
-    }
+    Logout,
+    Success,
+    Failure,
+    LeftArea
 }

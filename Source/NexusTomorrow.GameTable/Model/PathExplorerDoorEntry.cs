@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class PathExplorerDoorEntry
 {
-    public class PathExplorerDoorEntry
-    {
-        public uint Id;
-        public uint WorldZoneIdInsideMicro;
-        public uint TargetGroupIdActivate;
-        public uint TargetGroupIdKill;
-    }
+    public uint Id;
+    public uint WorldZoneIdInsideMicro;
+    public uint TargetGroupIdActivate;
+    public uint TargetGroupIdKill;
 }

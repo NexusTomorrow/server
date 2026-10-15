@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Spell4StackGroupEntry
 {
-    public class Spell4StackGroupEntry
-    {
-        public uint Id;
-        public uint StackCap;
-        public uint StackTypeEnum;
-    }
+    public uint Id;
+    public uint StackCap;
+    public uint StackTypeEnum;
 }

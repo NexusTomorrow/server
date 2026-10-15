@@ -1,15 +1,14 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class EpisodeEntry
 {
-    public class EpisodeEntry
-    {
-        public uint Id;
-        public uint LocalizedTextIdName;
-        public uint LocalizedTextIdBriefing;
-        public uint LocalizedTextIdEndSummary;
-        public uint Flags;
-        public uint WorldZoneId;
-        public uint PercentToDisplay;
-        public uint QuestHubIdExile;
-        public uint QuestHubIdDominion;
-    }
+    public uint Id;
+    public uint LocalizedTextIdName;
+    public uint LocalizedTextIdBriefing;
+    public uint LocalizedTextIdEndSummary;
+    public uint Flags;
+    public uint WorldZoneId;
+    public uint PercentToDisplay;
+    public uint QuestHubIdExile;
+    public uint QuestHubIdDominion;
 }

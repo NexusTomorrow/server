@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Loot
+﻿namespace NexusTomorrow.Game.Static.Loot;
+
+public enum LootRollAction
 {
-    public enum LootRollAction
-    {
-        Need    = 0,
-        Greed   = 1,
-        Pass    = 2,
-    }
+    Need = 0,
+    Greed = 1,
+    Pass = 2,
 }

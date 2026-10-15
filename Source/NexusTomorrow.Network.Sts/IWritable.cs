@@ -1,9 +1,8 @@
 ﻿using System.Xml;
 
-namespace NexusTomorrow.Network.Sts
+namespace NexusTomorrow.Network.Sts;
+
+public interface IWritable
 {
-    public interface IWritable
-    {
-        void Write(XmlWriter writer);
-    }
+    void Write(XmlWriter writer);
 }

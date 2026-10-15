@@ -1,13 +1,12 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class LocalizedTextEntry
 {
-    public class LocalizedTextEntry
-    {
-        public uint Id;
-        public uint SoundEventId;
-        public uint SoundEventIdFemale;
-        public uint Version;
-        public uint UnitVoiceTypeId;
-        public uint StringContextEnum;
-        public uint SoundAvailabilityFlagFemale;
-    }
+    public uint Id;
+    public uint SoundEventId;
+    public uint SoundEventIdFemale;
+    public uint Version;
+    public uint UnitVoiceTypeId;
+    public uint StringContextEnum;
+    public uint SoundAvailabilityFlagFemale;
 }

@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class BugSubcategoryEntry
 {
-    public class BugSubcategoryEntry
-    {
-        public uint Id;
-        public uint BugCategoryId;
-        public uint LocalizedTextId;
-    }
+    public uint Id;
+    public uint BugCategoryId;
+    public uint LocalizedTextId;
 }

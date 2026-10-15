@@ -1,22 +1,21 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace NexusTomorrow.GameTable
+namespace NexusTomorrow.GameTable;
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct GameTableHeader
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct GameTableHeader
-    {
-        public uint Signature;
-        public uint Version;
-        public ulong NameLength;
-        public ulong Unknown1;
-        public ulong RecordSize;
-        public ulong FieldCount;
-        public ulong FieldOffset;
-        public ulong RecordCount;
-        public ulong TotalRecordSize;
-        public ulong RecordOffset;
-        public ulong MaxId;
-        public ulong LookupOffset;
-        public ulong Unknown2;
-    }
+    public uint Signature;
+    public uint Version;
+    public ulong NameLength;
+    public ulong Unknown1;
+    public ulong RecordSize;
+    public ulong FieldCount;
+    public ulong FieldOffset;
+    public ulong RecordCount;
+    public ulong TotalRecordSize;
+    public ulong RecordOffset;
+    public ulong MaxId;
+    public ulong LookupOffset;
+    public ulong Unknown2;
 }

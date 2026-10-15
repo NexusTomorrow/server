@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ClientEventActionEntry
 {
-    public class ClientEventActionEntry
-    {
-        public uint Id;
-        public uint ActionTypeEnum;
-        public uint ActionData00;
-        public uint ActionData01;
-        public uint LocalizedTextIdSubZoneName;
-    }
+    public uint Id;
+    public uint ActionTypeEnum;
+    public uint ActionData00;
+    public uint ActionData01;
+    public uint LocalizedTextIdSubZoneName;
 }

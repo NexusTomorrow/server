@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Story
+﻿namespace NexusTomorrow.Game.Static.Story;
+
+public enum CommunicatorPortraitPlacement
 {
-    public enum CommunicatorPortraitPlacement
-    {
-        Left  = 0x0,
-        Right = 0x1
-    };
-}
+    Left = 0x0,
+    Right = 0x1
+};

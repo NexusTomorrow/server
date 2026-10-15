@@ -1,14 +1,13 @@
-﻿namespace NexusTomorrow.Network
-{
-    public class InvalidPacketValueException : Exception
-    {
-        public InvalidPacketValueException()
-        {
-        }
+﻿namespace NexusTomorrow.Network;
 
-        public InvalidPacketValueException(string message)
-            : base(message)
-        {
-        }
+public class InvalidPacketValueException : Exception
+{
+    public InvalidPacketValueException()
+    {
+    }
+
+    public InvalidPacketValueException(string message)
+        : base(message)
+    {
     }
 }

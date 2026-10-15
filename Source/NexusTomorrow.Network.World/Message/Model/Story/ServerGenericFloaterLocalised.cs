@@ -1,16 +1,15 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Story
-{
-    // Appears over the player's unit
-    [Message(GameMessageOpcode.ServerGenericFloaterLocalised)]
-    public class ServerGenericFloaterLocalised : IWritable
-    {
-        public uint LocalisedTextId { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.Story;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(LocalisedTextId);
-        }
+// Appears over the player's unit
+[Message(GameMessageOpcode.ServerGenericFloaterLocalised)]
+public class ServerGenericFloaterLocalised : IWritable
+{
+    public uint LocalisedTextId { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(LocalisedTextId);
     }
 }

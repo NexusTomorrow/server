@@ -1,12 +1,11 @@
 ﻿using System.Xml;
 
-namespace NexusTomorrow.Network.Sts.Model
+namespace NexusTomorrow.Network.Sts.Model;
+
+[Message("/Sts/Ping")]
+public class PingMessage : IReadable
 {
-    [Message("/Sts/Ping")]
-    public class PingMessage : IReadable
+    public void Read(XmlDocument document)
     {
-        public void Read(XmlDocument document)
-        {
-        }
     }
 }

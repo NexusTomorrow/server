@@ -1,16 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
-using NexusTomorrow.Game.Static.Crafting;
+﻿using NexusTomorrow.Game.Static.Crafting;
+using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Crafting
+namespace NexusTomorrow.Network.World.Message.Model.Crafting;
+
+[Message(GameMessageOpcode.ServerTradeskillSigilResult)]
+public class ServerTradeskillSigilResult : IWritable
 {
-    [Message(GameMessageOpcode.ServerTradeskillSigilResult)]
-    public class ServerTradeskillSigilResult : IWritable
-    {
-        public TradeskillResult TradeskillSigilResult { get; set; }
+    public TradeskillResult TradeskillSigilResult { get; set; }
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(TradeskillSigilResult, 32u);
-        }
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(TradeskillSigilResult, 32u);
     }
 }

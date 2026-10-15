@@ -1,12 +1,11 @@
 ﻿using System.Xml;
 
-namespace NexusTomorrow.Network.Sts.Model
+namespace NexusTomorrow.Network.Sts.Model;
+
+[Message("/Auth/LoginFinish")]
+public class ClientLoginFinishMessage : IReadable
 {
-    [Message("/Auth/LoginFinish")]
-    public class ClientLoginFinishMessage : IReadable
+    public void Read(XmlDocument document)
     {
-        public void Read(XmlDocument document)
-        {
-        }
     }
 }

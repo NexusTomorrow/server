@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Spell4ConditionsEntry
 {
-    public class Spell4ConditionsEntry
-    {
-        public uint Id;
-        public uint ConditionMask;
-        public uint ConditionValue;
-    }
+    public uint Id;
+    public uint ConditionMask;
+    public uint ConditionValue;
 }

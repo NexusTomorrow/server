@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Chat
+﻿namespace NexusTomorrow.Game.Static.Chat;
+
+public enum ChatChannelLeaveReason
 {
-    public enum ChatChannelLeaveReason
-    {
-        Leave  = 0,
-        Kicked = 1,
-        Banned = 2
-    }
+    Leave = 0,
+    Kicked = 1,
+    Banned = 2
 }

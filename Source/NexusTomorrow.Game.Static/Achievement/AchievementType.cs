@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.Game.Static.Achievement
+﻿namespace NexusTomorrow.Game.Static.Achievement;
+
+// TODO: name more
+public enum AchievementType
 {
-    // TODO: name more
-    public enum AchievementType
-    {
-        KillCreatureEntry = 1,
-        KillCreatureGroup = 2,
-        QuestComplete     = 3,
-        MapComplete       = 53,
-        ItemConsume       = 80
-    }
+    KillCreatureEntry = 1,
+    KillCreatureGroup = 2,
+    QuestComplete = 3,
+    MapComplete = 53,
+    ItemConsume = 80
 }

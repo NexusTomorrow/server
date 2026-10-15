@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.Game.Static.Prerequisite
+﻿namespace NexusTomorrow.Game.Static.Prerequisite;
+
+public enum PrerequisiteComparison
 {
-    public enum PrerequisiteComparison
-    {
-        Equal              = 1,
-        NotEqual           = 2,
-        GreaterThanOrEqual = 3,
-        GreaterThan        = 4,
-        LessThanOrEqual    = 5,
-        LessThan           = 6
-    }
+    Equal = 1,
+    NotEqual = 2,
+    GreaterThanOrEqual = 3,
+    GreaterThan = 4,
+    LessThanOrEqual = 5,
+    LessThan = 6
 }

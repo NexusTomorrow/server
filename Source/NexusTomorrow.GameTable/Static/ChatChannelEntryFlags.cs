@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Static
+﻿namespace NexusTomorrow.GameTable.Static;
+
+public enum ChatChannelEntryFlags
 {
-    public enum ChatChannelEntryFlags
-    {
-        ShowChatBubble = 0x10,
-        ServerSide     = 0x80
-    }
+    ShowChatBubble = 0x10,
+    ServerSide = 0x80
 }

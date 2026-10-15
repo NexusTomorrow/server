@@ -1,13 +1,12 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class PathExplorerPowerMapEntry
 {
-    public class PathExplorerPowerMapEntry
-    {
-        public uint Id;
-        public uint DistanceThreshold;
-        public uint CollectQuantity;
-        public uint VictoryPauseMS;
-        public uint WorldLocation2IdVisual;
-        public uint VisualEffectIdInactive;
-        public uint LocalizedTextIdInfo;
-    }
+    public uint Id;
+    public uint DistanceThreshold;
+    public uint CollectQuantity;
+    public uint VictoryPauseMS;
+    public uint WorldLocation2IdVisual;
+    public uint VisualEffectIdInactive;
+    public uint LocalizedTextIdInfo;
 }

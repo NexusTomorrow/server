@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class MapZoneSpriteEntry
 {
-    public class MapZoneSpriteEntry
-    {
-        public uint Id;
-        public string SpriteName = string.Empty;
-    }
+    public uint Id;
+    public string SpriteName = string.Empty;
 }

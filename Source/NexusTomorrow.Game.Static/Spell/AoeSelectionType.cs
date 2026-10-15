@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.Game.Static.Spell
+﻿namespace NexusTomorrow.Game.Static.Spell;
+
+public enum AoeSelectionType
 {
-    public enum AoeSelectionType
-    {
-        None,
-        Closest,
-        Furthest,
-        Random,
-        LowestAbsoluteHealth,
-        MissingMostHealth
-    }
+    None,
+    Closest,
+    Furthest,
+    Random,
+    LowestAbsoluteHealth,
+    MissingMostHealth
 }

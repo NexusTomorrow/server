@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class TutorialLayoutEntry
 {
-    public class TutorialLayoutEntry
-    {
-        public uint Id;
-        public string Form = string.Empty;
-        public uint Flags;
-    }
+    public uint Id;
+    public string Form = string.Empty;
+    public uint Flags;
 }

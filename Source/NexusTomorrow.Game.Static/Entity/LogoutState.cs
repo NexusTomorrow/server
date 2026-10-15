@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Entity
+﻿namespace NexusTomorrow.Game.Static.Entity;
+
+public enum LogoutState
 {
-    public enum LogoutState
-    {
-        None,
-        Timer,
-        Logout,
-        Finished
-    }
+    None,
+    Timer,
+    Logout,
+    Finished
 }

@@ -1,7 +1,6 @@
-﻿namespace NexusTomorrow.IO
+﻿namespace NexusTomorrow.IO;
+
+public interface IReadable
 {
-    public interface IReadable
-    {
-        void Read(BinaryReader reader);
-    }
+    void Read(BinaryReader reader);
 }

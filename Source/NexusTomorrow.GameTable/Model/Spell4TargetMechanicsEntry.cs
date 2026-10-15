@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Spell4TargetMechanicsEntry
 {
-    public class Spell4TargetMechanicsEntry
-    {
-        public uint Id;
-        public uint TargetType;
-        public uint Flags;
-    }
+    public uint Id;
+    public uint TargetType;
+    public uint Flags;
 }

@@ -1,17 +1,16 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Mail
-{
-    [Message(GameMessageOpcode.ClientMailDelete)]
-    public class ClientMailDelete : IReadable
-    {
-        public List<ulong> MailList { get; } = [];
+namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
-        public void Read(GamePacketReader reader)
-        {
-            uint count = reader.ReadUInt();
-            for (int i = 0; i < count; i++)
-                MailList.Add(reader.ReadULong());
-        }
+[Message(GameMessageOpcode.ClientMailDelete)]
+public class ClientMailDelete : IReadable
+{
+    public List<ulong> MailList { get; } = [];
+
+    public void Read(GamePacketReader reader)
+    {
+        uint count = reader.ReadUInt();
+        for (int i = 0; i < count; i++)
+            MailList.Add(reader.ReadULong());
     }
 }

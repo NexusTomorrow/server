@@ -1,17 +1,16 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.PlayerPath
+namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
+
+// Fires whenever the player leaves a location where a power map mission can be started.
+
+[Message(GameMessageOpcode.ServerPathExplorerPowerMapExited)]
+public class ServerPathExplorerPowerMapExited : IWritable
 {
-    // Fires whenever the player leaves a location where a power map mission can be started.
+    public ushort PathMissionId { get; set; }
 
-    [Message(GameMessageOpcode.ServerPathExplorerPowerMapExited)]
-    public class ServerPathExplorerPowerMapExited : IWritable
+    public void Write(GamePacketWriter writer)
     {
-        public ushort PathMissionId { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(PathMissionId, 14);
-        }
+        writer.Write(PathMissionId, 14);
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Entity
+﻿namespace NexusTomorrow.Game.Static.Entity;
+
+public enum GenericUnlockType
 {
-    public enum GenericUnlockType
-    {
-        Unknown = 0,
-        Dye     = 1
-    }
+    Unknown = 0,
+    Dye = 1
 }

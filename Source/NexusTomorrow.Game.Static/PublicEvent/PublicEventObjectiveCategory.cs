@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.PublicEvent
+﻿namespace NexusTomorrow.Game.Static.PublicEvent;
+
+public enum PublicEventObjectiveCategory
 {
-    public enum PublicEventObjectiveCategory
-    {
-        Main,
-        Optional,
-        PlayerPath,
-        Challenge
-    }
+    Main,
+    Optional,
+    PlayerPath,
+    Challenge
 }

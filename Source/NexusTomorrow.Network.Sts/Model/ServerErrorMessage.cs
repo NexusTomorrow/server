@@ -1,41 +1,40 @@
 ﻿using System.Xml;
 
-namespace NexusTomorrow.Network.Sts.Model
+namespace NexusTomorrow.Network.Sts.Model;
+
+public class ServerErrorMessage : IWritable
 {
-    public class ServerErrorMessage : IWritable
+    private readonly int code;
+
+    public ServerErrorMessage(int code)
     {
-        private int code;
+        this.code = code;
+    }
 
-        public ServerErrorMessage(int code)
-        {
-            this.code = code;
-        }
+    public void Write(XmlWriter writer)
+    {
+        writer.WriteStartElement("Error");
 
-        public void Write(XmlWriter writer)
-        {
-            writer.WriteStartElement("Error");
+        writer.WriteStartAttribute("code");
+        writer.WriteValue(code);
+        writer.WriteEndAttribute();
 
-            writer.WriteStartAttribute("code");
-            writer.WriteValue(code);
-            writer.WriteEndAttribute();
+        writer.WriteStartAttribute("server");
+        writer.WriteValue(0); // TODO
+        writer.WriteEndAttribute();
 
-            writer.WriteStartAttribute("server");
-            writer.WriteValue(0); // TODO
-            writer.WriteEndAttribute();
+        writer.WriteStartAttribute("module");
+        writer.WriteValue(0); // TODO
+        writer.WriteEndAttribute();
 
-            writer.WriteStartAttribute("module");
-            writer.WriteValue(0); // TODO
-            writer.WriteEndAttribute();
+        writer.WriteStartAttribute("line");
+        writer.WriteValue(0); // TODO
+        writer.WriteEndAttribute();
 
-            writer.WriteStartAttribute("line");
-            writer.WriteValue(0); // TODO
-            writer.WriteEndAttribute();
+        writer.WriteStartAttribute("text");
+        writer.WriteValue(0); // TODO
+        writer.WriteEndAttribute();
 
-            writer.WriteStartAttribute("text");
-            writer.WriteValue(0); // TODO
-            writer.WriteEndAttribute();
-
-            writer.WriteEndElement();
-        }
+        writer.WriteEndElement();
     }
 }

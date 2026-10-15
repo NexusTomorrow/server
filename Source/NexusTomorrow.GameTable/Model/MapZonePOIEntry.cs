@@ -1,13 +1,12 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class MapZonePOIEntry
 {
-    public class MapZonePOIEntry
-    {
-        public uint Id;
-        public uint MapZoneId;
-        public uint Pos0;
-        public uint Pos1;
-        public uint Pos2;
-        public uint LocalizedTextId;
-        public uint MapZoneSpriteId;
-    }
+    public uint Id;
+    public uint MapZoneId;
+    public uint Pos0;
+    public uint Pos1;
+    public uint Pos2;
+    public uint LocalizedTextId;
+    public uint MapZoneSpriteId;
 }

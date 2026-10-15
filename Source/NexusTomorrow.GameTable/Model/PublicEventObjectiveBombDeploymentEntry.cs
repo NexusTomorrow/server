@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class PublicEventObjectiveBombDeploymentEntry
 {
-    public class PublicEventObjectiveBombDeploymentEntry
-    {
-        public uint Id;
-        public uint Creature2IdBomb;
-        public uint Spell4IdCarrying;
-    }
+    public uint Id;
+    public uint Creature2IdBomb;
+    public uint Spell4IdCarrying;
 }

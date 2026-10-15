@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class PropAdditionalDetailEntry
 {
-    public class PropAdditionalDetailEntry
-    {
-        public uint Id;
-        public uint LocalizedTextId;
-    }
+    public uint Id;
+    public uint LocalizedTextId;
 }

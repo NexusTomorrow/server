@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class RewardRotationModifierEntry
 {
-    public class RewardRotationModifierEntry
-    {
-        public uint Id;
-        public uint RewardPropertyId;
-        public uint RewardPropertyData;
-        public float Value;
-        public uint MinPlayerLevel;
-        public uint WorldDifficultyFlags;
-    }
+    public uint Id;
+    public uint RewardPropertyId;
+    public uint RewardPropertyData;
+    public float Value;
+    public uint MinPlayerLevel;
+    public uint WorldDifficultyFlags;
 }

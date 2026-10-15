@@ -1,21 +1,20 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model
+namespace NexusTomorrow.Network.World.Message.Model;
+
+[Message(GameMessageOpcode.ServerMatchingMatchReady)]
+
+// Specifically sent for a match that has not started yet
+public class ServerMatchingMatchReady : IWritable
 {
-    [Message(GameMessageOpcode.ServerMatchingMatchReady)]
+    public Game.Static.Matching.MatchType MatchType { get; set; }
+    public uint PendingAllies { get; set; }
+    public uint PendingEnemies { get; set; }
 
-    // Specifically sent for a match that has not started yet
-    public class ServerMatchingMatchReady : IWritable
+    public void Write(GamePacketWriter writer)
     {
-        public Game.Static.Matching.MatchType MatchType { get; set; }
-        public uint PendingAllies { get; set; }
-        public uint PendingEnemies { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(MatchType, 5u);
-            writer.Write(PendingAllies);
-            writer.Write(PendingEnemies);
-        }
+        writer.Write(MatchType, 5u);
+        writer.Write(PendingAllies);
+        writer.Write(PendingEnemies);
     }
 }

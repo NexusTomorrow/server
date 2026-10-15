@@ -1,20 +1,19 @@
 ﻿using NexusTomorrow.Game.Static.Option;
 using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Option
-{
-    // When Type is Casting, NewValue is a bitmask of CastingOptionFlags.
-    // When Type is SharedChallenge, NewValue only indicates whether the player wants to allow shared challenges.
-    [Message(GameMessageOpcode.ClientOptions)]
-    public class ClientOptions : IReadable
-    {
-        public OptionType Type { get; private set; }
-        public uint NewValue { get; private set; }
+namespace NexusTomorrow.Network.World.Message.Model.Option;
 
-        public void Read(GamePacketReader reader)
-        {
-            Type = reader.ReadEnum<OptionType>(32u);
-            NewValue = reader.ReadUInt();
-        }
+// When Type is Casting, NewValue is a bitmask of CastingOptionFlags.
+// When Type is SharedChallenge, NewValue only indicates whether the player wants to allow shared challenges.
+[Message(GameMessageOpcode.ClientOptions)]
+public class ClientOptions : IReadable
+{
+    public OptionType Type { get; private set; }
+    public uint NewValue { get; private set; }
+
+    public void Read(GamePacketReader reader)
+    {
+        Type = reader.ReadEnum<OptionType>(32u);
+        NewValue = reader.ReadUInt();
     }
 }

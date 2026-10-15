@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.Game.Static.Chat
+﻿namespace NexusTomorrow.Game.Static.Chat;
+
+[Flags]
+public enum ChatChannelMemberFlags
 {
-    [Flags]
-    public enum ChatChannelMemberFlags
-    {
-        None      = 0x00,
-        Owner     = 0x01,
-        Moderator = 0x02,
-        Muted     = 0x04
-    }
+    None = 0x00,
+    Owner = 0x01,
+    Moderator = 0x02,
+    Muted = 0x04
 }

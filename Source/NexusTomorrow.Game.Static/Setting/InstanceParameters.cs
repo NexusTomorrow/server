@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Setting
+﻿namespace NexusTomorrow.Game.Static.Setting;
+
+[Flags]
+public enum InstanceParameters
 {
-    [Flags]
-    public enum InstanceParameters
-    {
-        Scaling        = 0x001,
-        HasPrimeLevels = 0x200,
-    }
+    Scaling = 0x001,
+    HasPrimeLevels = 0x200,
 }

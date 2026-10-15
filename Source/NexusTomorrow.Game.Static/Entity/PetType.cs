@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Entity
+﻿namespace NexusTomorrow.Game.Static.Entity;
+
+public enum PetType
 {
-    public enum PetType
-    {
-        ScanBot     = 0,
-        GroundMount = 1,
-        HoverBoard  = 2
-    }
+    ScanBot = 0,
+    GroundMount = 1,
+    HoverBoard = 2
 }

@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ArchiveLinkEntry
 {
-    public class ArchiveLinkEntry
-    {
-        public uint Id;
-        public uint ArchiveArticleIdParent;
-        public uint ArchiveArticleIdChild;
-        public uint ArchiveLinkFlags;
-    }
+    public uint Id;
+    public uint ArchiveArticleIdParent;
+    public uint ArchiveArticleIdChild;
+    public uint ArchiveLinkFlags;
 }

@@ -1,7 +1,6 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class SoundReplaceDescriptionEntry
 {
-    public class SoundReplaceDescriptionEntry
-    {
-        public uint Id;
-    }
+    public uint Id;
 }

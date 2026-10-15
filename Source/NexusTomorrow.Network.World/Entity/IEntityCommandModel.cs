@@ -1,8 +1,7 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Entity
+namespace NexusTomorrow.Network.World.Entity;
+
+public interface IEntityCommandModel : IReadable, IWritable
 {
-    public interface IEntityCommandModel : IReadable,  IWritable
-    {
-    }
 }

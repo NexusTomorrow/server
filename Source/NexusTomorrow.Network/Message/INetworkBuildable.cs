@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.Network.Message
-{
-    public interface INetworkBuildable<out T>
-    {
-        T Build();
-    }
+﻿namespace NexusTomorrow.Network.Message;
 
-    public interface INetworkBuildable
-    {
-        IWritable Build();
-    }
+public interface INetworkBuildable<out T>
+{
+    T Build();
+}
+
+public interface INetworkBuildable
+{
+    IWritable Build();
 }

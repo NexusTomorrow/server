@@ -1,20 +1,19 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
 
-namespace NexusTomorrow.Network.World.Chat.Model
+namespace NexusTomorrow.Network.World.Chat.Model;
+
+public class ChatFormatAlien : IChatFormatModel
 {
-    public class ChatFormatAlien : IChatFormatModel
+    public ChatFormatType Type => ChatFormatType.Alien;
+    public uint RandomTextSeed { get; set; }
+
+    public void Read(GamePacketReader reader)
     {
-        public ChatFormatType Type => ChatFormatType.Alien;
-        public uint RandomTextSeed { get; set; }
+        RandomTextSeed = reader.ReadUShort(14u);
+    }
 
-        public void Read(GamePacketReader reader)
-        {
-            RandomTextSeed = reader.ReadUShort(14u);
-        }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(RandomTextSeed);
-        }
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(RandomTextSeed);
     }
 }

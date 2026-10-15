@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ItemProficiencyEntry
 {
-    public class ItemProficiencyEntry
-    {
-        public uint Id;
-        public uint BitMask;
-        public uint LocalizedTextIdString;
-    }
+    public uint Id;
+    public uint BitMask;
+    public uint LocalizedTextIdString;
 }

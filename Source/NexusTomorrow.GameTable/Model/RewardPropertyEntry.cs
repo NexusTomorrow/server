@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class RewardPropertyEntry
 {
-    public class RewardPropertyEntry
-    {
-        public uint Id;
-        public uint LocalizedTextId;
-        public uint RewardModifierValueTypeEnum;
-    }
+    public uint Id;
+    public uint LocalizedTextId;
+    public uint RewardModifierValueTypeEnum;
 }

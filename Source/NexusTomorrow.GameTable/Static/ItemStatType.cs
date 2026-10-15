@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Static
+﻿namespace NexusTomorrow.GameTable.Static;
+
+public enum ItemStatType
 {
-    public enum ItemStatType
-    {
-        None            = 0,
-        Standard        = 1,
-        RandomStatGroup = 2,
-        Unknown4        = 4
-    }
+    None = 0,
+    Standard = 1,
+    RandomStatGroup = 2,
+    Unknown4 = 4
 }

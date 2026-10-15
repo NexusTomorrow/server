@@ -1,49 +1,48 @@
-﻿namespace NexusTomorrow.Network
+﻿namespace NexusTomorrow.Network;
+
+public class FragmentedBuffer
 {
-    public class FragmentedBuffer
+    public bool IsComplete => data.Length == offset;
+
+    public byte[] Data
     {
-        public bool IsComplete => data.Length == offset;
-
-        public byte[] Data
+        get
         {
-            get
-            {
-                if (!IsComplete)
-                    throw new InvalidOperationException();
-                return data;
-            }
-        }
-
-        private uint offset;
-        private readonly byte[] data;
-
-        public FragmentedBuffer(uint size)
-        {
-            data = new byte[size];
-        }
-
-        public void Populate(GamePacketReader reader)
-        {
-            if (IsComplete)
+            if (!IsComplete)
                 throw new InvalidOperationException();
+            return data;
+        }
+    }
 
-            uint remaining = reader.BytesRemaining;
-            if (remaining < data.Length - offset)
-            {
-                // not enough data, push entire frame into packet
-                byte[] newData = reader.ReadBytes(remaining);
-                Buffer.BlockCopy(newData, 0, data, (int)offset, (int)remaining);
+    private uint offset;
+    private readonly byte[] data;
 
-                offset += (uint)newData.Length;
-            }
-            else
-            {
-                // enough data, push required frame into packet
-                byte[] newData = reader.ReadBytes((uint)data.Length - offset);
-                Buffer.BlockCopy(newData, 0, data, (int)offset, newData.Length);
+    public FragmentedBuffer(uint size)
+    {
+        data = new byte[size];
+    }
 
-                offset += (uint)newData.Length;
-            }
+    public void Populate(GamePacketReader reader)
+    {
+        if (IsComplete)
+            throw new InvalidOperationException();
+
+        uint remaining = reader.BytesRemaining;
+        if (remaining < data.Length - offset)
+        {
+            // not enough data, push entire frame into packet
+            byte[] newData = reader.ReadBytes(remaining);
+            Buffer.BlockCopy(newData, 0, data, (int)offset, (int)remaining);
+
+            offset += (uint)newData.Length;
+        }
+        else
+        {
+            // enough data, push required frame into packet
+            byte[] newData = reader.ReadBytes((uint)data.Length - offset);
+            Buffer.BlockCopy(newData, 0, data, (int)offset, newData.Length);
+
+            offset += (uint)newData.Length;
         }
     }
 }

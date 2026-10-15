@@ -1,18 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
 
-namespace NexusTomorrow.Network.World.Combat
+namespace NexusTomorrow.Network.World.Combat;
+
+public class CombatLogBuildSwitch : ICombatLog
 {
-    public class CombatLogBuildSwitch : ICombatLog
+    public CombatLogType Type => CombatLogType.BuildSwitch;
+
+    public uint UnitId { get; set; }
+    public byte NewSpecIndex { get; set; } // 3u
+
+    public void Write(GamePacketWriter writer)
     {
-        public CombatLogType Type => CombatLogType.BuildSwitch;
-
-        public uint UnitId { get; set; }
-        public byte NewSpecIndex { get; set; } // 3u
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(UnitId);
-            writer.Write(NewSpecIndex, 3u);
-        }
+        writer.Write(UnitId);
+        writer.Write(NewSpecIndex, 3u);
     }
 }

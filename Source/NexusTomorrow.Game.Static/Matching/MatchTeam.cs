@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Matching
+﻿namespace NexusTomorrow.Game.Static.Matching;
+
+public enum MatchTeam
 {
-    public enum MatchTeam
-    {
-        Red,
-        Blue
-    }
+    Red,
+    Blue
 }

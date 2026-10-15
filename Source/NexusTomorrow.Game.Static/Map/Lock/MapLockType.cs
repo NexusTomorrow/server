@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.Game.Static.Map.Lock
+﻿namespace NexusTomorrow.Game.Static.Map.Lock;
+
+public enum MapLockType
 {
-    public enum MapLockType
-    {
-        Solo,
-        Group,
-        Match,
-        Raid,
-        Residence
-    }
+    Solo,
+    Group,
+    Match,
+    Raid,
+    Residence
 }

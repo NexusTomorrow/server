@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class BindPointEntry
 {
-    public class BindPointEntry
-    {
-        public uint Id;
-        public uint BindPointFactionEnum;
-        public uint LocalizedTextId;
-    }
+    public uint Id;
+    public uint BindPointFactionEnum;
+    public uint LocalizedTextId;
 }

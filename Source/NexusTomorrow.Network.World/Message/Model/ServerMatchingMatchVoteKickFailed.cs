@@ -1,14 +1,13 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model
+namespace NexusTomorrow.Network.World.Message.Model;
+
+// Triggers MatchVoteKickEnd lua event on client
+[Message(GameMessageOpcode.ServerMatchingMatchVoteKickFailed)]
+public class ServerMatchingMatchVoteKickFailed : IWritable
 {
-    // Triggers MatchVoteKickEnd lua event on client
-    [Message(GameMessageOpcode.ServerMatchingMatchVoteKickFailed)]
-    public class ServerMatchingMatchVoteKickFailed : IWritable
+    public void Write(GamePacketWriter writer)
     {
-        public void Write(GamePacketWriter writer)
-        {
-            // Zero byte message
-        }
+        // Zero byte message
     }
 }

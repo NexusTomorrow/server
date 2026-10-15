@@ -1,17 +1,16 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model
-{
-    [Message(GameMessageOpcode.ServerTitleSet)]
-    public class ServerTitleSet : IWritable
-    {
-        public uint Guid { get; set; }
-        public ushort Title { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Guid);
-            writer.Write(Title, 14);
-        }
+[Message(GameMessageOpcode.ServerTitleSet)]
+public class ServerTitleSet : IWritable
+{
+    public uint Guid { get; set; }
+    public ushort Title { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Guid);
+        writer.Write(Title, 14);
     }
 }

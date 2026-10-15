@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Creature2OverridePropertiesEntry
 {
-    public class Creature2OverridePropertiesEntry
-    {
-        public uint Id;
-        public uint Creature2Id;
-        public uint UnitPropertyIndex;
-        public float UnitPropertyValue;
-    }
+    public uint Id;
+    public uint Creature2Id;
+    public uint UnitPropertyIndex;
+    public float UnitPropertyValue;
 }

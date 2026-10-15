@@ -1,20 +1,19 @@
 ﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
 
-namespace NexusTomorrow.Network.World.Entity.Command
+namespace NexusTomorrow.Network.World.Entity.Command;
+
+[EntityCommand(EntityCommand.SetRotationDefaults)]
+public class SetRotationDefaultsCommand : IEntityCommandModel
 {
-    [EntityCommand(EntityCommand.SetRotationDefaults)]
-    public class SetRotationDefaultsCommand : IEntityCommandModel
+    public bool Blend { get; set; }
+
+    public void Read(GamePacketReader reader)
     {
-        public bool Blend { get; set; }
+        Blend = reader.ReadBit();
+    }
 
-        public void Read(GamePacketReader reader)
-        {
-            Blend = reader.ReadBit();
-        }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Blend);
-        }
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Blend);
     }
 }

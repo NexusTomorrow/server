@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Spell4TagEntry
 {
-    public class Spell4TagEntry
-    {
-        public uint Id;
-        public uint Flags;
-        public uint LocalizedTextIdName;
-    }
+    public uint Id;
+    public uint Flags;
+    public uint LocalizedTextIdName;
 }

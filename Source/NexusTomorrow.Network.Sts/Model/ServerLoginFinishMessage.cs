@@ -1,45 +1,44 @@
 ﻿using System.Xml;
 
-namespace NexusTomorrow.Network.Sts.Model
+namespace NexusTomorrow.Network.Sts.Model;
+
+public class ServerLoginFinishMessage : IWritable
 {
-    public class ServerLoginFinishMessage : IWritable
+    public required string LocationId { get; set; }
+    public required string UserId { get; set; }
+    public required uint UserCenter { get; set; }
+    public required string UserName { get; set; }
+    public required long AccessMask { get; set; }
+
+    // Status
+    // Aliases
+    // ExternalAccount
+    // PcCafe
+
+    public void Write(XmlWriter writer)
     {
-        public required string LocationId { get; set; }
-        public required string UserId { get; set; }
-        public required uint UserCenter { get; set; }
-        public required string UserName { get; set; }
-        public required long AccessMask { get; set; }
+        writer.WriteStartElement("Reply");
 
-        // Status
-        // Aliases
-        // ExternalAccount
-        // PcCafe
+        writer.WriteStartElement("LocationId");
+        writer.WriteString(LocationId);
+        writer.WriteEndElement();
 
-        public void Write(XmlWriter writer)
-        {
-            writer.WriteStartElement("Reply");
+        writer.WriteStartElement("UserId");
+        writer.WriteString(UserId);
+        writer.WriteEndElement();
 
-            writer.WriteStartElement("LocationId");
-            writer.WriteString(LocationId);
-            writer.WriteEndElement();
+        writer.WriteStartElement("UserCenter");
+        writer.WriteValue(UserCenter);
+        writer.WriteEndElement();
 
-            writer.WriteStartElement("UserId");
-            writer.WriteString(UserId);
-            writer.WriteEndElement();
+        writer.WriteStartElement("UserName");
+        writer.WriteString(UserName);
+        writer.WriteEndElement();
 
-            writer.WriteStartElement("UserCenter");
-            writer.WriteValue(UserCenter);
-            writer.WriteEndElement();
+        writer.WriteStartElement("AccessMask");
+        writer.WriteValue(AccessMask);
+        writer.WriteEndElement();
 
-            writer.WriteStartElement("UserName");
-            writer.WriteString(UserName);
-            writer.WriteEndElement();
-
-            writer.WriteStartElement("AccessMask");
-            writer.WriteValue(AccessMask);
-            writer.WriteEndElement();
-
-            writer.WriteEndElement();
-        }
+        writer.WriteEndElement();
     }
 }

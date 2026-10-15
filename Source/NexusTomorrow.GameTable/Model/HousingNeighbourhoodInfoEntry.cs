@@ -1,15 +1,14 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class HousingNeighbourhoodInfoEntry
 {
-    public class HousingNeighbourhoodInfoEntry
-    {
-        public uint Id;
-        public uint BaseCost;
-        public uint MaxPopulation;
-        public uint PopulationThreshold;
-        public uint HousingFactionEnum;
-        public uint HousingFeatureTypeEnum;
-        public uint HousingPlaystyleTypeEnum;
-        public uint HousingMapInfoIdPrimary;
-        public uint HousingMapInfoIdSecondary;
-    }
+    public uint Id;
+    public uint BaseCost;
+    public uint MaxPopulation;
+    public uint PopulationThreshold;
+    public uint HousingFactionEnum;
+    public uint HousingFeatureTypeEnum;
+    public uint HousingPlaystyleTypeEnum;
+    public uint HousingMapInfoIdPrimary;
+    public uint HousingMapInfoIdSecondary;
 }

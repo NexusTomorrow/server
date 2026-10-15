@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class TaxiRouteEntry
 {
-    public class TaxiRouteEntry
-    {
-        public uint Id;
-        public uint TaxiNodeIdSource;
-        public uint TaxiNodeIdDestination;
-        public uint Price;
-    }
+    public uint Id;
+    public uint TaxiNodeIdSource;
+    public uint TaxiNodeIdDestination;
+    public uint Price;
 }

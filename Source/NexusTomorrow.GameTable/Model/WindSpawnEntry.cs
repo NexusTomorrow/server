@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class WindSpawnEntry
 {
-    public class WindSpawnEntry
-    {
-        public uint Id;
-        public uint IntervalMin;
-        public uint IntervalMax;
-        public float DirectionMin;
-        public float DirectionMax;
-    }
+    public uint Id;
+    public uint IntervalMin;
+    public uint IntervalMax;
+    public float DirectionMin;
+    public float DirectionMax;
 }

@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Static
+﻿namespace NexusTomorrow.GameTable.Static;
+
+[Flags]
+public enum UnitPropertyFlags
 {
-    [Flags]
-    public enum UnitPropertyFlags
-    {
-        None      = 0x00,
-        Static    = 0x01,
-        Unknown04 = 0x04
-    }
+    None = 0x00,
+    Static = 0x01,
+    Unknown04 = 0x04
 }

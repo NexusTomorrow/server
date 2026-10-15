@@ -1,31 +1,30 @@
 ﻿using NexusTomorrow.Game.Static.Who;
 using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter
+namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
+
+public class WhoParameter : IReadable
 {
-    public class WhoParameter : IReadable
+    public WhoParameterType Type { get; private set; }
+    public IWhoParameterData Data { get; private set; }
+
+    public void Read(GamePacketReader reader)
     {
-        public WhoParameterType Type { get; private set; }
-        public IWhoParameterData Data { get; private set; }
+        Type = reader.ReadEnum<WhoParameterType>(4u);
 
-        public void Read(GamePacketReader reader)
+        Data = Type switch
         {
-            Type = reader.ReadEnum<WhoParameterType>(4u);
-
-            Data = Type switch
-            {
-                WhoParameterType.Level   => new WhoParameterLevel(),
-                WhoParameterType.Race    => new WhoParameterRace(),
-                WhoParameterType.Path    => new WhoParameterPath(),
-                WhoParameterType.Class   => new WhoParameterClass(),
-                WhoParameterType.Zone    => new WhoParameterZone(),
-                WhoParameterType.Guild   => new WhoParameterGuild(),
-                WhoParameterType.Player  => new WhoParameterPlayer(),
-                WhoParameterType.Combo   => new WhoParameterCombo(),
-                WhoParameterType.Faction => new WhoParameterFaction(),
-                _                        => throw new NotImplementedException()
-            };
-            Data.Read(reader);
-        }
+            WhoParameterType.Level => new WhoParameterLevel(),
+            WhoParameterType.Race => new WhoParameterRace(),
+            WhoParameterType.Path => new WhoParameterPath(),
+            WhoParameterType.Class => new WhoParameterClass(),
+            WhoParameterType.Zone => new WhoParameterZone(),
+            WhoParameterType.Guild => new WhoParameterGuild(),
+            WhoParameterType.Player => new WhoParameterPlayer(),
+            WhoParameterType.Combo => new WhoParameterCombo(),
+            WhoParameterType.Faction => new WhoParameterFaction(),
+            _ => throw new NotImplementedException()
+        };
+        Data.Read(reader);
     }
 }

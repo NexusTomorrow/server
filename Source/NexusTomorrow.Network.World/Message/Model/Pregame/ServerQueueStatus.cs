@@ -1,20 +1,19 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Pregame
-{
-    // Client only processes message when on CharacterSelect screen.
-    [Message(GameMessageOpcode.ServerQueueStatus)]
-    public class ServerQueueStatus : IWritable
-    {
-        public uint QueuePosition { get; set; }
-        public uint WaitTimeSeconds { get; set; }
-        public bool IsGuest { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(QueuePosition);
-            writer.Write(WaitTimeSeconds);
-            writer.Write(IsGuest);
-        }
+// Client only processes message when on CharacterSelect screen.
+[Message(GameMessageOpcode.ServerQueueStatus)]
+public class ServerQueueStatus : IWritable
+{
+    public uint QueuePosition { get; set; }
+    public uint WaitTimeSeconds { get; set; }
+    public bool IsGuest { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(QueuePosition);
+        writer.Write(WaitTimeSeconds);
+        writer.Write(IsGuest);
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Text.Static
+﻿namespace NexusTomorrow.GameTable.Text.Static;
+
+public enum TextFilterClass
 {
-    public enum TextFilterClass
-    {
-        Strict,
-        Standard,
-        Low
-    }
+    Strict,
+    Standard,
+    Low
 }

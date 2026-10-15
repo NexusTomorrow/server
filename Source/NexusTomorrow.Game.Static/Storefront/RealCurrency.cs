@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Storefront
+﻿namespace NexusTomorrow.Game.Static.Storefront;
+
+public enum RealCurrency
 {
-    public enum RealCurrency
-    {
-        Usd,
-        Gbp,
-        Eur
-    }
+    Usd,
+    Gbp,
+    Eur
 }

@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.PlayerPath
+﻿namespace NexusTomorrow.Game.Static.PlayerPath;
+
+public enum TowerDefenseUnitType
 {
-    public enum TowerDefenseUnitType
-    {
-        Defend    = 0,
-        Auxiliary = 1,
-        Escaping  = 2
-    }
+    Defend = 0,
+    Auxiliary = 1,
+    Escaping = 2
 }

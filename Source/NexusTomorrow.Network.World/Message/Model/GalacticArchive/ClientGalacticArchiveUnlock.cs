@@ -1,16 +1,15 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.GalacticArchive
-{
-    // Sent when following GalacticArchiveLink or interacting with creatures that have archiveArticleIdInteractUnlock
-    [Message(GameMessageOpcode.ClientGalacticArchiveUnlock)]
-    public class ClientGalacticArchiveUnlock : IReadable
-    {
-        public uint ArchiveArticleId { get; private set; }
+namespace NexusTomorrow.Network.World.Message.Model.GalacticArchive;
 
-        public void Read(GamePacketReader reader)
-        {
-            ArchiveArticleId = reader.ReadUInt();
-        }
+// Sent when following GalacticArchiveLink or interacting with creatures that have archiveArticleIdInteractUnlock
+[Message(GameMessageOpcode.ClientGalacticArchiveUnlock)]
+public class ClientGalacticArchiveUnlock : IReadable
+{
+    public uint ArchiveArticleId { get; private set; }
+
+    public void Read(GamePacketReader reader)
+    {
+        ArchiveArticleId = reader.ReadUInt();
     }
 }

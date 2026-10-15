@@ -1,7 +1,6 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class HookTypeEntry
 {
-    public class HookTypeEntry
-    {
-        public uint Id;
-    }
+    public uint Id;
 }

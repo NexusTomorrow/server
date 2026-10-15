@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.PlayerPath
+﻿namespace NexusTomorrow.Game.Static.PlayerPath;
+
+public enum SettlerInfrastructureState
 {
-    public enum SettlerInfrastructureState
-    {
-        Inactive = 0,
-        Building = 1,
-        Built    = 2
-    };
-}
+    Inactive = 0,
+    Building = 1,
+    Built = 2
+};

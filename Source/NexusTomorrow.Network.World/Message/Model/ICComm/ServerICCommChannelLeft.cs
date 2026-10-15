@@ -1,15 +1,14 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.ICComm
-{
-    [Message(GameMessageOpcode.ServerICCommChannelLeft)]
-    public class ServerICCommChannelLeft : IWritable
-    {
-        public ulong IccomId { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.ICComm;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(IccomId);
-        }
+[Message(GameMessageOpcode.ServerICCommChannelLeft)]
+public class ServerICCommChannelLeft : IWritable
+{
+    public ulong IccomId { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(IccomId);
     }
 }

@@ -1,15 +1,14 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.PlayerPath
-{
-    [Message(GameMessageOpcode.ServerPathSoldierHoldoutDeath)]
-    public class ServerPathSoldierHoldoutDeath : IWritable
-    {
-        public ushort PathSoldierEventId { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(PathSoldierEventId, 14);
-        }
+[Message(GameMessageOpcode.ServerPathSoldierHoldoutDeath)]
+public class ServerPathSoldierHoldoutDeath : IWritable
+{
+    public ushort PathSoldierEventId { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(PathSoldierEventId, 14);
     }
 }

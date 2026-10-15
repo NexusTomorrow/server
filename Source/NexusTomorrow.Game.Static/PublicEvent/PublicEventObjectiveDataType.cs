@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.PublicEvent
+﻿namespace NexusTomorrow.Game.Static.PublicEvent;
+
+public enum PublicEventObjectiveDataType
 {
-    public enum PublicEventObjectiveDataType
-    {
-        Empty,
-        CapturePointDefend,
-        CapturePoint,
-        VirtualItemDepot
-    }
+    Empty,
+    CapturePointDefend,
+    CapturePoint,
+    VirtualItemDepot
 }

@@ -1,16 +1,15 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.PlayerPath
-{
-    // Triggers SettlerInfrastructureComplete lua event
-    [Message(GameMessageOpcode.ServerPathSettlerInfrastructureComplete)]
-    public class ServerPathSettlerInfrastructureComplete : IWritable
-    {
-        public uint Unused { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Unused);
-        }
+// Triggers SettlerInfrastructureComplete lua event
+[Message(GameMessageOpcode.ServerPathSettlerInfrastructureComplete)]
+public class ServerPathSettlerInfrastructureComplete : IWritable
+{
+    public uint Unused { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Unused);
     }
 }

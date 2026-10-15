@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Pregame
+﻿namespace NexusTomorrow.Game.Static.Pregame;
+
+[Flags]
+public enum RealmFlag
 {
-    [Flags]
-    public enum RealmFlag
-    {
-        FactionRestricted = 0x10,
-    }
+    FactionRestricted = 0x10,
 }

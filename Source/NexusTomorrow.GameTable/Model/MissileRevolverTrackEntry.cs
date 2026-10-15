@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class MissileRevolverTrackEntry
 {
-    public class MissileRevolverTrackEntry
-    {
-        public uint Id;
-        public float Radius;
-        public float Speed;
-        public float SpeedMultiplier;
-        public float ScaleMultiplier;
-        public uint ModelAttachmentIdHeight;
-    }
+    public uint Id;
+    public float Radius;
+    public float Speed;
+    public float SpeedMultiplier;
+    public float ScaleMultiplier;
+    public uint ModelAttachmentIdHeight;
 }

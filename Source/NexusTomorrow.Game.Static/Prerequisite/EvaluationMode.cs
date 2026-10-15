@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Prerequisite
+﻿namespace NexusTomorrow.Game.Static.Prerequisite;
+
+public enum EvaluationMode
 {
-    public enum EvaluationMode
-    {
-        EvaluateAND,
-        EvaluateOR,
-    }
+    EvaluateAND,
+    EvaluateOR,
 }

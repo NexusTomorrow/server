@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class LocalizedEnumEntry
 {
-    public class LocalizedEnumEntry
-    {
-        public uint Id;
-        public string EnumName = string.Empty;
-        public uint LocalizedTextId;
-    }
+    public uint Id;
+    public string EnumName = string.Empty;
+    public uint LocalizedTextId;
 }

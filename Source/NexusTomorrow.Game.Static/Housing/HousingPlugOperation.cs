@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Housing
+﻿namespace NexusTomorrow.Game.Static.Housing;
+
+public enum HousingPlugOperation
 {
-    public enum HousingPlugOperation
-    {
-        Place   = 1,
-        Remove  = 2,
-        Repair  = 4
-    }
+    Place = 1,
+    Remove = 2,
+    Repair = 4
 }

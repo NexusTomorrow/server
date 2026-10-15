@@ -1,18 +1,17 @@
-﻿using NexusTomorrow.Network.Message;
-using NexusTomorrow.Game.Static.Group;
+﻿using NexusTomorrow.Game.Static.Group;
+using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Shared
+namespace NexusTomorrow.Network.World.Message.Model.Shared;
+
+public class MarkerInfo : IWritable
 {
-    public class MarkerInfo : IWritable
+    public uint UnitId { get; set; }
+
+    public GroupMarker Marker { get; set; }
+
+    public void Write(GamePacketWriter writer)
     {
-        public uint UnitId { get; set; }
-
-        public GroupMarker Marker { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Marker, 32u);
-            writer.Write(UnitId);
-        }
+        writer.Write(Marker, 32u);
+        writer.Write(UnitId);
     }
 }

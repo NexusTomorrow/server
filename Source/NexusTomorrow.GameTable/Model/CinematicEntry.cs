@@ -1,7 +1,6 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class CinematicEntry
 {
-    public class CinematicEntry
-    {
-        public uint Id;
-    }
+    public uint Id;
 }

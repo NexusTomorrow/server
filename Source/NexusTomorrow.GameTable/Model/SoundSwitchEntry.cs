@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class SoundSwitchEntry
 {
-    public class SoundSwitchEntry
-    {
-        public uint Id;
-        public uint NameHash;
-        public uint GroupHash;
-    }
+    public uint Id;
+    public uint NameHash;
+    public uint GroupHash;
 }

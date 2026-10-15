@@ -1,13 +1,12 @@
-﻿namespace NexusTomorrow.Game.Static.Costume
+﻿namespace NexusTomorrow.Game.Static.Costume;
+
+public enum CostumeItemSlot
 {
-    public enum CostumeItemSlot
-    {
-        Chest    = 0,
-        Legs     = 1,
-        Head     = 2,
-        Shoulder = 3,
-        Feet     = 4,
-        Hands    = 5,
-        Weapon   = 6
-    }
+    Chest = 0,
+    Legs = 1,
+    Head = 2,
+    Shoulder = 3,
+    Feet = 4,
+    Hands = 5,
+    Weapon = 6
 }

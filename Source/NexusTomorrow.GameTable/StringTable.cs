@@ -1,28 +1,27 @@
 ﻿using System.Text;
 
-namespace NexusTomorrow.GameTable
+namespace NexusTomorrow.GameTable;
+
+public class StringTable : IDisposable
 {
-    public class StringTable : IDisposable
+    private readonly MemoryStream stream;
+    private readonly BinaryReader reader;
+
+    public StringTable(byte[] buffer)
     {
-        private readonly MemoryStream stream;
-        private readonly BinaryReader reader;
+        stream = new MemoryStream(buffer);
+        reader = new BinaryReader(stream, Encoding.Unicode);
+    }
 
-        public StringTable(byte[] buffer)
-        {
-            stream = new MemoryStream(buffer);
-            reader = new BinaryReader(stream, Encoding.Unicode);
-        }
+    public void Dispose()
+    {
+        reader.Dispose();
+        stream.Dispose();
+    }
 
-        public void Dispose()
-        {
-            reader.Dispose();
-            stream.Dispose();
-        }
-
-        public string GetEntry(uint offset)
-        {
-            stream.Position = offset;
-            return reader.ReadWideString();
-        }
+    public string GetEntry(uint offset)
+    {
+        stream.Position = offset;
+        return reader.ReadWideString();
     }
 }

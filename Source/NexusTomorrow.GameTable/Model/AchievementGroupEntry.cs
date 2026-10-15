@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class AchievementGroupEntry
 {
-    public class AchievementGroupEntry
-    {
-        public uint Id;
-        public uint LocalizedTextId;
-        public uint TradeSkillId;
-    }
+    public uint Id;
+    public uint LocalizedTextId;
+    public uint TradeSkillId;
 }

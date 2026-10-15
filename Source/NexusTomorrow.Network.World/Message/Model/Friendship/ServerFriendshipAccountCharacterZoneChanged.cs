@@ -1,32 +1,31 @@
 ﻿using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
-namespace NexusTomorrow.Network.World.Message.Model.Friendship
+namespace NexusTomorrow.Network.World.Message.Model.Friendship;
+
+[Message(GameMessageOpcode.ServerFriendshipAccountCharacterZoneChanged)]
+public class ServerFriendshipAccountCharacterZoneChanged : IWritable
 {
-    [Message(GameMessageOpcode.ServerFriendshipAccountCharacterZoneChanged)]
-    public class ServerFriendshipAccountCharacterZoneChanged : IWritable
+    public class FriendCharacterZoneInfo : IWritable
     {
-        public class FriendCharacterZoneInfo : IWritable
-        {
-            public ulong AccountFriendId { get; set; }
-            public Identity CharacterInNewZone { get; set; }
-            public uint WorldZoneId { get; set; }
-
-            public void Write(GamePacketWriter writer)
-            {
-                writer.Write(AccountFriendId);
-                CharacterInNewZone.Write(writer);
-                writer.Write(WorldZoneId, 15u);
-            }
-        }
-
-        public List<FriendCharacterZoneInfo> ZoneInfos { get; set; }
+        public ulong AccountFriendId { get; set; }
+        public Identity CharacterInNewZone { get; set; }
+        public uint WorldZoneId { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
-            writer.Write(ZoneInfos.Count);
-            foreach (FriendCharacterZoneInfo zoneInfo in ZoneInfos)
-                zoneInfo.Write(writer);
+            writer.Write(AccountFriendId);
+            CharacterInNewZone.Write(writer);
+            writer.Write(WorldZoneId, 15u);
         }
+    }
+
+    public List<FriendCharacterZoneInfo> ZoneInfos { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(ZoneInfos.Count);
+        foreach (FriendCharacterZoneInfo zoneInfo in ZoneInfos)
+            zoneInfo.Write(writer);
     }
 }

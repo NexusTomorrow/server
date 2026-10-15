@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Reputation
+﻿namespace NexusTomorrow.Game.Static.Reputation;
+
+public enum Faction : uint
 {
-    public enum Faction : uint
-    {
-        Dominion      = 166,
-        Exile         = 167,
-        MatchingTeam1 = 391,
-        MatchingTeam2 = 392
-    }
+    Dominion = 166,
+    Exile = 167,
+    MatchingTeam1 = 391,
+    MatchingTeam2 = 392
 }

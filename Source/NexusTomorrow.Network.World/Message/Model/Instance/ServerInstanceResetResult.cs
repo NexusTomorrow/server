@@ -1,17 +1,16 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Instance
-{
-    [Message(GameMessageOpcode.ServerInstanceResetResult)]
-    public class ServerInstanceResetResult : IWritable
-    {
-        public uint Unused { get; set; } // Probably WorldId but not used by client
-        public bool Success { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.Instance;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Unused, 15u);
-            writer.Write(Success);
-        }
+[Message(GameMessageOpcode.ServerInstanceResetResult)]
+public class ServerInstanceResetResult : IWritable
+{
+    public uint Unused { get; set; } // Probably WorldId but not used by client
+    public bool Success { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Unused, 15u);
+        writer.Write(Success);
     }
 }

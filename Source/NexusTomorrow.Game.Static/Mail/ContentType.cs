@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Mail
+﻿namespace NexusTomorrow.Game.Static.Mail;
+
+public enum ContentType
 {
-    public enum ContentType
-    {
-        PlayerMessage   = 0,
-        AuctionWon      = 5,
-        AuctionExpired  = 7,
-        AccountItem     = 23,
-    }
+    PlayerMessage = 0,
+    AuctionWon = 5,
+    AuctionExpired = 7,
+    AccountItem = 23,
 }

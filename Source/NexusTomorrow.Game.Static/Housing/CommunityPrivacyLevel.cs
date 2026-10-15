@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Housing
+﻿namespace NexusTomorrow.Game.Static.Housing;
+
+public enum CommunityPrivacyLevel
 {
-    public enum CommunityPrivacyLevel
-    {
-        Public  = 1,
-        Private = 2
-    }
+    Public = 1,
+    Private = 2
 }

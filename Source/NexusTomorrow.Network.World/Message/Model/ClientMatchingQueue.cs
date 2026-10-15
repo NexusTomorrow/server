@@ -2,22 +2,21 @@
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
-namespace NexusTomorrow.Network.World.Message.Model
+namespace NexusTomorrow.Network.World.Message.Model;
+
+[Message(GameMessageOpcode.ClientMatchingQueue)]
+public class ClientMatchingQueue : IReadable
 {
-    [Message(GameMessageOpcode.ClientMatchingQueue)]
-    public class ClientMatchingQueue : IReadable
+    public MatchingMap MapData { get; private set; }
+    public Role Roles { get; private set; }
+    public uint PrimeLevel { get; private set; }
+
+    public void Read(GamePacketReader reader)
     {
-        public MatchingMap MapData { get; private set; }
-        public Role Roles { get; private set; }
-        public uint PrimeLevel { get; private set; }
+        MapData = new MatchingMap();
+        MapData.Read(reader);
 
-        public void Read(GamePacketReader reader)
-        {
-            MapData = new MatchingMap();
-            MapData.Read(reader);
-
-            Roles      = reader.ReadEnum<Role>(32u);
-            PrimeLevel = reader.ReadUInt();
-        }
+        Roles = reader.ReadEnum<Role>(32u);
+        PrimeLevel = reader.ReadUInt();
     }
 }

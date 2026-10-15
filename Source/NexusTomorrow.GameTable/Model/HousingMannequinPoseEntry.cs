@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class HousingMannequinPoseEntry
 {
-    public class HousingMannequinPoseEntry
-    {
-        public uint Id;
-        public string EnumName = string.Empty;
-        public uint LocalizedTextId;
-        public uint ModelSequenceId;
-    }
+    public uint Id;
+    public string EnumName = string.Empty;
+    public uint LocalizedTextId;
+    public uint ModelSequenceId;
 }

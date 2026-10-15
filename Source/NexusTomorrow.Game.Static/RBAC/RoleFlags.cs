@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.RBAC
+﻿namespace NexusTomorrow.Game.Static.RBAC;
+
+[Flags]
+public enum RoleFlags
 {
-    [Flags]
-    public enum RoleFlags
-    {
-        None      = 0x00,
-        Inclusive = 0x01,
-        Exclusive = 0x02
-    }
+    None = 0x00,
+    Inclusive = 0x01,
+    Exclusive = 0x02
 }

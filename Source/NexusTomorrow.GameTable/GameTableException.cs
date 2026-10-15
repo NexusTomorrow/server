@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable
+﻿namespace NexusTomorrow.GameTable;
+
+public class GameTableException : Exception
 {
-    public class GameTableException : Exception
+    public GameTableException(string message)
+        : base(message)
     {
-        public GameTableException(string message)
-            : base(message)
-        {
-        }
     }
 }

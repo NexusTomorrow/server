@@ -1,9 +1,8 @@
 ﻿using System.Xml;
 
-namespace NexusTomorrow.Network.Sts
+namespace NexusTomorrow.Network.Sts;
+
+public interface IReadable
 {
-    public interface IReadable
-    {
-        void Read(XmlDocument document);
-    }
+    void Read(XmlDocument document);
 }

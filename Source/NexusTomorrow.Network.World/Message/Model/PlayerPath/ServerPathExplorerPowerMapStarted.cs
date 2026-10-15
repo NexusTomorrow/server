@@ -1,19 +1,18 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.PlayerPath
+namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
+
+// Fires whenever the player successfully starts a Tracking mission.
+
+[Message(GameMessageOpcode.ServerPathExplorerPowerMapStarted)]
+public class ServerPathExplorerPowerMapStarted : IWritable
 {
-    // Fires whenever the player successfully starts a Tracking mission.
+    public ushort PathMissionId { get; set; }
+    public uint UnitId { get; set; } // Unit that the player is tracking for the mission.
 
-    [Message(GameMessageOpcode.ServerPathExplorerPowerMapStarted)]
-    public class ServerPathExplorerPowerMapStarted : IWritable
+    public void Write(GamePacketWriter writer)
     {
-        public ushort PathMissionId { get; set; }
-        public uint UnitId { get; set; } // Unit that the player is tracking for the mission.
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(PathMissionId, 14);
-            writer.Write(UnitId);
-        }
+        writer.Write(PathMissionId, 14);
+        writer.Write(UnitId);
     }
 }

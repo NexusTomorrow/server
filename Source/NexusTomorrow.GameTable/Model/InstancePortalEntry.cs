@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class InstancePortalEntry
 {
-    public class InstancePortalEntry
-    {
-        public uint Id;
-        public uint LocalizedTextIdName;
-        public uint MinLevel;
-        public uint MaxLevel;
-        public uint ExpectedCompletionTime;
-        public uint InstancePortalTypeEnum;
-    }
+    public uint Id;
+    public uint LocalizedTextIdName;
+    public uint MinLevel;
+    public uint MaxLevel;
+    public uint ExpectedCompletionTime;
+    public uint InstancePortalTypeEnum;
 }

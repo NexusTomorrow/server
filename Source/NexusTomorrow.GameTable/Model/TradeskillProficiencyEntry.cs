@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class TradeskillProficiencyEntry
 {
-    public class TradeskillProficiencyEntry
-    {
-        public uint Id;
-        public uint ProficiencyFlagEnum;
-    }
+    public uint Id;
+    public uint ProficiencyFlagEnum;
 }

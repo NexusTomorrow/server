@@ -1,14 +1,13 @@
-﻿namespace NexusTomorrow.Game.Static.Spell
+﻿namespace NexusTomorrow.Game.Static.Spell;
+
+public enum CombatResult
 {
-    public enum CombatResult
-    {
-        Avoid,
-        Critical,
-        Hit,
-        NeedsTelegraphEvaluation,
-        OutsideTelegraph,
-        OutsideTelegraphInvalid,
-        InsideTelegraph,
-        NeedsHitResultCalc
-    }
+    Avoid,
+    Critical,
+    Hit,
+    NeedsTelegraphEvaluation,
+    OutsideTelegraph,
+    OutsideTelegraphInvalid,
+    InsideTelegraph,
+    NeedsHitResultCalc
 }

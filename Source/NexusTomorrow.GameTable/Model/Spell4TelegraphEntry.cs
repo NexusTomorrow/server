@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Spell4TelegraphEntry
 {
-    public class Spell4TelegraphEntry
-    {
-        public uint Id;
-        public uint Spell4Id;
-        public uint TelegraphDamageId;
-    }
+    public uint Id;
+    public uint Spell4Id;
+    public uint TelegraphDamageId;
 }

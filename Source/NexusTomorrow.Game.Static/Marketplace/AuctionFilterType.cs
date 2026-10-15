@@ -1,13 +1,12 @@
-﻿namespace NexusTomorrow.Game.Static.Marketplace
+﻿namespace NexusTomorrow.Game.Static.Marketplace;
+
+public enum AuctionFilterType
 {
-    public enum AuctionFilterType
-    {
-        PropertyMin  = 0,
-        PropertyMax  = 1,
-        Level        = 2,
-        Quality      = 3,
-        RuneSlot     = 4,
-        BuyoutMax    = 5,
-        EquippableBy = 6
-    }
+    PropertyMin = 0,
+    PropertyMax = 1,
+    Level = 2,
+    Quality = 3,
+    RuneSlot = 4,
+    BuyoutMax = 5,
+    EquippableBy = 6
 }

@@ -1,17 +1,16 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Cinematic
-{
-    [Message(GameMessageOpcode.ServerCinematicPlayerControl)]
-    public class ServerCinematicPlayerControl : IWritable
-    {
-        public uint Delay { get; set; }
-        public bool Allow { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Delay);
-            writer.Write(Allow);
-        }
+[Message(GameMessageOpcode.ServerCinematicPlayerControl)]
+public class ServerCinematicPlayerControl : IWritable
+{
+    public uint Delay { get; set; }
+    public bool Allow { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Delay);
+        writer.Write(Allow);
     }
 }

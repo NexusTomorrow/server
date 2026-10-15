@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Reputation
+﻿namespace NexusTomorrow.Game.Static.Reputation;
+
+public enum Disposition
 {
-    public enum Disposition
-    {
-        Hostile,
-        Neutral,
-        Friendly,
-        Unknown
-    }
+    Hostile,
+    Neutral,
+    Friendly,
+    Unknown
 }

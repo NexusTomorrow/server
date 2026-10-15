@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class GenericMapEntry
 {
-    public class GenericMapEntry
-    {
-        public uint Id;
-        public uint MapZoneId;
-    }
+    public uint Id;
+    public uint MapZoneId;
 }

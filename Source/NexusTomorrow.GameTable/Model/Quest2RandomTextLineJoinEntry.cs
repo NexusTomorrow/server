@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Quest2RandomTextLineJoinEntry
 {
-    public class Quest2RandomTextLineJoinEntry
-    {
-        public uint Id;
-        public uint Quest2Id;
-        public uint QuestVOTextType;
-        public uint RandomTextLineId;
-    }
+    public uint Id;
+    public uint Quest2Id;
+    public uint QuestVOTextType;
+    public uint RandomTextLineId;
 }

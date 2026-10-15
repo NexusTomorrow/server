@@ -1,15 +1,14 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ResourceConversionEntry
 {
-    public class ResourceConversionEntry
-    {
-        public uint Id;
-        public uint ResourceConversionTypeEnum;
-        public uint SourceId;
-        public uint SourceCount;
-        public uint TargetId;
-        public uint TargetCount;
-        public uint SurchargeId;
-        public uint SurchargeCount;
-        public uint Flags;
-    }
+    public uint Id;
+    public uint ResourceConversionTypeEnum;
+    public uint SourceId;
+    public uint SourceCount;
+    public uint TargetId;
+    public uint TargetCount;
+    public uint SurchargeId;
+    public uint SurchargeCount;
+    public uint Flags;
 }

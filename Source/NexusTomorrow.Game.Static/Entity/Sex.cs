@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Entity
+﻿namespace NexusTomorrow.Game.Static.Entity;
+
+public enum Sex : byte
 {
-    public enum Sex : byte
-    {
-        Male,
-        Female
-    }
+    Male,
+    Female
 }

@@ -1,14 +1,13 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace NexusTomorrow.GameTable
+namespace NexusTomorrow.GameTable;
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct GameTableField
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct GameTableField
-    {
-        public ulong NameLength;
-        public ulong NameOffset;
-        public DataType Type;
-        public ushort Unknown2;
-        public uint Unknown3;
-    }
+    public ulong NameLength;
+    public ulong NameOffset;
+    public DataType Type;
+    public ushort Unknown2;
+    public uint Unknown3;
 }

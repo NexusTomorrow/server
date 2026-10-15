@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Spell4TierRequirementsEntry
 {
-    public class Spell4TierRequirementsEntry
-    {
-        public uint Id;
-        public uint TierIndex;
-        public uint LevelRequirement;
-    }
+    public uint Id;
+    public uint TierIndex;
+    public uint LevelRequirement;
 }

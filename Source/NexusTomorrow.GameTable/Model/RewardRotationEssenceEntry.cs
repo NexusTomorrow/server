@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class RewardRotationEssenceEntry
 {
-    public class RewardRotationEssenceEntry
-    {
-        public uint Id;
-        public uint AccountCurrencyTypeId;
-        public uint MinPlayerLevel;
-        public uint WorldDifficultyFlags;
-    }
+    public uint Id;
+    public uint AccountCurrencyTypeId;
+    public uint MinPlayerLevel;
+    public uint WorldDifficultyFlags;
 }

@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class VitalEntry
 {
-    public class VitalEntry
-    {
-        public uint Id;
-        public uint LocalizedTextIdDisplayText;
-    }
+    public uint Id;
+    public uint LocalizedTextIdDisplayText;
 }

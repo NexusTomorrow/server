@@ -1,12 +1,11 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model
+namespace NexusTomorrow.Network.World.Message.Model;
+
+[Message(GameMessageOpcode.ServerPlayerEnteredWorld)]
+public class ServerPlayerEnteredWorld : IWritable
 {
-    [Message(GameMessageOpcode.ServerPlayerEnteredWorld)]
-    public class ServerPlayerEnteredWorld : IWritable
+    public void Write(GamePacketWriter writer)
     {
-        public void Write(GamePacketWriter writer)
-        {
-        }
     }
 }

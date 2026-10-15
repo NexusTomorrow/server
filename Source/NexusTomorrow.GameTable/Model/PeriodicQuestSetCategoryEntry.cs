@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class PeriodicQuestSetCategoryEntry
 {
-    public class PeriodicQuestSetCategoryEntry
-    {
-        public uint Id;
-        public uint PeriodicSetsOffered;
-    }
+    public uint Id;
+    public uint PeriodicSetsOffered;
 }

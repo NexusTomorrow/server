@@ -1,11 +1,10 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace NexusTomorrow.GameTable
+namespace NexusTomorrow.GameTable;
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct TextTableField
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct TextTableField
-    {
-        public uint Id;
-        public uint Offset;
-    }
+    public uint Id;
+    public uint Offset;
 }

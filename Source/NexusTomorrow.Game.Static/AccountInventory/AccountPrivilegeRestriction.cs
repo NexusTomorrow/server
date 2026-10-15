@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.AccountInventory
+﻿namespace NexusTomorrow.Game.Static.AccountInventory;
+
+public enum AccountPrivilegeRestriction
 {
-    public enum AccountPrivilegeRestriction
-    {
-        Chat     = 0x0,
-        Invite   = 0x1,
-        PvpMatch = 0x2,
-        Trade    = 0x3
-    }
+    Chat = 0x0,
+    Invite = 0x1,
+    PvpMatch = 0x2,
+    Trade = 0x3
 }

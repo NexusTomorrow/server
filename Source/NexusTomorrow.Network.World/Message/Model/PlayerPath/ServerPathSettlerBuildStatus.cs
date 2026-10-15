@@ -1,17 +1,16 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.PlayerPath
-{
-    [Message(GameMessageOpcode.ServerPathSettlerBuildStatus)]
-    public class ServerPathSettlerBuildStatus : IWritable
-    {
-        public ushort PathSettlerHubId { get; set; }
-        public SettlerImprovementGroupStatus Status { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(PathSettlerHubId, 14);
-            Status.Write(writer);
-        }
+[Message(GameMessageOpcode.ServerPathSettlerBuildStatus)]
+public class ServerPathSettlerBuildStatus : IWritable
+{
+    public ushort PathSettlerHubId { get; set; }
+    public SettlerImprovementGroupStatus Status { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(PathSettlerHubId, 14);
+        Status.Write(writer);
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class WordFilterAltEntry
 {
-    public class WordFilterAltEntry
-    {
-        public uint Id;
-        public string Filter = string.Empty;
-    }
+    public uint Id;
+    public string Filter = string.Empty;
 }

@@ -1,13 +1,12 @@
-﻿namespace NexusTomorrow.Game.Static.Group
+﻿namespace NexusTomorrow.Game.Static.Group;
+
+public enum LootThreshold : byte
 {
-    public enum LootThreshold : byte
-    {
-        Inferior        = 1,
-        Average         = 2,
-        Good            = 3,
-        Excellent       = 4,
-        Superb          = 5,
-        Legendary       = 6,
-        Artifact        = 7,
-    }
+    Inferior = 1,
+    Average = 2,
+    Good = 3,
+    Excellent = 4,
+    Superb = 5,
+    Legendary = 6,
+    Artifact = 7,
 }

@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Costume
+﻿namespace NexusTomorrow.Game.Static.Costume;
+
+public enum CostumeType
 {
-    public enum CostumeType
-    {
-        Personal  = 0,
-        Mannequin = 1
-    }
+    Personal = 0,
+    Mannequin = 1
 }

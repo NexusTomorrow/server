@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class VeteranTierEntry
 {
-    public class VeteranTierEntry
-    {
-        public uint Id;
-        public uint PrimeLevel;
-        public uint VeteranTierScalingType;
-        public uint UnitPropertyOverrideMenace;
-    }
+    public uint Id;
+    public uint PrimeLevel;
+    public uint VeteranTierScalingType;
+    public uint UnitPropertyOverrideMenace;
 }

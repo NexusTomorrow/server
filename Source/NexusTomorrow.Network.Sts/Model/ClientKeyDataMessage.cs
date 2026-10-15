@@ -1,24 +1,23 @@
 ﻿using System.Xml;
 
-namespace NexusTomorrow.Network.Sts.Model
+namespace NexusTomorrow.Network.Sts.Model;
+
+[Message("/Auth/KeyData")]
+public class ClientKeyDataMessage : IReadable
 {
-    [Message("/Auth/KeyData")]
-    public class ClientKeyDataMessage : IReadable
+    public byte[] A { get; private set; } = [];
+    public byte[] M1 { get; private set; } = [];
+
+    public void Read(XmlDocument document)
     {
-        public byte[] A { get; private set; } = [];
-        public byte[] M1 { get; private set; } = [];
+        XmlElement rootNode = document.GetElement("Request");
+        string keyData = rootNode.GetValue<string>("KeyData");
 
-        public void Read(XmlDocument document)
-        {
-            XmlElement rootNode = document.GetElement("Request");
-            string keyData = rootNode.GetValue<string>("KeyData");
-
-            using var stream = new MemoryStream(Convert.FromBase64String(keyData));
-            using var reader = new BinaryReader(stream);
-            int lengthA = reader.ReadInt32();
-            A = reader.ReadBytes(lengthA);
-            int lengthM = reader.ReadInt32();
-            M1 = reader.ReadBytes(lengthM);
-        }
+        using var stream = new MemoryStream(Convert.FromBase64String(keyData));
+        using var reader = new BinaryReader(stream);
+        int lengthA = reader.ReadInt32();
+        A = reader.ReadBytes(lengthA);
+        int lengthM = reader.ReadInt32();
+        M1 = reader.ReadBytes(lengthM);
     }
 }

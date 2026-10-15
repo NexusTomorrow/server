@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Option
+﻿namespace NexusTomorrow.Game.Static.Option;
+
+public enum InputKeyLookupGroup
 {
-    public enum InputKeyLookupGroup
-    {
-        Main                    = 0,
-        StunBreakoutGameplay    = 1
-    }
+    Main = 0,
+    StunBreakoutGameplay = 1
 }

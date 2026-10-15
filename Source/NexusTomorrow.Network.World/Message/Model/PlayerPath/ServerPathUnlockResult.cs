@@ -2,19 +2,18 @@
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Static;
 
-namespace NexusTomorrow.Network.World.Message.Model.PlayerPath
+namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
+
+
+[Message(GameMessageOpcode.ServerPathUnlockResult)]
+public class ServerPathUnlockResult : IWritable
 {
+    public GenericError Result { get; set; }
+    public PathUnlockedMask UnlockedPathMask { get; set; }
 
-    [Message(GameMessageOpcode.ServerPathUnlockResult)]
-    public class ServerPathUnlockResult : IWritable
+    public void Write(GamePacketWriter writer)
     {
-        public GenericError Result { get; set; }
-        public PathUnlockedMask UnlockedPathMask { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Result, 8u);
-            writer.Write(UnlockedPathMask);
-        }
+        writer.Write(Result, 8u);
+        writer.Write(UnlockedPathMask);
     }
 }

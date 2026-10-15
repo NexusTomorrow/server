@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Fortune
+﻿namespace NexusTomorrow.Game.Static.Fortune;
+
+public enum FortuneOperation
 {
-    public enum FortuneOperation
-    {
-        Reset  = 0,
-        Update = 3
-    }
+    Reset = 0,
+    Update = 3
 }

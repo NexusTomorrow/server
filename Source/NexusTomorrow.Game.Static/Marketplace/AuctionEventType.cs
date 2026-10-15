@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.Game.Static.Marketplace
+﻿namespace NexusTomorrow.Game.Static.Marketplace;
+
+public enum AuctionEventType
 {
-    public enum AuctionEventType
-    {
-        Post   = 0x0,
-        Bid    = 0x1,
-        Fill   = 0x2,
-        Expire = 0x3,
-        Cancel = 0x4,
-    }
+    Post = 0x0,
+    Bid = 0x1,
+    Fill = 0x2,
+    Expire = 0x3,
+    Cancel = 0x4,
 }

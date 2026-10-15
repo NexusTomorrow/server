@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Guild
+﻿namespace NexusTomorrow.Game.Static.Guild;
+
+public enum GuildStandardPartType
 {
-    public enum GuildStandardPartType
-    {
-        Background = 3,
-        Foreground = 4,
-        ScanLines  = 5
-    }
+    Background = 3,
+    Foreground = 4,
+    ScanLines = 5
 }

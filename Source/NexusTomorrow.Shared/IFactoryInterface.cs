@@ -1,7 +1,6 @@
-﻿namespace NexusTomorrow.Shared
+﻿namespace NexusTomorrow.Shared;
+
+public interface IFactoryInterface<T> where T : class
 {
-    public interface IFactoryInterface<T> where T : class
-    {
-        T2 Resolve<T2>() where T2 : T;
-    }
+    T2 Resolve<T2>() where T2 : T;
 }

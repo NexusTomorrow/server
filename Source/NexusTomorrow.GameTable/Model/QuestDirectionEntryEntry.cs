@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class QuestDirectionEntryEntry
 {
-    public class QuestDirectionEntryEntry
-    {
-        public uint Id;
-        public uint WorldLocation2Id;
-        public uint WorldLocation2IdInactive;
-        public uint WorldZoneId;
-        public uint QuestDirectionEntryFlags;
-        public uint QuestDirectionFactionEnum;
-    }
+    public uint Id;
+    public uint WorldLocation2Id;
+    public uint WorldLocation2IdInactive;
+    public uint WorldZoneId;
+    public uint QuestDirectionEntryFlags;
+    public uint QuestDirectionFactionEnum;
 }

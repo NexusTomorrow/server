@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Quest2RewardEntry
 {
-    public class Quest2RewardEntry
-    {
-        public uint Id;
-        public uint Quest2Id;
-        public uint Quest2RewardTypeId;
-        public uint ObjectId;
-        public uint ObjectAmount;
-        public uint Flags;
-    }
+    public uint Id;
+    public uint Quest2Id;
+    public uint Quest2RewardTypeId;
+    public uint ObjectId;
+    public uint ObjectAmount;
+    public uint Flags;
 }

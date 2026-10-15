@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Quest
+﻿namespace NexusTomorrow.Game.Static.Quest;
+
+public enum QuestRepeatPeriodFlags
 {
-    public enum QuestRepeatPeriodFlags
-    {
-        Daily = 1,
-        Weekly = 2,
-        Monthly = 4,
-        Yearly = 8
-    }
+    Daily = 1,
+    Weekly = 2,
+    Monthly = 4,
+    Yearly = 8
 }

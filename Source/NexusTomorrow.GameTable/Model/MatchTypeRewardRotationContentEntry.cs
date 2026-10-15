@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class MatchTypeRewardRotationContentEntry
 {
-    public class MatchTypeRewardRotationContentEntry
-    {
-        public uint Id;
-        public uint MatchTypeEnum;
-        public uint RewardRotationContentIdRandomNormal;
-        public uint RewardRotationContentIdRandomVeteran;
-    }
+    public uint Id;
+    public uint MatchTypeEnum;
+    public uint RewardRotationContentIdRandomNormal;
+    public uint RewardRotationContentIdRandomVeteran;
 }

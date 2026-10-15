@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class RandomTextLineEntry
 {
-    public class RandomTextLineEntry
-    {
-        public uint Id;
-        public uint LocalizedTextId;
-        public uint RandomTextLineSetId;
-    }
+    public uint Id;
+    public uint LocalizedTextId;
+    public uint RandomTextLineSetId;
 }

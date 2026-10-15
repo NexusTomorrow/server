@@ -1,19 +1,18 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Spell
-{
-    [Message(GameMessageOpcode.ClientCastSpellContinuous)]
-    public class ClientCastSpellContinuous : IReadable
-    {
-        public ushort BagIndex { get; private set; }
-        public uint TargetUnitId { get; private set; }
-        public bool ButtonPressed { get; private set; }
+namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-        public void Read(GamePacketReader reader)
-        {
-            BagIndex  = reader.ReadUShort();
-            TargetUnitId      = reader.ReadUInt();
-            ButtonPressed = reader.ReadBit();
-        }
+[Message(GameMessageOpcode.ClientCastSpellContinuous)]
+public class ClientCastSpellContinuous : IReadable
+{
+    public ushort BagIndex { get; private set; }
+    public uint TargetUnitId { get; private set; }
+    public bool ButtonPressed { get; private set; }
+
+    public void Read(GamePacketReader reader)
+    {
+        BagIndex = reader.ReadUShort();
+        TargetUnitId = reader.ReadUInt();
+        ButtonPressed = reader.ReadBit();
     }
 }

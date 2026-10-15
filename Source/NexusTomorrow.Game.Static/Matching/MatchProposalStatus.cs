@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Matching
+﻿namespace NexusTomorrow.Game.Static.Matching;
+
+public enum MatchProposalStatus
 {
-    public enum MatchProposalStatus
-    {
-        Pending,
-        Declined,
-        Expired,
-        Success
-    }
+    Pending,
+    Declined,
+    Expired,
+    Success
 }

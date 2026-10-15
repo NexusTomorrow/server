@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Text.Search
-{
-    public interface ITextReverseIndex
-    {
-        bool IsEmpty { get; }
+﻿namespace NexusTomorrow.GameTable.Text.Search;
 
-        IEnumerable<uint>? ExactSearch(string text);
-        IEnumerable<uint> FuzzySearch(string text);
-    }
+public interface ITextReverseIndex
+{
+    bool IsEmpty { get; }
+
+    IEnumerable<uint>? ExactSearch(string text);
+    IEnumerable<uint> FuzzySearch(string text);
 }

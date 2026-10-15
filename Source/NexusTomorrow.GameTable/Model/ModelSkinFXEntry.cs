@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ModelSkinFXEntry
 {
-    public class ModelSkinFXEntry
-    {
-        public uint Id;
-        public string Suffix = string.Empty;
-    }
+    public uint Id;
+    public string Suffix = string.Empty;
 }

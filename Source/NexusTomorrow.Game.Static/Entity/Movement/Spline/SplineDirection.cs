@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Entity.Movement.Spline
+﻿namespace NexusTomorrow.Game.Static.Entity.Movement.Spline;
+
+public enum SplineDirection
 {
-    public enum SplineDirection
-    {
-        Forward,
-        Backward
-    }
+    Forward,
+    Backward
 }

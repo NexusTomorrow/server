@@ -1,21 +1,20 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Spell
-{
-    [Message(GameMessageOpcode.ServerSpellUpdateEffectDuration)]
-    public class ServerSpellUpdateEffectDuration : IWritable
-    {
-        public uint ServerUniqueId { get; set; }
-        public uint SpellEffectUniqueId { get; set; }
-        public int TimeRemaining { get; set; }
-        public uint TargetUnitId { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(ServerUniqueId);
-            writer.Write(SpellEffectUniqueId);
-            writer.Write(TimeRemaining);
-            writer.Write(TargetUnitId);
-        }
+[Message(GameMessageOpcode.ServerSpellUpdateEffectDuration)]
+public class ServerSpellUpdateEffectDuration : IWritable
+{
+    public uint ServerUniqueId { get; set; }
+    public uint SpellEffectUniqueId { get; set; }
+    public int TimeRemaining { get; set; }
+    public uint TargetUnitId { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(ServerUniqueId);
+        writer.Write(SpellEffectUniqueId);
+        writer.Write(TimeRemaining);
+        writer.Write(TargetUnitId);
     }
 }

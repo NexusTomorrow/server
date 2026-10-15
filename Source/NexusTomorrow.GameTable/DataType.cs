@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.GameTable
+﻿namespace NexusTomorrow.GameTable;
+
+public enum DataType : ushort
 {
-    public enum DataType : ushort
-    {
-        UInt = 3,
-        Single = 4,
-        Boolean = 11,
-        ULong = 20,
-        String = 130
-    }
+    UInt = 3,
+    Single = 4,
+    Boolean = 11,
+    ULong = 20,
+    String = 130
 }

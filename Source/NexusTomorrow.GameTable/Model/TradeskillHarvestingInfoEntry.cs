@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class TradeskillHarvestingInfoEntry
 {
-    public class TradeskillHarvestingInfoEntry
-    {
-        public uint Id;
-        public uint TradeSkillTierId;
-        public uint PrerequisiteId;
-        public uint MiniMapMarkerId;
-    }
+    public uint Id;
+    public uint TradeSkillTierId;
+    public uint PrerequisiteId;
+    public uint MiniMapMarkerId;
 }

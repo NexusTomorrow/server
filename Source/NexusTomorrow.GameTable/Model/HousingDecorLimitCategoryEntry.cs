@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class HousingDecorLimitCategoryEntry
 {
-    public class HousingDecorLimitCategoryEntry
-    {
-        public uint Id;
-        public uint DecorLimit;
-    }
+    public uint Id;
+    public uint DecorLimit;
 }

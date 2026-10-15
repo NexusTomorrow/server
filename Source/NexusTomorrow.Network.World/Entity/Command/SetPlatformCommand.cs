@@ -1,20 +1,19 @@
 ﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
 
-namespace NexusTomorrow.Network.World.Entity.Command
+namespace NexusTomorrow.Network.World.Entity.Command;
+
+[EntityCommand(EntityCommand.SetPlatform)]
+public class SetPlatformCommand : IEntityCommandModel
 {
-    [EntityCommand(EntityCommand.SetPlatform)]
-    public class SetPlatformCommand : IEntityCommandModel
+    public uint UnitId { get; set; }
+
+    public void Read(GamePacketReader reader)
     {
-        public uint UnitId { get; set; }
+        UnitId = reader.ReadUInt();
+    }
 
-        public void Read(GamePacketReader reader)
-        {
-            UnitId = reader.ReadUInt();
-        }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(UnitId);
-        }
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(UnitId);
     }
 }

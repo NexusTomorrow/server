@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Network.World.Message.Static
+﻿namespace NexusTomorrow.Network.World.Message.Static;
+
+public enum CharacterSelectResult
 {
-    public enum CharacterSelectResult
-    {
-        FailedRename           = 1,
-        Failed                 = 2,
-        FailedDisabled         = 3,
-        FailedCharacterInWorld = 4
-    }
+    FailedRename = 1,
+    Failed = 2,
+    FailedDisabled = 3,
+    FailedCharacterInWorld = 4
 }

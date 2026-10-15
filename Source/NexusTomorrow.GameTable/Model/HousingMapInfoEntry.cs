@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class HousingMapInfoEntry
 {
-    public class HousingMapInfoEntry
-    {
-        public uint Id;
-        public uint WorldId;
-        public uint PrivatePropertyCount;
-        public uint PublicPropertyCount;
-    }
+    public uint Id;
+    public uint WorldId;
+    public uint PrivatePropertyCount;
+    public uint PublicPropertyCount;
 }

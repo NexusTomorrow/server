@@ -1,7 +1,6 @@
-﻿namespace NexusTomorrow.Network.Message
+﻿namespace NexusTomorrow.Network.Message;
+
+public interface IWritable
 {
-    public interface IWritable
-    {
-        void Write(GamePacketWriter writer);
-    }
+    void Write(GamePacketWriter writer);
 }

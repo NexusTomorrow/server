@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Spell4ServiceTokenCostEntry
 {
-    public class Spell4ServiceTokenCostEntry
-    {
-        public uint Id;
-        public uint Spell4Id;
-        public uint ServiceTokenCost;
-    }
+    public uint Id;
+    public uint Spell4Id;
+    public uint ServiceTokenCost;
 }

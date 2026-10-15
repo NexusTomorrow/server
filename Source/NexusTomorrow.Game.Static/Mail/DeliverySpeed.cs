@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Mail
+﻿namespace NexusTomorrow.Game.Static.Mail;
+
+public enum DeliverySpeed
 {
-    public enum DeliverySpeed
-    {
-        Instant = 0,
-        Hour    = 1,
-        Day     = 2
-    }
+    Instant = 0,
+    Hour = 1,
+    Day = 2
 }

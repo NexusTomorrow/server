@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Info
+﻿namespace NexusTomorrow.Game.Static.Info;
+
+public enum HealthyGamingStatus
 {
-    public enum HealthyGamingStatus
-    {
-        Normal    = 0x0,
-        Fatigue   = 0x1,
-        Unhealthy = 0x2
-    };
-}
+    Normal = 0x0,
+    Fatigue = 0x1,
+    Unhealthy = 0x2
+};

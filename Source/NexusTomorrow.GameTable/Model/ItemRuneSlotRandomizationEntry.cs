@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ItemRuneSlotRandomizationEntry
 {
-    public class ItemRuneSlotRandomizationEntry
-    {
-        public uint Id;
-        public uint MicrochipTypeEnum;
-        public uint ItemRoleFlagBitMask;
-        public float RandomWeight;
-    }
+    public uint Id;
+    public uint MicrochipTypeEnum;
+    public uint ItemRoleFlagBitMask;
+    public float RandomWeight;
 }

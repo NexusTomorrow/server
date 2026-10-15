@@ -1,24 +1,23 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Spell
+namespace NexusTomorrow.Network.World.Message.Model.Spell;
+
+[Message(GameMessageOpcode.ServerSpellEffectResultAnnounce)]
+public class ServerSpellEffectResultAnnounce : IWritable
 {
-    [Message(GameMessageOpcode.ServerSpellEffectResultAnnounce)]
-    public class ServerSpellEffectResultAnnounce : IWritable
+    public uint CastingId { get; set; }
+    public uint Spell4EffectId { get; set; }
+    public uint TargetUnitId { get; set; }
+
+    public List<SpellEffectResult> SpellEffectResults { get; set; } = [];
+
+    public void Write(GamePacketWriter writer)
     {
-        public uint CastingId { get; set; }
-        public uint Spell4EffectId { get; set; }
-        public uint TargetUnitId { get; set; }
+        writer.Write(CastingId);
+        writer.Write(Spell4EffectId, 19);
+        writer.Write(TargetUnitId);
 
-        public List<SpellEffectResult> SpellEffectResults { get; set; } = new();
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(CastingId);
-            writer.Write(Spell4EffectId, 19);
-            writer.Write(TargetUnitId);
-
-            writer.Write(SpellEffectResults.Count, 8u);
-            SpellEffectResults.ForEach(u => u.Write(writer));
-        }
+        writer.Write(SpellEffectResults.Count, 8u);
+        SpellEffectResults.ForEach(u => u.Write(writer));
     }
 }

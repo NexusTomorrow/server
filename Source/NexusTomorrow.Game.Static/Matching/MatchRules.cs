@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Matching
+﻿namespace NexusTomorrow.Game.Static.Matching;
+
+public enum MatchRules
 {
-    public enum MatchRules
-    {
-        Default,
-        WaveRespawn,
-        DeathmatchPool
-    }
+    Default,
+    WaveRespawn,
+    DeathmatchPool
 }

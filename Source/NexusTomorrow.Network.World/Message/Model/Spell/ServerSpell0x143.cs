@@ -1,13 +1,12 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Spell
+namespace NexusTomorrow.Network.World.Message.Model.Spell;
+
+[Message(GameMessageOpcode.ServerSpell0x143)]
+public class ServerSpell0x143 : IWritable
 {
-    [Message(GameMessageOpcode.ServerSpell0x143)]
-    public class ServerSpell0x143 : IWritable
+    public void Write(GamePacketWriter writer)
     {
-        public void Write(GamePacketWriter writer)
-        {
-            // zero byte message
-        }
+        // zero byte message
     }
 }

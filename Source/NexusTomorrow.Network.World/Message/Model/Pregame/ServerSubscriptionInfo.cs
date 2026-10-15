@@ -1,25 +1,24 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Pregame
+namespace NexusTomorrow.Network.World.Message.Model.Pregame;
+
+[Message(GameMessageOpcode.ServerSubscriptionInfo)]
+public class ServerSubscriptionInfo : IWritable
 {
-    [Message(GameMessageOpcode.ServerSubscriptionInfo)]
-    public class ServerSubscriptionInfo : IWritable
+    [Flags]
+    public enum RealmTransferFlags
     {
-        [Flags]
-        public enum RealmTransferFlags
-        {
-            FreeRealmTransfer = 0x1,
-        }
+        FreeRealmTransfer = 0x1,
+    }
 
-        public RealmTransferFlags Flags { get; set; }
-        public bool SubscriptionExpired { get; set; }
-        public float GameTimeHoursRemaining { get; set; }
+    public RealmTransferFlags Flags { get; set; }
+    public bool SubscriptionExpired { get; set; }
+    public float GameTimeHoursRemaining { get; set; }
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Flags, 32u);
-            writer.Write(SubscriptionExpired);
-            writer.Write(GameTimeHoursRemaining);
-        }
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Flags, 32u);
+        writer.Write(SubscriptionExpired);
+        writer.Write(GameTimeHoursRemaining);
     }
 }

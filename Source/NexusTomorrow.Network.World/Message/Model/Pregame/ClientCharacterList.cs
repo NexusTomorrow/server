@@ -1,13 +1,12 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Pregame
+namespace NexusTomorrow.Network.World.Message.Model.Pregame;
+
+[Message(GameMessageOpcode.ClientCharacterList)]
+public class ClientCharacterList : IReadable
 {
-    [Message(GameMessageOpcode.ClientCharacterList)]
-    public class ClientCharacterList : IReadable
+    public void Read(GamePacketReader reader)
     {
-        public void Read(GamePacketReader reader)
-        {
-            // Zero byte message
-        }
+        // Zero byte message
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class TradeskillMaterialCategoryEntry
 {
-    public class TradeskillMaterialCategoryEntry
-    {
-        public uint Id;
-        public uint LocalizedTextIdName;
-    }
+    public uint Id;
+    public uint LocalizedTextIdName;
 }

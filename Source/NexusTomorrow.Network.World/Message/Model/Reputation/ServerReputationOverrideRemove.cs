@@ -1,18 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Reputation;
 using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Reputation
-{
-    [Message(GameMessageOpcode.ServerReputationOverrideRemove)]
-    public class ServerReputationOverrideRemove : IWritable
-    {
-        public uint UnitId { get; set; } // Must be player's UnitId otherwise message is ignored
-        public Faction FactionId { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.Reputation;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(UnitId);
-            writer.Write(FactionId, 14u);
-        }
+[Message(GameMessageOpcode.ServerReputationOverrideRemove)]
+public class ServerReputationOverrideRemove : IWritable
+{
+    public uint UnitId { get; set; } // Must be player's UnitId otherwise message is ignored
+    public Faction FactionId { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(UnitId);
+        writer.Write(FactionId, 14u);
     }
 }

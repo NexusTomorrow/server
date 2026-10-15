@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Reward
+﻿namespace NexusTomorrow.Game.Static.Reward;
+
+public enum RewardModifierValueType
 {
-    public enum RewardModifierValueType
-    {
-        AdditiveScalar       = 0,
-        Discrete             = 1,
-        MultiplicativeScalar = 2
-    }
+    AdditiveScalar = 0,
+    Discrete = 1,
+    MultiplicativeScalar = 2
 }

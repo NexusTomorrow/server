@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class MaterialRemapEntry
 {
-    public class MaterialRemapEntry
-    {
-        public uint Id;
-        public uint MaterialDataRow;
-        public uint MaterialSetId;
-        public uint MaterialDataRowRemap;
-    }
+    public uint Id;
+    public uint MaterialDataRow;
+    public uint MaterialSetId;
+    public uint MaterialDataRowRemap;
 }

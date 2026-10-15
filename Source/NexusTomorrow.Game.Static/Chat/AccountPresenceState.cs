@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Chat
+﻿namespace NexusTomorrow.Game.Static.Chat;
+
+public enum AccountPresenceState
 {
-    public enum AccountPresenceState
-    {
-        Available   = 0,
-        Away        = 1,
-        Busy        = 2,
-        Invisible   = 3
-    }
+    Available = 0,
+    Away = 1,
+    Busy = 2,
+    Invisible = 3
 }

@@ -1,28 +1,27 @@
 ﻿using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Static;
 
-namespace NexusTomorrow.Network.World.Message.Model.Housing
+namespace NexusTomorrow.Network.World.Message.Model.Housing;
+
+[Message(GameMessageOpcode.ClientHousingDecorUpdate)]
+public class ClientHousingDecorUpdate : IReadable
 {
-    [Message(GameMessageOpcode.ClientHousingDecorUpdate)]
-    public class ClientHousingDecorUpdate : IReadable
+    public DecorUpdateOperation Operation { get; private set; }
+    public List<DecorUpdate> DecorUpdates { get; private set; } = [];
+
+    public void Read(GamePacketReader reader)
     {
-        public DecorUpdateOperation Operation { get; private set; }
-        public List<DecorUpdate> DecorUpdates { get; private set; } = [];
+        Operation = reader.ReadEnum<DecorUpdateOperation>(3u);
 
-        public void Read(GamePacketReader reader)
+        uint count = reader.ReadUInt();
+        for (uint i = 0u; i < count; i++)
         {
-            Operation = reader.ReadEnum<DecorUpdateOperation>(3u);
-
-            uint count = reader.ReadUInt();
-            for (uint i = 0u; i < count; i++)
-            {
-                var decorUpdate = new DecorUpdate();
-                decorUpdate.Read(reader);
-                DecorUpdates.Add(decorUpdate);
-            }
-
-            for (int i = 0; i < count; i++)
-                DecorUpdates[i].UseServiceToken = reader.ReadBit();
+            var decorUpdate = new DecorUpdate();
+            decorUpdate.Read(reader);
+            DecorUpdates.Add(decorUpdate);
         }
+
+        for (int i = 0; i < count; i++)
+            DecorUpdates[i].UseServiceToken = reader.ReadBit();
     }
 }

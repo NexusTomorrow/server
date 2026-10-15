@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Network.Packet
+﻿namespace NexusTomorrow.Network.Packet;
+
+public class ClientGamePacket
 {
-    public class ClientGamePacket
-    {
-        public bool IsEncrypted { get; init; }
-        public required byte[] Data { get; init; }
-    }
+    public bool IsEncrypted { get; init; }
+    public required byte[] Data { get; init; }
 }

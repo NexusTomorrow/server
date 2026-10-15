@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Entity
+﻿namespace NexusTomorrow.Game.Static.Entity;
+
+public enum EntityDeathState
 {
-    public enum EntityDeathState
-    {
-        JustDied,
-        Corpse,
-        Dead
-    }
+    JustDied,
+    Corpse,
+    Dead
 }

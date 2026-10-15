@@ -1,27 +1,26 @@
-﻿namespace NexusTomorrow.IO.Map
+﻿namespace NexusTomorrow.IO.Map;
+
+public class WritableMapFile : MapFile, IWritable
 {
-    public class WritableMapFile : MapFile, IWritable
+    public WritableMapFile(string asset)
     {
-        public WritableMapFile(string asset)
-        {
-            Asset = asset;
-        }
+        Asset = asset;
+    }
 
-        public void Write(BinaryWriter writer)
-        {
-            writer.Write(Magic);
-            writer.Write(Version);
-            writer.Write(Build);
-            writer.Write(Asset);
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Magic);
+        writer.Write(Version);
+        writer.Write(Build);
+        writer.Write(Asset);
 
-            writer.Write(grids.Count);
-            foreach (WritableMapFileGrid grid in grids.Values)
-                grid.Write(writer);
-        }
+        writer.Write(grids.Count);
+        foreach (WritableMapFileGrid grid in grids.Values)
+            grid.Write(writer);
+    }
 
-        public void SetGrid(uint x, uint y, WritableMapFileGrid grid)
-        {
-            grids.Add((grid.X << 16) | grid.Y, grid);
-        }
+    public void SetGrid(uint x, uint y, WritableMapFileGrid grid)
+    {
+        grids.Add((grid.X << 16) | grid.Y, grid);
     }
 }

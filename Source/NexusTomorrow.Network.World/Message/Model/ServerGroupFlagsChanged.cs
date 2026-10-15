@@ -1,22 +1,21 @@
 ﻿using NexusTomorrow.Game.Static.Group;
 using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model
+namespace NexusTomorrow.Network.World.Message.Model;
+
+[Message(GameMessageOpcode.ServerGroupFlagsChanged)]
+public class ServerGroupFlagsChanged : IWritable
 {
-    [Message(GameMessageOpcode.ServerGroupFlagsChanged)]
-    public class ServerGroupFlagsChanged : IWritable
+    public ulong GroupId { get; set; }
+
+    public GroupFlags Flags { get; set; }
+
+    public uint Unk0 { get; set; }
+
+    public void Write(GamePacketWriter writer)
     {
-        public ulong GroupId { get; set; }
-
-        public GroupFlags Flags { get; set; }
-
-        public uint Unk0 { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(GroupId);
-            writer.Write(Unk0);
-            writer.Write(Flags, 32u);
-        }
+        writer.Write(GroupId);
+        writer.Write(Unk0);
+        writer.Write(Flags, 32u);
     }
 }

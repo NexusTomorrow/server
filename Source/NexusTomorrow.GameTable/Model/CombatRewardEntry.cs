@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class CombatRewardEntry
 {
-    public class CombatRewardEntry
-    {
-        public uint Id;
-        public uint CombatRewardTypeEnum;
-        public uint LocalizedTextIdCombatFloater;
-        public uint LocalizedTextIdCombatLogMessage;
-        public uint VisualEffectIdVisual00;
-        public uint VisualEffectIdVisual01;
-    }
+    public uint Id;
+    public uint CombatRewardTypeEnum;
+    public uint LocalizedTextIdCombatFloater;
+    public uint LocalizedTextIdCombatLogMessage;
+    public uint VisualEffectIdVisual00;
+    public uint VisualEffectIdVisual01;
 }

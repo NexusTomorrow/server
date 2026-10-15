@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ItemRandomStatEntry
 {
-    public class ItemRandomStatEntry
-    {
-        public uint Id;
-        public uint ItemRandomStatGroupId;
-        public float Weight;
-        public uint ItemStatTypeEnum;
-        public uint ItemStatData;
-    }
+    public uint Id;
+    public uint ItemRandomStatGroupId;
+    public float Weight;
+    public uint ItemStatTypeEnum;
+    public uint ItemStatData;
 }

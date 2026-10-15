@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class SoundDirectionalAmbienceEntry
 {
-    public class SoundDirectionalAmbienceEntry
-    {
-        public uint Id;
-        public uint SoundEventIdOutsideStart;
-        public uint SoundEventIdOutsideStop;
-    }
+    public uint Id;
+    public uint SoundEventIdOutsideStart;
+    public uint SoundEventIdOutsideStop;
 }

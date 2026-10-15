@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace NexusTomorrow.ClientConnector.Native
+namespace NexusTomorrow.ClientConnector.Native;
+
+public struct PROCESS_INFORMATION
 {
-    public struct PROCESS_INFORMATION
-    {
-        public IntPtr hProcess;
-        public IntPtr hThread;
-        public uint dwProcessId;
-        public uint dwThreadId;
-    }
+    public IntPtr hProcess;
+    public IntPtr hThread;
+    public uint dwProcessId;
+    public uint dwThreadId;
 }

@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class TradeskillAdditiveEntry
 {
-    public class TradeskillAdditiveEntry
-    {
-        public uint Id;
-        public uint TradeSkillId;
-        public uint Tier;
-        public float VectorX;
-        public float VectorY;
-        public float Radius;
-    }
+    public uint Id;
+    public uint TradeSkillId;
+    public uint Tier;
+    public float VectorX;
+    public float VectorY;
+    public float Radius;
 }

@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Matching
+﻿namespace NexusTomorrow.Game.Static.Matching;
+
+public enum MatchWinner
 {
-    public enum MatchWinner
-    {
-        Red,
-        Blue,
-        Draw
-    }
+    Red,
+    Blue,
+    Draw
 }

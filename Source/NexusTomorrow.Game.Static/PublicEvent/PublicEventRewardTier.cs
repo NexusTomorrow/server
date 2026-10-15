@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.PublicEvent
+﻿namespace NexusTomorrow.Game.Static.PublicEvent;
+
+public enum PublicEventRewardTier
 {
-    public enum PublicEventRewardTier
-    {
-        None,
-        Bronze,
-        Silver,
-        Gold
-    }
+    None,
+    Bronze,
+    Silver,
+    Gold
 }

@@ -1,27 +1,26 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
 using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Chat
+namespace NexusTomorrow.Network.World.Message.Model.Chat;
+
+[Message(GameMessageOpcode.ServerChatList)]
+public class ServerChatList : IWritable
 {
-    [Message(GameMessageOpcode.ServerChatList)]
-    public class ServerChatList : IWritable
+    public ChatChannelType Type { get; set; }
+    public ulong ChannelId { get; set; }
+    public List<string> Names { get; set; }
+    public List<ChatChannelMemberFlags> Flags { get; set; }
+    public bool More { get; set; } // not used by client
+
+    public void Write(GamePacketWriter writer)
     {
-        public ChatChannelType Type { get; set; }
-        public ulong ChannelId { get; set; }
-        public List<string> Names { get; set; }
-        public List<ChatChannelMemberFlags> Flags { get; set; }
-        public bool More { get; set; } // not used by client
+        writer.Write(Type, 14u);
+        writer.Write(ChannelId);
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Type, 14u);
-            writer.Write(ChannelId);
-
-            writer.Write(Names.Count);
-            foreach (string name in Names)
-                writer.WriteStringWide(name);
-            foreach (ChatChannelMemberFlags flag in Flags)
-                writer.Write(flag, 32u);
-        }
+        writer.Write(Names.Count);
+        foreach (string name in Names)
+            writer.WriteStringWide(name);
+        foreach (ChatChannelMemberFlags flag in Flags)
+            writer.Write(flag, 32u);
     }
 }

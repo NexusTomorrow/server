@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class LevelDifferentialAttributeEntry
 {
-    public class LevelDifferentialAttributeEntry
-    {
-        public uint Id;
-        public uint LocalizedTextIdDescription;
-        public uint LevelDifferentialValue;
-        public float QuestXpMultiplier;
-    }
+    public uint Id;
+    public uint LocalizedTextIdDescription;
+    public uint LevelDifferentialValue;
+    public float QuestXpMultiplier;
 }

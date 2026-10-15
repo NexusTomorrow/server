@@ -1,22 +1,21 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model
+namespace NexusTomorrow.Network.World.Message.Model;
+
+[Message(GameMessageOpcode.ClientPackedWorld)]
+public class ClientPackedWorld : IReadable
 {
-    [Message(GameMessageOpcode.ClientPackedWorld)]
-    public class ClientPackedWorld : IReadable
+    // TODO: research this more
+    // client hardcoded value of either 11 or 19 depending on what function sends the packet
+    public byte Unknown0 { get; private set; }
+    public byte[] Data { get; private set; }
+
+    public void Read(GamePacketReader reader)
     {
-        // TODO: research this more
-        // client hardcoded value of either 11 or 19 depending on what function sends the packet
-        public byte Unknown0 { get; private set; }
-        public byte[] Data { get; private set; }
+        Unknown0 = reader.ReadByte(5u);
+        reader.ResetBits();
 
-        public void Read(GamePacketReader reader)
-        {
-            Unknown0 = reader.ReadByte(5u);
-            reader.ResetBits();
-
-            uint length = reader.ReadUInt();
-            Data = reader.ReadBytes(length - 4);
-        }
+        uint length = reader.ReadUInt();
+        Data = reader.ReadBytes(length - 4);
     }
 }

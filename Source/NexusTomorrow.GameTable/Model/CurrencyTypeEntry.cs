@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class CurrencyTypeEntry
 {
-    public class CurrencyTypeEntry
-    {
-        public uint Id;
-        public string Description = string.Empty;
-        public uint LocalizedTextId;
-        public string IconName = string.Empty;
-        public ulong CapAmount;
-    }
+    public uint Id;
+    public string Description = string.Empty;
+    public uint LocalizedTextId;
+    public string IconName = string.Empty;
+    public ulong CapAmount;
 }

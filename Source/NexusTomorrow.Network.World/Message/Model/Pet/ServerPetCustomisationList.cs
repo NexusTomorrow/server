@@ -1,21 +1,20 @@
 ﻿using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
-namespace NexusTomorrow.Network.World.Message.Model.Pet
+namespace NexusTomorrow.Network.World.Message.Model.Pet;
+
+[Message(GameMessageOpcode.ServerPetCustomisationList)]
+public class ServerPetCustomisationList : IWritable
 {
-    [Message(GameMessageOpcode.ServerPetCustomisationList)]
-    public class ServerPetCustomisationList : IWritable
+    public NetworkBitArray UnlockedFlair { get; set; } = new(512, NetworkBitArray.BitOrder.MostSignificantBit);
+    public List<PetCustomisation> PetCustomisations { get; set; } = [];
+
+    public void Write(GamePacketWriter writer)
     {
-        public NetworkBitArray UnlockedFlair { get; set; } = new(512, NetworkBitArray.BitOrder.MostSignificantBit);
-        public List<PetCustomisation> PetCustomisations { get; set; } = new();
+        writer.WriteBytes(UnlockedFlair.GetBuffer());
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.WriteBytes(UnlockedFlair.GetBuffer());
-
-            writer.Write(PetCustomisations.Count, 32u);
-            foreach (var petCustomisation in PetCustomisations)
-                petCustomisation.Write(writer);
-        }
+        writer.Write(PetCustomisations.Count, 32u);
+        foreach (PetCustomisation petCustomisation in PetCustomisations)
+            petCustomisation.Write(writer);
     }
 }

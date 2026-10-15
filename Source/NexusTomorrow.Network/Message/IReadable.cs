@@ -1,7 +1,6 @@
-﻿namespace NexusTomorrow.Network.Message
+﻿namespace NexusTomorrow.Network.Message;
+
+public interface IReadable
 {
-    public interface IReadable
-    {
-        void Read(GamePacketReader reader);
-    }
+    void Read(GamePacketReader reader);
 }

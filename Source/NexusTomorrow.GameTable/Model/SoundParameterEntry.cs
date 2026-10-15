@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class SoundParameterEntry
 {
-    public class SoundParameterEntry
-    {
-        public uint Id;
-        public uint Hash;
-    }
+    public uint Id;
+    public uint Hash;
 }

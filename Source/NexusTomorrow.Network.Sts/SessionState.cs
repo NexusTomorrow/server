@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Network.Sts
+﻿namespace NexusTomorrow.Network.Sts;
+
+public enum SessionState
 {
-    public enum SessionState
-    {
-        None,
-        Connected,
-        LoginStart,
-        KeyData
-    }
+    None,
+    Connected,
+    LoginStart,
+    KeyData
 }

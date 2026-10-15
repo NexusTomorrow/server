@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class WorldWaterEnvironmentEntry
 {
-    public class WorldWaterEnvironmentEntry
-    {
-        public uint Id;
-        public string LandMapPath = string.Empty;
-    }
+    public uint Id;
+    public string LandMapPath = string.Empty;
 }

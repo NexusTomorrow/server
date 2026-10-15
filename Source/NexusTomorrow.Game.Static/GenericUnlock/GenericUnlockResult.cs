@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.GenericUnlock
+﻿namespace NexusTomorrow.Game.Static.GenericUnlock;
+
+public enum GenericUnlockResult
 {
-    public enum GenericUnlockResult
-    {
-        AlreadyUnlocked = 0,
-        Granted         = 1,
-        Invalid         = 2,
-        PartialUnlock   = 3
-    }
+    AlreadyUnlocked = 0,
+    Granted = 1,
+    Invalid = 2,
+    PartialUnlock = 3
 }

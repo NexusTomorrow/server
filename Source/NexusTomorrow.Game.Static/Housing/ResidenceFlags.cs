@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Housing
+﻿namespace NexusTomorrow.Game.Static.Housing;
+
+[Flags]
+public enum ResidenceFlags
 {
-    [Flags]
-    public enum ResidenceFlags
-    {
-        None                  = 0,
-        HideGroundClutter     = 1,
-        HideNeighbourSkyplots = 2
-    }
+    None = 0,
+    HideGroundClutter = 1,
+    HideNeighbourSkyplots = 2
 }

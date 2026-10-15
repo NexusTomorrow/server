@@ -1,26 +1,25 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
 
-namespace NexusTomorrow.Network.World.Chat.Model
+namespace NexusTomorrow.Network.World.Chat.Model;
+
+public class ChatFormatNavPoint : IChatFormatModel
 {
-    public class ChatFormatNavPoint : IChatFormatModel
+    public ChatFormatType Type => ChatFormatType.NavPoint;
+    public ushort MapZoneId { get; set; }
+    public float X { get; set; }
+    public float Y { get; set; }
+
+    public void Read(GamePacketReader reader)
     {
-        public ChatFormatType Type => ChatFormatType.NavPoint;
-        public ushort MapZoneId { get; set; }
-        public float X { get; set; }
-        public float Y { get; set; }
+        MapZoneId = reader.ReadUShort(14u);
+        X = reader.ReadSingle();
+        Y = reader.ReadSingle();
+    }
 
-        public void Read(GamePacketReader reader)
-        {
-            MapZoneId = reader.ReadUShort(14u);
-            X = reader.ReadSingle();
-            Y = reader.ReadSingle();
-        }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(MapZoneId, 14u);
-            writer.Write(X);
-            writer.Write(Y);
-        }
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(MapZoneId, 14u);
+        writer.Write(X);
+        writer.Write(Y);
     }
 }

@@ -1,15 +1,14 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class RewardPropertyPremiumModifierEntry
 {
-    public class RewardPropertyPremiumModifierEntry
-    {
-        public uint Id;
-        public uint PremiumSystemEnum;
-        public uint Tier;
-        public uint RewardPropertyId;
-        public uint RewardPropertyData;
-        public uint ModifierValueInt;
-        public float ModifierValueFloat;
-        public uint EntitlementIdModifierCount;
-        public uint Flags;
-    }
+    public uint Id;
+    public uint PremiumSystemEnum;
+    public uint Tier;
+    public uint RewardPropertyId;
+    public uint RewardPropertyData;
+    public uint ModifierValueInt;
+    public float ModifierValueFloat;
+    public uint EntitlementIdModifierCount;
+    public uint Flags;
 }

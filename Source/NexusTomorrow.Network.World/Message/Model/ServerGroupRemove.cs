@@ -1,28 +1,27 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Game.Static.Group;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
-using NexusTomorrow.Game.Static.Group;
 
-namespace NexusTomorrow.Network.World.Message.Model
+namespace NexusTomorrow.Network.World.Message.Model;
+
+/// <summary>
+/// Tells a player they are no longer part of the group.
+/// Invokes the 'Group_Leave' event in Apollo. Which is invoked only for the current player.
+/// </summary>
+[Message(GameMessageOpcode.ServerGroupRemove)]
+public class ServerGroupRemove : IWritable
 {
-    /// <summary>
-    /// Tells a player they are no longer part of the group.
-    /// Invokes the 'Group_Leave' event in Apollo. Which is invoked only for the current player.
-    /// </summary>
-    [Message(GameMessageOpcode.ServerGroupRemove)]
-    public class ServerGroupRemove : IWritable
+    public ulong GroupId { get; set; }
+    public uint Unk0 { get; set; }
+    public Identity TargetPlayer { get; set; } = new();
+    public RemoveReason Reason { get; set; }
+
+    public void Write(GamePacketWriter writer)
     {
-        public ulong GroupId { get; set; }
-        public uint Unk0 { get; set; }
-        public Identity TargetPlayer { get; set; } = new();
-        public RemoveReason Reason { get; set; }
+        writer.Write(GroupId);
+        writer.Write(Unk0);
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(GroupId);
-            writer.Write(Unk0);
-
-            TargetPlayer.Write(writer);
-            writer.Write(Reason, 4u);
-        }
+        TargetPlayer.Write(writer);
+        writer.Write(Reason, 4u);
     }
 }

@@ -1,18 +1,17 @@
 ﻿using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
-namespace NexusTomorrow.Network.World.Message.Model.Guild
-{
-    [Message(GameMessageOpcode.ServerGuildBankInventoryRemove)]
-    public class ServerGuildBankInventoryRemove : IWritable
-    {
-        public Identity GuildIdentity { get; set; }
-        public ulong ItemGuid { get; private set; }
+namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-        public void Write(GamePacketWriter writer)
-        {
-            GuildIdentity.Write(writer);
-            writer.Write(ItemGuid);
-        }
+[Message(GameMessageOpcode.ServerGuildBankInventoryRemove)]
+public class ServerGuildBankInventoryRemove : IWritable
+{
+    public Identity GuildIdentity { get; set; }
+    public ulong ItemGuid { get; private set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        GuildIdentity.Write(writer);
+        writer.Write(ItemGuid);
     }
 }

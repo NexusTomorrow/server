@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class SoundBankEntry
 {
-    public class SoundBankEntry
-    {
-        public uint Id;
-        public string Name = string.Empty;
-    }
+    public uint Id;
+    public string Name = string.Empty;
 }

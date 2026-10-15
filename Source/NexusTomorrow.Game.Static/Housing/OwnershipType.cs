@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Housing
+﻿namespace NexusTomorrow.Game.Static.Housing;
+
+public enum OwnershipType
 {
-    public enum OwnershipType
-    {
-        CannotEdit = 0,
-        CanEdit    = 1,
-        IsMine     = 2
-    }
+    CannotEdit = 0,
+    CanEdit = 1,
+    IsMine = 2
 }

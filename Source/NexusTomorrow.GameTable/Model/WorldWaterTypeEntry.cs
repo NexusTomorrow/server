@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class WorldWaterTypeEntry
 {
-    public class WorldWaterTypeEntry
-    {
-        public uint Id;
-        public uint WorldWaterFogId;
-        public uint SurfaceType;
-        public string ParticleFile = string.Empty;
-        public uint SoundDirectionalAmbienceId;
-    }
+    public uint Id;
+    public uint WorldWaterFogId;
+    public uint SurfaceType;
+    public string ParticleFile = string.Empty;
+    public uint SoundDirectionalAmbienceId;
 }

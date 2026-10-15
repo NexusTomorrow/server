@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Spell4HitResultsEntry
 {
-    public class Spell4HitResultsEntry
-    {
-        public uint Id;
-        public uint Flags;
-    }
+    public uint Id;
+    public uint Flags;
 }

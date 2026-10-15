@@ -1,14 +1,13 @@
-﻿namespace NexusTomorrow.Game.Static
+﻿namespace NexusTomorrow.Game.Static;
+
+public enum DisableType
 {
-    public enum DisableType
-    {
-        Quest,
-        Spell,
-        BaseSpell,
-        Item,
-        World,
-        Currency,
-        AccountCurrency,
-        Achievement
-    }
+    Quest,
+    Spell,
+    BaseSpell,
+    Item,
+    World,
+    Currency,
+    AccountCurrency,
+    Achievement
 }

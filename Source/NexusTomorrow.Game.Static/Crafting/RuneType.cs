@@ -1,13 +1,12 @@
-﻿namespace NexusTomorrow.Game.Static.Crafting
+﻿namespace NexusTomorrow.Game.Static.Crafting;
+
+public enum RuneType
 {
-    public enum RuneType
-    {
-        Air     = 7,
-        Water   = 8,
-        Earth   = 9,
-        Fire    = 10,
-        Logic   = 11,
-        Life    = 12,
-        Fusion  = 13,
-    };
-}
+    Air = 7,
+    Water = 8,
+    Earth = 9,
+    Fire = 10,
+    Logic = 11,
+    Life = 12,
+    Fusion = 13,
+};

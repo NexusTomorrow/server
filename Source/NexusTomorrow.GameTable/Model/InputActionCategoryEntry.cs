@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class InputActionCategoryEntry
 {
-    public class InputActionCategoryEntry
-    {
-        public uint Id;
-        public uint LocalizedTextId;
-    }
+    public uint Id;
+    public uint LocalizedTextId;
 }

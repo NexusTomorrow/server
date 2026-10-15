@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Housing
+﻿namespace NexusTomorrow.Game.Static.Housing;
+
+public enum DecorOperation
 {
-    public enum DecorOperation
-    {
-        Place           = 0,
-        DetachFromProp  = 1,
-        Destroy         = 2
-    }
+    Place = 0,
+    DetachFromProp = 1,
+    Destroy = 2
 }

@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static
+﻿namespace NexusTomorrow.Game.Static;
+
+public enum PremiumSystem
 {
-    public enum PremiumSystem
-    {
-        None,
-        Hybrid,
-        VIP
-    }
+    None,
+    Hybrid,
+    VIP
 }

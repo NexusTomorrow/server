@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ModelEventEntry
 {
-    public class ModelEventEntry
-    {
-        public uint Id;
-        public string EnumName = string.Empty;
-    }
+    public uint Id;
+    public string EnumName = string.Empty;
 }

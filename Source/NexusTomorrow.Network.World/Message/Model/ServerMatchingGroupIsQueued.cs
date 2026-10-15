@@ -1,13 +1,12 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model
+namespace NexusTomorrow.Network.World.Message.Model;
+
+[Message(GameMessageOpcode.ServerMatchingGroupIsQueued)]
+public class ServerMatchingGroupIsQueued : IWritable
 {
-    [Message(GameMessageOpcode.ServerMatchingGroupIsQueued)]
-    public class ServerMatchingGroupIsQueued : IWritable
+    public void Write(GamePacketWriter writer)
     {
-        public void Write(GamePacketWriter writer)
-        {
-            // Zero byte message
-        }
+        // Zero byte message
     }
 }

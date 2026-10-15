@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class HousingPlotInfoEntry
 {
-    public class HousingPlotInfoEntry
-    {
-        public uint Id;
-        public uint WorldSocketId;
-        public uint PlotType;
-        public uint HousingPropertyInfoId;
-        public uint HousingPropertyPlotIndex;
-        public uint HousingPlugItemIdDefault;
-    }
+    public uint Id;
+    public uint WorldSocketId;
+    public uint PlotType;
+    public uint HousingPropertyInfoId;
+    public uint HousingPropertyPlotIndex;
+    public uint HousingPlugItemIdDefault;
 }

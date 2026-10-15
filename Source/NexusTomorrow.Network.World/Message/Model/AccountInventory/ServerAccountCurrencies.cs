@@ -1,17 +1,16 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.AccountInventory
+namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
+
+[Message(GameMessageOpcode.ServerAccountCurrencies)]
+public class ServerAccountCurrencies : IWritable
 {
-    [Message(GameMessageOpcode.ServerAccountCurrencies)]
-    public class ServerAccountCurrencies : IWritable
+    public List<AccountCurrency> AccountCurrencies { get; set; } = [];
+
+    public void Write(GamePacketWriter writer)
     {
-        public List<AccountCurrency> AccountCurrencies { get; set; } = [];
+        writer.Write(AccountCurrencies.Count, 32u);
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(AccountCurrencies.Count, 32u);
-
-            AccountCurrencies.ForEach(a => a.Write(writer));
-        }
+        AccountCurrencies.ForEach(a => a.Write(writer));
     }
 }

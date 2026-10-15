@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Achievement
+﻿namespace NexusTomorrow.Game.Static.Achievement;
+
+[Flags]
+public enum AchievementFlags
 {
-    [Flags]
-    public enum AchievementFlags
-    {
-        None       = 0x00,
-        // Profession = 0x02,
-        Guild      = 0x04
-    }
+    None = 0x00,
+    // Profession = 0x02,
+    Guild = 0x04
 }

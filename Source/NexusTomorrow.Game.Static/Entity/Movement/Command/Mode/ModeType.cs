@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Entity.Movement.Command.Mode
+﻿namespace NexusTomorrow.Game.Static.Entity.Movement.Command.Mode;
+
+public enum ModeType
 {
-    public enum ModeType
-    {
-        Walk,
-        Swim,
-        Slide,
-        Free
-    }
+    Walk,
+    Swim,
+    Slide,
+    Free
 }

@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Chat
+﻿namespace NexusTomorrow.Game.Static.Chat;
+
+public enum ChatChannelReferenceType : byte
 {
-    public enum ChatChannelReferenceType : byte
-    {
-        Realm,
-        Group,
-        Guild
-    }
+    Realm,
+    Group,
+    Guild
 }

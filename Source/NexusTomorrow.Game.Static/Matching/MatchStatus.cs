@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Matching
+﻿namespace NexusTomorrow.Game.Static.Matching;
+
+public enum MatchStatus
 {
-    public enum MatchStatus
-    {
-        InProgress,
-        Finished,
-        Cleanup,
-        Finalised
-    }
+    InProgress,
+    Finished,
+    Cleanup,
+    Finalised
 }

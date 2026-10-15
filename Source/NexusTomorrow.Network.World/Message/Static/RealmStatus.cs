@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.Network.World.Message.Static
+﻿namespace NexusTomorrow.Network.World.Message.Static;
+
+public enum RealmStatus
 {
-    public enum RealmStatus
-    {
-        Unknown,
-        Offline,
-        Down,
-        Standby,
-        Up
-    }
+    Unknown,
+    Offline,
+    Down,
+    Standby,
+    Up
 }

@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class CharacterCustomizationSelectionEntry
 {
-    public class CharacterCustomizationSelectionEntry
-    {
-        public uint Id;
-        public uint CharacterCustomizationLabelId;
-        public uint Value;
-        public ulong Cost;
-    }
+    public uint Id;
+    public uint CharacterCustomizationLabelId;
+    public uint Value;
+    public ulong Cost;
 }

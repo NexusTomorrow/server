@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Creature2ActionSetEntry
 {
-    public class Creature2ActionSetEntry
-    {
-        public uint Id;
-        public string Description = string.Empty;
-        public uint PrerequisiteId;
-    }
+    public uint Id;
+    public string Description = string.Empty;
+    public uint PrerequisiteId;
 }

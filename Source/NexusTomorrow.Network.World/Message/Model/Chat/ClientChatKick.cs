@@ -1,17 +1,16 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Chat
-{
-    [Message(GameMessageOpcode.ClientChatKick)]
-    public class ClientChatKick : IReadable
-    {
-        public Channel Channel { get; private set; } = new();
-        public string CharacterName { get; private set; }
+namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
-        public void Read(GamePacketReader reader)
-        {
-            Channel.Read(reader);
-            CharacterName = reader.ReadWideString();
-        }
+[Message(GameMessageOpcode.ClientChatKick)]
+public class ClientChatKick : IReadable
+{
+    public Channel Channel { get; private set; } = new();
+    public string CharacterName { get; private set; }
+
+    public void Read(GamePacketReader reader)
+    {
+        Channel.Read(reader);
+        CharacterName = reader.ReadWideString();
     }
 }

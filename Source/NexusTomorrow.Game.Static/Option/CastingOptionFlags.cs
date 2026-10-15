@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.Game.Static.Option
+﻿namespace NexusTomorrow.Game.Static.Option;
+
+[Flags]
+public enum CastingOptionFlags
 {
-    [Flags]
-    public enum CastingOptionFlags
-    {
-        Unknown                = 1,
-        ButtonDownForAbilities = 2,
-        AutoTargetting         = 4,
-        HoldToContinueCasting  = 8,
-    }
+    Unknown = 1,
+    ButtonDownForAbilities = 2,
+    AutoTargetting = 4,
+    HoldToContinueCasting = 8,
 }

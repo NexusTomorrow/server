@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.Game.Static.PublicEvent
+﻿namespace NexusTomorrow.Game.Static.PublicEvent;
+
+public enum PublicEventRewardType
 {
-    public enum PublicEventRewardType
-    {
-        None,
-        Individual,
-        Speed,
-        Completion,
-        Nightmare,
-        Script
-    }
+    None,
+    Individual,
+    Speed,
+    Completion,
+    Nightmare,
+    Script
 }

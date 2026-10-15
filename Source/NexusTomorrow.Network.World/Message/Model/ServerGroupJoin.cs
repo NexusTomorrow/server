@@ -1,18 +1,17 @@
 ﻿using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
-namespace NexusTomorrow.Network.World.Message.Model
-{
-    [Message(GameMessageOpcode.ServerGroupJoin)]
-    public class ServerGroupJoin : IWritable
-    {
-        public Identity TargetPlayer { get; set; } = new();
-        public Group Group { get; set; } = new Group();
+namespace NexusTomorrow.Network.World.Message.Model;
 
-        public void Write(GamePacketWriter writer)
-        {
-            TargetPlayer.Write(writer);
-            Group.Write(writer);
-        }
+[Message(GameMessageOpcode.ServerGroupJoin)]
+public class ServerGroupJoin : IWritable
+{
+    public Identity TargetPlayer { get; set; } = new();
+    public Group Group { get; set; } = new Group();
+
+    public void Write(GamePacketWriter writer)
+    {
+        TargetPlayer.Write(writer);
+        Group.Write(writer);
     }
 }

@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class EmoteSequenceTransitionEntry
 {
-    public class EmoteSequenceTransitionEntry
-    {
-        public uint Id;
-        public uint EmotesIdTo;
-        public uint StandStateFrom;
-        public uint EmotesIdFrom;
-        public uint ModelSequenceId;
-    }
+    public uint Id;
+    public uint EmotesIdTo;
+    public uint StandStateFrom;
+    public uint EmotesIdFrom;
+    public uint ModelSequenceId;
 }

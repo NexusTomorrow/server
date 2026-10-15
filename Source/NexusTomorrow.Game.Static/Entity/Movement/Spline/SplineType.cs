@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Entity.Movement.Spline
+﻿namespace NexusTomorrow.Game.Static.Entity.Movement.Spline;
+
+public enum SplineType
 {
-    public enum SplineType
-    {
-        Linear,
-        CatmullRom
-    }
+    Linear,
+    CatmullRom
 }

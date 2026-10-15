@@ -1,20 +1,19 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Story
+namespace NexusTomorrow.Network.World.Message.Model.Story;
+
+[Message(GameMessageOpcode.ServerCommunicatorMessage)]
+public class ServerCommunicatorMessage : IWritable
 {
-    [Message(GameMessageOpcode.ServerCommunicatorMessage)]
-    public class ServerCommunicatorMessage : IWritable
+    public ushort CommunicatorMessagesId { get; set; }
+
+    // If false, this will make the message appear even if the player doesn't meet the
+    // conditions for the message
+    public bool CheckConditions { get; set; }
+
+    public void Write(GamePacketWriter writer)
     {
-        public ushort CommunicatorMessagesId { get; set; }
-
-        // If false, this will make the message appear even if the player doesn't meet the
-        // conditions for the message
-        public bool CheckConditions { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(CommunicatorMessagesId, 15u);
-            writer.Write(CheckConditions);
-        }
+        writer.Write(CommunicatorMessagesId, 15u);
+        writer.Write(CheckConditions);
     }
 }

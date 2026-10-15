@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.Network.Sts
-{
-    public class MessageAttribute : Attribute
-    {
-        public string Uri { get; }
+﻿namespace NexusTomorrow.Network.Sts;
 
-        public MessageAttribute(string uri)
-        {
-            Uri = uri;
-        }
+public class MessageAttribute : Attribute
+{
+    public string Uri { get; }
+
+    public MessageAttribute(string uri)
+    {
+        Uri = uri;
     }
 }

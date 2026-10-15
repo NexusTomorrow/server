@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class GossipEntryEntry
 {
-    public class GossipEntryEntry
-    {
-        public uint Id;
-        public uint GossipSetId;
-        public uint IndexOrder;
-        public uint LocalizedTextId;
-        public uint PrerequisiteId;
-    }
+    public uint Id;
+    public uint GossipSetId;
+    public uint IndexOrder;
+    public uint LocalizedTextId;
+    public uint PrerequisiteId;
 }

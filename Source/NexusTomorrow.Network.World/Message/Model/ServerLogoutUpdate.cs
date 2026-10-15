@@ -1,35 +1,34 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model
+namespace NexusTomorrow.Network.World.Message.Model;
+
+[Message(GameMessageOpcode.ServerLogoutUpdate)]
+public class ServerLogoutUpdate : IWritable
 {
-    [Message(GameMessageOpcode.ServerLogoutUpdate)]
-    public class ServerLogoutUpdate : IWritable
+    public class SignatureBonuses : IWritable
     {
-        public class SignatureBonuses : IWritable
-        {
-            public uint Xp { get; set; }
-            public uint ElderPoints { get; set; }
-            public ulong[] Currencies { get; set; }
-            public ulong[] AccountCurrencies { get; set; }
-
-            public void Write(GamePacketWriter writer)
-            {
-                writer.Write(Xp);
-                writer.Write(ElderPoints);
-                writer.Write(Currencies, 15u);
-                writer.Write(AccountCurrencies, 19u);
-            }
-        }
-
-        public uint TimeTillLogout { get; set; }
-        public bool CancelCamp { get; set; }
-        public SignatureBonuses SignatureBonusData { get; set; }
+        public uint Xp { get; set; }
+        public uint ElderPoints { get; set; }
+        public ulong[] Currencies { get; set; }
+        public ulong[] AccountCurrencies { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
-            writer.Write(TimeTillLogout);
-            writer.Write(CancelCamp);
-            SignatureBonusData.Write(writer);
+            writer.Write(Xp);
+            writer.Write(ElderPoints);
+            writer.Write(Currencies, 15u);
+            writer.Write(AccountCurrencies, 19u);
         }
+    }
+
+    public uint TimeTillLogout { get; set; }
+    public bool CancelCamp { get; set; }
+    public SignatureBonuses SignatureBonusData { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(TimeTillLogout);
+        writer.Write(CancelCamp);
+        SignatureBonusData.Write(writer);
     }
 }

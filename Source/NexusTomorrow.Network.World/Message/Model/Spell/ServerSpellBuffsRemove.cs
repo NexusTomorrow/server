@@ -1,18 +1,17 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Spell
-{
-    [Message(GameMessageOpcode.ServerSpellBuffRemove)] // removes same buff base on the spell CastingId from a list of targets
-    public class ServerSpellBuffRemove : IWritable
-    {
-        public uint ServerUniqueId { get; set; }
-        public List<uint> Targets { get; set; } = new();
+namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(ServerUniqueId);
-            writer.Write(Targets.Count, 32u);
-            Targets.ForEach(c => writer.Write(c));
-        }
+[Message(GameMessageOpcode.ServerSpellBuffRemove)] // removes same buff base on the spell CastingId from a list of targets
+public class ServerSpellBuffRemove : IWritable
+{
+    public uint ServerUniqueId { get; set; }
+    public List<uint> Targets { get; set; } = [];
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(ServerUniqueId);
+        writer.Write(Targets.Count, 32u);
+        Targets.ForEach(c => writer.Write(c));
     }
 }

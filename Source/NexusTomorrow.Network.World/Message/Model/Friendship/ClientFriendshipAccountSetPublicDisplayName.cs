@@ -1,15 +1,14 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Friendship
-{
-    [Message(GameMessageOpcode.ClientFriendshipAccountSetPublicDisplayName)]
-    public class ClientFriendshipAccountSetPublicDisplayName : IReadable
-    {
-        public string PublicDisplayName { get; private set; }
+namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-        public void Read(GamePacketReader reader)
-        {
-            PublicDisplayName = reader.ReadWideString();
-        }
+[Message(GameMessageOpcode.ClientFriendshipAccountSetPublicDisplayName)]
+public class ClientFriendshipAccountSetPublicDisplayName : IReadable
+{
+    public string PublicDisplayName { get; private set; }
+
+    public void Read(GamePacketReader reader)
+    {
+        PublicDisplayName = reader.ReadWideString();
     }
 }

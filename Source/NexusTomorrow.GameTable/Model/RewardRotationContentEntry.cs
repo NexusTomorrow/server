@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class RewardRotationContentEntry
 {
-    public class RewardRotationContentEntry
-    {
-        public uint Id;
-        public uint ContentTypeEnum;
-    }
+    public uint Id;
+    public uint ContentTypeEnum;
 }

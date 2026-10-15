@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter
-{
-    public class WhoParameterGuild : IWhoParameterData
-    {
-        public string GuildName { get; private set; }
+﻿namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
 
-        public void Read(GamePacketReader reader)
-        {
-            GuildName = reader.ReadWideString();
-        }
+public class WhoParameterGuild : IWhoParameterData
+{
+    public string GuildName { get; private set; }
+
+    public void Read(GamePacketReader reader)
+    {
+        GuildName = reader.ReadWideString();
     }
 }

@@ -1,17 +1,16 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Challenges
-{
-    [Message(GameMessageOpcode.ServerChallengeShared)]
-    public class ServerChallengeShared : IWritable
-    {
-        public ushort ChallengeId { get; set; }
-        public uint SharerUnitId { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.Challenges;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(ChallengeId, 14u);
-            writer.Write(SharerUnitId);
-        }
+[Message(GameMessageOpcode.ServerChallengeShared)]
+public class ServerChallengeShared : IWritable
+{
+    public ushort ChallengeId { get; set; }
+    public uint SharerUnitId { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(ChallengeId, 14u);
+        writer.Write(SharerUnitId);
     }
 }

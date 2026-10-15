@@ -1,20 +1,19 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
 
-namespace NexusTomorrow.Network.World.Chat.Model
+namespace NexusTomorrow.Network.World.Chat.Model;
+
+public class ChatFormatLoot : IChatFormatModel
 {
-    public class ChatFormatLoot : IChatFormatModel
+    public ChatFormatType Type => ChatFormatType.Loot;
+    public uint LootUnitId { get; set; } // must match loot sent in ServerLootNotification (0x8A6)
+
+    public void Read(GamePacketReader reader)
     {
-        public ChatFormatType Type => ChatFormatType.Loot;
-        public uint LootUnitId { get; set; } // must match loot sent in ServerLootNotification (0x8A6)
+        LootUnitId = reader.ReadUInt();
+    }
 
-        public void Read(GamePacketReader reader)
-        {
-            LootUnitId = reader.ReadUInt();
-        }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(LootUnitId);
-        }
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(LootUnitId);
     }
 }

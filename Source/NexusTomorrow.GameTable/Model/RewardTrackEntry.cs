@@ -1,25 +1,24 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class RewardTrackEntry
 {
-    public class RewardTrackEntry
-    {
-        public uint Id;
-        public uint RewardTrackTypeEnum;
-        public uint PrerequisiteId;
-        public uint LocalizedTextId;
-        public uint LocalizedTextIdSummary;
-        public string AssetPathImage = string.Empty;
-        public string AssetPathButtonImage = string.Empty;
-        public uint RewardPointCost00;
-        public uint RewardPointCost01;
-        public uint RewardPointCost02;
-        public uint RewardPointCost03;
-        public uint RewardPointCost04;
-        public uint RewardPointCost05;
-        public uint RewardPointCost06;
-        public uint RewardPointCost07;
-        public uint RewardPointCost08;
-        public uint RewardPointCost09;
-        public uint RewardTrackIdParent;
-        public uint Flags;
-    }
+    public uint Id;
+    public uint RewardTrackTypeEnum;
+    public uint PrerequisiteId;
+    public uint LocalizedTextId;
+    public uint LocalizedTextIdSummary;
+    public string AssetPathImage = string.Empty;
+    public string AssetPathButtonImage = string.Empty;
+    public uint RewardPointCost00;
+    public uint RewardPointCost01;
+    public uint RewardPointCost02;
+    public uint RewardPointCost03;
+    public uint RewardPointCost04;
+    public uint RewardPointCost05;
+    public uint RewardPointCost06;
+    public uint RewardPointCost07;
+    public uint RewardPointCost08;
+    public uint RewardPointCost09;
+    public uint RewardTrackIdParent;
+    public uint Flags;
 }

@@ -1,18 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
 
-namespace NexusTomorrow.Network.World.Combat
+namespace NexusTomorrow.Network.World.Combat;
+
+public class CombatLogFallingDamage : ICombatLog
 {
-    public class CombatLogFallingDamage : ICombatLog
+    public CombatLogType Type => CombatLogType.FallingDamage;
+
+    public uint CasterId { get; set; }
+    public uint Damage { get; set; }
+
+    public void Write(GamePacketWriter writer)
     {
-        public CombatLogType Type => CombatLogType.FallingDamage;
-
-        public uint CasterId { get; set; }
-        public uint Damage { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(CasterId);
-            writer.Write(Damage);
-        }
+        writer.Write(CasterId);
+        writer.Write(Damage);
     }
 }

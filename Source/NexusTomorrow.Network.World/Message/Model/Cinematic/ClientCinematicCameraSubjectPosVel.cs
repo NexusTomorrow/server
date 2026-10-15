@@ -1,19 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using System.Numerics;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
-using System.Numerics;
 
-namespace NexusTomorrow.Network.World.Message.Model.Cinematic
+namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
+
+[Message(GameMessageOpcode.ClientCinematicCameraSubjectPosVel)]
+public class ClientCinematicCameraSubjectPosVel : IReadable
 {
-    [Message(GameMessageOpcode.ClientCinematicCameraSubjectPosVel)]
-    public class ClientCinematicCameraSubjectPosVel : IReadable
-    {
-        public Position Position { get; private set; }
-        public Vector3 Velocity { get; private set; }
+    public Position Position { get; private set; }
+    public Vector3 Velocity { get; private set; }
 
-        public void Read(GamePacketReader reader)
-        {
-            Position.Read(reader);
-            Velocity = reader.ReadVector3();
-        }
+    public void Read(GamePacketReader reader)
+    {
+        Position.Read(reader);
+        Velocity = reader.ReadVector3();
     }
 }

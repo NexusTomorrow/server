@@ -1,15 +1,14 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Friendship
-{
-    [Message(GameMessageOpcode.ServerFriendshipInviteRemove)]
-    public class ServerFriendshipInviteRemove : IWritable
-    {
-        public ulong InviteId { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(InviteId);
-        }
+[Message(GameMessageOpcode.ServerFriendshipInviteRemove)]
+public class ServerFriendshipInviteRemove : IWritable
+{
+    public ulong InviteId { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(InviteId);
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Entity
+﻿namespace NexusTomorrow.Game.Static.Entity;
+
+public enum DatacubeType
 {
-    public enum DatacubeType
-    {
-        Datacube    = 0,
-        Chronicle   = 1,
-        Journal     = 2
-    }
+    Datacube = 0,
+    Chronicle = 1,
+    Journal = 2
 }

@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Cinematic
+﻿namespace NexusTomorrow.Game.Static.Cinematic;
+
+public enum ScaleTransitionType
 {
-    public enum ScaleTransitionType
-    {
-        StartMinimized = 2,
-        StartMaximized = 3
-    }
+    StartMinimized = 2,
+    StartMaximized = 3
 }

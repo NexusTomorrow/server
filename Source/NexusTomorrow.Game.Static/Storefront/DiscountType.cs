@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Storefront
+﻿namespace NexusTomorrow.Game.Static.Storefront;
+
+public enum DiscountType
 {
-    public enum DiscountType
-    {
-        None        = 0,
-        Fixed       = 1,
-        Percentage  = 2
-    }
+    None = 0,
+    Fixed = 1,
+    Percentage = 2
 }

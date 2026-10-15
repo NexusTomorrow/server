@@ -1,12 +1,11 @@
 ﻿using System.Xml;
 
-namespace NexusTomorrow.Network.Sts.Model
+namespace NexusTomorrow.Network.Sts.Model;
+
+[Message("/GameAccount/ListMyAccounts")]
+public class ListMyAccountsMessage : IReadable
 {
-    [Message("/GameAccount/ListMyAccounts")]
-    public class ListMyAccountsMessage : IReadable
+    public void Read(XmlDocument document)
     {
-        public void Read(XmlDocument document)
-        {
-        }
     }
 }

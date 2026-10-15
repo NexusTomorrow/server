@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ComponentRegionEntry
 {
-    public class ComponentRegionEntry
-    {
-        public uint Id;
-        public string EnumName = string.Empty;
-        public uint ComponentMap;
-    }
+    public uint Id;
+    public string EnumName = string.Empty;
+    public uint ComponentMap;
 }

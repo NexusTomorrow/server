@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ArchiveCategoryEntry
 {
-    public class ArchiveCategoryEntry
-    {
-        public uint Id;
-        public uint LocalizedTextId;
-    }
+    public uint Id;
+    public uint LocalizedTextId;
 }

@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class SoundImpactEventsEntry
 {
-    public class SoundImpactEventsEntry
-    {
-        public uint Id;
-        public uint Origin;
-        public uint Target;
-        public uint Qualifier;
-        public uint Event;
-    }
+    public uint Id;
+    public uint Origin;
+    public uint Target;
+    public uint Qualifier;
+    public uint Event;
 }

@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Pregame
+﻿namespace NexusTomorrow.Game.Static.Pregame;
+
+public enum RealmType
 {
-    public enum RealmType
-    {
-        PVE,
-        PVP
-    }
+    PVE,
+    PVP
 }

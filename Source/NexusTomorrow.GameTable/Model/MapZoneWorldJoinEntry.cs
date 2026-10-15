@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class MapZoneWorldJoinEntry
 {
-    public class MapZoneWorldJoinEntry
-    {
-        public uint Id;
-        public uint MapZoneId;
-        public uint WorldId;
-    }
+    public uint Id;
+    public uint MapZoneId;
+    public uint WorldId;
 }

@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.IO.Area
+﻿namespace NexusTomorrow.IO.Area;
+
+public class Dhmo : IReadable
 {
-    public class Dhmo : IReadable
+    public void Read(BinaryReader reader)
     {
-        public void Read(BinaryReader reader)
-        {
-        }
     }
 }

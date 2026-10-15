@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class TextEntry
 {
-    public class TextEntry
-    {
-        public uint Id;
-        public string LocalizedText = string.Empty;
-    }
+    public uint Id;
+    public string LocalizedText = string.Empty;
 }

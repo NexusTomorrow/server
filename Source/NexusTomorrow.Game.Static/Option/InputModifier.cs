@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Option
+﻿namespace NexusTomorrow.Game.Static.Option;
+
+public enum InputModifier
 {
-    public enum InputModifier
-    {
-        Shift   = 0,
-        Control = 1,
-        Alt     = 4
-    }
+    Shift = 0,
+    Control = 1,
+    Alt = 4
 }

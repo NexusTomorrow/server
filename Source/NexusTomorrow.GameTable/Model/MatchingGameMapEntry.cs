@@ -1,15 +1,14 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class MatchingGameMapEntry
 {
-    public class MatchingGameMapEntry
-    {
-        public uint Id;
-        public uint MatchingGameMapEnumFlags;
-        public uint LocalizedTextIdName;
-        public uint LocalizedTextIdDescription;
-        public uint MatchingGameTypeId;
-        public uint WorldId;
-        public uint RecommendedItemLevel;
-        public uint AchievementCategoryId;
-        public uint PrerequisiteId;
-    }
+    public uint Id;
+    public uint MatchingGameMapEnumFlags;
+    public uint LocalizedTextIdName;
+    public uint LocalizedTextIdDescription;
+    public uint MatchingGameTypeId;
+    public uint WorldId;
+    public uint RecommendedItemLevel;
+    public uint AchievementCategoryId;
+    public uint PrerequisiteId;
 }

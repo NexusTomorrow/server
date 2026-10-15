@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class PathLevelEntry
 {
-    public class PathLevelEntry
-    {
-        public uint Id;
-        public uint PathTypeEnum;
-        public uint PathLevel;
-        public uint PathXP;
-    }
+    public uint Id;
+    public uint PathTypeEnum;
+    public uint PathLevel;
+    public uint PathXP;
 }

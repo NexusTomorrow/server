@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ModelBoneEntry
 {
-    public class ModelBoneEntry
-    {
-        public uint Id;
-        public string XSIName = string.Empty;
-    }
+    public uint Id;
+    public string XSIName = string.Empty;
 }

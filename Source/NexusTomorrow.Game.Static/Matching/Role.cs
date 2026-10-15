@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.Game.Static.Matching
+﻿namespace NexusTomorrow.Game.Static.Matching;
+
+[Flags]
+public enum Role
 {
-    [Flags]
-    public enum Role
-    {
-        None   = 0x0,
-        Tank   = 0x1,
-        Healer = 0x2,
-        DPS    = 0x4
-    }
+    None = 0x0,
+    Tank = 0x1,
+    Healer = 0x2,
+    DPS = 0x4
 }

@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static
+﻿namespace NexusTomorrow.Game.Static;
+
+public enum AccountTier
 {
-    public enum AccountTier
-    {
-        Basic,
-        Signature
-    }
+    Basic,
+    Signature
 }

@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Map
+﻿namespace NexusTomorrow.Game.Static.Map;
+
+public enum WorldRemovalReason
 {
-    public enum WorldRemovalReason
-    {
-        GroupMembership,
-        KickedFromCommunity,
-        CommunityDisband,
-        LeftCommunity
-    }
+    GroupMembership,
+    KickedFromCommunity,
+    CommunityDisband,
+    LeftCommunity
 }

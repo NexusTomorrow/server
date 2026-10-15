@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Setting
+﻿namespace NexusTomorrow.Game.Static.Setting;
+
+public enum WorldDifficulty
 {
-    public enum WorldDifficulty
-    {
-        Normal  = 0,
-        Veteran = 1,
-        Count   = 2, // Not sure how this is used
-    }
+    Normal = 0,
+    Veteran = 1,
+    Count = 2, // Not sure how this is used
 }

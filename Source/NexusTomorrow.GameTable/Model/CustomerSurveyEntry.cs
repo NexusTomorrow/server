@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class CustomerSurveyEntry
 {
-    public class CustomerSurveyEntry
-    {
-        public uint Id;
-        public uint CustomerSurveyTypeEnum;
-        public uint LocalizedTextIdOverrideTitle;
-        public uint LocalizedTextIdQuestion00;
-        public uint LocalizedTextIdQuestion01;
-        public uint LocalizedTextIdQuestion02;
-    }
+    public uint Id;
+    public uint CustomerSurveyTypeEnum;
+    public uint LocalizedTextIdOverrideTitle;
+    public uint LocalizedTextIdQuestion00;
+    public uint LocalizedTextIdQuestion01;
+    public uint LocalizedTextIdQuestion02;
 }

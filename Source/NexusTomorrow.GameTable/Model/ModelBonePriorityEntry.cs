@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class ModelBonePriorityEntry
 {
-    public class ModelBonePriorityEntry
-    {
-        public uint Id;
-        public uint BoneID;
-        public uint BoneSetID;
-        public uint Priority;
-    }
+    public uint Id;
+    public uint BoneID;
+    public uint BoneSetID;
+    public uint Priority;
 }

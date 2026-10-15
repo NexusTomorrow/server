@@ -1,13 +1,12 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class AchievementChecklistEntry
 {
-    public class AchievementChecklistEntry
-    {
-        public uint Id;
-        public uint AchievementId;
-        public uint Bit;
-        public uint ObjectId;
-        public uint ObjectIdAlt;
-        public uint PrerequisiteId;
-        public uint PrerequisiteIdAlt;
-    }
+    public uint Id;
+    public uint AchievementId;
+    public uint Bit;
+    public uint ObjectId;
+    public uint ObjectIdAlt;
+    public uint PrerequisiteId;
+    public uint PrerequisiteIdAlt;
 }

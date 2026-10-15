@@ -1,13 +1,12 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.AccountInventory
+namespace NexusTomorrow.Network.World.Message.AccountInventory;
+
+[Message(GameMessageOpcode.ClientPremiumLockboxKeyRequest)]
+public class ClientPremiumLockboxKeyRequest : IReadable
 {
-    [Message(GameMessageOpcode.ClientPremiumLockboxKeyRequest)]
-    public class ClientPremiumLockboxKeyRequest : IReadable
+    public void Read(GamePacketReader reader)
     {
-        public void Read(GamePacketReader reader)
-        {
-            // zero byte message
-        }
+        // zero byte message
     }
 }

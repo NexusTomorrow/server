@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.Housing
+﻿namespace NexusTomorrow.Game.Static.Housing;
+
+public enum ResidencePrivacyLevel
 {
-    public enum ResidencePrivacyLevel
-    {
-        Public         = 0,
-        NeighboursOnly = 1,
-        RoommatesOnly  = 2,
-        Private        = 3
-    }
+    Public = 0,
+    NeighboursOnly = 1,
+    RoommatesOnly = 2,
+    Private = 3
 }

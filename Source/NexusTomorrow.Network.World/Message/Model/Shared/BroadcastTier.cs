@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Network.World.Message.Model.Shared
+﻿namespace NexusTomorrow.Network.World.Message.Model.Shared;
+
+public enum BroadcastTier
 {
-    public enum BroadcastTier
-    {
-        High    = 0, // Notification Windows & Chat Message
-        Medium  = 1, // Notification Message centre screen & Chat Message
-        Low     = 2  // Chat Message
-    }
+    High = 0, // Notification Windows & Chat Message
+    Medium = 1, // Notification Message centre screen & Chat Message
+    Low = 2  // Chat Message
 }

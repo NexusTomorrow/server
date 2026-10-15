@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Game.Static.PublicEvent
+﻿namespace NexusTomorrow.Game.Static.PublicEvent;
+
+public enum PublicEventStatus
 {
-    public enum PublicEventStatus
-    {
-        Inactive,
-        Active,
-        Succeeded,
-        Failed
-    }
+    Inactive,
+    Active,
+    Succeeded,
+    Failed
 }

@@ -1,20 +1,19 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Housing
-{
-    public class WarPlotPlug : IWritable
-    {
-        public byte Index { get; set; }
-        public uint Health { get; set; }
-        public uint HealthMax { get; set; }
-        public byte Tier { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Index);
-            writer.Write(Health);
-            writer.Write(HealthMax);
-            writer.Write(Tier, 2u);
-        }
+public class WarPlotPlug : IWritable
+{
+    public byte Index { get; set; }
+    public uint Health { get; set; }
+    public uint HealthMax { get; set; }
+    public byte Tier { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Index);
+        writer.Write(Health);
+        writer.Write(HealthMax);
+        writer.Write(Tier, 2u);
     }
 }

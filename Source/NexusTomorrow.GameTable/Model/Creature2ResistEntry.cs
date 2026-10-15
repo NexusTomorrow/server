@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Creature2ResistEntry
 {
-    public class Creature2ResistEntry
-    {
-        public uint Id;
-        public float ResistPhysicalMultiplier;
-        public float ResistTechMultiplier;
-        public float ResistMagicMultiplier;
-    }
+    public uint Id;
+    public float ResistPhysicalMultiplier;
+    public float ResistTechMultiplier;
+    public float ResistMagicMultiplier;
 }

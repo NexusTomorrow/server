@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.Network.World.Entity.Model
-{
-    public class WorldUnitEntityModel : IEntityModel
-    {
-        public bool Unknown0 { get; set; }
+﻿namespace NexusTomorrow.Network.World.Entity.Model;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(Unknown0);
-        }
+public class WorldUnitEntityModel : IEntityModel
+{
+    public bool Unknown0 { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(Unknown0);
     }
 }

@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class TradeskillCatalystOrderingEntry
 {
-    public class TradeskillCatalystOrderingEntry
-    {
-        public uint Id;
-        public uint UnlockLevel00;
-        public uint UnlockLevel01;
-        public uint UnlockLevel02;
-        public uint UnlockLevel03;
-        public uint UnlockLevel04;
-    }
+    public uint Id;
+    public uint UnlockLevel00;
+    public uint UnlockLevel01;
+    public uint UnlockLevel02;
+    public uint UnlockLevel03;
+    public uint UnlockLevel04;
 }

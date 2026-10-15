@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class PathScientistExperimentationEntry
 {
-    public class PathScientistExperimentationEntry
-    {
-        public uint Id;
-        public uint NumAttempts;
-    }
+    public uint Id;
+    public uint NumAttempts;
 }

@@ -1,17 +1,16 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.AccountInventory
-{
-    [Message(GameMessageOpcode.ClientCreddExchangeBuyOrderSubmit)]
-    public class ClientCreddExchangeBuyOrderSubmit : IReadable
-    {
-        public ulong Bid { get; private set; }
-        public bool Immediate { get; private set; } // exchange order = 0, purchase now = 1
+namespace NexusTomorrow.Network.World.Message.AccountInventory;
 
-        public void Read(GamePacketReader reader)
-        {
-            Bid = reader.ReadULong();
-            Immediate = reader.ReadBit();
-        }
+[Message(GameMessageOpcode.ClientCreddExchangeBuyOrderSubmit)]
+public class ClientCreddExchangeBuyOrderSubmit : IReadable
+{
+    public ulong Bid { get; private set; }
+    public bool Immediate { get; private set; } // exchange order = 0, purchase now = 1
+
+    public void Read(GamePacketReader reader)
+    {
+        Bid = reader.ReadULong();
+        Immediate = reader.ReadBit();
     }
 }

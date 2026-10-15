@@ -1,13 +1,12 @@
-﻿namespace NexusTomorrow.Game.Static.Entity
-{
-    [AttributeUsage(AttributeTargets.Field)]
-    public class InventoryLocationAttribute : Attribute
-    {
-        public uint DefaultCapacity { get; }
+﻿namespace NexusTomorrow.Game.Static.Entity;
 
-        public InventoryLocationAttribute(uint defaultCapacity)
-        {
-            DefaultCapacity = defaultCapacity;
-        }
+[AttributeUsage(AttributeTargets.Field)]
+public class InventoryLocationAttribute : Attribute
+{
+    public uint DefaultCapacity { get; }
+
+    public InventoryLocationAttribute(uint defaultCapacity)
+    {
+        DefaultCapacity = defaultCapacity;
     }
 }

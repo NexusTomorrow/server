@@ -1,18 +1,17 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Abilities
-{
-    [Message(GameMessageOpcode.ServerSpellAbilityCharges)]
-    public class ServerSpellAbilityCharges : IWritable
-    {
-        public uint SpellId { get; set; }
-        public uint AbilityChargeCount { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(SpellId, 18u);
-            writer.Write(AbilityChargeCount);
-        }
+[Message(GameMessageOpcode.ServerSpellAbilityCharges)]
+public class ServerSpellAbilityCharges : IWritable
+{
+    public uint SpellId { get; set; }
+    public uint AbilityChargeCount { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(SpellId, 18u);
+        writer.Write(AbilityChargeCount);
     }
 }
 

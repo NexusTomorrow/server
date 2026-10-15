@@ -1,7 +1,6 @@
-﻿namespace NexusTomorrow.IO
+﻿namespace NexusTomorrow.IO;
+
+public interface IWritable
 {
-    public interface IWritable
-    {
-        void Write(BinaryWriter writer);
-    }
+    void Write(BinaryWriter writer);
 }

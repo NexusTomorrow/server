@@ -1,13 +1,12 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model
+namespace NexusTomorrow.Network.World.Message.Model;
+
+[Message(GameMessageOpcode.ServerMatchingMatchVoteKickSucceeded)]
+public class ServerMatchingMatchVoteKickSucceeded : IWritable
 {
-    [Message(GameMessageOpcode.ServerMatchingMatchVoteKickSucceeded)]
-    public class ServerMatchingMatchVoteKickSucceeded : IWritable
+    public void Write(GamePacketWriter writer)
     {
-        public void Write(GamePacketWriter writer)
-        {
-            // Zero byte message
-        }
+        // Zero byte message
     }
 }

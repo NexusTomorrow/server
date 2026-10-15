@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.IO.Area
+﻿namespace NexusTomorrow.IO.Area;
+
+[Flags]
+public enum ChnkCellFlags
 {
-    [Flags]
-    public enum ChnkCellFlags
-    {
-        HeightMap = 0x00000001,
-        ZoneBound = 0x00010000,
-        Zone      = 0x10000000
-    }
+    HeightMap = 0x00000001,
+    ZoneBound = 0x00010000,
+    Zone = 0x10000000
 }

@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.IO.Area
+﻿namespace NexusTomorrow.IO.Area;
+
+public class Prop : IReadable
 {
-    public class Prop : IReadable
+    public void Read(BinaryReader reader)
     {
-        public void Read(BinaryReader reader)
-        {
-        }
     }
 }

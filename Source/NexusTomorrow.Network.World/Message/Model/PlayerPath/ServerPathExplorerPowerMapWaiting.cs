@@ -1,17 +1,16 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.PlayerPath
+namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
+
+//Fires when the unit that is being tracked in a Tracking mission reaches its destination before the player.
+
+[Message(GameMessageOpcode.ServerPathExplorerPowerMapWaiting)]
+public class ServerPathExplorerPowerMapWaiting : IWritable
 {
-    //Fires when the unit that is being tracked in a Tracking mission reaches its destination before the player.
+    public ushort PathMissionId { get; set; }
 
-    [Message(GameMessageOpcode.ServerPathExplorerPowerMapWaiting)]
-    public class ServerPathExplorerPowerMapWaiting : IWritable
+    public void Write(GamePacketWriter writer)
     {
-        public ushort PathMissionId { get; set; }
-
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(PathMissionId, 14);
-        }
+        writer.Write(PathMissionId, 14);
     }
 }

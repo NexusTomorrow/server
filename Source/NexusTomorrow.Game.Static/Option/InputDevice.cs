@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Option
+﻿namespace NexusTomorrow.Game.Static.Option;
+
+public enum InputDevice
 {
-    public enum InputDevice
-    {
-        None        = 0,
-        Keyboard    = 1,
-        Mouse       = 2
-    }
+    None = 0,
+    Keyboard = 1,
+    Mouse = 2
 }

@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class HousingWarplotBossTokenEntry
 {
-    public class HousingWarplotBossTokenEntry
-    {
-        public uint Id;
-        public uint Spell4IdSummon;
-        public uint MinimumUpgradeTierEnum;
-        public uint HousingPlugItemIdLinked;
-    }
+    public uint Id;
+    public uint Spell4IdSummon;
+    public uint MinimumUpgradeTierEnum;
+    public uint HousingPlugItemIdLinked;
 }

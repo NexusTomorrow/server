@@ -1,15 +1,14 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Option
-{
-    [Message(GameMessageOpcode.ClientCombatLogDisableOthers)]
-    public class ClientCombatLogDisableOthers : IReadable
-    {
-        public bool DisableOtherPlayers { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.Option;
 
-        public void Read(GamePacketReader reader)
-        {
-            DisableOtherPlayers = reader.ReadUInt() > 0;
-        }
+[Message(GameMessageOpcode.ClientCombatLogDisableOthers)]
+public class ClientCombatLogDisableOthers : IReadable
+{
+    public bool DisableOtherPlayers { get; set; }
+
+    public void Read(GamePacketReader reader)
+    {
+        DisableOtherPlayers = reader.ReadUInt() > 0;
     }
 }

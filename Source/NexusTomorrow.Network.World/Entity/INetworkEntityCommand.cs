@@ -1,10 +1,9 @@
 ﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
 
-namespace NexusTomorrow.Network.World.Entity
+namespace NexusTomorrow.Network.World.Entity;
+
+public interface INetworkEntityCommand
 {
-    public interface INetworkEntityCommand
-    {
-        EntityCommand Command { get; set; }
-        IEntityCommandModel Model { get; set; }
-    }
+    EntityCommand Command { get; set; }
+    IEntityCommandModel Model { get; set; }
 }

@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.Game.Static.Cinematic
+﻿namespace NexusTomorrow.Game.Static.Cinematic;
+
+public enum CinematicState
 {
-    public enum CinematicState
-    {
-        Initalising  = 0,
-        Finishing    = 1,
-        Playing      = 2,
-        Ended        = 3,
-        Cancelling   = 4
-    }
+    Initalising = 0,
+    Finishing = 1,
+    Playing = 2,
+    Ended = 3,
+    Cancelling = 4
 }

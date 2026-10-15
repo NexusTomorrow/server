@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Cinematic
+﻿namespace NexusTomorrow.Game.Static.Cinematic;
+
+public enum CancelType
 {
-    public enum CancelType
-    {
-        EndTransition = 1,
-        EndImmediate  = 2
-    }
+    EndTransition = 1,
+    EndImmediate = 2
 }

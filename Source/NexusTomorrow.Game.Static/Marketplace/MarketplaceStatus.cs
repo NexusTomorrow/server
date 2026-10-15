@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Marketplace
+﻿namespace NexusTomorrow.Game.Static.Marketplace;
+
+[Flags]
+public enum MarketplaceStatus
 {
-    [Flags]
-    public enum MarketplaceStatus
-    {
-        AuctionsDisabled    = 0x01,
-        CommoditiesDisabled = 0x02,
-    }
+    AuctionsDisabled = 0x01,
+    CommoditiesDisabled = 0x02,
 }

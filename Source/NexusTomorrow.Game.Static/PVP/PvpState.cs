@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Pvp
+﻿namespace NexusTomorrow.Game.Static.Pvp;
+
+[Flags]
+public enum PvpState
 {
-    [Flags]
-    public enum PvpState
-    {
-        PvpOn = 1,
-        Forced = 2,
-    }
+    PvpOn = 1,
+    Forced = 2,
 }

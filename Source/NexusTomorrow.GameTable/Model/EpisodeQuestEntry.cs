@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class EpisodeQuestEntry
 {
-    public class EpisodeQuestEntry
-    {
-        public uint Id;
-        public uint EpisodeId;
-        public uint QuestId;
-        public uint OrderIdx;
-        public uint Flags;
-    }
+    public uint Id;
+    public uint EpisodeId;
+    public uint QuestId;
+    public uint OrderIdx;
+    public uint Flags;
 }

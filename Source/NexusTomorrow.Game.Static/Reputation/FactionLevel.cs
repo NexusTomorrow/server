@@ -1,17 +1,16 @@
-﻿namespace NexusTomorrow.Game.Static.Reputation
+﻿namespace NexusTomorrow.Game.Static.Reputation;
+
+public enum FactionLevel
 {
-    public enum FactionLevel
-    {
-        Reviled,
-        Hated,
-        Shunned,
-        Disliked,
-        Wary,
-        Neutral,
-        Liked,
-        Accepted,
-        Popular,
-        Esteemed,
-        Beloved
-    }
+    Reviled,
+    Hated,
+    Shunned,
+    Disliked,
+    Wary,
+    Neutral,
+    Liked,
+    Accepted,
+    Popular,
+    Esteemed,
+    Beloved
 }

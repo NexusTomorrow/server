@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class QuestGroupEntry
 {
-    public class QuestGroupEntry
-    {
-        public uint Id;
-        public uint LocalizedTextId;
-    }
+    public uint Id;
+    public uint LocalizedTextId;
 }

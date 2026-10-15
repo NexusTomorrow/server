@@ -1,7 +1,6 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class AccountItemCooldownGroupEntry
 {
-    public class AccountItemCooldownGroupEntry
-    {
-        public uint Id;
-    }
+    public uint Id;
 }

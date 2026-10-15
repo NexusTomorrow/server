@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class PathSoldierEventWaveEntry
 {
-    public class PathSoldierEventWaveEntry
-    {
-        public uint Id;
-        public uint PathSoldierEventId;
-        public uint WaveIndex;
-        public uint SoundZoneKitId;
-    }
+    public uint Id;
+    public uint PathSoldierEventId;
+    public uint WaveIndex;
+    public uint SoundZoneKitId;
 }

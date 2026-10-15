@@ -1,12 +1,11 @@
-﻿namespace NexusTomorrow.Game.Static.Option
+﻿namespace NexusTomorrow.Game.Static.Option;
+
+public enum InputSets
 {
-    public enum InputSets
-    {
-        Default1    = 0,
-        Default2    = 1,
-        Default3    = 2,
-        Account     = 3,
-        Character   = 4,
-	    MaxValue    = 5
-    }
+    Default1 = 0,
+    Default2 = 1,
+    Default3 = 2,
+    Account = 3,
+    Character = 4,
+    MaxValue = 5
 }

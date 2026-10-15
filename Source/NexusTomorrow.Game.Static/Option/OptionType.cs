@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Option
+﻿namespace NexusTomorrow.Game.Static.Option;
+
+public enum OptionType
 {
-    public enum OptionType
-    {
-        Casting         = 0,
-        SharedChallenge = 1,
-    }
+    Casting = 0,
+    SharedChallenge = 1,
 }

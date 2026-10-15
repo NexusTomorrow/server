@@ -1,7 +1,6 @@
-﻿namespace NexusTomorrow.Game.Static.Spell
-{
-    public enum SpellTag
-    {
+﻿namespace NexusTomorrow.Game.Static.Spell;
 
-    }
+public enum SpellTag
+{
+
 }

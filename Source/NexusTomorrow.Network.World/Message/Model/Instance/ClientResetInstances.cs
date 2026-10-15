@@ -1,13 +1,12 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Instance
+namespace NexusTomorrow.Network.World.Message.Model.Instance;
+
+[Message(GameMessageOpcode.ClientResetInstances)]
+public class ClientResetInstances : IReadable
 {
-    [Message(GameMessageOpcode.ClientResetInstances)]
-    public class ClientResetInstances : IReadable
+    public void Read(GamePacketReader reader)
     {
-        public void Read(GamePacketReader reader)
-        {
-            // Zero byte message
-        }
+        // Zero byte message
     }
 }

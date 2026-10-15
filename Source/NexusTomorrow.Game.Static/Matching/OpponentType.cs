@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Matching
+﻿namespace NexusTomorrow.Game.Static.Matching;
+
+public enum OpponentType
 {
-    public enum OpponentType
-    {
-        Player = 0x0,
-        Creature = 0x1,
-    };
-}
+    Player = 0x0,
+    Creature = 0x1,
+};

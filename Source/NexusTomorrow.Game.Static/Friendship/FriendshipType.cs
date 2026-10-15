@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.Game.Static.Friendship
+﻿namespace NexusTomorrow.Game.Static.Friendship;
+
+public enum FriendshipType
 {
-    public enum FriendshipType
-    {
-        Friend         = 0,
-        Ignore         = 1,
-        Rival          = 3,
-        FriendAndRival = 4,
-        Account        = 8
-    }
+    Friend = 0,
+    Ignore = 1,
+    Rival = 3,
+    FriendAndRival = 4,
+    Account = 8
 }

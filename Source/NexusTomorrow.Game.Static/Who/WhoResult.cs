@@ -1,9 +1,8 @@
-﻿namespace NexusTomorrow.Game.Static.Who
+﻿namespace NexusTomorrow.Game.Static.Who;
+
+public enum WhoResult
 {
-    public enum WhoResult
-    {
-        OK            = 0x0,
-        Partial       = 0x1,
-        UnderCooldown = 0x2
-    };
-}
+    OK = 0x0,
+    Partial = 0x1,
+    UnderCooldown = 0x2
+};

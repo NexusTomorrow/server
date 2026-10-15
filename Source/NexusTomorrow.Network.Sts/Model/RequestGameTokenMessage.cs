@@ -1,12 +1,11 @@
 ﻿using System.Xml;
 
-namespace NexusTomorrow.Network.Sts.Model
+namespace NexusTomorrow.Network.Sts.Model;
+
+[Message("/Auth/RequestGameToken")]
+public class RequestGameTokenMessage : IReadable
 {
-    [Message("/Auth/RequestGameToken")]
-    public class RequestGameTokenMessage : IReadable
+    public void Read(XmlDocument document)
     {
-        public void Read(XmlDocument document)
-        {
-        }
     }
 }

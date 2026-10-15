@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.Game.Static.Housing
+﻿namespace NexusTomorrow.Game.Static.Housing;
+
+public enum HousingPlugFacing
 {
-    public enum HousingPlugFacing
-    {
-        North,
-        South,
-        East,
-        West,
-        Default
-    }
+    North,
+    South,
+    East,
+    West,
+    Default
 }

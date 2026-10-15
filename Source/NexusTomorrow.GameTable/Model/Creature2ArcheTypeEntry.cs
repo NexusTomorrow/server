@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class Creature2ArcheTypeEntry
 {
-    public class Creature2ArcheTypeEntry
-    {
-        public uint Id;
-        public string Icon = string.Empty;
-        [GameTableFieldArray(200)]
-        public float[] UnitPropertyMultiplier = [];
-    }
+    public uint Id;
+    public string Icon = string.Empty;
+    [GameTableFieldArray(200)]
+    public float[] UnitPropertyMultiplier = [];
 }

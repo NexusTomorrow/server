@@ -1,18 +1,17 @@
-﻿namespace NexusTomorrow.GameTable
+﻿namespace NexusTomorrow.GameTable;
+
+[AttributeUsage(AttributeTargets.Property)]
+public class GameDataAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class GameDataAttribute : Attribute
+    public string? FileName { get; }
+
+    public GameDataAttribute()
+        : this(null)
     {
-        public string? FileName { get; }
+    }
 
-        public GameDataAttribute()
-            : this(null)
-        {
-        }
-
-        public GameDataAttribute(string? fileName)
-        {
-            FileName = fileName;
-        }
+    public GameDataAttribute(string? fileName)
+    {
+        FileName = fileName;
     }
 }

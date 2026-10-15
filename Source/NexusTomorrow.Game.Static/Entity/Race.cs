@@ -1,15 +1,14 @@
-﻿namespace NexusTomorrow.Game.Static.Entity
+﻿namespace NexusTomorrow.Game.Static.Entity;
+
+public enum Race : byte
 {
-    public enum Race : byte
-    {
-        None    = 0,
-        Human   = 1,
-        Eshara  = 2,
-        Granok  = 3,
-        Aurin   = 4,
-        Draken  = 5,
-        Mechari = 12,
-        Chua    = 13,
-        Mordesh = 16
-    }
+    None = 0,
+    Human = 1,
+    Eshara = 2,
+    Granok = 3,
+    Aurin = 4,
+    Draken = 5,
+    Mechari = 12,
+    Chua = 13,
+    Mordesh = 16
 }

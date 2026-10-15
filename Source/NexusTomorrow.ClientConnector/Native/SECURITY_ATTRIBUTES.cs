@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace NexusTomorrow.ClientConnector.Native
+namespace NexusTomorrow.ClientConnector.Native;
+
+public struct SECURITY_ATTRIBUTES
 {
-    public struct SECURITY_ATTRIBUTES
-    {
-        public int length;
-        public IntPtr lpSecurityDescriptor;
-        public bool bInheritHandle;
-    }
+    public int length;
+    public IntPtr lpSecurityDescriptor;
+    public bool bInheritHandle;
 }

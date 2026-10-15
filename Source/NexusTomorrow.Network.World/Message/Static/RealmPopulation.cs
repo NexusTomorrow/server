@@ -1,10 +1,9 @@
-﻿namespace NexusTomorrow.Network.World.Message.Static
+﻿namespace NexusTomorrow.Network.World.Message.Static;
+
+public enum RealmPopulation
 {
-    public enum RealmPopulation
-    {
-        Low,
-        Medium,
-        High,
-        Full
-    }
+    Low,
+    Medium,
+    High,
+    Full
 }

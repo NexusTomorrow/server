@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class WorldSocketEntry
 {
-    public class WorldSocketEntry
-    {
-        public uint Id;
-        public uint WorldId;
-        [GameTableFieldArray(4u)]
-        public uint[] BoundIds = [];
-        public uint AverageHeight;
-    }
+    public uint Id;
+    public uint WorldId;
+    [GameTableFieldArray(4u)]
+    public uint[] BoundIds = [];
+    public uint AverageHeight;
 }

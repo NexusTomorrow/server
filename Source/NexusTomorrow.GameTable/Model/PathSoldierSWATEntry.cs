@@ -1,11 +1,10 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class PathSoldierSWATEntry
 {
-    public class PathSoldierSWATEntry
-    {
-        public uint Id;
-        public uint Creature2Id;
-        public uint TargetGroupId;
-        public uint Count;
-        public uint VirtualItemIdDisplay;
-    }
+    public uint Id;
+    public uint Creature2Id;
+    public uint TargetGroupId;
+    public uint Count;
+    public uint VirtualItemIdDisplay;
 }

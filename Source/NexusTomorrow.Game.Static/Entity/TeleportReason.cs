@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.Game.Static.Entity
+﻿namespace NexusTomorrow.Game.Static.Entity;
+
+public enum TeleportReason
 {
-    public enum TeleportReason
-    {
-        Relocate,
-        Unload
-    }
+    Relocate,
+    Unload
 }

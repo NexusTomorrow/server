@@ -1,8 +1,7 @@
-﻿namespace NexusTomorrow.GameTable.Model
+﻿namespace NexusTomorrow.GameTable.Model;
+
+public class PrerequisiteTypeEntry
 {
-    public class PrerequisiteTypeEntry
-    {
-        public uint Id;
-        public uint LocalizedTextIdError;
-    }
+    public uint Id;
+    public uint LocalizedTextIdError;
 }

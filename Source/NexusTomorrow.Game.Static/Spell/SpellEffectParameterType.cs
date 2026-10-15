@@ -1,33 +1,32 @@
-﻿namespace NexusTomorrow.Game.Static.Spell
+﻿namespace NexusTomorrow.Game.Static.Spell;
+
+public enum SpellEffectParameterType
 {
-    public enum SpellEffectParameterType
-    {
-        None,
-        Brutality,
-        Finesse,
-        Tech,
-        Moxie,
-        Insight,
-        Weapon,
-        TargetMaxHealth,
-        CasterMaxHealth,
-        WeaponDPS,
-        PerLevel,
-        Grit,
-        AssaultPower,
-        SupportPower,
-        CasterShieldCapacity,
-        TargetShieldCapacity,
-        CasterMaxShieldCapacity,
-        TargetMaxShieldCapacity,
-        ItemBudget,
-        TargetCurrentHealth,
-        TargetShieldCapacity2,
-        TargetMissingHealth,
-        TargetMissingShields,
-        CasterCurrentHealth,
-        CasterShieldCapacity2,
-        CasterMissingHealth,
-        CasterMissingShields
-    }
+    None,
+    Brutality,
+    Finesse,
+    Tech,
+    Moxie,
+    Insight,
+    Weapon,
+    TargetMaxHealth,
+    CasterMaxHealth,
+    WeaponDPS,
+    PerLevel,
+    Grit,
+    AssaultPower,
+    SupportPower,
+    CasterShieldCapacity,
+    TargetShieldCapacity,
+    CasterMaxShieldCapacity,
+    TargetMaxShieldCapacity,
+    ItemBudget,
+    TargetCurrentHealth,
+    TargetShieldCapacity2,
+    TargetMissingHealth,
+    TargetMissingShields,
+    CasterCurrentHealth,
+    CasterShieldCapacity2,
+    CasterMissingHealth,
+    CasterMissingShields
 }

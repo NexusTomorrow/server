@@ -1,18 +1,17 @@
 ﻿using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.PlayerPath
-{
-    [Message(GameMessageOpcode.ServerPathExplorerScavengerHuntClueAddUnitList)]
-    public class ServerPathExplorerScavengerHuntClueAddUnitList : IWritable
-    {
-        public ushort PathExplorerScavengerClueId { get; set; }
-        public uint[] UnitIdList { get; set; }
+namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-        public void Write(GamePacketWriter writer)
-        {
-            writer.Write(PathExplorerScavengerClueId, 14);
-            for (uint i = 0u; i < UnitIdList.Length; i++)
-                writer.Write(UnitIdList[i]);
-        }
+[Message(GameMessageOpcode.ServerPathExplorerScavengerHuntClueAddUnitList)]
+public class ServerPathExplorerScavengerHuntClueAddUnitList : IWritable
+{
+    public ushort PathExplorerScavengerClueId { get; set; }
+    public uint[] UnitIdList { get; set; }
+
+    public void Write(GamePacketWriter writer)
+    {
+        writer.Write(PathExplorerScavengerClueId, 14);
+        for (uint i = 0u; i < UnitIdList.Length; i++)
+            writer.Write(UnitIdList[i]);
     }
 }
