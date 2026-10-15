@@ -4,6 +4,9 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <!-- Replaced in Part B: the codec's converter rewrites these models, and Part B removes these two lines with the conversion. -->
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <AnalysisLevel>10-none</AnalysisLevel>
   </PropertyGroup>
 
   <ItemGroup>

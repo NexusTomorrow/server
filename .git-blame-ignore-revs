@@ -1,2 +1,6 @@
 # Normalize line endings, encodings and trailing whitespace
 77f461a0f19d3486b25671eaf66761dee9a404b0
+# Format the tree to the code standard
+94b4127c37c8a61056ed36ab2d9064349c5891c5
+# Rename fields and British-spelled symbols to the code standard
+103cccbc87d17e63d2f5c4bf7599abcdb5a23f77

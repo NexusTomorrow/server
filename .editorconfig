@@ -64,6 +64,11 @@ dotnet_diagnostic.IDE0305.severity = warning
 
 # Classes are sealed unless built for inheritance; CA1852 covers internal types, review covers public ones
 dotnet_diagnostic.CA1852.severity = warning
+# CA1716 guards against keywords of other .NET languages, such as Visual Basic's Static, which names
+# our Static namespaces; this codebase is C# only.
+dotnet_diagnostic.CA1716.severity = none
+# A [Flags] enum named ...Flags reads as what it is, as the BCL's BindingFlags does.
+dotnet_code_quality.CA1711.allowed_suffixes = Flags
 
 # Naming. Rules order themselves by specificity; a naming rule's own severity reaches only the IDE,
 # so the build reads IDE1006's severity below.
@@ -102,3 +107,41 @@ dotnet_naming_symbols.instance_fields.applicable_kinds = field
 dotnet_naming_symbols.instance_fields.applicable_accessibilities = private, internal, private_protected
 dotnet_naming_style.prefix_underscore.required_prefix = _
 dotnet_naming_style.prefix_underscore.capitalization = camel_case
+
+# Data-shape code keeps the client's own names: its enum values (Neighbor_PlayerNotFound,
+# FlightPathNew), its type names (GuildFlag, GuildRankPermission) and its value kinds (Integer, Float).
+[{Source/NexusTomorrow.Game.Static/**.cs,Source/NexusTomorrow.GameTable/**.cs}]
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1711.severity = none
+dotnet_diagnostic.CA1720.severity = none
+
+# Table row models are field records the table loader fills by position (GameTable.cs:27 walks
+# typeof(T).GetFields()), so their fields stay public fields.
+[Source/NexusTomorrow.GameTable/Model/**.cs]
+dotnet_diagnostic.CA1051.severity = none
+
+# Win32 interop structs keep the API's names and field layout, which the marshaller reads.
+[Source/NexusTomorrow.ClientConnector/Native/**.cs]
+dotnet_diagnostic.CA1051.severity = none
+dotnet_diagnostic.CA1707.severity = none
+
+# Part B's opcode task resolves the value 0x07DF declared twice and names the opcodes still known
+# only by number.
+[Source/NexusTomorrow.Network/Message/GameMessageOpcode.cs]
+dotnet_diagnostic.CA1069.severity = none
+dotnet_diagnostic.CA1707.severity = none
+
+# Replaced in Part B: the codec's converter rewrites these wire models and retires these primitives,
+# so they keep the seed's names and analyzer findings until then. Network.World and Network.Auth
+# switch their analyzers off in their project files. Part B deletes each section as its files go.
+[{Source/NexusTomorrow.Network.World/**.cs,Source/NexusTomorrow.Network.Auth/**.cs,Source/NexusTomorrow.Network/Message/Model/**.cs}]
+dotnet_diagnostic.IDE1006.severity = none
+
+[Source/NexusTomorrow.Network/{GamePacketReader,GamePacketWriter,NetworkBitArray,NetworkGuid}.cs]
+dotnet_diagnostic.IDE1006.severity = none
+dotnet_diagnostic.CA1720.severity = none
+dotnet_diagnostic.CA1816.severity = none
+dotnet_diagnostic.CA2208.severity = none
+
+[Source/NexusTomorrow.Network/Packet/ClientGamePacketReader.cs]
+dotnet_diagnostic.IDE1006.severity = none

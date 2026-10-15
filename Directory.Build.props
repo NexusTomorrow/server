@@ -1,6 +1,11 @@
 <Project>
   <PropertyGroup>
     <Nullable>enable</Nullable>
+    <!-- Listing nullable here keeps its warnings errors even where an .editorconfig section lowers their severity (CI run 38668315031). -->
     <WarningsAsErrors>$(WarningsAsErrors);nullable</WarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <!-- Pinned to a release, not latest, so a newer SDK cannot add rules to an untouched commit. -->
+    <AnalysisLevel>10-recommended</AnalysisLevel>
   </PropertyGroup>
 </Project>

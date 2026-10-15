@@ -18,6 +18,35 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Commit messages
+        run: |
+          status=0
+          for commit in $(git rev-list origin/main..HEAD); do
+            subject=$(git log -1 --format=%s "$commit")
+            if [ -n "$(git log -1 --format=%B "$commit" | sed -n 2p)" ]; then
+              echo "::error::$commit: line 2 of the message must be blank"
+              status=1
+            fi
+            if [ ${#subject} -gt 72 ]; then
+              echo "::error::$commit: the headline is ${#subject} characters, over 72"
+              status=1
+            fi
+            case "$subject" in
+              *.) echo "::error::$commit: the headline ends with a full stop"; status=1 ;;
+            esac
+          done
+          exit $status
+
+      - name: Em dashes
+        run: |
+          if git grep -n "$(printf '\342\200\224')" -- '*.cs' '*.md'; then
+            echo "::error::Em dashes are banned in .cs and .md files (listed above)"
+            exit 1
+          fi
 
       - name: Set up .NET
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
@@ -26,6 +55,9 @@ jobs:
 
       - name: Restore
         run: dotnet restore Source/NexusTomorrow.slnx
+
+      - name: Format
+        run: dotnet format Source/NexusTomorrow.slnx --verify-no-changes --no-restore
 
       - name: Build
         run: dotnet build Source/NexusTomorrow.slnx --configuration Debug --no-restore
