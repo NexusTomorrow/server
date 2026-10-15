@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientBuybackItemFromVendor)]
-public class ClientBuybackItemFromVendor : IReadable
+[WireMessage(GameMessageOpcode.ClientBuybackItemFromVendor, Direction.ClientToServer)]
+public sealed partial class ClientBuybackItemFromVendor : IReadable
 {
-    public uint UniqueId { get; private set; }
+    [UInt(32)] public uint UniqueId { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

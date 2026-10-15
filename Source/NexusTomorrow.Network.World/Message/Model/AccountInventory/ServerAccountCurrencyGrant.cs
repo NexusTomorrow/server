@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 [Message(GameMessageOpcode.ServerAccountCurrencyGrant)]
-public class ServerAccountCurrencyGrant : IWritable
+[WireMessage(GameMessageOpcode.ServerAccountCurrencyGrant, Direction.ServerToClient)]
+public sealed partial class ServerAccountCurrencyGrant : IWritable
 {
     public AccountCurrency AccountCurrency { get; set; }
-    public ulong NewAmount { get; set; }
-    public ulong SignatureBonusAmount { get; set; }
-    public ulong EssenceBonusAmount { get; set; }
+    [UInt(64)] public ulong NewAmount { get; set; }
+    [UInt(64)] public ulong SignatureBonusAmount { get; set; }
+    [UInt(64)] public ulong EssenceBonusAmount { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

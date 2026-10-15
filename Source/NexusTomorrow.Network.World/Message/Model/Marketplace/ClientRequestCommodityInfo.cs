@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
 // MarketplaceLib::RequestCommodityInfo()
 [Message(GameMessageOpcode.ClientRequestCommodityInfo)]
-public class ClientRequestCommodityInfo : IReadable
+[WireMessage(GameMessageOpcode.ClientRequestCommodityInfo, Direction.ClientToServer)]
+public sealed partial class ClientRequestCommodityInfo : IReadable
 {
-    public uint Item2Id { get; private set; }
+    [UInt(18)] public uint Item2Id { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

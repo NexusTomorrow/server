@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.AccountInventory;
 
 [Message(GameMessageOpcode.ClientCreddExchangeInfoRequest)]
-public class ClientCreddExchangeInfoRequest : IReadable
+[WireMessage(GameMessageOpcode.ClientCreddExchangeInfoRequest, Direction.ClientToServer)]
+public sealed partial class ClientCreddExchangeInfoRequest : IReadable
 {
     public void Read(GamePacketReader reader)
     {

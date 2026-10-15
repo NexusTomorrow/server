@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerMissileActorRemove)]
-public class ServerMissileActorRemove : IWritable
+[WireMessage(GameMessageOpcode.ServerMissileActorRemove, Direction.ServerToClient)]
+public sealed partial class ServerMissileActorRemove : IWritable
 {
-    public uint MissileActorId { get; set; }
+    [UInt(32)] public uint MissileActorId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

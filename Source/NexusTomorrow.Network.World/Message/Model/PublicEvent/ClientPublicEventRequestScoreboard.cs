@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
 // Toggles whether the PublicEventLiveStatsUpdate event will fire for this public event.
 [Message(GameMessageOpcode.ClientPublicEventRequestScoreboard)]
-public class ClientPublicEventRequestScoreboard : IReadable
+[WireMessage(GameMessageOpcode.ClientPublicEventRequestScoreboard, Direction.ClientToServer)]
+public sealed partial class ClientPublicEventRequestScoreboard : IReadable
 {
-    public uint EventId { get; private set; }
-    public bool Subscribe { get; private set; }
+    [UInt(14)] public uint EventId { get; private set; }
+    [UInt(1)] public bool Subscribe { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

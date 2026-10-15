@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetRotationFaceUnit)]
-public class SetRotationFaceUnitCommand : IEntityCommandModel
+[WireStruct]
+public sealed partial class SetRotationFaceUnitCommand : IEntityCommandModel
 {
-    public uint UnitId { get; set; }
-    public bool Blend { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(1)] public bool Blend { get; set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Chat.Model;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
@@ -8,15 +9,16 @@ namespace NexusTomorrow.Network.World.Message.Model.Chat;
 // ChatMesssageId and replaces any Formats of type ItemGuid with ItemFull.
 
 [Message(GameMessageOpcode.ServerChatAccept)]
-public class ServerChatAccept : IWritable
+[WireMessage(GameMessageOpcode.ServerChatAccept, Direction.ServerToClient)]
+public sealed partial class ServerChatAccept : IWritable
 {
-    public ushort ChatMessageId { get; set; } // used to match the original ClientChat message
-    public bool GM { get; set; }
-    public List<ChatFormatItemFull> Formats { get; } = [];
-    public string SenderName { get; set; }
-    public string RealmName { get; set; }
-    public uint UnitId { get; set; }
-    public byte PremiumTier { get; set; } = 1;
+    [UInt(16)] public ushort ChatMessageId { get; set; } // used to match the original ClientChat message
+    [UInt(1)] public bool GM { get; set; }
+    [Array(CountBits = 5)] public List<ChatFormatItemFull> Formats { get; } = [];
+    [WideString] public string SenderName { get; set; }
+    [WideString] public string RealmName { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(8)] public byte PremiumTier { get; set; } = 1;
 
     public void Write(GamePacketWriter writer)
     {

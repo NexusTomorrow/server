@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientP2PTradingSetMoney)]
-public class ClientP2PTradingSetMoney : IReadable
+[WireMessage(GameMessageOpcode.ClientP2PTradingSetMoney, Direction.ClientToServer)]
+public sealed partial class ClientP2PTradingSetMoney : IReadable
 {
-    public ulong Credits { get; private set; }
+    [UInt(32)] public ulong Credits { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

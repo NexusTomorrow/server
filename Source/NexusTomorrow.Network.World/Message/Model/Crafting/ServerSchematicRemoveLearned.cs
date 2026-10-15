@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Crafting;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
 [Message(GameMessageOpcode.ServerSchematicRemoveLearned)]
-public class ServerSchematicRemoveLearned : IWritable
+[WireMessage(GameMessageOpcode.ServerSchematicRemoveLearned, Direction.ServerToClient)]
+public sealed partial class ServerSchematicRemoveLearned : IWritable
 {
-    public TradeskillType TradeskillId { get; set; }
-    public uint TradeskillSchematic2Id { get; set; }
+    [UInt(32)] public TradeskillType TradeskillId { get; set; }
+    [UInt(32)] public uint TradeskillSchematic2Id { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

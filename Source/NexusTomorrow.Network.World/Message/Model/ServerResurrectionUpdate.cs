@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerResurrectionUpdate)]
-public class ServerResurrectionUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerResurrectionUpdate, Direction.ServerToClient)]
+public sealed partial class ServerResurrectionUpdate : IWritable
 {
-    public ResurrectionType ShowRezFlags { get; set; } // 8
-    public bool HasCasterRezRequest { get; set; }
+    [UInt(8)] public ResurrectionType ShowRezFlags { get; set; } // 8
+    [UInt(1)] public bool HasCasterRezRequest { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

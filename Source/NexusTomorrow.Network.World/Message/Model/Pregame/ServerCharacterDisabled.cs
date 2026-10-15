@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 [Message(GameMessageOpcode.ServerCharacterDisabled)]
-public class ServerCharacterDisabled : IWritable
+[WireMessage(GameMessageOpcode.ServerCharacterDisabled, Direction.ServerToClient)]
+public sealed partial class ServerCharacterDisabled : IWritable
 {
-    public ulong CharacterId { get; set; }
-    public bool Disabled { get; set; }
+    [UInt(64)] public ulong CharacterId { get; set; }
+    [UInt(1)] public bool Disabled { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

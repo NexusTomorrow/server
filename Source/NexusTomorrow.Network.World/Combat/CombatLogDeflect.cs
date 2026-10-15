@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogDeflect : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogDeflect : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.Deflect;
+    [NotOnWire] public CombatLogType Type => CombatLogType.Deflect;
 
-    public bool BMultiHit { get; set; }
+    [UInt(1)] public bool BMultiHit { get; set; }
     public CombatLogCastData CastData { get; set; }
 
     public void Write(GamePacketWriter writer)

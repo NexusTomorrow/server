@@ -1,19 +1,21 @@
 ﻿using NexusTomorrow.Game.Static.Guild;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [Message(GameMessageOpcode.ClientGuildRegister)]
-public class ClientGuildRegister : IReadable
+[WireMessage(GameMessageOpcode.ClientGuildRegister, Direction.ClientToServer)]
+public sealed partial class ClientGuildRegister : IReadable
 {
-    public uint InteractionUnitId { get; private set; }
-    public GuildType GuildType { get; private set; }
-    public string GuildName { get; private set; }
-    public string MasterTitle { get; private set; }
-    public string CouncilTitle { get; private set; }
-    public string MemberTitle { get; private set; }
+    [UInt(32)] public uint InteractionUnitId { get; private set; }
+    [UInt(4)] public GuildType GuildType { get; private set; }
+    [WideString] public string GuildName { get; private set; }
+    [WideString] public string MasterTitle { get; private set; }
+    [WideString] public string CouncilTitle { get; private set; }
+    [WideString] public string MemberTitle { get; private set; }
     public GuildStandard GuildStandard { get; private set; } = new();
-    public bool AlternateCost { get; private set; }
+    [UInt(1)] public bool AlternateCost { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

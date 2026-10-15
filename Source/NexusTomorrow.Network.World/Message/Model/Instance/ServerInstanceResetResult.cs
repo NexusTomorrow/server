@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Instance;
 
 [Message(GameMessageOpcode.ServerInstanceResetResult)]
-public class ServerInstanceResetResult : IWritable
+[WireMessage(GameMessageOpcode.ServerInstanceResetResult, Direction.ServerToClient)]
+public sealed partial class ServerInstanceResetResult : IWritable
 {
-    public uint Unused { get; set; } // Probably WorldId but not used by client
-    public bool Success { get; set; }
+    [UInt(15)] public uint Unused { get; set; } // Probably WorldId but not used by client
+    [UInt(1)] public bool Success { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

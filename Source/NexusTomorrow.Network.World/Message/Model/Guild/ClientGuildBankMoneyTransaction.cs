@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [Message(GameMessageOpcode.ClientGuildBankMoneyTransaction)]
-public class ClientGuildBankMoneyTransaction : IReadable
+[WireMessage(GameMessageOpcode.ClientGuildBankMoneyTransaction, Direction.ClientToServer)]
+public sealed partial class ClientGuildBankMoneyTransaction : IReadable
 {
     public Identity GuildIdentity { get; private set; } = new();
-    public long Amount { get; private set; } // Negative for deposit, positive for withdraw
+    [UInt(64)] public long Amount { get; private set; } // Negative for deposit, positive for withdraw
 
     public void Read(GamePacketReader reader)
     {

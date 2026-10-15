@@ -1,17 +1,19 @@
 ﻿using NexusTomorrow.Game.Static.Costume;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Costume;
 
-public class Costume : IWritable
+[WireStruct]
+public sealed partial class Costume : IWritable
 {
     public const byte MaxCostumeItems = 7;
 
-    public uint Index { get; set; } // zero indexed, for CostumeType.Personal the limit is 12, for CostumeType.Mannequin the limit is 5
-    public uint VisibilityMask { get; set; } // Bitmask representing which costume slots are visible, uses CostumeItemSlot as bit index
-    public CostumeType Type { get; set; }
-    public uint[] Item2Ids { get; set; } = new uint[7]; // in order of CostumeItemSlot enum
-    public uint[] DyeData { get; set; } = new uint[7]; // in order of CostumeItemSlot enum
+    [UInt(32)] public uint Index { get; set; } // zero indexed, for CostumeType.Personal the limit is 12, for CostumeType.Mannequin the limit is 5
+    [UInt(32)] public uint VisibilityMask { get; set; } // Bitmask representing which costume slots are visible, uses CostumeItemSlot as bit index
+    [UInt(2)] public CostumeType Type { get; set; }
+    [FixedArray(7), UInt(32)] public uint[] Item2Ids { get; set; } = new uint[7]; // in order of CostumeItemSlot enum
+    [FixedArray(7), UInt(32)] public uint[] DyeData { get; set; } = new uint[7]; // in order of CostumeItemSlot enum
 
     public void Write(GamePacketWriter writer)
     {

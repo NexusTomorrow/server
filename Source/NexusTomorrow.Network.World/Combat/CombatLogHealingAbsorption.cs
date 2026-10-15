@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogHealingAbsorption : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogHealingAbsorption : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.HealingAbsorption;
+    [NotOnWire] public CombatLogType Type => CombatLogType.HealingAbsorption;
 
-    public uint Amount { get; set; }
+    [UInt(32)] public uint Amount { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

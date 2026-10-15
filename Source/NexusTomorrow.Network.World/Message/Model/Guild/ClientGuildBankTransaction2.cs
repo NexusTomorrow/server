@@ -1,19 +1,21 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [Message(GameMessageOpcode.ClientGuildBankTransaction2)]
-public class ClientGuildBankTransaction2 : IReadable
+[WireMessage(GameMessageOpcode.ClientGuildBankTransaction2, Direction.ClientToServer)]
+public sealed partial class ClientGuildBankTransaction2 : IReadable
 {
     public Identity GuildIdentity { get; private set; } = new Identity();
-    public ulong SourceItemGuid { get; private set; }
-    public ulong DestinationItemGuid { get; private set; } // Sent if bag slot already contains an item, otherwise 0
-    public uint SourceItem2Id { get; private set; }
+    [UInt(64)] public ulong SourceItemGuid { get; private set; }
+    [UInt(64)] public ulong DestinationItemGuid { get; private set; } // Sent if bag slot already contains an item, otherwise 0
+    [UInt(32)] public uint SourceItem2Id { get; private set; }
     public ItemLocation Destination { get; private set; } = new ItemLocation();
     public ItemLocation Source { get; private set; } = new ItemLocation();
-    public bool UseFirstFreeSlot { get; private set; }
-    public uint Count { get; private set; } // Value of 0 transfers entire stack
+    [UInt(1)] public bool UseFirstFreeSlot { get; private set; }
+    [UInt(32)] public uint Count { get; private set; } // Value of 0 transfers entire stack
 
     public void Read(GamePacketReader reader)
     {

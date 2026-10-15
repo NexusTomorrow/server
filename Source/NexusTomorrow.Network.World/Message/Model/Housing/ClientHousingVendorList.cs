@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ClientHousingVendorList)]
-public class ClientHousingVendorList : IReadable
+[WireMessage(GameMessageOpcode.ClientHousingVendorList, Direction.ClientToServer)]
+public sealed partial class ClientHousingVendorList : IReadable
 {
     public Identity ResidenceIdentity { get; private set; } = new();
-    public byte ResidenceIsBroker { get; private set; } // 0 = normal residences, 1 is when is ResidenceType.Broker
+    [UInt(2)] public byte ResidenceIsBroker { get; private set; } // 0 = normal residences, 1 is when is ResidenceType.Broker
 
     public void Read(GamePacketReader reader)
     {

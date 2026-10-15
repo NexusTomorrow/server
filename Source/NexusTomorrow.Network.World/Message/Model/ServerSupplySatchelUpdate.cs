@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 
 [Message(GameMessageOpcode.ServerSupplySatchelUpdate)]
-public class ServerSupplySatchelUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerSupplySatchelUpdate, Direction.ServerToClient)]
+public sealed partial class ServerSupplySatchelUpdate : IWritable
 {
-    public ushort MaterialId { get; set; }
-    public ushort StackCount { get; set; }
+    [UInt(14)] public ushort MaterialId { get; set; }
+    [UInt(16)] public ushort StackCount { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Housing;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ServerHousingNeighbourUpdate)]
-public class ServerHousingNeighbourUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerHousingNeighbourUpdate, Direction.ServerToClient)]
+public sealed partial class ServerHousingNeighbourUpdate : IWritable
 {
     public Neighbour Neighbour { get; set; }
-    public NeighborResult Result { get; set; }
+    [UInt(7)] public NeighborResult Result { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogStealth : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogStealth : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.Stealth;
+    [NotOnWire] public CombatLogType Type => CombatLogType.Stealth;
 
-    public uint UnitId { get; set; }
-    public bool BExiting { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(1)] public bool BExiting { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

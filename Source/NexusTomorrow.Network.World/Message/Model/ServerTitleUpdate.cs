@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerTitleUpdate)]
-public class ServerTitleUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerTitleUpdate, Direction.ServerToClient)]
+public sealed partial class ServerTitleUpdate : IWritable
 {
-    public ushort TitleId { get; set; }
-    public bool Alreadyowned { get; set; }
-    public bool Revoked { get; set; }
+    [UInt(14)] public ushort TitleId { get; set; }
+    [UInt(1)] public bool Alreadyowned { get; set; }
+    [UInt(1)] public bool Revoked { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

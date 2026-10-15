@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerEntitlement)]
-public class ServerEntitlement : IWritable
+[WireMessage(GameMessageOpcode.ServerEntitlement, Direction.ServerToClient)]
+public sealed partial class ServerEntitlement : IWritable
 {
-    public EntitlementType Entitlement { get; set; }
-    public uint Count { get; set; }
+    [UInt(14)] public EntitlementType Entitlement { get; set; }
+    [UInt(32)] public uint Count { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

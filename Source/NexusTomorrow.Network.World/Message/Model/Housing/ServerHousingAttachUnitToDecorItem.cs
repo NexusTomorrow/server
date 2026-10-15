@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ServerHousingAttachUnitToDecorItem)]
-public class ServerHousingAttachUnitToDecorItem : IWritable
+[WireMessage(GameMessageOpcode.ServerHousingAttachUnitToDecorItem, Direction.ServerToClient)]
+public sealed partial class ServerHousingAttachUnitToDecorItem : IWritable
 {
     public Identity ResidenceIdentity { get; set; }
-    public ulong DecorId { get; set; }
-    public ulong AttachedUnitId { get; set; }
+    [UInt(64)] public ulong DecorId { get; set; }
+    [UInt(64)] public ulong AttachedUnitId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

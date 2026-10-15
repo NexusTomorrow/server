@@ -1,16 +1,19 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerLogoutUpdate)]
-public class ServerLogoutUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerLogoutUpdate, Direction.ServerToClient)]
+public sealed partial class ServerLogoutUpdate : IWritable
 {
-    public class SignatureBonuses : IWritable
+    [WireStruct]
+    public sealed partial class SignatureBonuses : IWritable
     {
-        public uint Xp { get; set; }
-        public uint ElderPoints { get; set; }
-        public ulong[] Currencies { get; set; }
-        public ulong[] AccountCurrencies { get; set; }
+        [UInt(32)] public uint Xp { get; set; }
+        [UInt(32)] public uint ElderPoints { get; set; }
+        [FixedArray(15), UInt(64)] public ulong[] Currencies { get; set; }
+        [FixedArray(19), UInt(64)] public ulong[] AccountCurrencies { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -21,8 +24,8 @@ public class ServerLogoutUpdate : IWritable
         }
     }
 
-    public uint TimeTillLogout { get; set; }
-    public bool CancelCamp { get; set; }
+    [UInt(32)] public uint TimeTillLogout { get; set; }
+    [UInt(1)] public bool CancelCamp { get; set; }
     public SignatureBonuses SignatureBonusData { get; set; }
 
     public void Write(GamePacketWriter writer)

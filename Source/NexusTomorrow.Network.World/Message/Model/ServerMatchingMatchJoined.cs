@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerMatchingMatchJoined)]
-public class ServerMatchingMatchJoined : IWritable
+[WireMessage(GameMessageOpcode.ServerMatchingMatchJoined, Direction.ServerToClient)]
+public sealed partial class ServerMatchingMatchJoined : IWritable
 {
-    public uint MatchingGameMapId { get; set; } // Id of map the player has just joined
+    [UInt(14)] public uint MatchingGameMapId { get; set; } // Id of map the player has just joined
 
     public void Write(GamePacketWriter writer)
     {

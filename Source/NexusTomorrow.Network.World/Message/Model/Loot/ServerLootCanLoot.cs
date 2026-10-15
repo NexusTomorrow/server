@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Loot;
 
 // Sets CanLoot flag on the loot
 [Message(GameMessageOpcode.ServerLootCanLoot)]
-public class ServerLootCanLoot : IWritable
+[WireMessage(GameMessageOpcode.ServerLootCanLoot, Direction.ServerToClient)]
+public sealed partial class ServerLootCanLoot : IWritable
 {
-    public uint LootUnitId { get; set; }
+    [UInt(32)] public uint LootUnitId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

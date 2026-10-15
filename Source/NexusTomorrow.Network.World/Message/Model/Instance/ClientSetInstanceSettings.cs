@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Setting;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Instance;
 
 [Message(GameMessageOpcode.ClientSetInstanceSettings)]
-public class ClientSetInstanceSettings : IReadable
+[WireMessage(GameMessageOpcode.ClientSetInstanceSettings, Direction.ClientToServer)]
+public sealed partial class ClientSetInstanceSettings : IReadable
 {
-    public uint InstancePortalUnitId { get; private set; }
-    public WorldDifficulty Difficulty { get; private set; }
-    public byte PrimeLevel { get; private set; }
-    public ushort Rally { get; private set; } // Was probably intended for more flags but is only used for one setting.
+    [UInt(32)] public uint InstancePortalUnitId { get; private set; }
+    [UInt(2)] public WorldDifficulty Difficulty { get; private set; }
+    [UInt(8)] public byte PrimeLevel { get; private set; }
+    [UInt(11)] public ushort Rally { get; private set; } // Was probably intended for more flags but is only used for one setting.
 
     public void Read(GamePacketReader reader)
     {

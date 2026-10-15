@@ -1,21 +1,23 @@
 ﻿using NexusTomorrow.Game.Static.PlayerPath;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathSoldierHoldoutStatus)]
-public class ServerPathSoldierHoldoutStatus : IWritable
+[WireMessage(GameMessageOpcode.ServerPathSoldierHoldoutStatus, Direction.ServerToClient)]
+public sealed partial class ServerPathSoldierHoldoutStatus : IWritable
 {
-    public uint PathSoldierEventId { get; set; }
-    public List<TowerDefenseUnit> Units { get; set; } = [];
-    public uint UnitId { get; set; }
-    public bool IsBoss { get; set; }
-    public PlayerPathSoldierEventMode Mode { get; set; }
-    public int DelayTime { get; set; }
-    public int WaveIndex { get; set; }
-    public float MaxDefendHealth { get; set; }
-    public float MaxAuxiliaryHealth { get; set; }
-    public int StartTimeOffset { get; set; }
+    [UInt(14)] public uint PathSoldierEventId { get; set; }
+    [Array(CountBits = 32)] public List<TowerDefenseUnit> Units { get; set; } = [];
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(1)] public bool IsBoss { get; set; }
+    [UInt(32)] public PlayerPathSoldierEventMode Mode { get; set; }
+    [UInt(32)] public int DelayTime { get; set; }
+    [UInt(32)] public int WaveIndex { get; set; }
+    [Float32] public float MaxDefendHealth { get; set; }
+    [Float32] public float MaxAuxiliaryHealth { get; set; }
+    [UInt(32)] public int StartTimeOffset { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

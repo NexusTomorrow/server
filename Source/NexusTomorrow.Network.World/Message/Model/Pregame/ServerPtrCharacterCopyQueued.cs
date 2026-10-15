@@ -1,10 +1,12 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 // Can be sent to client while player is in Game or on CharacterSelect screen.
 [Message(GameMessageOpcode.ServerPtrCharacterCopyQueued)]
-public class ServerPtrCharacterCopyQueued : IWritable
+[WireMessage(GameMessageOpcode.ServerPtrCharacterCopyQueued, Direction.ServerToClient)]
+public sealed partial class ServerPtrCharacterCopyQueued : IWritable
 {
     public void Write(GamePacketWriter writer)
     {

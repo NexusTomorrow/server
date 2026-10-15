@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Entity;
 
 // If a Tether CCState is applied to the player, the TetherUnit is the unit from which the tether length is calculated.
 [Message(GameMessageOpcode.ServerEntityCCTetherUnit)]
-public class ServerEntityCCTetherUnit : IWritable
+[WireMessage(GameMessageOpcode.ServerEntityCCTetherUnit, Direction.ServerToClient)]
+public sealed partial class ServerEntityCCTetherUnit : IWritable
 {
-    public uint UnitId { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

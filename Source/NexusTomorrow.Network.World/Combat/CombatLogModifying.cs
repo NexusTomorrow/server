@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogModifying : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogModifying : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.Modifying;
+    [NotOnWire] public CombatLogType Type => CombatLogType.Modifying;
 
-    public uint CasterId { get; set; }
-    public uint HostItem2Id { get; set; } // 18u
-    public uint ItemRemovedItem2Id { get; set; }
-    public uint ItemAddedItem2Id { get; set; }
+    [UInt(32)] public uint CasterId { get; set; }
+    [UInt(18)] public uint HostItem2Id { get; set; } // 18u
+    [UInt(32)] public uint ItemRemovedItem2Id { get; set; }
+    [UInt(32)] public uint ItemAddedItem2Id { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

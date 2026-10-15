@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
 using NexusTomorrow.Game.Static.Spell;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogInterrupted : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogInterrupted : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.Interrupted;
+    [NotOnWire] public CombatLogType Type => CombatLogType.Interrupted;
 
-    public uint InterruptingSpellId { get; set; } // 18u
-    public CastResult CastResult { get; set; } // 9u
+    [UInt(18)] public uint InterruptingSpellId { get; set; } // 18u
+    [UInt(9)] public CastResult CastResult { get; set; } // 9u
     public CombatLogCastData CastData { get; set; }
 
     public void Write(GamePacketWriter writer)

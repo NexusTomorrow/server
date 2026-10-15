@@ -1,15 +1,17 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
 [Message(GameMessageOpcode.ClientCraftingCraftItemAutoCraft)]
-public class ClientCraftingCraftItemAutoCraft : IReadable
+[WireMessage(GameMessageOpcode.ClientCraftingCraftItemAutoCraft, Direction.ClientToServer)]
+public sealed partial class ClientCraftingCraftItemAutoCraft : IReadable
 {
-    public uint ClientSpellcastUniqueId { get; private set; } // creates a spell cast when the craft is Runecrafting
-    public uint CraftingStationUnitId { get; private set; }
-    public uint TradeskillSchematic2Id { get; private set; }
-    public uint SchematicCount { get; private set; }
-    public uint CatalystItem2Id { get; private set; }
+    [UInt(32)] public uint ClientSpellcastUniqueId { get; private set; } // creates a spell cast when the craft is Runecrafting
+    [UInt(32)] public uint CraftingStationUnitId { get; private set; }
+    [UInt(32)] public uint TradeskillSchematic2Id { get; private set; }
+    [UInt(32)] public uint SchematicCount { get; private set; }
+    [UInt(18)] public uint CatalystItem2Id { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

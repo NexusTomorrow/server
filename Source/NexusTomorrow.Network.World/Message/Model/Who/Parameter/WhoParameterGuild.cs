@@ -1,8 +1,11 @@
-﻿namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
+﻿using NexusTomorrow.Network.Codec;
 
-public class WhoParameterGuild : IWhoParameterData
+namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
+
+[WireStruct]
+public sealed partial class WhoParameterGuild : IWhoParameterData
 {
-    public string GuildName { get; private set; }
+    [WideString] public string GuildName { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

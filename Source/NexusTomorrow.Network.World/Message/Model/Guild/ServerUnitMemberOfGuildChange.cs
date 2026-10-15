@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
@@ -6,10 +7,11 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 // Circles, Warparties, Arena teams, and Communities all work the same on the client/server as normal Guilds so this
 // list will contain any and all of the GuildIds to which the unit belongs. </summary>
 [Message(GameMessageOpcode.ServerUnitMemberOfGuildChange)]
-public class ServerUnitMemberOfGuildChange : IWritable
+[WireMessage(GameMessageOpcode.ServerUnitMemberOfGuildChange, Direction.ServerToClient)]
+public sealed partial class ServerUnitMemberOfGuildChange : IWritable
 {
-    public uint UnitId { get; set; }
-    public List<ulong> GuildIds { get; set; } = [];
+    [UInt(32)] public uint UnitId { get; set; }
+    [Array(CountBits = 32), UInt(64)] public List<ulong> GuildIds { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

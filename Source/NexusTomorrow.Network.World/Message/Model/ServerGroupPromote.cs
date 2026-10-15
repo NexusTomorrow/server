@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerGroupPromote)]
-public class ServerGroupPromote : IWritable
+[WireMessage(GameMessageOpcode.ServerGroupPromote, Direction.ServerToClient)]
+public sealed partial class ServerGroupPromote : IWritable
 {
-    public ulong GroupId { get; set; }
+    [UInt(64)] public ulong GroupId { get; set; }
 
-    public uint LeaderIndex { get; set; }
+    [UInt(32)] public uint LeaderIndex { get; set; }
 
     public Identity NewLeader { get; set; }
 

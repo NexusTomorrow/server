@@ -1,16 +1,18 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogExperience : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogExperience : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.Experience;
+    [NotOnWire] public CombatLogType Type => CombatLogType.Experience;
 
-    public uint UnitId { get; set; }
-    public uint Xp { get; set; }
-    public uint RestXp { get; set; }
-    public uint ElderPoints { get; set; }
-    public uint RestElderPoints { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(32)] public uint Xp { get; set; }
+    [UInt(32)] public uint RestXp { get; set; }
+    [UInt(32)] public uint ElderPoints { get; set; }
+    [UInt(32)] public uint RestElderPoints { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

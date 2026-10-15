@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [Message(GameMessageOpcode.ServerGuildEventLogDeleteEntry)]
-public class ServerGuildEventLogDeleteEntry : IWritable
+[WireMessage(GameMessageOpcode.ServerGuildEventLogDeleteEntry, Direction.ServerToClient)]
+public sealed partial class ServerGuildEventLogDeleteEntry : IWritable
 {
     public Identity GuildIdentity { get; set; }
-    public ulong EventLogId { get; set; }
+    [UInt(64)] public ulong EventLogId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

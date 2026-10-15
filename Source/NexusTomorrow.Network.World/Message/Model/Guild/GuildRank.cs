@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Guild;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-public class GuildRank : IWritable
+[WireStruct]
+public sealed partial class GuildRank : IWritable
 {
-    public string RankName { get; set; } = "";
-    public GuildRankPermission PermissionMask { get; set; } = GuildRankPermission.Disabled;
-    public ulong BankWithdrawalPermissions { get; set; }
-    public ulong MoneyWithdrawalLimit { get; set; }
-    public ulong RepairLimit { get; set; }
+    [WideString] public string RankName { get; set; } = "";
+    [UInt(32)] public GuildRankPermission PermissionMask { get; set; } = GuildRankPermission.Disabled;
+    [UInt(64)] public ulong BankWithdrawalPermissions { get; set; }
+    [UInt(64)] public ulong MoneyWithdrawalLimit { get; set; }
+    [UInt(64)] public ulong RepairLimit { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

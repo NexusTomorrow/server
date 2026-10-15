@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ClientCastBindPointSpell)]
-public class ClientCastBindPointSpell : IReadable
+[WireMessage(GameMessageOpcode.ClientCastBindPointSpell, Direction.ClientToServer)]
+public sealed partial class ClientCastBindPointSpell : IReadable
 {
-    public uint ClientSpellCastUniqueId { get; private set; }
-    public uint UnitId { get; private set; } // Bind point units
+    [UInt(32)] public uint ClientSpellCastUniqueId { get; private set; }
+    [UInt(32)] public uint UnitId { get; private set; } // Bind point units
 
     public void Read(GamePacketReader reader)
     {

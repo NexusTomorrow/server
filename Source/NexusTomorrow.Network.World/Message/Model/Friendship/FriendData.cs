@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Friendship;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-public class FriendData : IWritable
+[WireStruct]
+public sealed partial class FriendData : IWritable
 {
-    public ulong FriendshipId { get; set; }
+    [UInt(64)] public ulong FriendshipId { get; set; }
     public Identity PlayerIdentity { get; set; } = new();
-    public string Note { get; set; } = "";
-    public FriendshipType Type { get; set; }
+    [WideString] public string Note { get; set; } = "";
+    [UInt(4)] public FriendshipType Type { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

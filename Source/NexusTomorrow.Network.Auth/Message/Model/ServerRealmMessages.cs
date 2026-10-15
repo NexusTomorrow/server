@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NetworkMessage = NexusTomorrow.Network.Message.Model.Shared.Message;
 
 namespace NexusTomorrow.Network.Auth.Message.Model;
 
 [Message(GameMessageOpcode.ServerRealmMessages)]
-public class ServerRealmMessages : IWritable
+[WireMessage(GameMessageOpcode.ServerRealmMessages, Direction.ServerToClient)]
+public sealed partial class ServerRealmMessages : IWritable
 {
-    public List<NetworkMessage> Messages { get; set; } = [];
+    [Array(CountBits = 32)] public List<NetworkMessage> Messages { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

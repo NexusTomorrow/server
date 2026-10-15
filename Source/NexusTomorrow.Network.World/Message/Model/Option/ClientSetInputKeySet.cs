@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Option;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Option;
 
 [Message(GameMessageOpcode.ClientSetInputKeySet)]
-public class ClientSetInputKeySet : IReadable
+[WireMessage(GameMessageOpcode.ClientSetInputKeySet, Direction.ClientToServer)]
+public sealed partial class ClientSetInputKeySet : IReadable
 {
-    public InputSets InputKeySetEnum { get; private set; }
+    [UInt(32)] public InputSets InputKeySetEnum { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

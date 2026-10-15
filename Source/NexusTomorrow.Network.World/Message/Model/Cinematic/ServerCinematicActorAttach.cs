@@ -1,15 +1,17 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ServerCinematicCameraAttach)]
-public class ServerCinematicCameraAttach : IWritable
+[WireMessage(GameMessageOpcode.ServerCinematicCameraAttach, Direction.ServerToClient)]
+public sealed partial class ServerCinematicCameraAttach : IWritable
 {
-    public uint AttachType { get; set; }
-    public uint AttachId { get; set; }
-    public uint Delay { get; set; }
-    public uint ParentUnitId { get; set; }
-    public bool UseRotation { get; set; }
+    [UInt(32)] public uint AttachType { get; set; }
+    [UInt(32)] public uint AttachId { get; set; }
+    [UInt(32)] public uint Delay { get; set; }
+    [UInt(32)] public uint ParentUnitId { get; set; }
+    [UInt(1)] public bool UseRotation { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientRapidTransport)]
-public class ClientRapidTransport : IReadable
+[WireMessage(GameMessageOpcode.ClientRapidTransport, Direction.ClientToServer)]
+public sealed partial class ClientRapidTransport : IReadable
 {
-    public ushort TaxiNode { get; private set; }
+    [UInt(14)] public ushort TaxiNode { get; private set; }
     // not sure about the name - some increment
-    public uint Time { get; private set; }
+    [UInt(32)] public uint Time { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathScientistAddFieldStudyToCreature)]
-public class ServerPathScientistAddFieldStudyToCreature : IWritable
+[WireMessage(GameMessageOpcode.ServerPathScientistAddFieldStudyToCreature, Direction.ServerToClient)]
+public sealed partial class ServerPathScientistAddFieldStudyToCreature : IWritable
 {
-    public uint UnitId { get; set; }
-    public uint PathScientistFieldStudyId { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(14)] public uint PathScientistFieldStudyId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

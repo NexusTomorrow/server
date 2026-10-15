@@ -1,10 +1,13 @@
-﻿namespace NexusTomorrow.Network.World.Entity.Model;
+﻿using NexusTomorrow.Network.Codec;
 
-public class PickupEntityModel : IEntityModel
+namespace NexusTomorrow.Network.World.Entity.Model;
+
+[WireStruct]
+public sealed partial class PickupEntityModel : IEntityModel
 {
-    public uint CreatureId { get; set; }
-    public uint OwnerId { get; set; }
-    public uint Unknown0 { get; set; }
+    [UInt(18)] public uint CreatureId { get; set; }
+    [UInt(32)] public uint OwnerId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

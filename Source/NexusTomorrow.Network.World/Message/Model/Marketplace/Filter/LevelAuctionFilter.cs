@@ -1,9 +1,12 @@
-﻿namespace NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
+﻿using NexusTomorrow.Network.Codec;
 
-public class LevelAuctionFilter : IAuctionFilter
+namespace NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
+
+[WireStruct]
+public sealed partial class LevelAuctionFilter : IAuctionFilter
 {
-    public uint Minimum { get; private set; }
-    public uint Maximum { get; private set; }
+    [UInt(32)] public uint Minimum { get; private set; }
+    [UInt(32)] public uint Maximum { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

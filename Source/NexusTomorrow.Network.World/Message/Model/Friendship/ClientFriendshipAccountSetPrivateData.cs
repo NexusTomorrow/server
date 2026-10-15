@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
 [Message(GameMessageOpcode.ClientFriendshipAccountSetPrivateData)]
-public class ClientFriendshipAccountSetPrivateData : IReadable
+[WireMessage(GameMessageOpcode.ClientFriendshipAccountSetPrivateData, Direction.ClientToServer)]
+public sealed partial class ClientFriendshipAccountSetPrivateData : IReadable
 {
-    public ulong AccountFriendId { get; private set; }
-    public uint Unused { get; private set; } // Always 2
-    public string PrivateDataText { get; private set; }
+    [UInt(64)] public ulong AccountFriendId { get; private set; }
+    [UInt(32)] public uint Unused { get; private set; } // Always 2
+    [WideString] public string PrivateDataText { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

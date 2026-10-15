@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Friendship;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
 [Message(GameMessageOpcode.ClientFriendshipInviteResponse)]
-public class ClientFriendshipInviteResponse : IReadable
+[WireMessage(GameMessageOpcode.ClientFriendshipInviteResponse, Direction.ClientToServer)]
+public sealed partial class ClientFriendshipInviteResponse : IReadable
 {
-    public ulong InviteId { get; private set; }
-    public FriendshipResponse Response { get; private set; }
+    [UInt(64)] public ulong InviteId { get; private set; }
+    [UInt(3)] public FriendshipResponse Response { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

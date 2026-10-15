@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Marketplace;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
 [Message(GameMessageOpcode.ServerMarketplaceStatus)]
-public class ServerMarketplaceStatus : IWritable
+[WireMessage(GameMessageOpcode.ServerMarketplaceStatus, Direction.ServerToClient)]
+public sealed partial class ServerMarketplaceStatus : IWritable
 {
-    public MarketplaceStatus Status { get; set; }
+    [UInt(32)] public MarketplaceStatus Status { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Utility;
 
 [Message(GameMessageOpcode.ClientInspectPlayerRequest)]
-public class ClientInspectPlayerRequest : IReadable
+[WireMessage(GameMessageOpcode.ClientInspectPlayerRequest, Direction.ClientToServer)]
+public sealed partial class ClientInspectPlayerRequest : IReadable
 {
-    public uint UnitId { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
 
     public void Read(GamePacketReader reader)
     {

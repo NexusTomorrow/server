@@ -1,16 +1,19 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerTitles)]
-public class ServerTitles : IWritable
+[WireMessage(GameMessageOpcode.ServerTitles, Direction.ServerToClient)]
+public sealed partial class ServerTitles : IWritable
 {
-    public class Title : IWritable
+    [WireStruct]
+    public sealed partial class Title : IWritable
     {
-        public ushort TitleId { get; set; }
-        public bool Revoked { get; set; }
-        public bool InSchedule { get; set; }
-        public uint TimeRemaining { get; set; }
+        [UInt(14)] public ushort TitleId { get; set; }
+        [UInt(1)] public bool Revoked { get; set; }
+        [UInt(1)] public bool InSchedule { get; set; }
+        [UInt(32)] public uint TimeRemaining { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -21,7 +24,7 @@ public class ServerTitles : IWritable
         }
     }
 
-    public List<Title> Titles { get; set; } = [];
+    [Array(CountBits = 32)] public List<Title> Titles { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

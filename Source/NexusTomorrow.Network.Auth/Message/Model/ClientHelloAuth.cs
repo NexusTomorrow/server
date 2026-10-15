@@ -1,23 +1,26 @@
 ﻿using NexusTomorrow.Game.Static;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.Auth.Message.Model;
 
 [Message(GameMessageOpcode.ClientHelloAuth)]
-public class ClientHelloAuth : IReadable
+public partial class ClientHelloAuth : IReadable
 {
-    public class HardwareInformation : IReadable
+    [WireStruct]
+    public sealed partial class HardwareInformation : IReadable
     {
-        public class CpuInformation : IReadable
+        [WireStruct]
+        public sealed partial class CpuInformation : IReadable
         {
-            public string Manufacturer { get; private set; }
-            public string Name { get; private set; }
-            public string Description { get; private set; }
-            public uint Family { get; private set; }
-            public uint Level { get; private set; }
-            public uint Revision { get; private set; }
-            public uint MaxClockSpeed { get; private set; }
-            public uint NumberOfCores { get; private set; }
+            [WideString] public string Manufacturer { get; private set; }
+            [WideString] public string Name { get; private set; }
+            [WideString] public string Description { get; private set; }
+            [UInt(32)] public uint Family { get; private set; }
+            [UInt(32)] public uint Level { get; private set; }
+            [UInt(32)] public uint Revision { get; private set; }
+            [UInt(32)] public uint MaxClockSpeed { get; private set; }
+            [UInt(32)] public uint NumberOfCores { get; private set; }
 
             public void Read(GamePacketReader reader)
             {
@@ -32,14 +35,15 @@ public class ClientHelloAuth : IReadable
             }
         }
 
-        public class GpuInformation : IReadable
+        [WireStruct]
+        public sealed partial class GpuInformation : IReadable
         {
-            public string Name { get; private set; }
-            public uint VendorId { get; private set; }
-            public uint DeviceId { get; private set; }
-            public uint SubSysId { get; private set; }
-            public uint Revision { get; private set; }
-            public uint AdapterRamMB { get; private set; }
+            [WideString] public string Name { get; private set; }
+            [UInt(32)] public uint VendorId { get; private set; }
+            [UInt(32)] public uint DeviceId { get; private set; }
+            [UInt(32)] public uint SubSysId { get; private set; }
+            [UInt(32)] public uint Revision { get; private set; }
+            [UInt(32)] public uint AdapterRamMB { get; private set; }
 
             public void Read(GamePacketReader reader)
             {
@@ -53,12 +57,12 @@ public class ClientHelloAuth : IReadable
         }
 
         public CpuInformation Cpu { get; } = new();
-        public uint MemoryPhysical { get; private set; }
+        [UInt(32)] public uint MemoryPhysical { get; private set; }
         public GpuInformation Gpu { get; } = new();
-        public uint Architecture { get; private set; }
-        public uint OsVersion { get; private set; }
-        public uint ServicePack { get; private set; }
-        public uint ProductType { get; private set; }
+        [UInt(32)] public uint Architecture { get; private set; }
+        [UInt(32)] public uint OsVersion { get; private set; }
+        [UInt(32)] public uint ServicePack { get; private set; }
+        [UInt(32)] public uint ProductType { get; private set; }
 
         public void Read(GamePacketReader reader)
         {

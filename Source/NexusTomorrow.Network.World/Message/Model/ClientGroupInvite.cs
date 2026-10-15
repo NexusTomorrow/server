@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientGroupInvite)]
-public class ClientGroupInvite : IReadable
+[WireMessage(GameMessageOpcode.ClientGroupInvite, Direction.ClientToServer)]
+public sealed partial class ClientGroupInvite : IReadable
 {
-    public string Name { get; set; }
-    public string RealmName { get; set; }
+    [WideString] public string Name { get; set; }
+    [WideString] public string RealmName { get; set; }
 
     public void Read(GamePacketReader reader)
     {

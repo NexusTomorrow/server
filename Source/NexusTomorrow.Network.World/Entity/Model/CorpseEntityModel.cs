@@ -1,8 +1,11 @@
-﻿namespace NexusTomorrow.Network.World.Entity.Model;
+﻿using NexusTomorrow.Network.Codec;
 
-public class CorpseEntityModel : IEntityModel
+namespace NexusTomorrow.Network.World.Entity.Model;
+
+[WireStruct]
+public sealed partial class CorpseEntityModel : IEntityModel
 {
-    public uint CreatureId { get; set; }
+    [UInt(18)] public uint CreatureId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Spell;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellCastResult)]
-public class ServerSpellCastResult : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellCastResult, Direction.ServerToClient)]
+public sealed partial class ServerSpellCastResult : IWritable
 {
-    public uint ClientSpellCastUniqueId { get; set; }
-    public uint Spell4Id { get; set; }
-    public CastResult CastResult { get; set; }
+    [UInt(32)] public uint ClientSpellCastUniqueId { get; set; }
+    [UInt(18)] public uint Spell4Id { get; set; }
+    [UInt(9)] public CastResult CastResult { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

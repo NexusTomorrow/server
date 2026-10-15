@@ -1,24 +1,26 @@
 ﻿using NexusTomorrow.Game.Static.Loot;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Loot;
 
-public class LootItem : IWritable
+[WireStruct]
+public sealed partial class LootItem : IWritable
 {
-    public uint LootUnitId { get; set; }
-    public LootItemType Type { get; set; }
-    public uint ItemId { get; set; }
-    public uint Amount { get; set; }
-    public bool CanLoot { get; set; }
-    public bool RequiresRoll { get; set; }
-    public bool OnlyMasterLootable { get; set; }
-    public bool Explosion { get; set; }
-    public uint RollTime { get; set; }
-    public ulong RandomCircuitData { get; set; }
-    public uint RandomGlyphData { get; set; }
-    public uint ItemQuality2Id { get; set; }
-    public List<Identity> MasterList { get; set; } = [];
+    [UInt(32)] public uint LootUnitId { get; set; }
+    [UInt(32)] public LootItemType Type { get; set; }
+    [UInt(32)] public uint ItemId { get; set; }
+    [UInt(32)] public uint Amount { get; set; }
+    [UInt(1)] public bool CanLoot { get; set; }
+    [UInt(1)] public bool RequiresRoll { get; set; }
+    [UInt(1)] public bool OnlyMasterLootable { get; set; }
+    [UInt(1)] public bool Explosion { get; set; }
+    [UInt(32)] public uint RollTime { get; set; }
+    [UInt(64)] public ulong RandomCircuitData { get; set; }
+    [UInt(32)] public uint RandomGlyphData { get; set; }
+    [UInt(32)] public uint ItemQuality2Id { get; set; }
+    [Array(CountBits = 32)] public List<Identity> MasterList { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 // Client only processes message when on CharacterSelect screen.
 [Message(GameMessageOpcode.ServerRealmTransferResult)]
-public class ServerRealmTransferResult : IWritable
+[WireMessage(GameMessageOpcode.ServerRealmTransferResult, Direction.ServerToClient)]
+public sealed partial class ServerRealmTransferResult : IWritable
 {
-    public CharacterModifyResult Result { get; set; }
+    [UInt(6)] public CharacterModifyResult Result { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

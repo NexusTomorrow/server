@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Crafting;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
 [Message(GameMessageOpcode.ServerTradeskillSigilResult)]
-public class ServerTradeskillSigilResult : IWritable
+[WireMessage(GameMessageOpcode.ServerTradeskillSigilResult, Direction.ServerToClient)]
+public sealed partial class ServerTradeskillSigilResult : IWritable
 {
-    public TradeskillResult TradeskillSigilResult { get; set; }
+    [UInt(32)] public TradeskillResult TradeskillSigilResult { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,22 +1,24 @@
 ﻿using NexusTomorrow.Game.Static.Group;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerGroupLootRulesChange)]
-public class ServerGroupLootRulesChange : IWritable
+[WireMessage(GameMessageOpcode.ServerGroupLootRulesChange, Direction.ServerToClient)]
+public sealed partial class ServerGroupLootRulesChange : IWritable
 {
-    public ulong GroupId { get; set; }
+    [UInt(64)] public ulong GroupId { get; set; }
 
-    public uint UnknownDWord { get; set; }
+    [UInt(32)] public uint UnknownDWord { get; set; }
 
-    public LootRule LootRulesUnderThreshold { get; set; }
+    [UInt(3)] public LootRule LootRulesUnderThreshold { get; set; }
 
-    public LootRule LootRulesThresholdAndOver { get; set; }
+    [UInt(3)] public LootRule LootRulesThresholdAndOver { get; set; }
 
-    public LootThreshold LootThreshold { get; set; }
+    [UInt(4)] public LootThreshold LootThreshold { get; set; }
 
-    public HarvestLootRule HarvestLootRule { get; set; }
+    [UInt(2)] public HarvestLootRule HarvestLootRule { get; set; }
 
 
     public void Write(GamePacketWriter writer)

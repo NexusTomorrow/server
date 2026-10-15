@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ServerCinematicPlayerControl)]
-public class ServerCinematicPlayerControl : IWritable
+[WireMessage(GameMessageOpcode.ServerCinematicPlayerControl, Direction.ServerToClient)]
+public sealed partial class ServerCinematicPlayerControl : IWritable
 {
-    public uint Delay { get; set; }
-    public bool Allow { get; set; }
+    [UInt(32)] public uint Delay { get; set; }
+    [UInt(1)] public bool Allow { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
 [Message(GameMessageOpcode.ServerPublicEventVoteEnd)]
-public class ServerPublicEventVoteEnd : IWritable
+[WireMessage(GameMessageOpcode.ServerPublicEventVoteEnd, Direction.ServerToClient)]
+public sealed partial class ServerPublicEventVoteEnd : IWritable
 {
-    public uint EventId { get; set; }
-    public uint VoteId { get; set; }
-    public uint Winner { get; set; }
+    [UInt(14)] public uint EventId { get; set; }
+    [UInt(14)] public uint VoteId { get; set; }
+    [UInt(32)] public uint Winner { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

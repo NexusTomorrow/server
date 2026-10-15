@@ -1,19 +1,22 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
 using NexusTomorrow.Game.Static.Entity;
 using NexusTomorrow.Game.Static.Spell;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogTransference : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogTransference : ICombatLog
 {
-    public class CombatHealData : IWritable
+    [WireStruct]
+    public sealed partial class CombatHealData : IWritable
     {
-        public uint HealedUnitId { get; set; }
-        public uint HealAmount { get; set; }
-        public Vital Vital { get; set; }
-        public uint Overheal { get; set; }
-        public uint Absorption { get; set; }
+        [UInt(32)] public uint HealedUnitId { get; set; }
+        [UInt(32)] public uint HealAmount { get; set; }
+        [UInt(5)] public Vital Vital { get; set; }
+        [UInt(32)] public uint Overheal { get; set; }
+        [UInt(32)] public uint Absorption { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -26,16 +29,16 @@ public class CombatLogTransference : ICombatLog
     }
 
 
-    public CombatLogType Type => CombatLogType.Transference;
+    [NotOnWire] public CombatLogType Type => CombatLogType.Transference;
 
-    public uint DamageAmount { get; set; }
-    public DamageType DamageType { get; set; } // 3u
-    public uint Shield { get; set; }
-    public uint Absorption { get; set; }
-    public uint Overkill { get; set; }
-    public uint GlanceAmount { get; set; }
-    public bool BTargetVulnerable { get; set; }
-    public List<CombatHealData> HealedUnits { get; set; } = [];
+    [UInt(32)] public uint DamageAmount { get; set; }
+    [UInt(3)] public DamageType DamageType { get; set; } // 3u
+    [UInt(32)] public uint Shield { get; set; }
+    [UInt(32)] public uint Absorption { get; set; }
+    [UInt(32)] public uint Overkill { get; set; }
+    [UInt(32)] public uint GlanceAmount { get; set; }
+    [UInt(1)] public bool BTargetVulnerable { get; set; }
+    [Array(CountBits = 32)] public List<CombatHealData> HealedUnits { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

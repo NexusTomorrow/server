@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.ICComm;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.ICComm;
 
 [Message(GameMessageOpcode.ServerICCommChannelJoin)]
-public class ServerICCommChannelJoin : IWritable
+[WireMessage(GameMessageOpcode.ServerICCommChannelJoin, Direction.ServerToClient)]
+public sealed partial class ServerICCommChannelJoin : IWritable
 {
-    public ICCommChannelType Type { get; set; }
-    public ulong IccomId { get; set; }
-    public string ChannelName { get; set; }
+    [UInt(3)] public ICCommChannelType Type { get; set; }
+    [UInt(64)] public ulong IccomId { get; set; }
+    [WideString] public string ChannelName { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

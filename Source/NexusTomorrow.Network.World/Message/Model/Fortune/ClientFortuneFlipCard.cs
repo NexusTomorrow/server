@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Fortune;
 
 [Message(GameMessageOpcode.ClientFortuneFlipCard)]
-public class ClientFortuneFlipCard : IReadable
+[WireMessage(GameMessageOpcode.ClientFortuneFlipCard, Direction.ClientToServer)]
+public sealed partial class ClientFortuneFlipCard : IReadable
 {
-    public uint SelectedCardIndex { get; private set; }
+    [UInt(32)] public uint SelectedCardIndex { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

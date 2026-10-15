@@ -1,11 +1,13 @@
 ﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetVelocityDefaults)]
-public class SetVelocityDefaultsCommand : IEntityCommandModel
+[WireStruct]
+public sealed partial class SetVelocityDefaultsCommand : IEntityCommandModel
 {
-    public bool Blend { get; set; }
+    [UInt(1)] public bool Blend { get; set; }
 
     public void Read(GamePacketReader reader)
     {

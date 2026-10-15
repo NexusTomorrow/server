@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class Datacube : IWritable
+[WireStruct]
+public sealed partial class Datacube : IWritable
 {
-    public ushort DatacubeId { get; set; }
-    public uint Progress { get; set; }
+    [UInt(14)] public ushort DatacubeId { get; set; }
+    [UInt(32)] public uint Progress { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

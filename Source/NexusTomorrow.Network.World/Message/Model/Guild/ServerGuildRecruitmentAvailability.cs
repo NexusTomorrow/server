@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [Message(GameMessageOpcode.ServerGuildRecruitmentAvailability)]
-public class ServerGuildRecruitmentAvailability : IWritable
+[WireMessage(GameMessageOpcode.ServerGuildRecruitmentAvailability, Direction.ServerToClient)]
+public sealed partial class ServerGuildRecruitmentAvailability : IWritable
 {
     public Identity GuildIdentity1 { get; set; }
     public Identity GuildIdentity2 { get; set; } // GuildIdentity2 needs to match GuildIdentity1 for the handler to set the recruitment availability
-    public uint RecruitmentAvailability { get; set; } // Bit 2 is the only bit used to signal recruitment availability
+    [UInt(32)] public uint RecruitmentAvailability { get; set; } // Bit 2 is the only bit used to signal recruitment availability
 
     public void Write(GamePacketWriter writer)
     {

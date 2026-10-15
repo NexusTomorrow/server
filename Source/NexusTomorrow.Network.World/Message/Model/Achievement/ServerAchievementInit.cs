@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Achievement;
 
 [Message(GameMessageOpcode.ServerAchievementInit)]
-public class ServerAchievementInit : IWritable
+[WireMessage(GameMessageOpcode.ServerAchievementInit, Direction.ServerToClient)]
+public sealed partial class ServerAchievementInit : IWritable
 {
-    public List<Achievement> Achievements { get; set; } = [];
+    [Array(CountBits = 32)] public List<Achievement> Achievements { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

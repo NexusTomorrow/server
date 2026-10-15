@@ -1,13 +1,15 @@
 ﻿using System.Numerics;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Map;
 
 [Message(GameMessageOpcode.ServerDestinationArrowSet)]
-public class ServerDestinationArrowSet : IWritable
+[WireMessage(GameMessageOpcode.ServerDestinationArrowSet, Direction.ServerToClient)]
+public sealed partial class ServerDestinationArrowSet : IWritable
 {
-    public Vector3 DestinationPosition { get; set; }
-    public float Radius { get; set; }
+    [Float32] public Vector3 DestinationPosition { get; set; }
+    [Float32] public float Radius { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

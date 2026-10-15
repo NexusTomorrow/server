@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathSettlerNotifyUse)]
-public class ServerPathSettlerNotifyUse : IWritable
+[WireMessage(GameMessageOpcode.ServerPathSettlerNotifyUse, Direction.ServerToClient)]
+public sealed partial class ServerPathSettlerNotifyUse : IWritable
 {
-    public ushort PathSettlerImprovementGroupId { get; set; }
-    public string Name { get; set; }
+    [UInt(14)] public ushort PathSettlerImprovementGroupId { get; set; }
+    [WideString] public string Name { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.GenericUnlock;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.GenericUnlock;
 
 [Message(GameMessageOpcode.ServerGenericUnlockResult)]
-public class ServerGenericUnlockResult : IWritable
+[WireMessage(GameMessageOpcode.ServerGenericUnlockResult, Direction.ServerToClient)]
+public sealed partial class ServerGenericUnlockResult : IWritable
 {
-    public GenericUnlockResult Result { get; set; }
+    [UInt(3)] public GenericUnlockResult Result { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

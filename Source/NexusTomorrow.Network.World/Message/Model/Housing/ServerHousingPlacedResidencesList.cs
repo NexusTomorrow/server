@@ -1,16 +1,19 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ServerHousingPlacedResidencesList)]
-public class ServerHousingPlacedResidencesList : IWritable
+[WireMessage(GameMessageOpcode.ServerHousingPlacedResidencesList, Direction.ServerToClient)]
+public sealed partial class ServerHousingPlacedResidencesList : IWritable
 {
-    public class Residence : IWritable
+    [WireStruct]
+    public sealed partial class Residence : IWritable
     {
         public Identity ResidenceIdentity { get; set; }
-        public string PlayerName { get; set; }
-        public uint PropertyIndex { get; set; }
+        [WideString] public string PlayerName { get; set; }
+        [UInt(32)] public uint PropertyIndex { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -20,7 +23,7 @@ public class ServerHousingPlacedResidencesList : IWritable
         }
     }
 
-    public List<Residence> Residences { get; set; } = [];
+    [Array(CountBits = 32)] public List<Residence> Residences { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

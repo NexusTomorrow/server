@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
@@ -7,11 +8,12 @@ namespace NexusTomorrow.Network.World.Message.Model;
 /// This is different from <see cref="ServerEntityThreatUpdate"/> where values are stored against the entity object in the client.
 /// </summary>
 [Message(GameMessageOpcode.ServerEntityThreatListUpdate)]
-public class ServerEntityThreatListUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerEntityThreatListUpdate, Direction.ServerToClient)]
+public sealed partial class ServerEntityThreatListUpdate : IWritable
 {
-    public uint SrcUnitId { get; set; }
-    public uint[] ThreatUnitIds { get; set; } = new uint[5];
-    public uint[] ThreatLevels { get; set; } = new uint[5];
+    [UInt(32)] public uint SrcUnitId { get; set; }
+    [FixedArray(5), UInt(32)] public uint[] ThreatUnitIds { get; set; } = new uint[5];
+    [FixedArray(5), UInt(32)] public uint[] ThreatLevels { get; set; } = new uint[5];
 
     public void Write(GamePacketWriter writer)
     {

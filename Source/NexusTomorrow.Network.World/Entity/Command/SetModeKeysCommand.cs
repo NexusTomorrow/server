@@ -1,14 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
 using NexusTomorrow.Game.Static.Entity.Movement.Command.Mode;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetModeKeys)]
-public class SetModeKeysCommand : IEntityCommandModel
+[WireStruct]
+public sealed partial class SetModeKeysCommand : IEntityCommandModel
 {
-    public List<uint> Times { get; set; } = [];
-    public List<ModeType> Modes { get; set; } = [];
-    public uint Offset { get; set; }
+    [UInt(8), Count] public byte TimesCount { get; set; }
+    [Array(CountFrom = nameof(TimesCount)), UInt(32)] public List<uint> Times { get; set; } = [];
+    [Array(CountFrom = nameof(TimesCount)), UInt(32)] public List<ModeType> Modes { get; set; } = [];
+    [UInt(32)] public uint Offset { get; set; }
 
     public void Read(GamePacketReader reader)
     {

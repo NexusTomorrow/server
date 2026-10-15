@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerP2PTradeResult)]
-public class ServerP2PTradeResult : IWritable
+[WireMessage(GameMessageOpcode.ServerP2PTradeResult, Direction.ServerToClient)]
+public sealed partial class ServerP2PTradeResult : IWritable
 {
     public enum P2PTradeResult
     {
@@ -28,8 +30,8 @@ public class ServerP2PTradeResult : IWritable
         InviteFailedNoTrading = 18
     }
 
-    public P2PTradeResult Result { get; set; }
-    public bool Cancelled { get; set; }
+    [UInt(5)] public P2PTradeResult Result { get; set; }
+    [UInt(1)] public bool Cancelled { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

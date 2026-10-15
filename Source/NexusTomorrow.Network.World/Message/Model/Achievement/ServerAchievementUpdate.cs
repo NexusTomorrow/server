@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Achievement;
 
 [Message(GameMessageOpcode.ServerAchievementUpdate)]
-public class ServerAchievementUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerAchievementUpdate, Direction.ServerToClient)]
+public sealed partial class ServerAchievementUpdate : IWritable
 {
-    public bool Deleted { get; set; }
-    public List<Achievement> Achievements { get; set; } = [];
+    [UInt(1)] public bool Deleted { get; set; }
+    [Array(CountBits = 32)] public List<Achievement> Achievements { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

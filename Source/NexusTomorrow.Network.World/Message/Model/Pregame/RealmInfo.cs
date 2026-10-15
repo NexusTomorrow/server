@@ -1,17 +1,20 @@
 ﻿using NexusTomorrow.Game.Static.Pregame;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-public class RealmInfo : IWritable
+[WireStruct]
+public partial class RealmInfo : IWritable
 {
-    public class AccountRealmData : IWritable
+    [WireStruct]
+    public sealed partial class AccountRealmData : IWritable
     {
-        public ushort RealmId { get; set; }
-        public uint CharacterCount { get; set; }
-        public string LastPlayedCharacter { get; set; }
-        public ulong LastPlayedTime { get; set; }
+        [UInt(14)] public ushort RealmId { get; set; }
+        [UInt(32)] public uint CharacterCount { get; set; }
+        [WideString] public string LastPlayedCharacter { get; set; }
+        [UInt(64)] public ulong LastPlayedTime { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -22,20 +25,20 @@ public class RealmInfo : IWritable
         }
     }
 
-    public uint RealmId { get; set; }
-    public string RealmName { get; set; }
-    public uint RealmNoteStringId { get; set; }
-    public RealmFlag Flags { get; set; }
-    public RealmType Type { get; set; }
-    public RealmStatus Status { get; set; }
-    public RealmPopulation Population { get; set; }
-    public uint Unused1 { get; set; }
-    public byte[] Unused2 { get; set; } = new byte[16];
+    [UInt(32)] public uint RealmId { get; set; }
+    [WideString] public string RealmName { get; set; }
+    [UInt(32)] public uint RealmNoteStringId { get; set; }
+    [UInt(32)] public RealmFlag Flags { get; set; }
+    [UInt(2)] public RealmType Type { get; set; }
+    [UInt(3)] public RealmStatus Status { get; set; }
+    [UInt(3)] public RealmPopulation Population { get; set; }
+    [UInt(32)] public uint Unused1 { get; set; }
+    [FixedArray(16), UInt(8)] public byte[] Unused2 { get; set; } = new byte[16];
     public AccountRealmData AccountRealmInfo { get; set; }
-    public ushort Unused3 { get; set; }
-    public ushort Unused4 { get; set; }
-    public ushort Unused5 { get; set; }
-    public ushort Unused6 { get; set; }
+    [UInt(16)] public ushort Unused3 { get; set; }
+    [UInt(16)] public ushort Unused4 { get; set; }
+    [UInt(16)] public ushort Unused5 { get; set; }
+    [UInt(16)] public ushort Unused6 { get; set; }
 
     public virtual void Write(GamePacketWriter writer)
     {

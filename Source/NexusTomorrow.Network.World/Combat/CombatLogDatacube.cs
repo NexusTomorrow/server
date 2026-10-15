@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
 using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogDatacube : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogDatacube : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.Datacube;
+    [NotOnWire] public CombatLogType Type => CombatLogType.Datacube;
 
-    public uint UnitId { get; set; }
-    public DatacubeType DatacubeType { get; set; } // 3u
-    public bool HasPieces { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(3)] public DatacubeType DatacubeType { get; set; } // 3u
+    [UInt(1)] public bool HasPieces { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

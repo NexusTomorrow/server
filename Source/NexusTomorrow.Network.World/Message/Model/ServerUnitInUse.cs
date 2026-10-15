@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerUnitInUse)]
-public class ServerUnitInUse : IWritable
+[WireMessage(GameMessageOpcode.ServerUnitInUse, Direction.ServerToClient)]
+public sealed partial class ServerUnitInUse : IWritable
 {
-    public uint UnitId { get; set; }
-    public bool InUse { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(1)] public bool InUse { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

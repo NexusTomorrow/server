@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 
 [Message(GameMessageOpcode.ServerWarPartyMatchResults)]
-public class ServerWarPartyMatchResults : IWritable
+[WireMessage(GameMessageOpcode.ServerWarPartyMatchResults, Direction.ServerToClient)]
+public sealed partial class ServerWarPartyMatchResults : IWritable
 {
-    public uint Rating { get; set; }
-    public uint RepairCost { get; set; }
-    public uint DestroyedPlugs { get; set; }
-    public uint WarCoinsEarned { get; set; }
+    [UInt(32)] public uint Rating { get; set; }
+    [UInt(32)] public uint RepairCost { get; set; }
+    [UInt(32)] public uint DestroyedPlugs { get; set; }
+    [UInt(32)] public uint WarCoinsEarned { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

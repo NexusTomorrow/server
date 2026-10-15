@@ -1,23 +1,25 @@
 ﻿using NexusTomorrow.Game.Static.Storefront;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerStoreOffers)]
-public class ServerStoreOffers : IWritable
+public partial class ServerStoreOffers : IWritable
 {
-    public class OfferGroup : IWritable
+    public partial class OfferGroup : IWritable
     {
-        public class Offer : IWritable
+        public partial class Offer : IWritable
         {
-            public class OfferCurrencyData : IWritable
+            [WireStruct]
+            public sealed partial class OfferCurrencyData : IWritable
             {
-                public byte CurrencyId { get; set; } // 5
-                public float Price { get; set; }
-                public DiscountType DiscountType { get; set; } // 2
-                public float DiscountValue { get; set; }
-                public long DiscountTimeRemaining { get; set; }
-                public long TimeSinceExpiry { get; set; }
+                [UInt(5)] public byte CurrencyId { get; set; } // 5
+                [Float32] public float Price { get; set; }
+                [UInt(2)] public DiscountType DiscountType { get; set; } // 2
+                [Float32] public float DiscountValue { get; set; }
+                [UInt(64)] public long DiscountTimeRemaining { get; set; }
+                [UInt(64)] public long TimeSinceExpiry { get; set; }
 
                 public void Write(GamePacketWriter writer)
                 {

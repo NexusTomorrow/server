@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 [Message(GameMessageOpcode.ServerAccountItemCooldowns)]
-public class ServerAccountItemCooldowns : IWritable
+[WireMessage(GameMessageOpcode.ServerAccountItemCooldowns, Direction.ServerToClient)]
+public sealed partial class ServerAccountItemCooldowns : IWritable
 {
-    public List<AccountItemCooldown> AccountItemCooldowns { get; set; } = [];
+    [Array(CountBits = 32)] public List<AccountItemCooldown> AccountItemCooldowns { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

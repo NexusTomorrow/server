@@ -1,11 +1,13 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Chat.Model;
 
-public class ChatFormatLoot : IChatFormatModel
+[WireStruct]
+public sealed partial class ChatFormatLoot : IChatFormatModel
 {
-    public ChatFormatType Type => ChatFormatType.Loot;
-    public uint LootUnitId { get; set; } // must match loot sent in ServerLootNotification (0x8A6)
+    [NotOnWire] public ChatFormatType Type => ChatFormatType.Loot;
+    [UInt(32)] public uint LootUnitId { get; set; } // must match loot sent in ServerLootNotification (0x8A6)
 
     public void Read(GamePacketReader reader)
     {

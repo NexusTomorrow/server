@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Leaderboard;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Leaderboard;
 
 [Message(GameMessageOpcode.ClientLeaderboardPvpRequest)]
-public class ClientLeaderboardPvpRequest : IReadable
+[WireMessage(GameMessageOpcode.ClientLeaderboardPvpRequest, Direction.ClientToServer)]
+public sealed partial class ClientLeaderboardPvpRequest : IReadable
 {
-    public LeaderboardType Type { get; private set; }
+    [UInt(4)] public LeaderboardType Type { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

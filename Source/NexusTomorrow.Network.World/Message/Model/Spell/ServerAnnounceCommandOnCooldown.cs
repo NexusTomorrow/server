@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerAnnounceCommandOnCooldown)]
-public class ServerAnnounceCommandOnCooldown : IWritable
+[WireMessage(GameMessageOpcode.ServerAnnounceCommandOnCooldown, Direction.ServerToClient)]
+public sealed partial class ServerAnnounceCommandOnCooldown : IWritable
 {
-    public uint CooldownTime { get; set; }
+    [UInt(32)] public uint CooldownTime { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

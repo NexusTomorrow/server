@@ -1,10 +1,12 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ClientHousingDoorInteraction)]
-public class ClientHousingDoorInteraction : IReadable
+[WireMessage(GameMessageOpcode.ClientHousingDoorInteraction, Direction.ClientToServer)]
+public sealed partial class ClientHousingDoorInteraction : IReadable
 {
     public Identity ResidenceIdentity { get; } = new();
 

@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Costume;
 
 [Message(GameMessageOpcode.ServerCostumeItemList)]
-public class ServerCostumeItemList : IWritable
+[WireMessage(GameMessageOpcode.ServerCostumeItemList, Direction.ServerToClient)]
+public sealed partial class ServerCostumeItemList : IWritable
 {
-    public List<uint> Item2Ids { get; set; } = [];
+    [Array(CountBits = 32), UInt(32)] public List<uint> Item2Ids { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

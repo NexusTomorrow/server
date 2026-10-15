@@ -1,9 +1,10 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerQuestLuaEvent)]
-public class ServerQuestLuaEvent : IWritable
+public partial class ServerQuestLuaEvent : IWritable
 {
     public enum LuaEventType
     {
@@ -20,10 +21,11 @@ public class ServerQuestLuaEvent : IWritable
         LuaEventType Type { get; }
     }
 
-    public class LuaEventDataInt : ILuaEventData, IWritable
+    [WireStruct]
+    public sealed partial class LuaEventDataInt : ILuaEventData, IWritable
     {
-        public LuaEventType Type => LuaEventType.Int;
-        public int Int { get; set; }
+        [NotOnWire] public LuaEventType Type => LuaEventType.Int;
+        [UInt(32)] public int Int { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -31,10 +33,11 @@ public class ServerQuestLuaEvent : IWritable
         }
     }
 
-    public class LuaEventDataString : ILuaEventData, IWritable
+    [WireStruct]
+    public sealed partial class LuaEventDataString : ILuaEventData, IWritable
     {
-        public LuaEventType Type => LuaEventType.String;
-        public string Text { get; set; }
+        [NotOnWire] public LuaEventType Type => LuaEventType.String;
+        [WideString] public string Text { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -42,10 +45,11 @@ public class ServerQuestLuaEvent : IWritable
         }
     }
 
-    public class LuaEventDataBool : ILuaEventData, IWritable
+    [WireStruct]
+    public sealed partial class LuaEventDataBool : ILuaEventData, IWritable
     {
-        public LuaEventType Type => LuaEventType.Bool;
-        public bool Bool { get; set; }
+        [NotOnWire] public LuaEventType Type => LuaEventType.Bool;
+        [UInt(1)] public bool Bool { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -53,10 +57,11 @@ public class ServerQuestLuaEvent : IWritable
         }
     }
 
-    public class LuaEventDataItem : ILuaEventData, IWritable
+    [WireStruct]
+    public sealed partial class LuaEventDataItem : ILuaEventData, IWritable
     {
-        public LuaEventType Type => LuaEventType.Item;
-        public uint Item2Id { get; set; }
+        [NotOnWire] public LuaEventType Type => LuaEventType.Item;
+        [UInt(18)] public uint Item2Id { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -64,10 +69,11 @@ public class ServerQuestLuaEvent : IWritable
         }
     }
 
-    public class LuaEventDataQuest : ILuaEventData, IWritable
+    [WireStruct]
+    public sealed partial class LuaEventDataQuest : ILuaEventData, IWritable
     {
-        public LuaEventType Type => LuaEventType.Quest;
-        public uint QuestId { get; set; }
+        [NotOnWire] public LuaEventType Type => LuaEventType.Quest;
+        [UInt(15)] public uint QuestId { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

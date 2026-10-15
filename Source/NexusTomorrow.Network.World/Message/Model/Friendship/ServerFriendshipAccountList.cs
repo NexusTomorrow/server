@@ -1,21 +1,24 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
 [Message(GameMessageOpcode.ServerFriendshipAccountList)]
-public class ServerFriendshipAccountList : IWritable
+[WireMessage(GameMessageOpcode.ServerFriendshipAccountList, Direction.ServerToClient)]
+public sealed partial class ServerFriendshipAccountList : IWritable
 {
-    public class AccountFriend : IWritable
+    [WireStruct]
+    public sealed partial class AccountFriend : IWritable
     {
-        public uint AccountId { get; set; }
-        public ulong AccountFriendId { get; set; }
-        public string PublicNote { get; set; } = "";
-        public float DaysSinceLastLogin { get; set; }
-        public string PrivateNote { get; set; } = "";
-        public string DisplayName { get; set; } = "";
-        public AccountPresenceState Presence { get; set; }
-        public List<CharacterData> CharacterList { get; set; } = [];
+        [UInt(32)] public uint AccountId { get; set; }
+        [UInt(64)] public ulong AccountFriendId { get; set; }
+        [WideString] public string PublicNote { get; set; } = "";
+        [Float32] public float DaysSinceLastLogin { get; set; }
+        [WideString] public string PrivateNote { get; set; } = "";
+        [WideString] public string DisplayName { get; set; } = "";
+        [UInt(3)] public AccountPresenceState Presence { get; set; }
+        [Array(CountBits = 32)] public List<CharacterData> CharacterList { get; set; } = [];
 
         public void Write(GamePacketWriter writer)
         {
@@ -32,7 +35,7 @@ public class ServerFriendshipAccountList : IWritable
         }
     }
 
-    public List<AccountFriend> FriendListData { get; set; } = [];
+    [Array(CountBits = 32)] public List<AccountFriend> FriendListData { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

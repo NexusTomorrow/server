@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerVehiclePassengerRemove)]
-public class ServerVehiclePassengerRemove : IWritable
+[WireMessage(GameMessageOpcode.ServerVehiclePassengerRemove, Direction.ServerToClient)]
+public sealed partial class ServerVehiclePassengerRemove : IWritable
 {
-    public uint Self { get; set; }
-    public uint Passenger { get; set; }
+    [UInt(32)] public uint Self { get; set; }
+    [UInt(32)] public uint Passenger { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

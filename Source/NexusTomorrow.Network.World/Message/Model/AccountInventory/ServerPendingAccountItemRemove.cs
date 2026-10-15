@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 [Message(GameMessageOpcode.ServerPendingAccountItemRemove)]
-public class ServerPendingAccountItemRemove : IWritable
+[WireMessage(GameMessageOpcode.ServerPendingAccountItemRemove, Direction.ServerToClient)]
+public sealed partial class ServerPendingAccountItemRemove : IWritable
 {
-    public string TransactionId { get; set; }
-    public bool Redeemed { get; set; } // not used by client
+    [WideString] public string TransactionId { get; set; }
+    [UInt(1)] public bool Redeemed { get; set; } // not used by client
 
     public void Write(GamePacketWriter writer)
     {

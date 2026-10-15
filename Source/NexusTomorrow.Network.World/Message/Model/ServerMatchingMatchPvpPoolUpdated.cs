@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerMatchingMatchPvpPoolUpdated)]
-public class ServerMatchingMatchPvpPoolUpdated : IWritable
+[WireMessage(GameMessageOpcode.ServerMatchingMatchPvpPoolUpdated, Direction.ServerToClient)]
+public sealed partial class ServerMatchingMatchPvpPoolUpdated : IWritable
 {
-    public uint LivesRemainingTeam1 { get; set; }
-    public uint LivesRemainingTeam2 { get; set; }
+    [UInt(32)] public uint LivesRemainingTeam1 { get; set; }
+    [UInt(32)] public uint LivesRemainingTeam2 { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

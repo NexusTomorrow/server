@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
 [Message(GameMessageOpcode.ServerSpecChanged)]
-public class ServerSpecChanged : IWritable
+[WireMessage(GameMessageOpcode.ServerSpecChanged, Direction.ServerToClient)]
+public sealed partial class ServerSpecChanged : IWritable
 {
-    public byte ActionSetIndex { get; set; }
-    public SpecError SpecError { get; set; }
+    [UInt(3)] public byte ActionSetIndex { get; set; }
+    [UInt(32)] public SpecError SpecError { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

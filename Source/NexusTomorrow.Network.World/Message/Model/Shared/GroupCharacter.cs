@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
 using NexusTomorrow.Game.Static.Reputation;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class GroupCharacter : IWritable
+public partial class GroupCharacter : IWritable
 {
-    public class UnknownStruct0 : IWritable
+    [WireStruct]
+    public sealed partial class UnknownStruct0 : IWritable
     {
-        public ushort Unknown6 { get; set; } = 0;
-        public byte Unknown7 { get; set; } = 48;
+        [UInt(16)] public ushort Unknown6 { get; set; } = 0;
+        [UInt(8)] public byte Unknown7 { get; set; } = 48;
 
         public void Write(GamePacketWriter writer)
         {
@@ -18,10 +20,11 @@ public class GroupCharacter : IWritable
         }
     }
 
-    public class UnknownStruct1 : IWritable
+    [WireStruct]
+    public sealed partial class UnknownStruct1 : IWritable
     {
-        public ushort Unknown30 { get; set; }
-        public ushort Unknown31 { get; set; }
+        [UInt(15)] public ushort Unknown30 { get; set; }
+        [UInt(16)] public ushort Unknown31 { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

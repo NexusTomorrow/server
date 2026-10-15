@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 // Clears all items from client's PendingAccountItem list before adding these
 [Message(GameMessageOpcode.ServerPendingAccountItemsAdd)]
-public class ServerPendingAccountItemsAdd : IWritable
+[WireMessage(GameMessageOpcode.ServerPendingAccountItemsAdd, Direction.ServerToClient)]
+public sealed partial class ServerPendingAccountItemsAdd : IWritable
 {
-    public List<PendingAccountItem> PendingItems { get; set; } = [];
+    [Array(CountBits = 32)] public List<PendingAccountItem> PendingItems { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

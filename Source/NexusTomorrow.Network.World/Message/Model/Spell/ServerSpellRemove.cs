@@ -1,15 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellRemove)]
-public class ServerSpellRemove : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellRemove, Direction.ServerToClient)]
+public sealed partial class ServerSpellRemove : IWritable
 {
-    public class TargetSpellDodgeResult : IWritable
+    [WireStruct]
+    public sealed partial class TargetSpellDodgeResult : IWritable
     {
-        public uint TargetUnitId { get; set; }
-        public byte SpellDodged { get; set; } = 0;
-        public uint AdditionalSoundDelay { get; set; } = 0;
+        [UInt(32)] public uint TargetUnitId { get; set; }
+        [UInt(4)] public byte SpellDodged { get; set; } = 0;
+        [UInt(32)] public uint AdditionalSoundDelay { get; set; } = 0;
 
         public void Write(GamePacketWriter writer)
         {
@@ -18,8 +21,8 @@ public class ServerSpellRemove : IWritable
             writer.Write(AdditionalSoundDelay);
         }
     }
-    public uint CastingId { get; set; }
-    public List<TargetSpellDodgeResult> TargetDodgeResults { get; set; } = [];
+    [UInt(32)] public uint CastingId { get; set; }
+    [Array(CountBits = 32)] public List<TargetSpellDodgeResult> TargetDodgeResults { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

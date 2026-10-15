@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathScientistExperimentationInvoke)]
-public class ServerPathScientistExperimentationInvoke : IWritable
+[WireMessage(GameMessageOpcode.ServerPathScientistExperimentationInvoke, Direction.ServerToClient)]
+public sealed partial class ServerPathScientistExperimentationInvoke : IWritable
 {
-    public uint UnitId { get; set; }
-    public uint[] CurrentPattern { get; set; } = new uint[4]; // PathScientistExperimentationPatternDataId
+    [UInt(32)] public uint UnitId { get; set; }
+    [FixedArray(4), UInt(32)] public uint[] CurrentPattern { get; set; } = new uint[4]; // PathScientistExperimentationPatternDataId
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerItemStackCountUpdate)]
-public class ServerItemStackCountUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerItemStackCountUpdate, Direction.ServerToClient)]
+public sealed partial class ServerItemStackCountUpdate : IWritable
 {
-    public ulong Guid { get; set; }
-    public uint StackCount { get; set; }
-    public ItemUpdateReason Reason { get; set; }
+    [UInt(64)] public ulong Guid { get; set; }
+    [UInt(32)] public uint StackCount { get; set; }
+    [UInt(6)] public ItemUpdateReason Reason { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

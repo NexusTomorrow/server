@@ -1,15 +1,17 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ServerCinematicMissileActorAdd)]
-public class ServerCinematicMissileActorAdd : IWritable
+[WireMessage(GameMessageOpcode.ServerCinematicMissileActorAdd, Direction.ServerToClient)]
+public sealed partial class ServerCinematicMissileActorAdd : IWritable
 {
-    public uint Delay { get; set; }
-    public uint MissileActorUnitId { get; set; }
-    public uint FromUnitId { get; set; }
-    public uint ToUnitId { get; set; }
-    public uint Spell4ClientMissileId { get; set; }
+    [UInt(32)] public uint Delay { get; set; }
+    [UInt(32)] public uint MissileActorUnitId { get; set; }
+    [UInt(32)] public uint FromUnitId { get; set; }
+    [UInt(32)] public uint ToUnitId { get; set; }
+    [UInt(32)] public uint Spell4ClientMissileId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
 [Message(GameMessageOpcode.ServerAuctionSearchResults)]
-public class ServerAuctionSearchResults : IWritable
+[WireMessage(GameMessageOpcode.ServerAuctionSearchResults, Direction.ServerToClient)]
+public sealed partial class ServerAuctionSearchResults : IWritable
 {
-    public uint TotalResultCount { get; set; }
-    public uint CurrentPage { get; set; }
-    public List<AuctionInfo> Auctions { get; set; } = [];
+    [UInt(32)] public uint TotalResultCount { get; set; }
+    [UInt(32)] public uint CurrentPage { get; set; }
+    [Array(CountBits = 32)] public List<AuctionInfo> Auctions { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

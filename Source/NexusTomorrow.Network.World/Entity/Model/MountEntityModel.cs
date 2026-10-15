@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.World.Message.Model.Shared;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Entity.Model;
 
-public class MountEntityModel : IEntityModel
+[WireStruct]
+public sealed partial class MountEntityModel : IEntityModel
 {
-    public uint CreatureId { get; set; }
-    public ushort UnitVehicleId { get; set; }
-    public uint OwnerId { get; set; }
-    public List<VehiclePassenger> Passengers { get; set; } = [];
+    [UInt(18)] public uint CreatureId { get; set; }
+    [UInt(14)] public ushort UnitVehicleId { get; set; }
+    [UInt(32)] public uint OwnerId { get; set; }
+    [Array(CountBits = 3)] public List<VehiclePassenger> Passengers { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

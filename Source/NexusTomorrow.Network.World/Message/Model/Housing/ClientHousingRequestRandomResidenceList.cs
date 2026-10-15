@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ClientHousingRequestRandomResidenceList)]
-public class ClientHousingRequestRandomResidenceList : IReadable
+[WireMessage(GameMessageOpcode.ClientHousingRequestRandomResidenceList, Direction.ClientToServer)]
+public sealed partial class ClientHousingRequestRandomResidenceList : IReadable
 {
     public void Read(GamePacketReader reader)
     {

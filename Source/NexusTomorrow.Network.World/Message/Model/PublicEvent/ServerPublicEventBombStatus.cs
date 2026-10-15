@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.PublicEvent;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
 [Message(GameMessageOpcode.ServerPublicEventBombStatus)]
-public class ServerPublicEventBombStatus : IWritable
+[WireMessage(GameMessageOpcode.ServerPublicEventBombStatus, Direction.ServerToClient)]
+public sealed partial class ServerPublicEventBombStatus : IWritable
 {
-    public PublicEventTeam Team { get; set; }
-    public uint CarrierUnitId { get; set; }
-    public uint TimeInMs { get; set; }
+    [NotOnWire] public PublicEventTeam Team { get; set; }
+    [UInt(32)] public uint CarrierUnitId { get; set; }
+    [UInt(32)] public uint TimeInMs { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

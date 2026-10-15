@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
 using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogVitalModifier : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogVitalModifier : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.VitalModifier;
+    [NotOnWire] public CombatLogType Type => CombatLogType.VitalModifier;
 
-    public float Amount { get; set; }
-    public Vital VitalModified { get; set; }
-    public bool BShowCombatLog { get; set; }
+    [Float32] public float Amount { get; set; }
+    [UInt(5)] public Vital VitalModified { get; set; }
+    [UInt(1)] public bool BShowCombatLog { get; set; }
     public CombatLogCastData CastData { get; set; }
 
     public void Write(GamePacketWriter writer)

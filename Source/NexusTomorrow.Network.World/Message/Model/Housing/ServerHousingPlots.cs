@@ -1,26 +1,29 @@
 ﻿using NexusTomorrow.Game.Static.Housing;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ServerHousingPlots)]
-public class ServerHousingPlots : IWritable
+[WireMessage(GameMessageOpcode.ServerHousingPlots, Direction.ServerToClient)]
+public sealed partial class ServerHousingPlots : IWritable
 {
-    public class Plot : IWritable
+    [WireStruct]
+    public sealed partial class Plot : IWritable
     {
-        public uint PlotPropertyIndex { get; set; }
-        public uint PlugItemId { get; set; }
-        public HousingPlugFacing PlugFacing { get; set; }
-        public uint PlotInfoId { get; set; }
-        public uint[] HousingContributionTotals { get; } = new uint[5];
-        public uint[] HousingDecayTotals { get; } = new uint[5];
-        public uint HousingUpkeepCharges { get; set; }
-        public float HousingUpkeepTime { get; set; }
-        public BuildState BuildState { get; set; }
-        public uint BuildStage { get; set; } // changes the model's sequenceId
-        public float BuildBonus { get; set; } // 0.0f to 1.0f, higher is faster build
-        public float BuildStartTime { get; set; }
+        [UInt(32)] public uint PlotPropertyIndex { get; set; }
+        [UInt(32)] public uint PlugItemId { get; set; }
+        [UInt(32)] public HousingPlugFacing PlugFacing { get; set; }
+        [UInt(32)] public uint PlotInfoId { get; set; }
+        [FixedArray(5), UInt(32)] public uint[] HousingContributionTotals { get; } = new uint[5];
+        [FixedArray(5), UInt(32)] public uint[] HousingDecayTotals { get; } = new uint[5];
+        [UInt(32)] public uint HousingUpkeepCharges { get; set; }
+        [Float32] public float HousingUpkeepTime { get; set; }
+        [UInt(3)] public BuildState BuildState { get; set; }
+        [UInt(32)] public uint BuildStage { get; set; } // changes the model's sequenceId
+        [Float32] public float BuildBonus { get; set; } // 0.0f to 1.0f, higher is faster build
+        [Float32] public float BuildStartTime { get; set; }
 
         public Plot()
         {
@@ -51,7 +54,7 @@ public class ServerHousingPlots : IWritable
     }
 
     public Identity ResidenceIdentity { get; set; }
-    public List<Plot> Plots { get; set; } = [];
+    [Array(CountBits = 32)] public List<Plot> Plots { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

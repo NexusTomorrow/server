@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
@@ -7,11 +8,12 @@ namespace NexusTomorrow.Network.World.Message.Model;
 /// Additionally it will set the target id on the entity object in the client.
 /// </summary>
 [Message(GameMessageOpcode.ServerEntityTargetUnit)]
-public class ServerEntityTargetUnit : IWritable
+[WireMessage(GameMessageOpcode.ServerEntityTargetUnit, Direction.ServerToClient)]
+public sealed partial class ServerEntityTargetUnit : IWritable
 {
-    public uint UnitId { get; set; }
-    public uint NewTargetId { get; set; }
-    public uint ThreatLevel { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(32)] public uint NewTargetId { get; set; }
+    [UInt(32)] public uint ThreatLevel { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

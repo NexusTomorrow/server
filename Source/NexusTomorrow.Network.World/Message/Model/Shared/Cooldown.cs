@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class Cooldown : IWritable
+[WireStruct]
+public sealed partial class Cooldown : IWritable
 {
-    public byte Type { get; set; }
-    public uint SpellId { get; set; }
-    public uint TypeId { get; set; }
-    public uint TimeRemaining { get; set; }
+    [UInt(3)] public byte Type { get; set; }
+    [UInt(18)] public uint SpellId { get; set; }
+    [UInt(32)] public uint TypeId { get; set; }
+    [UInt(32)] public uint TimeRemaining { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

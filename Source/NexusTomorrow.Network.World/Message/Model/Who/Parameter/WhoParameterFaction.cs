@@ -1,10 +1,12 @@
 ﻿using NexusTomorrow.Game.Static.Reputation;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
 
-public class WhoParameterFaction : IWhoParameterData
+[WireStruct]
+public sealed partial class WhoParameterFaction : IWhoParameterData
 {
-    public Faction Faction2Id { get; private set; }
+    [UInt(14)] public Faction Faction2Id { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

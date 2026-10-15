@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
 [Message(GameMessageOpcode.ClientChatOwner)]
-public class ClientChatOwner : IReadable
+[WireMessage(GameMessageOpcode.ClientChatOwner, Direction.ClientToServer)]
+public sealed partial class ClientChatOwner : IReadable
 {
     public Channel Channel { get; private set; }
-    public string CharacterName { get; private set; }
+    [WideString] public string CharacterName { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

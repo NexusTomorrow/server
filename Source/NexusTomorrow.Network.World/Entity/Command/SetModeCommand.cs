@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
 using NexusTomorrow.Game.Static.Entity.Movement.Command.Mode;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetMode)]
-public class SetModeCommand : IEntityCommandModel
+[WireStruct]
+public sealed partial class SetModeCommand : IEntityCommandModel
 {
-    public ModeType Mode { get; set; }
+    [UInt(32)] public ModeType Mode { get; set; }
 
     public void Read(GamePacketReader reader)
     {

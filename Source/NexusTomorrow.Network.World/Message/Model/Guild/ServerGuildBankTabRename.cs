@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 // Sends all bank tab names.
 [Message(GameMessageOpcode.ServerGuildBankTabRename)]
-public class ServerGuildBankTabRename : IWritable
+[WireMessage(GameMessageOpcode.ServerGuildBankTabRename, Direction.ServerToClient)]
+public sealed partial class ServerGuildBankTabRename : IWritable
 {
     public Identity GuildIdentity { get; set; }
-    public string[] BankTabNames { get; set; } = new string[10];
+    [FixedArray(10), WideString] public string[] BankTabNames { get; set; } = new string[10];
 
     public void Write(GamePacketWriter writer)
     {

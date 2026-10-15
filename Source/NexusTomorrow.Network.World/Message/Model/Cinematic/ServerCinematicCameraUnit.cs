@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ServerCinematicCameraSubject)]
-public class ServerCinematicCameraUnit : IWritable
+[WireMessage(GameMessageOpcode.ServerCinematicCameraSubject, Direction.ServerToClient)]
+public sealed partial class ServerCinematicCameraUnit : IWritable
 {
-    public uint Delay { get; set; }
-    public uint UnitId { get; set; }
-    public bool Target { get; set; }
+    [UInt(32)] public uint Delay { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(1)] public bool Target { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

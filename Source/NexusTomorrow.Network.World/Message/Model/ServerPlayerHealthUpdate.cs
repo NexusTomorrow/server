@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
@@ -7,11 +8,12 @@ namespace NexusTomorrow.Network.World.Message.Model;
 /// This is sent to the Player being updated. Forces a refresh on the health bar of that user. UnitId always matches player ID of the client.
 /// </summary>
 [Message(GameMessageOpcode.ServerPlayerHealthUpdate)]
-public class ServerPlayerHealthUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerPlayerHealthUpdate, Direction.ServerToClient)]
+public sealed partial class ServerPlayerHealthUpdate : IWritable
 {
-    public uint UnitId { get; set; }
-    public uint Health { get; set; }
-    public UpdateHealthMask Mask { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(32)] public uint Health { get; set; }
+    [UInt(18)] public UpdateHealthMask Mask { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,19 +1,21 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientStatisticsWindowOpen)]
-public class ClientStatisticsWindowOpen : IReadable
+[WireMessage(GameMessageOpcode.ClientStatisticsWindowOpen, Direction.ClientToServer)]
+public sealed partial class ClientStatisticsWindowOpen : IReadable
 {
-    public uint Always35 { get; private set; }
-    public uint WindowId { get; private set; }
-    public ulong CharacterId { get; private set; }
-    public ulong Always0_1 { get; private set; }
-    public ulong TimeSpentOpen { get; private set; }
-    public ulong Always0_2 { get; private set; }
-    public ulong Always0_3 { get; private set; }
-    public ulong Always0_4 { get; private set; }
-    public string WindowName { get; private set; }
+    [UInt(6)] public uint Always35 { get; private set; }
+    [UInt(10)] public uint WindowId { get; private set; }
+    [UInt(64)] public ulong CharacterId { get; private set; }
+    [UInt(64)] public ulong Always0_1 { get; private set; }
+    [UInt(64)] public ulong TimeSpentOpen { get; private set; }
+    [UInt(64)] public ulong Always0_2 { get; private set; }
+    [UInt(64)] public ulong Always0_3 { get; private set; }
+    [UInt(64)] public ulong Always0_4 { get; private set; }
+    [WideString] public string WindowName { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
 [Message(GameMessageOpcode.ClientCommodityOrderCancel)]
-public class ClientCommodityOrderCancel : IReadable
+[WireMessage(GameMessageOpcode.ClientCommodityOrderCancel, Direction.ClientToServer)]
+public sealed partial class ClientCommodityOrderCancel : IReadable
 {
-    public ulong CommodityOrderId { get; private set; }
-    public uint Item2Id { get; private set; }
-    public bool IsBuyOrder { get; private set; }
+    [UInt(64)] public ulong CommodityOrderId { get; private set; }
+    [UInt(18)] public uint Item2Id { get; private set; }
+    [UInt(1)] public bool IsBuyOrder { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,11 +1,14 @@
-﻿namespace NexusTomorrow.Network.World.Entity.Model;
+﻿using NexusTomorrow.Network.Codec;
 
-public class PetEntityModel : IEntityModel
+namespace NexusTomorrow.Network.World.Entity.Model;
+
+[WireStruct]
+public sealed partial class PetEntityModel : IEntityModel
 {
-    public uint CreatureId { get; set; }
-    public uint OwnerId { get; set; }
-    public ushort Unknown1 { get; set; }
-    public string Name { get; set; }
+    [UInt(18)] public uint CreatureId { get; set; }
+    [UInt(32)] public uint OwnerId { get; set; }
+    [UInt(15)] public ushort Unknown1 { get; set; }
+    [WideString] public string Name { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

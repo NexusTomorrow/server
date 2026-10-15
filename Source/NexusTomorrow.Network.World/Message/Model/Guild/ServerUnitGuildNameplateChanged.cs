@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Guild;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [Message(GameMessageOpcode.ServerUnitGuildNameplateChanged)]
-public class ServerUnitGuildNameplateChanged : IWritable
+[WireMessage(GameMessageOpcode.ServerUnitGuildNameplateChanged, Direction.ServerToClient)]
+public sealed partial class ServerUnitGuildNameplateChanged : IWritable
 {
-    public uint UnitId { get; set; }
-    public string GuildName { get; set; }
-    public GuildType GuildType { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [WideString] public string GuildName { get; set; }
+    [UInt(4)] public GuildType GuildType { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

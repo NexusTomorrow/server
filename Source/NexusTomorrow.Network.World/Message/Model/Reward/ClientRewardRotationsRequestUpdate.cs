@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Reward;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Reward;
 
 [Message(GameMessageOpcode.ClientRewardRotationsRequestUpdate)]
-public class ClientRewardRotationsRequestUpdate : IReadable
+[WireMessage(GameMessageOpcode.ClientRewardRotationsRequestUpdate, Direction.ClientToServer)]
+public sealed partial class ClientRewardRotationsRequestUpdate : IReadable
 {
-    public RewardRotationContentType ContentType { get; private set; }
+    [UInt(32)] public RewardRotationContentType ContentType { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

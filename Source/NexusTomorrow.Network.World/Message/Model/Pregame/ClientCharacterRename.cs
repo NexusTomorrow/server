@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 [Message(GameMessageOpcode.ClientCharacterRename)]
-public class ClientCharacterRename : IReadable
+[WireMessage(GameMessageOpcode.ClientCharacterRename, Direction.ClientToServer)]
+public sealed partial class ClientCharacterRename : IReadable
 {
-    public ulong CharacterId { get; private set; }
-    public string Name { get; private set; }
+    [UInt(64)] public ulong CharacterId { get; private set; }
+    [WideString] public string Name { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

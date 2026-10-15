@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
 // Fires whenever a group member selects an option during a public event vote.
 [Message(GameMessageOpcode.ServerPublicEventVoteTally)]
-public class ServerPublicEventVoteTally : IWritable
+[WireMessage(GameMessageOpcode.ServerPublicEventVoteTally, Direction.ServerToClient)]
+public sealed partial class ServerPublicEventVoteTally : IWritable
 {
-    public uint EventId { get; set; }
-    public uint VoteId { get; set; }
-    public uint Choice { get; set; }
+    [UInt(14)] public uint EventId { get; set; }
+    [UInt(14)] public uint VoteId { get; set; }
+    [UInt(32)] public uint Choice { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

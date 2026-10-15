@@ -1,13 +1,15 @@
 ﻿using System.Numerics;
 using NexusTomorrow.Game.Static.Entity.Movement.Command;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetPosition)]
-public class SetPositionCommand : IEntityCommandModel
+[WireStruct]
+public sealed partial class SetPositionCommand : IEntityCommandModel
 {
-    public Vector3 Position { get; set; }
-    public bool Blend { get; set; }
+    [Float32] public Vector3 Position { get; set; }
+    [UInt(1)] public bool Blend { get; set; }
 
     public void Read(GamePacketReader reader)
     {

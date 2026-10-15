@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class MapRegion : IWritable
+[WireStruct]
+public sealed partial class MapRegion : IWritable
 {
-    public uint WorldSocketId { get; set; }
-    public uint WorldLocation2Id { get; set; }
+    [UInt(15)] public uint WorldSocketId { get; set; }
+    [UInt(17)] public uint WorldLocation2Id { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

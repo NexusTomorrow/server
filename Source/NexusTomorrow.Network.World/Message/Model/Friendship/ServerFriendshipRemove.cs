@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
 [Message(GameMessageOpcode.ServerFriendshipRemove)]
-public class ServerFriendshipRemove : IWritable
+[WireMessage(GameMessageOpcode.ServerFriendshipRemove, Direction.ServerToClient)]
+public sealed partial class ServerFriendshipRemove : IWritable
 {
-    public ulong FriendshipId { get; set; }
+    [UInt(64)] public ulong FriendshipId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
 [Message(GameMessageOpcode.ClientAuctionBuyOrderSubmit)]
-public class ClientAuctionBuyOrderSubmit : IReadable
+[WireMessage(GameMessageOpcode.ClientAuctionBuyOrderSubmit, Direction.ClientToServer)]
+public sealed partial class ClientAuctionBuyOrderSubmit : IReadable
 {
-    public uint Item2Id { get; private set; }
-    public ulong AuctionId { get; private set; }
-    public ulong AmountOffered { get; private set; } // is a buyout if AmountOffered == auction's buyout price
+    [UInt(18)] public uint Item2Id { get; private set; }
+    [UInt(64)] public ulong AuctionId { get; private set; }
+    [UInt(64)] public ulong AmountOffered { get; private set; } // is a buyout if AmountOffered == auction's buyout price
 
     public void Read(GamePacketReader reader)
     {

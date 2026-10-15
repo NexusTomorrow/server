@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 // Called from RequestCamp, ExitGame, Camp, CancelExit lua functions
 [Message(GameMessageOpcode.ClientLogoutRequest)]
-public class ClientLogoutRequest : IReadable
+[WireMessage(GameMessageOpcode.ClientLogoutRequest, Direction.ClientToServer)]
+public sealed partial class ClientLogoutRequest : IReadable
 {
-    public bool Initiated { get; private set; }
+    [UInt(1)] public bool Initiated { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

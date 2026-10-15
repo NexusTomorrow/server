@@ -1,17 +1,19 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
 using NexusTomorrow.Game.Static.Combat.CrowdControl;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogCCState : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogCCState : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.CCState;
+    [NotOnWire] public CombatLogType Type => CombatLogType.CCState;
 
-    public CCState State { get; set; } // 5u
-    public bool BRemoved { get; set; }
-    public uint InterruptArmorTaken { get; set; }
-    public CCStateApplyRulesResult Result { get; set; } // 4u
-    public ushort CcStateDiminishingReturnsId { get; set; } // 14u
+    [UInt(5)] public CCState State { get; set; } // 5u
+    [UInt(1)] public bool BRemoved { get; set; }
+    [UInt(32)] public uint InterruptArmorTaken { get; set; }
+    [UInt(4)] public CCStateApplyRulesResult Result { get; set; } // 4u
+    [UInt(14)] public ushort CcStateDiminishingReturnsId { get; set; } // 14u
     public CombatLogCastData CastData { get; set; }
 
     public void Write(GamePacketWriter writer)

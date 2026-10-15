@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ClientCinematicCameraSubjectSpline)]
-public class ClientCinematicCameraSplineSubject : IReadable
+[WireMessage(GameMessageOpcode.ClientCinematicCameraSubjectSpline, Direction.ClientToServer)]
+public sealed partial class ClientCinematicCameraSplineSubject : IReadable
 {
-    public uint SplineId { get; private set; }
-    public uint SplineMode { get; private set; }
-    public uint Speed { get; private set; }
+    [UInt(32)] public uint SplineId { get; private set; }
+    [UInt(32)] public uint SplineMode { get; private set; }
+    [UInt(32)] public uint Speed { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

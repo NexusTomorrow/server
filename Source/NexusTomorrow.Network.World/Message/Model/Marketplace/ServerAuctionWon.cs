@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
 [Message(GameMessageOpcode.ServerAuctionWon)]
-public class ServerAuctionWon : IWritable
+[WireMessage(GameMessageOpcode.ServerAuctionWon, Direction.ServerToClient)]
+public sealed partial class ServerAuctionWon : IWritable
 {
     public AuctionInfo Auction { get; set; }
 

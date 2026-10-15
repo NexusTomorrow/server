@@ -1,18 +1,21 @@
 ﻿using System.Numerics;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerResurrectRequest)]
-public class ServerResurrectRequest : IWritable
+[WireMessage(GameMessageOpcode.ServerResurrectRequest, Direction.ServerToClient)]
+public sealed partial class ServerResurrectRequest : IWritable
 {
-    public uint UnitId { get; set; }
-    public uint SpellId { get; set; }
-    public uint TimeUntilRez { get; set; }
-    public float PercentageHealthRestored { get; set; }
-    public float PercentageEnergyRestored { get; set; }
-    public Vector3 Position { get; set; }
-    public bool SpellCastOnDead { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(18)] public uint SpellId { get; set; }
+    [UInt(32)] public uint TimeUntilRez { get; set; }
+    [Float32] public float PercentageHealthRestored { get; set; }
+    [Float32] public float PercentageEnergyRestored { get; set; }
+    [Float32] public Vector3 Position { get; set; }
+    [Pad(1)] public Pad Pad0 { get; }
+    [NotOnWire] public bool SpellCastOnDead { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ClientHousingNeighborInviteResponse)]
-public class ClientHousingNeighbourInviteResponse : IReadable
+[WireMessage(GameMessageOpcode.ClientHousingNeighborInviteResponse, Direction.ClientToServer)]
+public sealed partial class ClientHousingNeighbourInviteResponse : IReadable
 {
-    public bool Accept { get; private set; }
+    [UInt(1)] public bool Accept { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellThresholdStart)]
-public class ServerSpellThresholdStart : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellThresholdStart, Direction.ServerToClient)]
+public sealed partial class ServerSpellThresholdStart : IWritable
 {
-    public uint Spell4Id { get; set; }
-    public uint RootSpell4Id { get; set; }
-    public uint ParentSpell4Id { get; set; } = 0;
-    public uint ServerUniqueId { get; set; }
+    [UInt(18)] public uint Spell4Id { get; set; }
+    [UInt(18)] public uint RootSpell4Id { get; set; }
+    [UInt(18)] public uint ParentSpell4Id { get; set; } = 0;
+    [UInt(32)] public uint ServerUniqueId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

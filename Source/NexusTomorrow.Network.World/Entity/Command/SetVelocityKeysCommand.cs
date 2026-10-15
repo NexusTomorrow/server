@@ -1,16 +1,19 @@
 ﻿using System.Numerics;
 using NexusTomorrow.Game.Static.Entity.Movement.Command;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetVelocityKeys)]
-public class SetVelocityKeysCommand : IEntityCommandModel
+[WireStruct]
+public sealed partial class SetVelocityKeysCommand : IEntityCommandModel
 {
-    public List<uint> Times { get; set; } = [];
-    public List<Vector3> Velocities { get; set; } = [];
-    public byte Type { get; set; }
-    public uint Offset { get; set; }
-    public bool Blend { get; set; }
+    [UInt(10), Count] public ushort TimesCount { get; set; }
+    [Array(CountFrom = nameof(TimesCount)), UInt(32)] public List<uint> Times { get; set; } = [];
+    [Array(CountFrom = nameof(TimesCount)), PackedFloat] public List<Vector3> Velocities { get; set; } = [];
+    [UInt(2)] public byte Type { get; set; }
+    [UInt(32)] public uint Offset { get; set; }
+    [UInt(1)] public bool Blend { get; set; }
 
     public void Read(GamePacketReader reader)
     {

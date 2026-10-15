@@ -1,16 +1,18 @@
 ﻿using NexusTomorrow.Game.Static.Matching;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerMatchingPvpRatingUpdated)]
-public class ServerMatchingPvpRatingUpdated : IWritable
+[WireMessage(GameMessageOpcode.ServerMatchingPvpRatingUpdated, Direction.ServerToClient)]
+public sealed partial class ServerMatchingPvpRatingUpdated : IWritable
 {
-    public uint Rating { get; set; }
-    public uint Wins { get; set; }
-    public uint Losses { get; set; }
-    public uint Draws { get; set; }
-    public MatchingGameRatingType Type { get; set; }
+    [UInt(32)] public uint Rating { get; set; }
+    [UInt(32)] public uint Wins { get; set; }
+    [UInt(32)] public uint Losses { get; set; }
+    [UInt(32)] public uint Draws { get; set; }
+    [UInt(3)] public MatchingGameRatingType Type { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

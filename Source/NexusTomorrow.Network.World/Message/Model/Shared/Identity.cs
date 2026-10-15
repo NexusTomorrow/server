@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class Identity : IReadable, IWritable
+[WireStruct]
+public sealed partial class Identity : IReadable, IWritable
 {
-    public ushort RealmId { get; set; }
-    public ulong Id { get; set; }
+    [UInt(14)] public ushort RealmId { get; set; }
+    [UInt(64)] public ulong Id { get; set; }
 
     public void Read(GamePacketReader reader)
     {

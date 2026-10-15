@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
 [Message(GameMessageOpcode.ServerFriendshipList)]
-public class ServerFriendshipList : IWritable
+[WireMessage(GameMessageOpcode.ServerFriendshipList, Direction.ServerToClient)]
+public sealed partial class ServerFriendshipList : IWritable
 {
-    public List<FriendData> Friends { get; set; } = [];
+    [Array(CountBits = 16)] public List<FriendData> Friends { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,15 +1,18 @@
 ﻿using NexusTomorrow.Game.Static.Reward;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Reward;
 
-public class LockedReward : IWritable
+[WireStruct]
+public sealed partial class LockedReward : IWritable
 {
-    public RewardRotationContentType ContentType { get; set; }
-    public uint RewardRotationContentId { get; set; }
-    public uint RewardId { get; set; } // RewardRotationItemId, RewardRotationEssenceId, RewardRotationModifierId
-    public RewardRotationRewardType RewardType { get; set; }
-    public GrantedRewardFlags RewardedFlags { get; set; }
+    [UInt(3)] public RewardRotationContentType ContentType { get; set; }
+    [UInt(32)] public uint RewardRotationContentId { get; set; }
+    [UInt(32)] public uint RewardId { get; set; } // RewardRotationItemId, RewardRotationEssenceId, RewardRotationModifierId
+    [UInt(8)] public RewardRotationRewardType RewardType { get; set; }
+    [UInt(32)] public GrantedRewardFlags RewardedFlags { get; set; }
+    [Pad(32)] public Pad RewardedFlagsHigh { get; }
 
     public void Write(GamePacketWriter writer)
     {

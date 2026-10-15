@@ -1,10 +1,12 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogDelayDeath : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogDelayDeath : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.DelayDeath;
+    [NotOnWire] public CombatLogType Type => CombatLogType.DelayDeath;
 
     public CombatLogCastData CastData { get; set; }
 

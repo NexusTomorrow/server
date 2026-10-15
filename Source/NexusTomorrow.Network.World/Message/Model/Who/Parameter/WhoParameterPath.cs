@@ -1,10 +1,12 @@
-﻿using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
+﻿using NexusTomorrow.Network.Codec;
+using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
 
 namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
 
-public class WhoParameterPath : IWhoParameterData
+[WireStruct]
+public sealed partial class WhoParameterPath : IWhoParameterData
 {
-    public Path PathId { get; private set; }
+    [UInt(3)] public Path PathId { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

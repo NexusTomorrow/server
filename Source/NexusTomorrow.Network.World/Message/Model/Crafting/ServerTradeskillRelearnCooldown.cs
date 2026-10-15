@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
 [Message(GameMessageOpcode.ServerTradeskillRelearnCooldown)]
-public class ServerTradeskillRelearnCooldown : IWritable
+[WireMessage(GameMessageOpcode.ServerTradeskillRelearnCooldown, Direction.ServerToClient)]
+public sealed partial class ServerTradeskillRelearnCooldown : IWritable
 {
-    public uint RelearnCooldown { get; set; } // Sent as an offset from the time now, to the finish time, in milliseconds.
+    [UInt(32)] public uint RelearnCooldown { get; set; } // Sent as an offset from the time now, to the finish time, in milliseconds.
 
     public void Write(GamePacketWriter writer)
     {

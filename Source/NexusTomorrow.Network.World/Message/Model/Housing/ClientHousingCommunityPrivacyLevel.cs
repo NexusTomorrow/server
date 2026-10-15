@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Housing;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ClientHousingCommunityPrivacyLevel)]
-public class ClientHousingCommunityPrivacyLevel : IReadable
+[WireMessage(GameMessageOpcode.ClientHousingCommunityPrivacyLevel, Direction.ClientToServer)]
+public sealed partial class ClientHousingCommunityPrivacyLevel : IReadable
 {
     public Identity GuildIdentity { get; private set; } = new();
-    public CommunityPrivacyLevel PrivacyLevel { get; private set; }
+    [UInt(1)] public CommunityPrivacyLevel PrivacyLevel { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

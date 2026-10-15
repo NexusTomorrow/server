@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.PlayerPath;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathSoldierTowerDefenseUnitUpdate)]
-public class ServerPathSoldierTowerDefenseUnitUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerPathSoldierTowerDefenseUnitUpdate, Direction.ServerToClient)]
+public sealed partial class ServerPathSoldierTowerDefenseUnitUpdate : IWritable
 {
-    public ushort PathSoldierEventId { get; set; }
-    public uint UnitId { get; set; }
-    public TowerDefenseUnitType Type { get; set; }
-    public float MaxHealth { get; set; }
+    [UInt(14)] public ushort PathSoldierEventId { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(32)] public TowerDefenseUnitType Type { get; set; }
+    [Float32] public float MaxHealth { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathSoliderWhackAMoleBurrows)]
-public class ServerPathSoldierWhackAMoleBurrows : IWritable
+[WireMessage(GameMessageOpcode.ServerPathSoliderWhackAMoleBurrows, Direction.ServerToClient)]
+public sealed partial class ServerPathSoldierWhackAMoleBurrows : IWritable
 {
-    public uint DelayUntilPop { get; set; }
-    public uint[] UnitIds { get; set; }
+    [UInt(32)] public uint DelayUntilPop { get; set; }
+    [Array(CountBits = 32), UInt(32)] public uint[] UnitIds { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

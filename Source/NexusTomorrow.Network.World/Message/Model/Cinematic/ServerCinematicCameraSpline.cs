@@ -1,16 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ServerCinematicCameraSpline)]
-public class ServerCinematicCameraSpline : IWritable
+[WireMessage(GameMessageOpcode.ServerCinematicCameraSpline, Direction.ServerToClient)]
+public sealed partial class ServerCinematicCameraSpline : IWritable
 {
-    public uint Delay { get; set; }
-    public uint SplineId { get; set; }
-    public uint SplineMode { get; set; }
-    public float Speed { get; set; }
-    public bool Target { get; set; }
-    public bool UseRotation { get; set; }
+    [UInt(32)] public uint Delay { get; set; }
+    [UInt(32)] public uint SplineId { get; set; }
+    [UInt(32)] public uint SplineMode { get; set; }
+    [Float32] public float Speed { get; set; }
+    [UInt(1)] public bool Target { get; set; }
+    [UInt(1)] public bool UseRotation { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

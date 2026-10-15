@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Pvp;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pvp;
 
 // Send to all observers in the nearby area. Client handles the correctness of the UI messages.
 [Message(GameMessageOpcode.ServerDuelResult)]
-public class ServerDuelResult : IWritable
+[WireMessage(GameMessageOpcode.ServerDuelResult, Direction.ServerToClient)]
+public sealed partial class ServerDuelResult : IWritable
 {
-    public uint WinnerUnitId { get; set; }
-    public uint LoserUnitId { get; set; }
-    public DuelFinishReason Reason { get; set; }
+    [UInt(32)] public uint WinnerUnitId { get; set; }
+    [UInt(32)] public uint LoserUnitId { get; set; }
+    [UInt(3)] public DuelFinishReason Reason { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

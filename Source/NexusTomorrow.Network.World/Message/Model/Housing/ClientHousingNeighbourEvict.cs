@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 // Sent either the player's identity or the player's name, never both
 [Message(GameMessageOpcode.ClientHousingNeighbourEvict)]
-public class ClientHousingNeighbourEvict : IReadable
+[WireMessage(GameMessageOpcode.ClientHousingNeighbourEvict, Direction.ClientToServer)]
+public sealed partial class ClientHousingNeighbourEvict : IReadable
 {
     public Identity PlayerIdentity { get; private set; } = new();
-    public string PlayerName { get; private set; }
+    [WideString] public string PlayerName { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 [Message(GameMessageOpcode.ServerAccountItemRemove)]
-public class ServerAccountItemRemove : IWritable
+[WireMessage(GameMessageOpcode.ServerAccountItemRemove, Direction.ServerToClient)]
+public sealed partial class ServerAccountItemRemove : IWritable
 {
-    public ulong UserInventoryId { get; set; }
+    [UInt(64)] public ulong UserInventoryId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

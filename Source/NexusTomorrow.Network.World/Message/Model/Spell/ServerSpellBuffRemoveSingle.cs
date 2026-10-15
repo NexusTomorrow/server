@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellBuffRemoveSingle)]
-public class ServerSpellBuffRemoveSingle : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellBuffRemoveSingle, Direction.ServerToClient)]
+public sealed partial class ServerSpellBuffRemoveSingle : IWritable
 {
-    public uint ServerUniqueId { get; set; }
-    public uint TargetUnitId { get; set; }
+    [UInt(32)] public uint ServerUniqueId { get; set; }
+    [UInt(32)] public uint TargetUnitId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

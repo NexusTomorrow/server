@@ -1,5 +1,6 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
 using NexusTomorrow.Game.Static.Matching;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
@@ -8,12 +9,13 @@ namespace NexusTomorrow.Network.World.Message.Model;
 // Must create an OpponentPlayer or OpponentCreature for both Killer and Victim
 
 [Message(GameMessageOpcode.ServerMatchingPvpKillNotification)]
-public class ServerMatchingPvpKillNotification : IWritable
+public partial class ServerMatchingPvpKillNotification : IWritable
 {
-    public class OpponentPlayer : IWritable
+    [WireStruct]
+    public sealed partial class OpponentPlayer : IWritable
     {
         public Identity Identity { get; set; } = new();
-        public Class Class { get; set; }
+        [UInt(5)] public Class Class { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -22,10 +24,11 @@ public class ServerMatchingPvpKillNotification : IWritable
         }
     }
 
-    public class OpponentCreature : IWritable
+    [WireStruct]
+    public sealed partial class OpponentCreature : IWritable
     {
-        public uint UnitId { get; set; }
-        public uint Creature2Id { get; set; }
+        [UInt(32)] public uint UnitId { get; set; }
+        [UInt(18)] public uint Creature2Id { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

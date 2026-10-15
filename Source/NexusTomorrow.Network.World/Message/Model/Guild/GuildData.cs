@@ -1,20 +1,23 @@
 ﻿using NexusTomorrow.Game.Static.Guild;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-public class GuildData : IWritable
+public partial class GuildData : IWritable
 {
-    public class Info : IWritable
+    [WireStruct]
+    public sealed partial class Info : IWritable
     {
-        public class PvPRating : IWritable
+        [WireStruct]
+        public sealed partial class PvPRating : IWritable
         {
-            public uint Wins { get; set; }
-            public uint Losses { get; set; }
-            public uint Draws { get; set; }
-            public uint Rating { get; set; }
-            public uint PvpSeason { get; set; }
-            public uint KFactor { get; set; }
+            [UInt(32)] public uint Wins { get; set; }
+            [UInt(32)] public uint Losses { get; set; }
+            [UInt(32)] public uint Draws { get; set; }
+            [UInt(32)] public uint Rating { get; set; }
+            [UInt(32)] public uint PvpSeason { get; set; }
+            [UInt(32)] public uint KFactor { get; set; }
 
             public void Write(GamePacketWriter writer)
             {
@@ -27,11 +30,11 @@ public class GuildData : IWritable
             }
         }
 
-        public string MessageOfTheDay { get; set; }
-        public string GuildInfo { get; set; }
-        public GuildQueueState QueueState { get; set; }
+        [WideString] public string MessageOfTheDay { get; set; }
+        [WideString] public string GuildInfo { get; set; }
+        [UInt(3)] public GuildQueueState QueueState { get; set; }
         public PvPRating PvPRatings { get; set; } = new();
-        public float GuildCreationDateInDays { get; set; }
+        [Float32] public float GuildCreationDateInDays { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -43,10 +46,11 @@ public class GuildData : IWritable
         }
     }
 
-    public class ActivePerk : IWritable
+    [WireStruct]
+    public sealed partial class ActivePerk : IWritable
     {
-        public GuildPerk Perk { get; set; } // Is the guildPerkId, see guildPerk tbl or GuildPerk enum
-        public float EndTime { get; set; }
+        [UInt(14)] public GuildPerk Perk { get; set; } // Is the guildPerkId, see guildPerk tbl or GuildPerk enum
+        [Float32] public float EndTime { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

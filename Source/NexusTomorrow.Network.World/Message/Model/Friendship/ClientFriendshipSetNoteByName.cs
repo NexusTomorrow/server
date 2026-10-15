@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
 [Message(GameMessageOpcode.ClientFriendshipSetNoteByName)]
-public class ClientFriendshipSetNoteByName : IReadable
+[WireMessage(GameMessageOpcode.ClientFriendshipSetNoteByName, Direction.ClientToServer)]
+public sealed partial class ClientFriendshipSetNoteByName : IReadable
 {
-    public string Name { get; private set; }
-    public string RealmName { get; private set; }
-    public string Note { get; private set; }
+    [WideString] public string Name { get; private set; }
+    [WideString] public string RealmName { get; private set; }
+    [WideString] public string Note { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

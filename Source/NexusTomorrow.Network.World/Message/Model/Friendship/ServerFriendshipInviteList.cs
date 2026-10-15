@@ -1,23 +1,27 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
 [Message(GameMessageOpcode.ServerFriendshipInviteList)]
-public class ServerFriendshipInviteList : IWritable
+[WireMessage(GameMessageOpcode.ServerFriendshipInviteList, Direction.ServerToClient)]
+public sealed partial class ServerFriendshipInviteList : IWritable
 {
-    public class InviteData : IWritable
+    [WireStruct]
+    public sealed partial class InviteData : IWritable
     {
-        public ulong InviteId { get; set; }
+        [UInt(64)] public ulong InviteId { get; set; }
         public Identity PlayerIdentity { get; set; }
-        public uint Seen { get; set; }
-        public float ExpiryInDays { get; set; }
-        public string Note { get; set; }
-        public string Name { get; set; }
-        public Class Class { get; set; }
-        public Game.Static.PlayerPath.Path Path { get; set; }
-        public byte Level { get; set; }
+        [UInt(3)] public uint Seen { get; set; }
+        [Float32] public float ExpiryInDays { get; set; }
+        [WideString] public string Note { get; set; }
+        [WideString] public string Name { get; set; }
+        [UInt(8)] public Class Class { get; set; }
+        [Pad(6)] public Pad ClassHigh { get; }
+        [UInt(3)] public Game.Static.PlayerPath.Path Path { get; set; }
+        [UInt(8)] public byte Level { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -33,7 +37,7 @@ public class ServerFriendshipInviteList : IWritable
         }
     }
 
-    public List<InviteData> Invites { get; set; } = [];
+    [Array(CountBits = 16)] public List<InviteData> Invites { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

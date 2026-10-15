@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathSoldierSoldierBuildInvoke)]
-public class ServerPathSoldierSoldierBuildInvoke : IWritable
+[WireMessage(GameMessageOpcode.ServerPathSoldierSoldierBuildInvoke, Direction.ServerToClient)]
+public sealed partial class ServerPathSoldierSoldierBuildInvoke : IWritable
 {
-    public uint UnitId { get; set; }
-    public ushort PathSoldierEventId { get; set; }
-    public List<uint> TowerDefenseIds { get; set; } = [];
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(14)] public ushort PathSoldierEventId { get; set; }
+    [Array(CountBits = 32), UInt(32)] public List<uint> TowerDefenseIds { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

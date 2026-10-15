@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
 [Message(GameMessageOpcode.ServerChatNPCCustom)]
-public class ServerChatNPCCustom : IWritable
+[WireMessage(GameMessageOpcode.ServerChatNPCCustom, Direction.ServerToClient)]
+public sealed partial class ServerChatNPCCustom : IWritable
 {
     public Channel Channel { get; set; }
-    public uint UnitNameLocalizedTextId { get; set; }
-    public string CustomChatText { get; set; }
+    [UInt(21)] public uint UnitNameLocalizedTextId { get; set; }
+    [WideString] public string CustomChatText { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

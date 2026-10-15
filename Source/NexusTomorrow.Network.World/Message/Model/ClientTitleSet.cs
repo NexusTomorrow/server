@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientTitleSet)]
-public class ClientTitleSet : IReadable
+[WireMessage(GameMessageOpcode.ClientTitleSet, Direction.ClientToServer)]
+public sealed partial class ClientTitleSet : IReadable
 {
-    public ushort TitleId { get; set; }
+    [UInt(14)] public ushort TitleId { get; set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,10 +1,13 @@
-﻿namespace NexusTomorrow.Network.World.Entity.Model;
+﻿using NexusTomorrow.Network.Codec;
 
-public class StructuredPlugEntityModel : IEntityModel
+namespace NexusTomorrow.Network.World.Entity.Model;
+
+[WireStruct]
+public sealed partial class StructuredPlugEntityModel : IEntityModel
 {
-    public uint CreatureId { get; set; }
-    public byte CurrentTier { get; set; }
-    public ushort SocketId { get; set; }
+    [UInt(18)] public uint CreatureId { get; set; }
+    [UInt(2)] public byte CurrentTier { get; set; }
+    [UInt(14)] public ushort SocketId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

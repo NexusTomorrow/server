@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Hazard;
 
 [Message(GameMessageOpcode.ServerHazardList)]
-public class ServerHazardList : IWritable
+[WireMessage(GameMessageOpcode.ServerHazardList, Direction.ServerToClient)]
+public sealed partial class ServerHazardList : IWritable
 {
-    public List<Hazard> Hazards { get; set; } = [];
+    [Array(CountBits = 32)] public List<Hazard> Hazards { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

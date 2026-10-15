@@ -1,11 +1,13 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Chat.Model;
 
-public class ChatFormatArchiveArticle : IChatFormatModel
+[WireStruct]
+public sealed partial class ChatFormatArchiveArticle : IChatFormatModel
 {
-    public ChatFormatType Type => ChatFormatType.ArchiveArticle;
-    public ushort ArchiveArticleId { get; set; }
+    [NotOnWire] public ChatFormatType Type => ChatFormatType.ArchiveArticle;
+    [UInt(14)] public ushort ArchiveArticleId { get; set; }
 
     public void Read(GamePacketReader reader)
     {

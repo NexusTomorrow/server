@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Guild;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-public class GuildStats : IWritable
+[WireStruct]
+public sealed partial class GuildStats : IWritable
 {
-    public ushort MemberCount { get; set; }
-    public ushort PerkCount { get; set; }
-    public GuildClassification Classification { get; set; }
+    [UInt(16)] public ushort MemberCount { get; set; }
+    [UInt(16)] public ushort PerkCount { get; set; }
+    [UInt(3)] public GuildClassification Classification { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

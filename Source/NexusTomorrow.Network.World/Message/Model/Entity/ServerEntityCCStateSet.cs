@@ -1,4 +1,5 @@
 ﻿using NexusTomorrow.Game.Static.Combat.CrowdControl;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Entity;
@@ -7,11 +8,12 @@ namespace NexusTomorrow.Network.World.Message.Model.Entity;
 // The SpellEffectUniqueId must match the id from the SpellCast result in ServerSpellGo/ServerSpellExecute
 // This triggers the restrictions and VisualEffects for the CC state.
 [Message(GameMessageOpcode.ServerEntityCCStateSet)]
-public class ServerEntityCCStateSet : IWritable
+[WireMessage(GameMessageOpcode.ServerEntityCCStateSet, Direction.ServerToClient)]
+public sealed partial class ServerEntityCCStateSet : IWritable
 {
-    public uint UnitId { get; set; }
-    public CCState CCType { get; set; }
-    public uint SpellEffectUniqueId { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(5)] public CCState CCType { get; set; }
+    [UInt(32)] public uint SpellEffectUniqueId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
 // Submits the currently selected AMPs so they are saved to the player's current spec.
 [Message(GameMessageOpcode.ClientCommitAmpSpec)]
-public class ClientCommitAmpSpec : IReadable
+[WireMessage(GameMessageOpcode.ClientCommitAmpSpec, Direction.ClientToServer)]
+public sealed partial class ClientCommitAmpSpec : IReadable
 {
-    public List<ushort> Amps { get; } = [];
+    [Array(CountBits = 7), UInt(16)] public List<ushort> Amps { get; } = [];
 
     public void Read(GamePacketReader reader)
     {

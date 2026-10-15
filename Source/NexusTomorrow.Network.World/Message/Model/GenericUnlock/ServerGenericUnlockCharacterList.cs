@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.GenericUnlock;
 
@@ -6,9 +7,10 @@ namespace NexusTomorrow.Network.World.Message.Model.GenericUnlock;
 // Seems that ServerGenericUnlocksCharacterRefreshed was the preferred method
 // as that clears the bCharacterUnlocked state on everything first
 [Message(GameMessageOpcode.ServerGenericUnlockCharacterList)]
-public class ServerGenericUnlockCharacterList : IWritable
+[WireMessage(GameMessageOpcode.ServerGenericUnlockCharacterList, Direction.ServerToClient)]
+public sealed partial class ServerGenericUnlockCharacterList : IWritable
 {
-    public List<uint> GenericUnlockEntryIds { get; set; } = [];
+    [Array(CountBits = 32), UInt(32)] public List<uint> GenericUnlockEntryIds { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

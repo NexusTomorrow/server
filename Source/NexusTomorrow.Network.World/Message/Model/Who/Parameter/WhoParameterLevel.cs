@@ -1,9 +1,12 @@
-﻿namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
+﻿using NexusTomorrow.Network.Codec;
 
-public class WhoParameterLevel : IWhoParameterData
+namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
+
+[WireStruct]
+public sealed partial class WhoParameterLevel : IWhoParameterData
 {
-    public uint BottomLevel { get; private set; }
-    public uint TopLevel { get; private set; }
+    [UInt(32)] public uint BottomLevel { get; private set; }
+    [UInt(32)] public uint TopLevel { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

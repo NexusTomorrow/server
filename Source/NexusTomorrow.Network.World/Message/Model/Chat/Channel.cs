@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
-public class Channel : IReadable, IWritable
+[WireStruct]
+public sealed partial class Channel : IReadable, IWritable
 {
-    public ChatChannelType ChatChannelId { get; set; }
-    public ulong ChatId { get; set; }
+    [UInt(14)] public ChatChannelType ChatChannelId { get; set; }
+    [UInt(64)] public ulong ChatId { get; set; }
 
     public void Read(GamePacketReader reader)
     {

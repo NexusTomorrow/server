@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
@@ -6,10 +7,11 @@ namespace NexusTomorrow.Network.World.Message.Model;
 // Both properties used for group member visibility checks
 // Used for Prerequisite checks of type = 0x18 and 0x19
 [Message(GameMessageOpcode.ServerPhaseVisibilityWorldLocation)]
-public class ServerPhaseVisibilityWorldLocation : IWritable
+[WireMessage(GameMessageOpcode.ServerPhaseVisibilityWorldLocation, Direction.ServerToClient)]
+public sealed partial class ServerPhaseVisibilityWorldLocation : IWritable
 {
-    public uint PhasesThatPerceiveMe { get; set; }
-    public uint PhasesIPerceive { get; set; }
+    [UInt(32)] public uint PhasesThatPerceiveMe { get; set; }
+    [UInt(32)] public uint PhasesIPerceive { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

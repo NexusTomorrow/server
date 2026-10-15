@@ -1,16 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [Message(GameMessageOpcode.ServerGuildPvpStatsUpdate)]
-public class ServerGuildPvpStatsUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerGuildPvpStatsUpdate, Direction.ServerToClient)]
+public sealed partial class ServerGuildPvpStatsUpdate : IWritable
 {
     public Identity GuildIdentity { get; set; }
-    public uint Wins { get; set; }
-    public uint Losses { get; set; }
-    public uint Draws { get; set; }
-    public uint Rating { get; set; }
+    [UInt(32)] public uint Wins { get; set; }
+    [UInt(32)] public uint Losses { get; set; }
+    [UInt(32)] public uint Draws { get; set; }
+    [UInt(32)] public uint Rating { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

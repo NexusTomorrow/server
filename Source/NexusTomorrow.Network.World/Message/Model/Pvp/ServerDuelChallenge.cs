@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pvp;
 
 // Send to all observers in the nearby area. Client handles the correctness of the UI messages.
 [Message(GameMessageOpcode.ServerDuelChallenge)]
-public class ServerDuelChallenge : IWritable
+[WireMessage(GameMessageOpcode.ServerDuelChallenge, Direction.ServerToClient)]
+public sealed partial class ServerDuelChallenge : IWritable
 {
-    public uint ChallengerUnitId { get; set; }
-    public uint OpponentUnitId { get; set; }
+    [UInt(32)] public uint ChallengerUnitId { get; set; }
+    [UInt(32)] public uint OpponentUnitId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

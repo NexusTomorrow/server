@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerMovementControlRemove)]
-public class ServerMovementControlRemove : IWritable
+[WireMessage(GameMessageOpcode.ServerMovementControlRemove, Direction.ServerToClient)]
+public sealed partial class ServerMovementControlRemove : IWritable
 {
     public void Write(GamePacketWriter writer)
     {

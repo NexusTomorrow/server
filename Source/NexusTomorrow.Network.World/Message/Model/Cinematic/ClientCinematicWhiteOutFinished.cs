@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ClientCinematicWhiteOutFinished)]
-public class ClientCinematicWhiteOutFinished : IReadable
+[WireMessage(GameMessageOpcode.ClientCinematicWhiteOutFinished, Direction.ClientToServer)]
+public sealed partial class ClientCinematicWhiteOutFinished : IReadable
 {
     public void Read(GamePacketReader reader)
     {

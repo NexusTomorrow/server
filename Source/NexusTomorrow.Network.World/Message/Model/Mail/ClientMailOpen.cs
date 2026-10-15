@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
 [Message(GameMessageOpcode.ClientMailOpen)]
-public class ClientMailOpen : IReadable
+[WireMessage(GameMessageOpcode.ClientMailOpen, Direction.ClientToServer)]
+public sealed partial class ClientMailOpen : IReadable
 {
-    public List<ulong> MailList { get; } = [];
+    [Array(CountBits = 32), UInt(64)] public List<ulong> MailList { get; } = [];
 
     public void Read(GamePacketReader reader)
     {

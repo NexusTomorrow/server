@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Guild;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [Message(GameMessageOpcode.ServerGuildClassification)]
-public class ServerGuildClassification : IWritable
+[WireMessage(GameMessageOpcode.ServerGuildClassification, Direction.ServerToClient)]
+public sealed partial class ServerGuildClassification : IWritable
 {
     public Identity GuildIdentity { get; set; }
-    public GuildClassification Classification { get; set; }
+    [UInt(14)] public GuildClassification Classification { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

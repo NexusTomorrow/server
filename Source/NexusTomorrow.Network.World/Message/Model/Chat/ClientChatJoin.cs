@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
 [Message(GameMessageOpcode.ClientChatJoin)]
-public class ClientChatJoin : IReadable
+[WireMessage(GameMessageOpcode.ClientChatJoin, Direction.ClientToServer)]
+public sealed partial class ClientChatJoin : IReadable
 {
-    public ChatChannelType Type { get; private set; }
-    public string Name { get; private set; }
-    public string Password { get; private set; }
-    public uint Order { get; private set; }
+    [UInt(14)] public ChatChannelType Type { get; private set; }
+    [WideString] public string Name { get; private set; }
+    [WideString] public string Password { get; private set; }
+    [UInt(32)] public uint Order { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

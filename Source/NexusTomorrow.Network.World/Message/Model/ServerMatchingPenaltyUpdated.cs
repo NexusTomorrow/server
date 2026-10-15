@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerMatchingPenaltyUpdated)]
-public class ServerMatchingPenaltyUpdated : IWritable
+[WireMessage(GameMessageOpcode.ServerMatchingPenaltyUpdated, Direction.ServerToClient)]
+public sealed partial class ServerMatchingPenaltyUpdated : IWritable
 {
-    public uint[] MatchingPenaltyTimesMS { get; set; } = new uint[16]; // These are the penalty times for each MatchType for the player
-                                                                       // Array is ordered by Game.Static.Matching.MatchType
+    [FixedArray(16), UInt(32)] public uint[] MatchingPenaltyTimesMS { get; set; } = new uint[16]; // These are the penalty times for each MatchType for the player
+                                                                                                  // Array is ordered by Game.Static.Matching.MatchType
     public void Write(GamePacketWriter writer)
     {
         foreach (uint penaltyTime in MatchingPenaltyTimesMS)

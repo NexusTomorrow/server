@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogDurabilityLoss : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogDurabilityLoss : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.DurabilityLoss;
+    [NotOnWire] public CombatLogType Type => CombatLogType.DurabilityLoss;
 
-    public uint UnitId { get; set; }
-    public float Amount { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [Float32] public float Amount { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

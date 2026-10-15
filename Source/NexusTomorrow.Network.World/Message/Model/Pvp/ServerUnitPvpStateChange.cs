@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Pvp;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pvp;
 
 [Message(GameMessageOpcode.ServerUnitPvpStateChange)]
-public class ServerUnitPvpStateChange : IWritable
+[WireMessage(GameMessageOpcode.ServerUnitPvpStateChange, Direction.ServerToClient)]
+public sealed partial class ServerUnitPvpStateChange : IWritable
 {
-    public uint UnitId { get; set; }
-    public PvpState State { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(3)] public PvpState State { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.PlayerPath;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-public class TowerDefenseUnit : IWritable
+[WireStruct]
+public sealed partial class TowerDefenseUnit : IWritable
 {
-    public uint UnitId { get; set; }
-    public TowerDefenseUnitType Type { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(32)] public TowerDefenseUnitType Type { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

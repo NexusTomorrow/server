@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pvp;
 
 [Message(GameMessageOpcode.ClientSetIgnoreDuelRequests)]
-public class ClientSetIgnoreDuelRequests : IReadable
+[WireMessage(GameMessageOpcode.ClientSetIgnoreDuelRequests, Direction.ClientToServer)]
+public sealed partial class ClientSetIgnoreDuelRequests : IReadable
 {
-    public bool Ignore { get; private set; }
+    [UInt(1)] public bool Ignore { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

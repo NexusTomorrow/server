@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-public class SettlerImprovementGroupStatus : IWritable
+[WireStruct]
+public sealed partial class SettlerImprovementGroupStatus : IWritable
 {
-    public ushort PathSettlerImprovementGroupId { get; set; }
-    public int Tier { get; set; } // -1 seems to mean the improvement is inactive
-    public uint RemainingTimeMS { get; set; }
-    public uint BundleCount { get; set; }
+    [UInt(14)] public ushort PathSettlerImprovementGroupId { get; set; }
+    [UInt(32)] public int Tier { get; set; } // -1 seems to mean the improvement is inactive
+    [UInt(32)] public uint RemainingTimeMS { get; set; }
+    [UInt(32)] public uint BundleCount { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

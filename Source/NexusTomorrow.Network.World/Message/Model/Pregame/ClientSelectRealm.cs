@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 [Message(GameMessageOpcode.ClientSelectRealm)]
-public class ClientSelectRealm : IReadable
+[WireMessage(GameMessageOpcode.ClientSelectRealm, Direction.ClientToServer)]
+public sealed partial class ClientSelectRealm : IReadable
 {
-    public uint RealmId { get; private set; }
+    [UInt(32)] public uint RealmId { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

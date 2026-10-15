@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerSetUnitPathType)]
-public class ServerSetUnitPathType : IWritable
+[WireMessage(GameMessageOpcode.ServerSetUnitPathType, Direction.ServerToClient)]
+public sealed partial class ServerSetUnitPathType : IWritable
 {
-    public uint UnitId { get; set; }
-    public Path Path { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(3)] public Path Path { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

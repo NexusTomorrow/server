@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
 // Player automatically has the right to vote on the event when started this way.
 [Message(GameMessageOpcode.ServerPublicEventVoteInitate)]
-public class ServerPublicEventVoteInitate : IWritable
+[WireMessage(GameMessageOpcode.ServerPublicEventVoteInitate, Direction.ServerToClient)]
+public sealed partial class ServerPublicEventVoteInitate : IWritable
 {
-    public uint EventId { get; set; }
-    public uint VoteId { get; set; }
-    public uint TeamId { get; set; }
+    [UInt(14)] public uint EventId { get; set; }
+    [UInt(14)] public uint VoteId { get; set; }
+    [UInt(14)] public uint TeamId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

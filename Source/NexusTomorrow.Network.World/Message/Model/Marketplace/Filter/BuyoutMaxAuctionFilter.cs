@@ -1,8 +1,11 @@
-﻿namespace NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
+﻿using NexusTomorrow.Network.Codec;
 
-public class BuyoutMaxAuctionFilter : IAuctionFilter
+namespace NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
+
+[WireStruct]
+public sealed partial class BuyoutMaxAuctionFilter : IAuctionFilter
 {
-    public ulong BuyoutPrice { get; private set; }
+    [UInt(64)] public ulong BuyoutPrice { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

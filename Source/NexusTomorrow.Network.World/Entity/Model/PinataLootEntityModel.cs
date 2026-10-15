@@ -1,11 +1,14 @@
-﻿namespace NexusTomorrow.Network.World.Entity.Model;
+﻿using NexusTomorrow.Network.Codec;
 
-public class PinataLootEntityModel : IEntityModel
+namespace NexusTomorrow.Network.World.Entity.Model;
+
+[WireStruct]
+public sealed partial class PinataLootEntityModel : IEntityModel
 {
-    public uint CreatureId { get; set; }
-    public uint ItemId { get; set; }
-    public uint ItemCount { get; set; }
-    public byte LootType { get; set; }
+    [UInt(18)] public uint CreatureId { get; set; }
+    [UInt(32)] public uint ItemId { get; set; }
+    [UInt(32)] public uint ItemCount { get; set; }
+    [UInt(4)] public byte LootType { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

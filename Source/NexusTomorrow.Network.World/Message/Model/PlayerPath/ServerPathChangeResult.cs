@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 
 [Message(GameMessageOpcode.ServerPathChangeResult)]
-public class ServerPathChangeResult : IWritable
+[WireMessage(GameMessageOpcode.ServerPathChangeResult, Direction.ServerToClient)]
+public sealed partial class ServerPathChangeResult : IWritable
 {
-    public GenericError Result { get; set; }
+    [UInt(8)] public GenericError Result { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellReflect)]
-public class ServerSpellReflect : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellReflect, Direction.ServerToClient)]
+public sealed partial class ServerSpellReflect : IWritable
 {
-    public uint SpellUniqueId { get; set; }
-    public uint Spell4EffectId { get; set; } = 0;
-    public uint CasterUnitId { get; set; } = 0;
-    public uint TargetUnitId { get; set; } = 0;
+    [UInt(32)] public uint SpellUniqueId { get; set; }
+    [UInt(19)] public uint Spell4EffectId { get; set; } = 0;
+    [UInt(32)] public uint CasterUnitId { get; set; } = 0;
+    [UInt(32)] public uint TargetUnitId { get; set; } = 0;
 
     public SpellEffectResult SpellEffectResult { get; set; } = new();
 

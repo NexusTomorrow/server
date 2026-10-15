@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ServerCinematicPlatformAdd)]
-public class ServerCinematicPlatformAdd : IWritable
+[WireMessage(GameMessageOpcode.ServerCinematicPlatformAdd, Direction.ServerToClient)]
+public sealed partial class ServerCinematicPlatformAdd : IWritable
 {
-    public uint Delay { get; set; }
-    public uint ActorUnitId { get; set; }
-    public uint PlatformUnitId { get; set; }
-    public uint AttachmentId { get; set; }
+    [UInt(32)] public uint Delay { get; set; }
+    [UInt(32)] public uint ActorUnitId { get; set; }
+    [UInt(32)] public uint PlatformUnitId { get; set; }
+    [UInt(32)] public uint AttachmentId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

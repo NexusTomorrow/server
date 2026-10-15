@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
@@ -7,10 +8,11 @@ namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 // of the AccountItemsInProgress items to see if a CREDD operation is underway. There are no sniffs recorded
 // showing a CREDD account item operation listed as InProgress.
 [Message(GameMessageOpcode.ServerAccountItemsInProgress)]
-public class ServerAccountItemsInProgress : IWritable
+[WireMessage(GameMessageOpcode.ServerAccountItemsInProgress, Direction.ServerToClient)]
+public sealed partial class ServerAccountItemsInProgress : IWritable
 {
-    public uint AccountId { get; set; } // is the AccountId sent ServerRealmInfo (0x3DB), filled by server but not used by client
-    public List<AccountInventoryItem> Items { get; set; }
+    [UInt(32)] public uint AccountId { get; set; } // is the AccountId sent ServerRealmInfo (0x3DB), filled by server but not used by client
+    [Array(CountBits = 32)] public List<AccountInventoryItem> Items { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ServerHousingBasics)]
-public class ServerHousingBasics : IWritable
+[WireMessage(GameMessageOpcode.ServerHousingBasics, Direction.ServerToClient)]
+public sealed partial class ServerHousingBasics : IWritable
 {
     [Flags]
     public enum ResidencePrivacyLevelFlags
@@ -14,9 +16,9 @@ public class ServerHousingBasics : IWritable
         RoommatesOnly = 0x04
     }
 
-    public ulong ResidenceId { get; set; }
-    public ulong NeighbourhoodId { get; set; }
-    public ResidencePrivacyLevelFlags PrivacyLevel { get; set; }
+    [UInt(64)] public ulong ResidenceId { get; set; }
+    [UInt(64)] public ulong NeighbourhoodId { get; set; }
+    [UInt(32)] public ResidencePrivacyLevelFlags PrivacyLevel { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

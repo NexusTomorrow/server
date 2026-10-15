@@ -1,11 +1,13 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
 
-public class PropertyMinAuctionFilter : IAuctionFilter
+[WireStruct]
+public sealed partial class PropertyMinAuctionFilter : IAuctionFilter
 {
-    public Property UnitProperty2Id { get; private set; }
-    public float Minimum { get; private set; }
+    [UInt(8)] public Property UnitProperty2Id { get; private set; }
+    [Float32] public float Minimum { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

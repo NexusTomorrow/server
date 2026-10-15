@@ -1,9 +1,12 @@
-﻿namespace NexusTomorrow.Network.Message.Model.Shared;
+﻿using NexusTomorrow.Network.Codec;
 
-public class Message : IWritable
+namespace NexusTomorrow.Network.Message.Model.Shared;
+
+[WireStruct]
+public sealed partial class Message : IWritable
 {
-    public uint Index { get; set; }
-    public List<string> Messages { get; set; } = [];
+    [UInt(32)] public uint Index { get; set; }
+    [Array(CountBits = 8), WideString] public List<string> Messages { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

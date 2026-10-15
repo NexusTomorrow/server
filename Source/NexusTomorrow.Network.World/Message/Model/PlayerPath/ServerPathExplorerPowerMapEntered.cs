@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 // Fires whenever the player enters an area where a Tracking mission can be started
 
 [Message(GameMessageOpcode.ServerPathExplorerPowerMapEntered)]
-public class ServerPathExplorerPowerMapEntered : IWritable
+[WireMessage(GameMessageOpcode.ServerPathExplorerPowerMapEntered, Direction.ServerToClient)]
+public sealed partial class ServerPathExplorerPowerMapEntered : IWritable
 {
-    public ushort PathMissionId { get; set; }
+    [UInt(14)] public ushort PathMissionId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

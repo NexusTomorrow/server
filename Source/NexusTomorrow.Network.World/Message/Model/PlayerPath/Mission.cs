@@ -1,16 +1,18 @@
 ﻿using NexusTomorrow.Game.Static.PlayerPath;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-public class Mission : IWritable
+[WireStruct]
+public sealed partial class Mission : IWritable
 {
-    public uint PathMissionId { get; set; }
-    public bool Completed { get; set; }
-    public uint ObjectiveCompletionFlags { get; set; }
-    public uint StateFlags { get; set; }
-    public PathMissionState State { get; set; }
-    public uint GiverUnitId { get; set; }
+    [UInt(15)] public uint PathMissionId { get; set; }
+    [UInt(1)] public bool Completed { get; set; }
+    [UInt(32)] public uint ObjectiveCompletionFlags { get; set; }
+    [UInt(32)] public uint StateFlags { get; set; }
+    [UInt(3)] public PathMissionState State { get; set; }
+    [UInt(32)] public uint GiverUnitId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

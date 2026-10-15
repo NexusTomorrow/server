@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathSetCurrentEpisode)]
-public class ServerPathSetCurrentEpisode : IWritable
+[WireMessage(GameMessageOpcode.ServerPathSetCurrentEpisode, Direction.ServerToClient)]
+public sealed partial class ServerPathSetCurrentEpisode : IWritable
 {
-    public ushort Unused { get; set; } // shows values in sniffs but client does not use
-    public ushort PathEpisodeId { get; set; }
+    [UInt(15)] public ushort Unused { get; set; } // shows values in sniffs but client does not use
+    [UInt(14)] public ushort PathEpisodeId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

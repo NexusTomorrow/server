@@ -1,20 +1,23 @@
 ﻿using NexusTomorrow.Game.Static.Spell;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-public class SpellEffectResult : IWritable
+[WireStruct]
+public sealed partial class SpellEffectResult : IWritable
 {
-    public class AdditionalEffectResult : IWritable
+    [WireStruct]
+    public sealed partial class AdditionalEffectResult : IWritable
     {
-        public uint RawDamage { get; set; }
-        public uint Amount { get; set; }
-        public uint Overheal { get; set; }
-        public uint Absorption { get; set; }
-        public uint Shield { get; set; }
-        public uint GlanceOrAbsorb { get; set; }
-        public uint Overkill { get; set; }
-        public CombatResult CombatResult { get; set; }
+        [UInt(32)] public uint RawDamage { get; set; }
+        [UInt(32)] public uint Amount { get; set; }
+        [UInt(32)] public uint Overheal { get; set; }
+        [UInt(32)] public uint Absorption { get; set; }
+        [UInt(32)] public uint Shield { get; set; }
+        [UInt(32)] public uint GlanceOrAbsorb { get; set; }
+        [UInt(32)] public uint Overkill { get; set; }
+        [UInt(3)] public CombatResult CombatResult { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -29,18 +32,18 @@ public class SpellEffectResult : IWritable
         }
     }
 
-    public uint RawDamage { get; set; }
-    public uint RawScaledDamage { get; set; }
-    public uint AbsorbedAmount { get; set; }
-    public uint ShieldAbsorbAmount { get; set; }
-    public uint AdjustedDamage { get; set; }
-    public uint OverkillAmount { get; set; }
-    public uint Glance { get; set; }
-    public bool KilledTarget { get; set; }
-    public CombatResult CombatResult { get; set; }
-    public DamageType DamageType { get; set; }
+    [UInt(32)] public uint RawDamage { get; set; }
+    [UInt(32)] public uint RawScaledDamage { get; set; }
+    [UInt(32)] public uint AbsorbedAmount { get; set; }
+    [UInt(32)] public uint ShieldAbsorbAmount { get; set; }
+    [UInt(32)] public uint AdjustedDamage { get; set; }
+    [UInt(32)] public uint OverkillAmount { get; set; }
+    [UInt(32)] public uint Glance { get; set; }
+    [UInt(1)] public bool KilledTarget { get; set; }
+    [UInt(4)] public CombatResult CombatResult { get; set; }
+    [UInt(3)] public DamageType DamageType { get; set; }
 
-    public List<AdditionalEffectResult> AdditionaEffectResults { get; set; } = [];
+    [Array(CountBits = 8)] public List<AdditionalEffectResult> AdditionaEffectResults { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

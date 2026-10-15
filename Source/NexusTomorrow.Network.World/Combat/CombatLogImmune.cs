@@ -1,10 +1,12 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogImmune : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogImmune : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.Immune;
+    [NotOnWire] public CombatLogType Type => CombatLogType.Immune;
 
     public CombatLogCastData CastData { get; set; }
 

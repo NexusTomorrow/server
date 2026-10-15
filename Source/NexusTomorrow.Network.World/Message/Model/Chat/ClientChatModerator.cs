@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
 [Message(GameMessageOpcode.ClientChatModerator)]
-public class ClientChatModerator : IReadable
+[WireMessage(GameMessageOpcode.ClientChatModerator, Direction.ClientToServer)]
+public sealed partial class ClientChatModerator : IReadable
 {
     public Channel Channel { get; private set; }
-    public string CharacterName { get; private set; }
-    public bool MakeModerator { get; private set; }
+    [WideString] public string CharacterName { get; private set; }
+    [UInt(1)] public bool MakeModerator { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Matching;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 // If MatchQueueRsult is PersonalSurrenderCooldown or GlobalSurrenderCooldown, uses the WaitTime
 [Message(GameMessageOpcode.ServerMatchingMatchOperationResult)]
-public class ServerMatchingMatchOperationResult : IWritable
+[WireMessage(GameMessageOpcode.ServerMatchingMatchOperationResult, Direction.ServerToClient)]
+public sealed partial class ServerMatchingMatchOperationResult : IWritable
 {
-    public MatchingQueueResult Result { get; set; }
-    public uint WaitTimeBeforeVoteMS { get; set; }
+    [UInt(6)] public MatchingQueueResult Result { get; set; }
+    [UInt(32)] public uint WaitTimeBeforeVoteMS { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

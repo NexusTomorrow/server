@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
 // Can also be used to send the player their Presence state
 [Message(GameMessageOpcode.ServerFriendshipAccountPresenceUpdate)]
-public class ServerFriendshipAccountPresenceUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerFriendshipAccountPresenceUpdate, Direction.ServerToClient)]
+public sealed partial class ServerFriendshipAccountPresenceUpdate : IWritable
 {
-    public uint AccountId { get; set; }
-    public AccountPresenceState Presence { get; set; }
+    [UInt(32)] public uint AccountId { get; set; }
+    [UInt(3)] public AccountPresenceState Presence { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-public class RecruitmentGuildInfo : IWritable
+[WireStruct]
+public sealed partial class RecruitmentGuildInfo : IWritable
 {
-    public ulong GuildId { get; set; }
-    public string GuildName { get; set; }
-    public string GuildMasterName { get; set; }
+    [UInt(64)] public ulong GuildId { get; set; }
+    [WideString] public string GuildName { get; set; }
+    [WideString] public string GuildMasterName { get; set; }
     public GuildStats Stats { get; set; }
-    public List<string> Recruiters { get; set; } = [];
+    [Array(CountBits = 32), WideString] public List<string> Recruiters { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

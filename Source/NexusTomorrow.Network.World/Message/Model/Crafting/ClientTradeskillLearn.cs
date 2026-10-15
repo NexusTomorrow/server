@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Crafting;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
 [Message(GameMessageOpcode.ClientTradeskillLearn)]
-public class ClientTradeskillLearn : IReadable
+[WireMessage(GameMessageOpcode.ClientTradeskillLearn, Direction.ClientToServer)]
+public sealed partial class ClientTradeskillLearn : IReadable
 {
-    public TradeskillType ToLearnTradeskillId { get; private set; }
-    public TradeskillType ToDropTradeskillId { get; private set; }
+    [UInt(32)] public TradeskillType ToLearnTradeskillId { get; private set; }
+    [UInt(32)] public TradeskillType ToDropTradeskillId { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

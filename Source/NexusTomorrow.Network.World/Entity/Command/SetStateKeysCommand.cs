@@ -1,14 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
 using NexusTomorrow.Game.Static.Entity.Movement.Command.State;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetStateKeys)]
-public class SetStateKeysCommand : IEntityCommandModel
+[WireStruct]
+public sealed partial class SetStateKeysCommand : IEntityCommandModel
 {
-    public List<uint> Times { get; set; } = [];
-    public List<StateFlags> States { get; set; } = [];
-    public uint Offset { get; set; }
+    [UInt(8), Count] public byte TimesCount { get; set; }
+    [Array(CountFrom = nameof(TimesCount)), UInt(32)] public List<uint> Times { get; set; } = [];
+    [Array(CountFrom = nameof(TimesCount)), UInt(32)] public List<StateFlags> States { get; set; } = [];
+    [UInt(32)] public uint Offset { get; set; }
 
     public void Read(GamePacketReader reader)
     {

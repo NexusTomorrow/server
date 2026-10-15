@@ -1,21 +1,25 @@
 ﻿using NexusTomorrow.Game.Static.AccountInventory;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 [Message(GameMessageOpcode.ServerCreddOperationHistory)]
-public class ServerCreddOperationHistory : IWritable
+[WireMessage(GameMessageOpcode.ServerCreddOperationHistory, Direction.ServerToClient)]
+public sealed partial class ServerCreddOperationHistory : IWritable
 {
-    public class CreddOperationHistoryEntry : IWritable
+    [WireStruct]
+    public sealed partial class CreddOperationHistoryEntry : IWritable
     {
-        public AccountOperation Operation { get; set; }
-        public bool IsInitiator { get; set; }
-        public uint LogAge { get; set; } // in minutes
+        [UInt(32)] public AccountOperation Operation { get; set; }
+        [Pad(32)] public Pad OperationHigh { get; }
+        [UInt(1)] public bool IsInitiator { get; set; }
+        [UInt(32)] public uint LogAge { get; set; } // in minutes
         public Identity Transactor { get; set; } // is the character identity the player performed the transaction with
         public Identity Unused { get; set; }
-        public ulong AccountFriendId { get; set; }
-        public ulong MoneyAmount { get; set; }
+        [UInt(64)] public ulong AccountFriendId { get; set; }
+        [UInt(64)] public ulong MoneyAmount { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -29,7 +33,7 @@ public class ServerCreddOperationHistory : IWritable
         }
     }
 
-    public List<CreddOperationHistoryEntry> HistoryEntries { get; set; } = [];
+    [Array(CountBits = 32)] public List<CreddOperationHistoryEntry> HistoryEntries { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,15 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
 [Message(GameMessageOpcode.ServerAbilityBook)]
-public class ServerAbilities : IWritable
+[WireMessage(GameMessageOpcode.ServerAbilityBook, Direction.ServerToClient)]
+public sealed partial class ServerAbilities : IWritable
 {
-    public class Spell : IWritable
+    [WireStruct]
+    public sealed partial class Spell : IWritable
     {
-        public uint Spell4BaseId { get; set; }
-        public byte TierIndexAchieved { get; set; }
-        public byte SpecIndex { get; set; }
+        [UInt(18)] public uint Spell4BaseId { get; set; }
+        [UInt(4)] public byte TierIndexAchieved { get; set; }
+        [UInt(3)] public byte SpecIndex { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -19,7 +22,7 @@ public class ServerAbilities : IWritable
         }
     }
 
-    public List<Spell> Spells { get; set; } = [];
+    [Array(CountBits = 32)] public List<Spell> Spells { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

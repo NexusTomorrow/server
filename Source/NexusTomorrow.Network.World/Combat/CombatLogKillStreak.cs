@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogKillStreak : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogKillStreak : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.KillStreak;
+    [NotOnWire] public CombatLogType Type => CombatLogType.KillStreak;
 
-    public uint UnitId { get; set; }
-    public CombatMomentumStat StatType { get; set; } // 5u
-    public uint StreakAmount { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(5)] public CombatMomentumStat StatType { get; set; } // 5u
+    [UInt(32)] public uint StreakAmount { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

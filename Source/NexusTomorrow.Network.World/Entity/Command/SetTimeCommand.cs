@@ -1,11 +1,13 @@
 ﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetTime)]
-public class SetTimeCommand : IEntityCommandModel
+[WireStruct]
+public sealed partial class SetTimeCommand : IEntityCommandModel
 {
-    public uint Time { get; set; }
+    [UInt(32)] public uint Time { get; set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-public class WarPartyBossToken : IWritable
+[WireStruct]
+public sealed partial class WarPartyBossToken : IWritable
 {
-    public uint TokenItem2Id { get; set; }
-    public uint Count { get; set; }
+    [UInt(18)] public uint TokenItem2Id { get; set; }
+    [UInt(32)] public uint Count { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

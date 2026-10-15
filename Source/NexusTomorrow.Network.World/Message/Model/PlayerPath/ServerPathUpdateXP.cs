@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathUpdateXP)]
-public class ServerPathUpdateXP : IWritable
+[WireMessage(GameMessageOpcode.ServerPathUpdateXP, Direction.ServerToClient)]
+public sealed partial class ServerPathUpdateXP : IWritable
 {
-    public uint TotalXP { get; set; }
+    [UInt(32)] public uint TotalXP { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

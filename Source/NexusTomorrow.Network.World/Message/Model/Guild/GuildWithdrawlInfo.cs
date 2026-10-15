@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-public class GuildWithdrawlInfo : IWritable
+[WireStruct]
+public sealed partial class GuildWithdrawlInfo : IWritable
 {
-    public ulong BankMoneyWithdrawnToday { get; set; }
-    public uint[] BankTabWithdrawCount { get; set; } = new uint[10];
-    public ulong BankRepairMoneyToday { get; set; }
+    [UInt(64)] public ulong BankMoneyWithdrawnToday { get; set; }
+    [FixedArray(10), UInt(32)] public uint[] BankTabWithdrawCount { get; set; } = new uint[10];
+    [UInt(64)] public ulong BankRepairMoneyToday { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

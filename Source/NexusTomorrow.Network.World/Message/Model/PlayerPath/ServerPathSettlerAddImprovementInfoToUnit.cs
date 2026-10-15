@@ -1,14 +1,17 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathSettlerAddImprovementInfoToUnit)]
-public class ServerPathSettlerAddImprovementInfoToUnit : IWritable
+[WireMessage(GameMessageOpcode.ServerPathSettlerAddImprovementInfoToUnit, Direction.ServerToClient)]
+public sealed partial class ServerPathSettlerAddImprovementInfoToUnit : IWritable
 {
-    public class ImprovementInfo : IWritable
+    [WireStruct]
+    public sealed partial class ImprovementInfo : IWritable
     {
-        public string Name { get; set; }
-        public uint Tier { get; set; }
+        [WideString] public string Name { get; set; }
+        [UInt(32)] public uint Tier { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -17,11 +20,11 @@ public class ServerPathSettlerAddImprovementInfoToUnit : IWritable
         }
     }
 
-    public uint UnitId { get; set; }
-    public uint PathSettlerImprovementGroupId { get; set; }
-    public uint RemainingTime { get; set; }
-    public List<string> Owners { get; set; } = [];
-    public List<ImprovementInfo> Improvements { get; set; } = [];
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(14)] public uint PathSettlerImprovementGroupId { get; set; }
+    [UInt(32)] public uint RemainingTime { get; set; }
+    [Array(CountBits = 32), WideString] public List<string> Owners { get; set; } = [];
+    [Array(CountBits = 32)] public List<ImprovementInfo> Improvements { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

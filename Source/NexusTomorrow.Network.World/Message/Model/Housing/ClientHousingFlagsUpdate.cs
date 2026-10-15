@@ -1,16 +1,18 @@
 ﻿using NexusTomorrow.Game.Static.Housing;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ClientHousingFlagsUpdate)]
-public class ClientHousingFlagsUpdate : IReadable
+[WireMessage(GameMessageOpcode.ClientHousingFlagsUpdate, Direction.ClientToServer)]
+public sealed partial class ClientHousingFlagsUpdate : IReadable
 {
     public Identity ResidenceIdentity { get; } = new();
-    public ResidenceFlags Flags { get; private set; }
-    public byte NeighbourHarvestSplit { get; private set; } // can never be more than 5
-    public byte NeighbourGardenSplit { get; private set; } // can never be more than 5
+    [UInt(32)] public ResidenceFlags Flags { get; private set; }
+    [UInt(3)] public byte NeighbourHarvestSplit { get; private set; } // can never be more than 5
+    [UInt(3)] public byte NeighbourGardenSplit { get; private set; } // can never be more than 5
 
     public void Read(GamePacketReader reader)
     {

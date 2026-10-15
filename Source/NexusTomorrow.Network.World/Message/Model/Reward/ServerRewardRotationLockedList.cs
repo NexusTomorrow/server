@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Reward;
 
 [Message(GameMessageOpcode.ServerRewardRotationLockedList)]
-public class ServerRewardRotationLockedList : IWritable
+[WireMessage(GameMessageOpcode.ServerRewardRotationLockedList, Direction.ServerToClient)]
+public sealed partial class ServerRewardRotationLockedList : IWritable
 {
-    public List<LockedReward> Rewards { get; set; } = [];
+    [Array(CountBits = 32)] public List<LockedReward> Rewards { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

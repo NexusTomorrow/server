@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 [Message(GameMessageOpcode.ServerCharacterSelectFail)]
-public class ServerCharacterSelectFail : IWritable
+[WireMessage(GameMessageOpcode.ServerCharacterSelectFail, Direction.ServerToClient)]
+public sealed partial class ServerCharacterSelectFail : IWritable
 {
-    public CharacterSelectResult Result { get; set; }
+    [UInt(3)] public CharacterSelectResult Result { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

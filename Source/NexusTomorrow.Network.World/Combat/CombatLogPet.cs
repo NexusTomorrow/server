@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogPet : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogPet : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.Pet;
+    [NotOnWire] public CombatLogType Type => CombatLogType.Pet;
 
-    public bool BDismissed { get; set; }
-    public bool BKilled { get; set; }
+    [UInt(1)] public bool BDismissed { get; set; }
+    [UInt(1)] public bool BKilled { get; set; }
     public CombatLogCastData CastData { get; set; }
 
     public void Write(GamePacketWriter writer)

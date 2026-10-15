@@ -1,22 +1,24 @@
 ﻿using NexusTomorrow.Game.Static.Guild;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-public class RecruitmentDemands : IWritable
+[WireStruct]
+public sealed partial class RecruitmentDemands : IWritable
 {
-    public RecruitmendDemand WarriorAssault { get; set; }
-    public RecruitmendDemand WarriorSupport { get; set; }
-    public RecruitmendDemand EngineerAssault { get; set; }
-    public RecruitmendDemand EngineerSupport { get; set; }
-    public RecruitmendDemand EsperAssault { get; set; }
-    public RecruitmendDemand EsperSupport { get; set; }
-    public RecruitmendDemand MedicAssault { get; set; }
-    public RecruitmendDemand MedicSupport { get; set; }
-    public RecruitmendDemand StalkedAssault { get; set; }
-    public RecruitmendDemand StalkerSupport { get; set; }
-    public RecruitmendDemand SpellslingerAssault { get; set; }
-    public RecruitmendDemand SpellslingerSupport { get; set; }
+    [UInt(8)] public RecruitmendDemand WarriorAssault { get; set; }
+    [UInt(8)] public RecruitmendDemand WarriorSupport { get; set; }
+    [UInt(8)] public RecruitmendDemand EngineerAssault { get; set; }
+    [UInt(8)] public RecruitmendDemand EngineerSupport { get; set; }
+    [UInt(8)] public RecruitmendDemand EsperAssault { get; set; }
+    [UInt(8)] public RecruitmendDemand EsperSupport { get; set; }
+    [UInt(8)] public RecruitmendDemand MedicAssault { get; set; }
+    [UInt(8)] public RecruitmendDemand MedicSupport { get; set; }
+    [UInt(8)] public RecruitmendDemand StalkedAssault { get; set; }
+    [UInt(8)] public RecruitmendDemand StalkerSupport { get; set; }
+    [UInt(8)] public RecruitmendDemand SpellslingerAssault { get; set; }
+    [UInt(8)] public RecruitmendDemand SpellslingerSupport { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

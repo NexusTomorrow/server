@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ServerHousingNeighborhoods)]
-public class ServerHousingNeighbourhoods : IWritable
+[WireMessage(GameMessageOpcode.ServerHousingNeighborhoods, Direction.ServerToClient)]
+public sealed partial class ServerHousingNeighbourhoods : IWritable
 {
-    public ushort Unused { get; set; }
-    public List<Neighbourhood> Neighbourhoods { get; set; } = [];
+    [UInt(14)] public ushort Unused { get; set; }
+    [Array(CountBits = 32)] public List<Neighbourhood> Neighbourhoods { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

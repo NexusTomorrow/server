@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [Message(GameMessageOpcode.ServerGuildPerkDeactivated)]
-public class ServerGuildPerkDeactivated : IWritable
+[WireMessage(GameMessageOpcode.ServerGuildPerkDeactivated, Direction.ServerToClient)]
+public sealed partial class ServerGuildPerkDeactivated : IWritable
 {
     public Identity GuildIdentity { get; set; }
-    public ushort GuildPerkId { get; set; }
+    [UInt(14)] public ushort GuildPerkId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

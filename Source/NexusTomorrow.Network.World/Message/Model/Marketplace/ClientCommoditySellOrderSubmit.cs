@@ -1,10 +1,12 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
 // Sent from ConfirmButtonType == MarketplaceCommoditiesSubmit
 [Message(GameMessageOpcode.ClientCommoditySellOrderSubmit)]
-public class ClientCommoditySellOrderSubmit : IReadable
+[WireMessage(GameMessageOpcode.ClientCommoditySellOrderSubmit, Direction.ClientToServer)]
+public sealed partial class ClientCommoditySellOrderSubmit : IReadable
 {
     public CommodityOrder Order { get; private set; } = new();
 

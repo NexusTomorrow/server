@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.PublicEvent;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
 [Message(GameMessageOpcode.ServerPublicEventLeave)]
-public class ServerPublicEventLeave : IWritable
+[WireMessage(GameMessageOpcode.ServerPublicEventLeave, Direction.ServerToClient)]
+public sealed partial class ServerPublicEventLeave : IWritable
 {
-    public uint PublicEventId { get; set; }
-    public PublicEventRemoveReason Reason { get; set; }
+    [UInt(14)] public uint PublicEventId { get; set; }
+    [UInt(32)] public PublicEventRemoveReason Reason { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellVisualEffectRemoveList)]
-public class ServerSpellVisualEffectRemoveList : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellVisualEffectRemoveList, Direction.ServerToClient)]
+public sealed partial class ServerSpellVisualEffectRemoveList : IWritable
 {
-    public List<uint> SpellVisualEffectUniqueIds { get; set; } = [];
+    [Array(CountBits = 32), UInt(32)] public List<uint> SpellVisualEffectUniqueIds { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

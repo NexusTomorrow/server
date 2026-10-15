@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 [Message(GameMessageOpcode.ServerCharacterCreate)]
-public class ServerCharacterCreate : IWritable
+[WireMessage(GameMessageOpcode.ServerCharacterCreate, Direction.ServerToClient)]
+public sealed partial class ServerCharacterCreate : IWritable
 {
-    public ulong CharacterId { get; set; }
-    public uint WorldId { get; set; }
-    public CharacterModifyResult Result { get; set; }
+    [UInt(64)] public ulong CharacterId { get; set; }
+    [UInt(32)] public uint WorldId { get; set; }
+    [UInt(3)] public CharacterModifyResult Result { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

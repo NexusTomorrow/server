@@ -1,8 +1,11 @@
-﻿namespace NexusTomorrow.Network.World.Entity.Model;
+﻿using NexusTomorrow.Network.Codec;
 
-public class CameraEntityModel : IEntityModel
+namespace NexusTomorrow.Network.World.Entity.Model;
+
+[WireStruct]
+public sealed partial class CameraEntityModel : IEntityModel
 {
-    public bool Unknown0 { get; set; }
+    [UInt(1)] public bool Unknown0 { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

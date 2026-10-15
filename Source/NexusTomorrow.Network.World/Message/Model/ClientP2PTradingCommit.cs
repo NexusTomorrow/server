@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientP2PTradingCommit)]
-public class ClientP2PTradingCommit : IReadable
+[WireMessage(GameMessageOpcode.ClientP2PTradingCommit, Direction.ClientToServer)]
+public sealed partial class ClientP2PTradingCommit : IReadable
 {
     // Zero byte message
     //

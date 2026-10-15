@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathExplorerScavengerHuntClueRemoveByClueId)]
-public class ServerPathExplorerScavengerHuntClueRemoveByClueId : IWritable
+[WireMessage(GameMessageOpcode.ServerPathExplorerScavengerHuntClueRemoveByClueId, Direction.ServerToClient)]
+public sealed partial class ServerPathExplorerScavengerHuntClueRemoveByClueId : IWritable
 {
-    public ushort PathExplorerScavengerClueId { get; set; }
+    [UInt(14)] public ushort PathExplorerScavengerClueId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
@@ -6,9 +7,10 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell;
 // If this differs from the clients current InteractionUnitId,
 // changes the active InteractionType to none.
 [Message(GameMessageOpcode.ServerInteractionChange)]
-public class ServerInteractionChange : IWritable
+[WireMessage(GameMessageOpcode.ServerInteractionChange, Direction.ServerToClient)]
+public sealed partial class ServerInteractionChange : IWritable
 {
-    public uint InteractionUnitId { get; set; } = 0;
+    [UInt(32)] public uint InteractionUnitId { get; set; } = 0;
 
     public void Write(GamePacketWriter writer)
     {

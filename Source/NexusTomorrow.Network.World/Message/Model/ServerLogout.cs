@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerLogout)]
-public class ServerLogout : IWritable
+[WireMessage(GameMessageOpcode.ServerLogout, Direction.ServerToClient)]
+public sealed partial class ServerLogout : IWritable
 {
-    public bool Requested { get; set; }
-    public LogoutReason Reason { get; set; }
+    [UInt(1)] public bool Requested { get; set; }
+    [UInt(5)] public LogoutReason Reason { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

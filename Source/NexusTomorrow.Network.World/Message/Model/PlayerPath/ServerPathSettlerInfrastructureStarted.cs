@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 // Triggers SettlerInfrastructureStarted lua event
 [Message(GameMessageOpcode.ServerPathSettlerInfrastructureStarted)]
-public class ServerPathSettlerInfrastructureStarted : IWritable
+[WireMessage(GameMessageOpcode.ServerPathSettlerInfrastructureStarted, Direction.ServerToClient)]
+public sealed partial class ServerPathSettlerInfrastructureStarted : IWritable
 {
-    public uint Unused { get; set; }
+    [UInt(32)] public uint Unused { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

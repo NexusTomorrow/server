@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class Item : IWritable
+public partial class Item : IWritable
 {
-    public class UnknownStructure : IWritable
+    [WireStruct]
+    public sealed partial class UnknownStructure : IWritable
     {
-        public byte Unknown0 { get; set; }
-        public uint Unknown4 { get; set; }
-        public uint Unknown8 { get; set; }
+        [UInt(3)] public byte Unknown0 { get; set; }
+        [UInt(32)] public uint Unknown4 { get; set; }
+        [UInt(32)] public uint Unknown8 { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -18,10 +20,11 @@ public class Item : IWritable
         }
     }
 
-    public class UnknownStructure2 : IWritable
+    [WireStruct]
+    public sealed partial class UnknownStructure2 : IWritable
     {
-        public ushort Unknown0 { get; set; }
-        public ulong Unknown8 { get; set; }
+        [UInt(14)] public ushort Unknown0 { get; set; }
+        [UInt(64)] public ulong Unknown8 { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

@@ -1,20 +1,22 @@
 ﻿using NexusTomorrow.Game.Static.Group;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientGroupLootRulesChange)]
-public class ClientGroupLootRulesChange : IReadable
+[WireMessage(GameMessageOpcode.ClientGroupLootRulesChange, Direction.ClientToServer)]
+public sealed partial class ClientGroupLootRulesChange : IReadable
 {
-    public ulong GroupId { get; set; }
+    [UInt(64)] public ulong GroupId { get; set; }
 
-    public LootRule LootRulesUnderThreshold { get; set; }
+    [UInt(3)] public LootRule LootRulesUnderThreshold { get; set; }
 
-    public LootRule LootRulesThresholdAndOver { get; set; }
+    [UInt(3)] public LootRule LootRulesThresholdAndOver { get; set; }
 
-    public LootThreshold Threshold { get; set; }
+    [UInt(4)] public LootThreshold Threshold { get; set; }
 
-    public HarvestLootRule HarvestingRule { get; set; }
+    [UInt(2)] public HarvestLootRule HarvestingRule { get; set; }
 
 
     public void Read(GamePacketReader reader)

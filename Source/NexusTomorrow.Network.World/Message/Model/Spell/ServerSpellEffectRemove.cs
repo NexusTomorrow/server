@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellEffectRemove)]
-public class ServerSpellEffectRemove : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellEffectRemove, Direction.ServerToClient)]
+public sealed partial class ServerSpellEffectRemove : IWritable
 {
-    public uint Spell4EffectId { get; set; }
-    public uint CastingId { get; set; }
-    public uint SpellEffectUniqueId { get; set; }
+    [UInt(32)] public uint Spell4EffectId { get; set; }
+    [UInt(32)] public uint CastingId { get; set; }
+    [UInt(32)] public uint SpellEffectUniqueId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

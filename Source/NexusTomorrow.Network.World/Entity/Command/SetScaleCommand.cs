@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetScale)]
-public class SetScaleCommand : IEntityCommandModel
+[WireStruct]
+public sealed partial class SetScaleCommand : IEntityCommandModel
 {
-    public float Scale { get; set; }
-    public bool Blend { get; set; }
+    [PackedFloat] public float Scale { get; set; }
+    [UInt(1)] public bool Blend { get; set; }
 
     public void Read(GamePacketReader reader)
     {

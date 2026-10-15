@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Costume;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Costume;
 
 [Message(GameMessageOpcode.ClientCostumeSave)]
-public class ClientCostumeSave : IReadable
+public partial class ClientCostumeSave : IReadable
 {
-    public class CostumeItem : IReadable
+    [WireStruct]
+    public sealed partial class CostumeItem : IReadable
     {
-        public uint Item2Id { get; private set; }
-        public uint[] DyeColorRampIds { get; } = new uint[3];
+        [UInt(18)] public uint Item2Id { get; private set; }
+        [FixedArray(3), UInt(32)] public uint[] DyeColorRampIds { get; } = new uint[3];
 
         public void Read(GamePacketReader reader)
         {

@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Costume;
 
 [Message(GameMessageOpcode.ClientCostumeSet)]
-public class ClientCostumeSet : IReadable
+[WireMessage(GameMessageOpcode.ClientCostumeSet, Direction.ClientToServer)]
+public sealed partial class ClientCostumeSet : IReadable
 {
-    public int Index { get; private set; }
+    [UInt(32)] public int Index { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,9 +1,12 @@
-﻿namespace NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
+﻿using NexusTomorrow.Network.Codec;
 
-public class RuneSlotAuctionFilter : IAuctionFilter
+namespace NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
+
+[WireStruct]
+public sealed partial class RuneSlotAuctionFilter : IAuctionFilter
 {
-    public byte MichrochipType { get; private set; }
-    public byte Minimum { get; private set; }
+    [UInt(5)] public byte MichrochipType { get; private set; }
+    [UInt(8)] public byte Minimum { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

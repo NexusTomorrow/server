@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Challenges;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Challenges;
 
 [Message(GameMessageOpcode.ClientChallengeChoice)]
-public class ClientChallengeChoice : IReadable
+[WireMessage(GameMessageOpcode.ClientChallengeChoice, Direction.ClientToServer)]
+public sealed partial class ClientChallengeChoice : IReadable
 {
-    public ushort ChallengeId { get; private set; }
-    public ChallengeChoice Choice { get; private set; }
-    public uint Unused { get; private set; }
+    [UInt(14)] public ushort ChallengeId { get; private set; }
+    [UInt(5)] public ChallengeChoice Choice { get; private set; }
+    [UInt(32)] public uint Unused { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

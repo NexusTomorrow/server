@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ClientPathExplorerProgressReport)]
-public class ClientPathExplorerProgressReport : IReadable
+[WireMessage(GameMessageOpcode.ClientPathExplorerProgressReport, Direction.ClientToServer)]
+public sealed partial class ClientPathExplorerProgressReport : IReadable
 {
-    public uint PathMissionId { get; private set; }
-    public uint ExplorerNodeIndex { get; private set; } // Reports when player unit has reached radius threshold around WorldLocation.
+    [UInt(15)] public uint PathMissionId { get; private set; }
+    [UInt(32)] public uint ExplorerNodeIndex { get; private set; } // Reports when player unit has reached radius threshold around WorldLocation.
 
     public void Read(GamePacketReader reader)
     {

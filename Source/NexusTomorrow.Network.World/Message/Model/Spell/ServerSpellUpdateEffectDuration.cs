@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellUpdateEffectDuration)]
-public class ServerSpellUpdateEffectDuration : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellUpdateEffectDuration, Direction.ServerToClient)]
+public sealed partial class ServerSpellUpdateEffectDuration : IWritable
 {
-    public uint ServerUniqueId { get; set; }
-    public uint SpellEffectUniqueId { get; set; }
-    public int TimeRemaining { get; set; }
-    public uint TargetUnitId { get; set; }
+    [UInt(32)] public uint ServerUniqueId { get; set; }
+    [UInt(32)] public uint SpellEffectUniqueId { get; set; }
+    [UInt(32)] public int TimeRemaining { get; set; }
+    [UInt(32)] public uint TargetUnitId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

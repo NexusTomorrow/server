@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
 [Message(GameMessageOpcode.ClientChatLeave)]
-public class ClientChatLeave : IReadable
+[WireMessage(GameMessageOpcode.ClientChatLeave, Direction.ClientToServer)]
+public sealed partial class ClientChatLeave : IReadable
 {
     public Channel Channel { get; private set; }
 

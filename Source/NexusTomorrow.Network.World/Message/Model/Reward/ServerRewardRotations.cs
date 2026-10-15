@@ -1,21 +1,24 @@
 ﻿using NexusTomorrow.Game.Static.Reward;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Reward;
 
 [Message(GameMessageOpcode.ServerRewardRotations)]
-public class ServerRewardRotations : IWritable
+[WireMessage(GameMessageOpcode.ServerRewardRotations, Direction.ServerToClient)]
+public sealed partial class ServerRewardRotations : IWritable
 {
-    public class RewardRotation : IWritable
+    [WireStruct]
+    public sealed partial class RewardRotation : IWritable
     {
-        public uint RotationId { get; set; } // Appears to be an ID used to denote a reward offered for some rotation period
-                                             // Values seen vary been 0 and ~5600
-                                             // Seen multiple times over time with different values in the RewardInfo
-                                             // Not certain how this should be created/managed
-        public uint RewardRotationContentId { get; set; }
-        public float ExpirationTime { get; set; } // in days from now
-        public RewardRotationRewardType RewardType { get; set; }
-        public uint RewardId { get; set; }
+        [UInt(32)] public uint RotationId { get; set; } // Appears to be an ID used to denote a reward offered for some rotation period
+                                                        // Values seen vary been 0 and ~5600
+                                                        // Seen multiple times over time with different values in the RewardInfo
+                                                        // Not certain how this should be created/managed
+        [UInt(14)] public uint RewardRotationContentId { get; set; }
+        [Float32] public float ExpirationTime { get; set; } // in days from now
+        [UInt(8)] public RewardRotationRewardType RewardType { get; set; }
+        [UInt(32)] public uint RewardId { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -27,7 +30,7 @@ public class ServerRewardRotations : IWritable
         }
     }
 
-    public List<RewardRotation> RewardRotations { get; set; }
+    [Array(CountBits = 32)] public List<RewardRotation> RewardRotations { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

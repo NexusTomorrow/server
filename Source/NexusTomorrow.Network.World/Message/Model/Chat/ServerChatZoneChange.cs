@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
 
 [Message(GameMessageOpcode.ServerChatZoneChange)]
-public class ServerChatZoneChange : IWritable
+[WireMessage(GameMessageOpcode.ServerChatZoneChange, Direction.ServerToClient)]
+public sealed partial class ServerChatZoneChange : IWritable
 {
-    public ushort WorldZoneId { get; set; }
+    [UInt(15)] public ushort WorldZoneId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

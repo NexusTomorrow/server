@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.ICComm;
 
 // Not seen in sniffs so not sure when these would be sent
 [Message(GameMessageOpcode.ServerICCommOrderedMessage)]
-public class ServerICCommOrderedMessage : IWritable
+[WireMessage(GameMessageOpcode.ServerICCommOrderedMessage, Direction.ServerToClient)]
+public sealed partial class ServerICCommOrderedMessage : IWritable
 {
-    public ulong IccomId { get; set; }
-    public uint MessageId { get; set; }
-    public string Message { get; set; }
+    [UInt(64)] public ulong IccomId { get; set; }
+    [UInt(32)] public uint MessageId { get; set; }
+    [WideString] public string Message { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

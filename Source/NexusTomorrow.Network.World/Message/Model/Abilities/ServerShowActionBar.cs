@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Spell;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
 [Message(GameMessageOpcode.ServerShowActionBar)]
-public class ServerShowActionBar : IWritable
+[WireMessage(GameMessageOpcode.ServerShowActionBar, Direction.ServerToClient)]
+public sealed partial class ServerShowActionBar : IWritable
 {
-    public ShortcutSet ShortcutSet { get; set; }
-    public ushort ActionBarShortcutSetId { get; set; }
-    public uint AssociatedUnitId { get; set; }
+    [UInt(4)] public ShortcutSet ShortcutSet { get; set; }
+    [UInt(14)] public ushort ActionBarShortcutSetId { get; set; }
+    [UInt(32)] public uint AssociatedUnitId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

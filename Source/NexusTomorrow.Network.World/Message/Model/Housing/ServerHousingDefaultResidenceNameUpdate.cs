@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ServerHousingDefaultResidenceNameUpdate)]
-public class ServerHousingDefaultResidenceNameUpdate : Neighbourhood
+[WireMessage(GameMessageOpcode.ServerHousingDefaultResidenceNameUpdate, Direction.ServerToClient)]
+public sealed partial class ServerHousingDefaultResidenceNameUpdate : Neighbourhood
 {
     // Client only uses the Name of the Neighbourhood in this message
 }

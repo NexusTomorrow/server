@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogLifesteal : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogLifesteal : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.Lifesteal;
+    [NotOnWire] public CombatLogType Type => CombatLogType.Lifesteal;
 
-    public uint UnitId { get; set; }
-    public uint HealthStolen { get; set; }
-    public uint Absorption { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(32)] public uint HealthStolen { get; set; }
+    [UInt(32)] public uint Absorption { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

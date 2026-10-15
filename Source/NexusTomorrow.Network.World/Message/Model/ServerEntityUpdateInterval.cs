@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
@@ -6,9 +7,10 @@ namespace NexusTomorrow.Network.World.Message.Model;
 // This can be sent at any time but will get overwritten by the ServiceInstanceSettings message.
 
 [Message(GameMessageOpcode.ServerClientEntityUpdateInterval)]
-public class ServerClientEntityUpdateInterval : IWritable
+[WireMessage(GameMessageOpcode.ServerClientEntityUpdateInterval, Direction.ServerToClient)]
+public sealed partial class ServerClientEntityUpdateInterval : IWritable
 {
-    public uint ClientEntitySendUpdateInterval { get; set; }
+    [UInt(32)] public uint ClientEntitySendUpdateInterval { get; set; }
     // Interval is specified in milliseconds.
     // Client will bound the value received between 25 and 1000 ms.
     // Captured data show that the server would periodically change the interval between 125 and 126 ms

@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Cinematic;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ServerCinematicNotify)]
-public class ServerCinematicNotify : IWritable
+[WireMessage(GameMessageOpcode.ServerCinematicNotify, Direction.ServerToClient)]
+public sealed partial class ServerCinematicNotify : IWritable
 {
-    public CinematicFlags Flags { get; set; }
-    public CancelType CancelMode { get; set; }
-    public uint Delay { get; set; } // for scheduling end
-    public ushort CinematicId { get; set; }
+    [UInt(16)] public CinematicFlags Flags { get; set; }
+    [UInt(16)] public CancelType CancelMode { get; set; }
+    [UInt(32)] public uint Delay { get; set; } // for scheduling end
+    [UInt(14)] public ushort CinematicId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

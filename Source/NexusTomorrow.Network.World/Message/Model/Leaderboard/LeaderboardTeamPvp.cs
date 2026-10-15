@@ -1,17 +1,19 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Leaderboard;
 
-public class LeaderboardTeamPvp : IWritable
+[WireStruct]
+public sealed partial class LeaderboardTeamPvp : IWritable
 {
-    public ulong GuildId { get; set; }
-    public Class Class { get; set; } // value is 23 when leaderboard type is Arena3v3
-    public uint Rating { get; set; }
-    public uint Rank { get; set; }
-    public uint LastRank { get; set; }
-    public string Name { get; set; } // can be team name or player name, depending on the leaderboard type
-    public List<TeamMember> TeamMembers { get; set; } = []; // Battleground rankings are for individuals only, there are no team members
+    [UInt(64)] public ulong GuildId { get; set; }
+    [UInt(5)] public Class Class { get; set; } // value is 23 when leaderboard type is Arena3v3
+    [UInt(32)] public uint Rating { get; set; }
+    [UInt(32)] public uint Rank { get; set; }
+    [UInt(32)] public uint LastRank { get; set; }
+    [WideString] public string Name { get; set; } // can be team name or player name, depending on the leaderboard type
+    [Array(CountBits = 32)] public List<TeamMember> TeamMembers { get; set; } = []; // Battleground rankings are for individuals only, there are no team members
 
     public void Write(GamePacketWriter writer)
     {

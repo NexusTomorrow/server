@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ClientPathExplorerPowerMapProgress)]
-public class ClientPathExplorerPowerMapProgress : IReadable
+[WireMessage(GameMessageOpcode.ClientPathExplorerPowerMapProgress, Direction.ClientToServer)]
+public sealed partial class ClientPathExplorerPowerMapProgress : IReadable
 {
-    public uint PathMissionId { get; private set; }
+    [UInt(14)] public uint PathMissionId { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
@@ -6,7 +7,8 @@ namespace NexusTomorrow.Network.World.Message.Model;
 // Possibly related to ServerSpellRemove (0x7FE).
 // Included for completeness but not useful unless the GameFormula tbl entry is overwritten.
 [Message(GameMessageOpcode.Server_0x178_SoundTrigger)]
-public class Server0178SoundTrigger : IWritable
+[WireMessage(GameMessageOpcode.Server_0x178_SoundTrigger, Direction.ServerToClient)]
+public sealed partial class Server0178SoundTrigger : IWritable
 {
     public void Write(GamePacketWriter writer)
     {

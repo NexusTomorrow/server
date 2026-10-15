@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
@@ -7,22 +8,24 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 // Data is accessible by calling lua function CharacterScreenLib::GetDeletedCharacterInfo
 // which is not used by the Carbine UI. Requires custom CharacterSelect screen to be useful.
 [Message(GameMessageOpcode.ServerCharacterDeletedInfo)]
-public class ServerCharacterDeletedInfo : IWritable
+[WireMessage(GameMessageOpcode.ServerCharacterDeletedInfo, Direction.ServerToClient)]
+public sealed partial class ServerCharacterDeletedInfo : IWritable
 {
-    public class DeletedCharacterInfo : IWritable
+    [WireStruct]
+    public sealed partial class DeletedCharacterInfo : IWritable
     {
-        public ulong CharacterId { get; set; }
-        public uint Unused { get; set; }
-        public string Name { get; set; }
-        public uint Level { get; set; }
-        public ushort Class { get; set; }
-        public ushort Race { get; set; }
-        public ushort Gender { get; set; }
-        public ushort Faction { get; set; }
-        public ushort Path { get; set; }
-        public ushort WorldId { get; set; }
-        public ushort WorldZoneId { get; set; }
-        public float PurgeDate { get; set; }
+        [UInt(64)] public ulong CharacterId { get; set; }
+        [UInt(32)] public uint Unused { get; set; }
+        [WideString] public string Name { get; set; }
+        [UInt(32)] public uint Level { get; set; }
+        [UInt(14)] public ushort Class { get; set; }
+        [UInt(14)] public ushort Race { get; set; }
+        [UInt(2)] public ushort Gender { get; set; }
+        [UInt(14)] public ushort Faction { get; set; }
+        [UInt(3)] public ushort Path { get; set; }
+        [UInt(15)] public ushort WorldId { get; set; }
+        [UInt(15)] public ushort WorldZoneId { get; set; }
+        [Float32] public float PurgeDate { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -41,7 +44,7 @@ public class ServerCharacterDeletedInfo : IWritable
         }
     }
 
-    public List<DeletedCharacterInfo> DelectedCharacters { get; set; } = [];
+    [Array(CountBits = 32)] public List<DeletedCharacterInfo> DelectedCharacters { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,10 +1,12 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ClientHousingCrateAllDecor)]
-public class ClientHousingCrateAllDecor : IReadable
+[WireMessage(GameMessageOpcode.ClientHousingCrateAllDecor, Direction.ClientToServer)]
+public sealed partial class ClientHousingCrateAllDecor : IReadable
 {
     public Identity TargetResidence { get; } = new();
 

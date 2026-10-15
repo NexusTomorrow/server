@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientMatchingMatchLeave)]
-public class ClientMatchingMatchLeave : IReadable
+[WireMessage(GameMessageOpcode.ClientMatchingMatchLeave, Direction.ClientToServer)]
+public sealed partial class ClientMatchingMatchLeave : IReadable
 {
     public void Read(GamePacketReader reader)
     {

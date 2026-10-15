@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 // Fires whenever the player leaves a location where a power map mission can be started.
 
 [Message(GameMessageOpcode.ServerPathExplorerPowerMapExited)]
-public class ServerPathExplorerPowerMapExited : IWritable
+[WireMessage(GameMessageOpcode.ServerPathExplorerPowerMapExited, Direction.ServerToClient)]
+public sealed partial class ServerPathExplorerPowerMapExited : IWritable
 {
-    public ushort PathMissionId { get; set; }
+    [UInt(14)] public ushort PathMissionId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

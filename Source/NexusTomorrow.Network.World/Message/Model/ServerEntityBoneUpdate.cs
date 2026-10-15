@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerEntityBoneUpdate)]
-public class ServerEntityBoneUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerEntityBoneUpdate, Direction.ServerToClient)]
+public sealed partial class ServerEntityBoneUpdate : IWritable
 {
-    public uint UnitId { get; set; }
-    public List<float> Bones { get; set; } = [];
+    [UInt(32)] public uint UnitId { get; set; }
+    [Array(CountBits = 32), Float32] public List<float> Bones { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

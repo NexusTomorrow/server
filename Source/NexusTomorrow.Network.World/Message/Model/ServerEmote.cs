@@ -1,16 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerEmote)]
-public class ServerEmote : IWritable
+[WireMessage(GameMessageOpcode.ServerEmote, Direction.ServerToClient)]
+public sealed partial class ServerEmote : IWritable
 {
-    public ushort EmotesId { get; set; }
-    public uint Seed { get; set; }
-    public uint SourceUnitId { get; set; }
-    public uint TargetUnitId { get; set; }
-    public bool Targeted { get; set; }
-    public bool Silent { get; set; }
+    [UInt(14)] public ushort EmotesId { get; set; }
+    [UInt(32)] public uint Seed { get; set; }
+    [UInt(32)] public uint SourceUnitId { get; set; }
+    [UInt(32)] public uint TargetUnitId { get; set; }
+    [UInt(1)] public bool Targeted { get; set; }
+    [UInt(1)] public bool Silent { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

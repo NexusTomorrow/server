@@ -1,10 +1,13 @@
-﻿namespace NexusTomorrow.Network.World.Entity.Model;
+﻿using NexusTomorrow.Network.Codec;
 
-public class EsperPetEntityModel : IEntityModel
+namespace NexusTomorrow.Network.World.Entity.Model;
+
+[WireStruct]
+public sealed partial class EsperPetEntityModel : IEntityModel
 {
-    public uint CreatureId { get; set; }
-    public uint OwnerId { get; set; }
-    public ushort OwnerDisplayItemId { get; set; }
+    [UInt(18)] public uint CreatureId { get; set; }
+    [UInt(32)] public uint OwnerId { get; set; }
+    [UInt(15)] public ushort OwnerDisplayItemId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

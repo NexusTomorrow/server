@@ -1,16 +1,18 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
 using NexusTomorrow.Game.Static.Spell;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogHeal : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogHeal : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.Heal;
+    [NotOnWire] public CombatLogType Type => CombatLogType.Heal;
 
-    public uint HealAmount { get; set; }
-    public uint Overheal { get; set; }
-    public uint Absorption { get; set; } // not used by client
-    public SpellEffectType EffectType { get; set; } // 8u
+    [UInt(32)] public uint HealAmount { get; set; }
+    [UInt(32)] public uint Overheal { get; set; }
+    [UInt(32)] public uint Absorption { get; set; } // not used by client
+    [UInt(8)] public SpellEffectType EffectType { get; set; } // 8u
     public CombatLogCastData CastData { get; set; }
 
     public void Write(GamePacketWriter writer)

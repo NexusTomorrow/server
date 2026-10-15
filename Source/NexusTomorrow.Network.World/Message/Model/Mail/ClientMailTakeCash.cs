@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
 [Message(GameMessageOpcode.ClientMailTakeCash)]
-public class ClientMailTakeCash : IReadable
+[WireMessage(GameMessageOpcode.ClientMailTakeCash, Direction.ClientToServer)]
+public sealed partial class ClientMailTakeCash : IReadable
 {
-    public ulong MailId { get; private set; }
-    public uint MailboxUnitId { get; private set; } // Mailbox being interacted with
+    [UInt(64)] public ulong MailId { get; private set; }
+    [UInt(32)] public uint MailboxUnitId { get; private set; } // Mailbox being interacted with
 
     public void Read(GamePacketReader reader)
     {

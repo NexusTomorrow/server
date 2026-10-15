@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.AccountInventory;
 
 [Message(GameMessageOpcode.ClientPremiumLockboxKeyRequest)]
-public class ClientPremiumLockboxKeyRequest : IReadable
+[WireMessage(GameMessageOpcode.ClientPremiumLockboxKeyRequest, Direction.ClientToServer)]
+public sealed partial class ClientPremiumLockboxKeyRequest : IReadable
 {
     public void Read(GamePacketReader reader)
     {

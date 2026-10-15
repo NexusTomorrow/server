@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
@@ -6,12 +7,13 @@ namespace NexusTomorrow.Network.World.Message.Model;
 /// Used by <see cref="CurrencyManager"/>, and also used during Combat to provide Momentum Boosts.
 /// </summary>
 [Message(GameMessageOpcode.ServerCombatReward)]
-public class ServerCombatReward : IWritable
+[WireMessage(GameMessageOpcode.ServerCombatReward, Direction.ServerToClient)]
+public sealed partial class ServerCombatReward : IWritable
 {
-    public byte Stat { get; set; }
-    public ulong NewValue { get; set; }
-    public uint CombatRewardId { get; set; }
-    public uint TargetUnitId { get; set; }
+    [UInt(5)] public byte Stat { get; set; }
+    [UInt(64)] public ulong NewValue { get; set; }
+    [UInt(32)] public uint CombatRewardId { get; set; }
+    [UInt(32)] public uint TargetUnitId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

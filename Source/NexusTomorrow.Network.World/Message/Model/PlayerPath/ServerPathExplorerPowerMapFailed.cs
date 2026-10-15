@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 // Fires whenever the player fails a Tracking mission.
 
 [Message(GameMessageOpcode.ServerPathExplorerPowerMapFailed)]
-public class ServerPathExplorerPowerMapFailed : IWritable
+[WireMessage(GameMessageOpcode.ServerPathExplorerPowerMapFailed, Direction.ServerToClient)]
+public sealed partial class ServerPathExplorerPowerMapFailed : IWritable
 {
-    public ushort PathMissionId { get; set; }
+    [UInt(14)] public ushort PathMissionId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,16 +1,18 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
 [Message(GameMessageOpcode.ServerChatJoin)]
-public class ServerChatJoin : IWritable
+[WireMessage(GameMessageOpcode.ServerChatJoin, Direction.ServerToClient)]
+public sealed partial class ServerChatJoin : IWritable
 {
     public Channel Channel { get; set; }
-    public string Name { get; set; }
-    public uint MemberCount { get; set; }
-    public ChatChannelMemberFlags Flags { get; set; }
-    public uint Order { get; set; }
+    [WideString] public string Name { get; set; }
+    [UInt(32)] public uint MemberCount { get; set; }
+    [UInt(32)] public ChatChannelMemberFlags Flags { get; set; }
+    [UInt(32)] public uint Order { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

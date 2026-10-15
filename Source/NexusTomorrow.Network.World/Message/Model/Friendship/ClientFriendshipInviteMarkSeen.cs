@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
 [Message(GameMessageOpcode.ClientFriendshipInviteMarkSeen)]
-public class ClientFriendshipInviteMarkSeen : IReadable
+[WireMessage(GameMessageOpcode.ClientFriendshipInviteMarkSeen, Direction.ClientToServer)]
+public sealed partial class ClientFriendshipInviteMarkSeen : IReadable
 {
-    public List<ulong> FriendInviteIds { get; private set; } = [];// Array of InviteIds
+    [Array(CountBits = 16), UInt(64)] public List<ulong> FriendInviteIds { get; private set; } = [];// Array of InviteIds
 
     public void Read(GamePacketReader reader)
     {

@@ -1,17 +1,19 @@
 ﻿using NexusTomorrow.Game.Static.Group;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerGroupMemberFlagsChanged)]
-public class ServerGroupMemberFlagsChanged : IWritable
+[WireMessage(GameMessageOpcode.ServerGroupMemberFlagsChanged, Direction.ServerToClient)]
+public sealed partial class ServerGroupMemberFlagsChanged : IWritable
 {
-    public ulong GroupId { get; set; }
-    public uint MemberIndex { get; set; } //< Not sure
+    [UInt(64)] public ulong GroupId { get; set; }
+    [UInt(32)] public uint MemberIndex { get; set; } //< Not sure
     public Identity TargetedPlayer { get; set; } = new();
-    public GroupMemberInfoFlags ChangedFlags { get; set; }
-    public bool IsFromPromotion { get; set; }
+    [UInt(32)] public GroupMemberInfoFlags ChangedFlags { get; set; }
+    [UInt(1)] public bool IsFromPromotion { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

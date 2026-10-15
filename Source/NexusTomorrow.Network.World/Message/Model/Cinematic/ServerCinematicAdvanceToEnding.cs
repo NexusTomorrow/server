@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 // TODO:: confirm
 [Message(GameMessageOpcode.ServerCinematicAdvanceToEnding)]
-public class ServerCinematicAdvanceToEnding : IWritable
+[WireMessage(GameMessageOpcode.ServerCinematicAdvanceToEnding, Direction.ServerToClient)]
+public sealed partial class ServerCinematicAdvanceToEnding : IWritable
 {
-    public byte Unused { get; set; }
+    [UInt(8)] public byte Unused { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

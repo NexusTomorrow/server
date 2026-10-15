@@ -1,16 +1,18 @@
 ﻿using NexusTomorrow.Game.Static.PlayerPath;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathInitialize)]
-public class ServerPathInitialise : IWritable
+[WireMessage(GameMessageOpcode.ServerPathInitialize, Direction.ServerToClient)]
+public sealed partial class ServerPathInitialise : IWritable
 {
-    public Path ActivePath { get; set; }
-    public uint[] PathProgress { get; set; } = new uint[4];
-    public PathUnlockedMask PathUnlockedMask { get; set; }
-    public float TimeSinceLastActivateInDays { get; set; }
+    [UInt(3)] public Path ActivePath { get; set; }
+    [FixedArray(4), UInt(32)] public uint[] PathProgress { get; set; } = new uint[4];
+    [UInt(4)] public PathUnlockedMask PathUnlockedMask { get; set; }
+    [Float32] public float TimeSinceLastActivateInDays { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

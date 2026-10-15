@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientGroupInviteResponse)]
-public class ClientGroupInviteResponse : IReadable
+[WireMessage(GameMessageOpcode.ClientGroupInviteResponse, Direction.ClientToServer)]
+public sealed partial class ClientGroupInviteResponse : IReadable
 {
-    public ulong GroupId { get; set; }
-    public bool Response { get; set; }
-    public uint Unk1 { get; set; }
+    [UInt(64)] public ulong GroupId { get; set; }
+    [UInt(1)] public bool Response { get; set; }
+    [UInt(32)] public uint Unk1 { get; set; }
 
     public void Read(GamePacketReader reader)
     {

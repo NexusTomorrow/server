@@ -1,16 +1,19 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ServerHousingVendorList)]
-public class ServerHousingVendorList : IWritable
+[WireMessage(GameMessageOpcode.ServerHousingVendorList, Direction.ServerToClient)]
+public sealed partial class ServerHousingVendorList : IWritable
 {
-    public class PlugItem : IWritable
+    [WireStruct]
+    public sealed partial class PlugItem : IWritable
     {
-        public ulong SourceId { get; set; }
-        public uint PlugItemId { get; set; }
-        public uint Cost { get; set; }
-        public uint PlugItemFlags { get; set; }
+        [UInt(64)] public ulong SourceId { get; set; }
+        [UInt(32)] public uint PlugItemId { get; set; }
+        [UInt(32)] public uint Cost { get; set; }
+        [UInt(32)] public uint PlugItemFlags { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -21,8 +24,8 @@ public class ServerHousingVendorList : IWritable
         }
     }
 
-    public List<PlugItem> PlugItems { get; set; } = [];
-    public byte ListType { get; set; } = 0; // must be zero or else the client ignores the contents of the message
+    [Array(CountBits = 32)] public List<PlugItem> PlugItems { get; set; } = [];
+    [UInt(2)] public byte ListType { get; set; } = 0; // must be zero or else the client ignores the contents of the message
 
     public void Write(GamePacketWriter writer)
     {

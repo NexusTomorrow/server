@@ -1,13 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [Message(GameMessageOpcode.ServerRecruitmentGuildDescription)]
-public class ServerRecruitmentGuildDescription : IWritable
+[WireMessage(GameMessageOpcode.ServerRecruitmentGuildDescription, Direction.ServerToClient)]
+public sealed partial class ServerRecruitmentGuildDescription : IWritable
 {
     public Identity GuildIdentity { get; set; }
-    public string Description { get; set; }
+    [WideString] public string Description { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

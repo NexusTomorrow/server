@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ServerWarPlotPlugState)]
-public class ServerWarPlotPlugState : IWritable
+[WireMessage(GameMessageOpcode.ServerWarPlotPlugState, Direction.ServerToClient)]
+public sealed partial class ServerWarPlotPlugState : IWritable
 {
-    public uint CratedDecorCount { get; set; }
-    public ushort Unknown1 { get; set; }
-    public ushort PlacedDecorCount { get; set; }
-    public List<WarPlotPlug> Plugs { get; set; } = [];
+    [UInt(32)] public uint CratedDecorCount { get; set; }
+    [UInt(16)] public ushort Unknown1 { get; set; }
+    [UInt(16)] public ushort PlacedDecorCount { get; set; }
+    [Array(CountBits = 8)] public List<WarPlotPlug> Plugs { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

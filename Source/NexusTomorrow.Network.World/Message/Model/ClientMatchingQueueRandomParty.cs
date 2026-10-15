@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Matching;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientMatchingQueueRandomParty)]
-public class ClientMatchingQueueRandomParty
+[WireMessage(GameMessageOpcode.ClientMatchingQueueRandomParty, Direction.ClientToServer)]
+public sealed partial class ClientMatchingQueueRandomParty
 {
-    public Game.Static.Matching.MatchType MatchType { get; private set; }
-    public MatchingQueueFlags Flags { get; private set; }
-    public Role Roles { get; private set; }
+    [UInt(5)] public Game.Static.Matching.MatchType MatchType { get; private set; }
+    [UInt(32)] public MatchingQueueFlags Flags { get; private set; }
+    [UInt(32)] public Role Roles { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,9 +1,12 @@
-﻿namespace NexusTomorrow.Network.World.Entity.Model;
+﻿using NexusTomorrow.Network.Codec;
 
-public class CollectableUnitEntityModel : IEntityModel
+namespace NexusTomorrow.Network.World.Entity.Model;
+
+[WireStruct]
+public sealed partial class CollectableUnitEntityModel : IEntityModel
 {
-    public uint CreatureId { get; set; }
-    public byte QuestChecklistIdx { get; set; }
+    [UInt(18)] public uint CreatureId { get; set; }
+    [UInt(8)] public byte QuestChecklistIdx { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

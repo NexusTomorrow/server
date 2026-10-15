@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogModifyInterruptArmor : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogModifyInterruptArmor : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.ModifyInterruptArmor;
+    [NotOnWire] public CombatLogType Type => CombatLogType.ModifyInterruptArmor;
 
-    public uint Amount { get; set; }
+    [UInt(32)] public uint Amount { get; set; }
     public CombatLogCastData CastData { get; set; }
 
     public void Write(GamePacketWriter writer)

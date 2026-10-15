@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.AccountInventory;
 
 [Message(GameMessageOpcode.ClientDailyLoginRewardsRequest)]
-public class ClientDailyLoginRewardsRequest : IReadable
+[WireMessage(GameMessageOpcode.ClientDailyLoginRewardsRequest, Direction.ClientToServer)]
+public sealed partial class ClientDailyLoginRewardsRequest : IReadable
 {
     public void Read(GamePacketReader reader)
     {

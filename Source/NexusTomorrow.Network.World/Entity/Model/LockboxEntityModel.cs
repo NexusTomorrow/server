@@ -1,12 +1,15 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Entity.Model;
 
-public class LockboxEntityModel : IEntityModel
+[WireStruct]
+public sealed partial class LockboxEntityModel : IEntityModel
 {
-    public class UnknownLockboxStructure : IWritable
+    [WireStruct]
+    public sealed partial class UnknownLockboxStructure : IWritable
     {
-        public uint Unknown0 { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -14,8 +17,8 @@ public class LockboxEntityModel : IEntityModel
         }
     }
 
-    public uint CreatureId { get; set; }
-    public List<UnknownLockboxStructure> Unknown1 { get; } = [];
+    [UInt(18)] public uint CreatureId { get; set; }
+    [Array(CountBits = 16)] public List<UnknownLockboxStructure> Unknown1 { get; } = [];
 
     public void Write(GamePacketWriter writer)
     {

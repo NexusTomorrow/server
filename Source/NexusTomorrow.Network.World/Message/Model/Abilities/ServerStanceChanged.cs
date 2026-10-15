@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
 [Message(GameMessageOpcode.ServerStanceChanged)]
-public class ServerStanceChanged : IWritable
+[WireMessage(GameMessageOpcode.ServerStanceChanged, Direction.ServerToClient)]
+public sealed partial class ServerStanceChanged : IWritable
 {
-    public byte InnateIndex { get; set; }
+    [UInt(2)] public byte InnateIndex { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Fortune;
 
 // Sent to the storefront server when the player has opened the Fortunes screen
 // Sent at the same time as ClientFortunesNotifyGame
 [Message(GameMessageOpcode.ClientFortuneNotifyStorefront)]
-public class ClientFortuneNotifyStorefront : IReadable
+[WireMessage(GameMessageOpcode.ClientFortuneNotifyStorefront, Direction.ClientToServer)]
+public sealed partial class ClientFortuneNotifyStorefront : IReadable
 {
     public void Read(GamePacketReader reader)
     {

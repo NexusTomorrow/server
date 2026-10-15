@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerBuybackItems)]
-public class ServerBuybackItems : IWritable
+[WireMessage(GameMessageOpcode.ServerBuybackItems, Direction.ServerToClient)]
+public sealed partial class ServerBuybackItems : IWritable
 {
-    public List<BuybackItem> BuybackItems { get; } = [];
+    [Array(CountBits = 32)] public List<BuybackItem> BuybackItems { get; } = [];
 
     public void Write(GamePacketWriter writer)
     {

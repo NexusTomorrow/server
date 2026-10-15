@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerEntityGroupAssociation)]
-public class ServerEntityGroupAssociation : IWritable
+[WireMessage(GameMessageOpcode.ServerEntityGroupAssociation, Direction.ServerToClient)]
+public sealed partial class ServerEntityGroupAssociation : IWritable
 {
-    public uint UnitId { get; set; }
-    public ulong GroupId { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(64)] public ulong GroupId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

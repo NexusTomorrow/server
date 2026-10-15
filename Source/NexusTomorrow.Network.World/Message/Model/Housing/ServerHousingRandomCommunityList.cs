@@ -1,16 +1,19 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [Message(GameMessageOpcode.ServerHousingRandomCommunityList)]
-public class ServerHousingRandomCommunityList : IWritable
+[WireMessage(GameMessageOpcode.ServerHousingRandomCommunityList, Direction.ServerToClient)]
+public sealed partial class ServerHousingRandomCommunityList : IWritable
 {
-    public class Community : IWritable
+    [WireStruct]
+    public sealed partial class Community : IWritable
     {
         public Identity GuildIdentity { get; set; }
-        public string Name { get; set; }
-        public string CommunityLeader { get; set; }
+        [WideString] public string Name { get; set; }
+        [WideString] public string CommunityLeader { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -20,7 +23,7 @@ public class ServerHousingRandomCommunityList : IWritable
         }
     }
 
-    public List<Community> Communities { get; set; } = [];
+    [Array(CountBits = 32)] public List<Community> Communities { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

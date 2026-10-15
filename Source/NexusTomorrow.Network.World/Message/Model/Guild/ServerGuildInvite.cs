@@ -1,16 +1,18 @@
 ﻿using NexusTomorrow.Game.Static.Guild;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [Message(GameMessageOpcode.ServerGuildInvite)]
-public class ServerGuildInvite : IWritable
+[WireMessage(GameMessageOpcode.ServerGuildInvite, Direction.ServerToClient)]
+public sealed partial class ServerGuildInvite : IWritable
 {
-    public string InviterName { get; set; }
-    public string GuildName { get; set; }
-    public GuildFlag Flags { get; set; }
-    public GuildType GuildType { get; set; }
-    public ulong Unused { get; set; }
+    [WideString] public string InviterName { get; set; }
+    [WideString] public string GuildName { get; set; }
+    [UInt(32)] public GuildFlag Flags { get; set; }
+    [UInt(4)] public GuildType GuildType { get; set; }
+    [UInt(64)] public ulong Unused { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

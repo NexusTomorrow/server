@@ -1,15 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 // Response to ClientGetRealmTransferDestinations (0x3EE)
 // Triggers TransferDestinationRealmList lua event.
 [Message(GameMessageOpcode.ServerTransferDestinationRealmList)]
-public class ServerTransferDestinationRealmList : IWritable
+[WireMessage(GameMessageOpcode.ServerTransferDestinationRealmList, Direction.ServerToClient)]
+public sealed partial class ServerTransferDestinationRealmList : IWritable
 {
-    public class RealmTransferInfo : RealmInfo
+    [WireStruct]
+    public sealed partial class RealmTransferInfo : RealmInfo
     {
-        public bool IsFree { get; set; }
+        [UInt(1)] public bool IsFree { get; set; }
 
         public override void Write(GamePacketWriter writer)
         {
@@ -18,7 +21,7 @@ public class ServerTransferDestinationRealmList : IWritable
         }
     }
 
-    public List<RealmTransferInfo> Realms { get; set; } = [];
+    [Array(CountBits = 32)] public List<RealmTransferInfo> Realms { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

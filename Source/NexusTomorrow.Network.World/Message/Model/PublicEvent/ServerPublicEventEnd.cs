@@ -1,16 +1,18 @@
 ﻿using NexusTomorrow.Game.Static.PublicEvent;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
 [Message(GameMessageOpcode.ServerPublicEventEnd)]
-public class ServerPublicEventEnd : IWritable
+public partial class ServerPublicEventEnd : IWritable
 {
-    public class PublicEventObjectiveStatus : IWritable
+    [WireStruct]
+    public sealed partial class PublicEventObjectiveStatus : IWritable
     {
-        public uint ObjectiveId { get; set; }
-        public PublicEventStatus Status { get; set; }
+        [UInt(15)] public uint ObjectiveId { get; set; }
+        [UInt(32)] public PublicEventStatus Status { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

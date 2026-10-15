@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerEntityAggroSwitch)]
-public class ServerEntityAggroSwitch : IWritable
+[WireMessage(GameMessageOpcode.ServerEntityAggroSwitch, Direction.ServerToClient)]
+public sealed partial class ServerEntityAggroSwitch : IWritable
 {
-    public uint UnitId { get; set; }
-    public uint TargetId { get; set; }
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(32)] public uint TargetId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

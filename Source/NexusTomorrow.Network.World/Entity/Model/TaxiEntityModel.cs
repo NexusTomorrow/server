@@ -1,14 +1,17 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Entity.Model;
 
-public class TaxiEntityModel : IEntityModel
+[WireStruct]
+public sealed partial class TaxiEntityModel : IEntityModel
 {
-    public class Passenger : IWritable
+    [WireStruct]
+    public sealed partial class Passenger : IWritable
     {
-        public byte SeatType { get; set; }
-        public byte SeatPosition { get; set; }
-        public uint UnitId { get; set; }
+        [UInt(2)] public byte SeatType { get; set; }
+        [UInt(3)] public byte SeatPosition { get; set; }
+        [UInt(32)] public uint UnitId { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -18,10 +21,10 @@ public class TaxiEntityModel : IEntityModel
         }
     }
 
-    public uint CreatureId { get; set; }
-    public ushort UnitVehicleId { get; set; }
-    public uint OwnerId { get; set; }
-    public List<Passenger> Passengers { get; set; } = [];
+    [UInt(18)] public uint CreatureId { get; set; }
+    [UInt(14)] public ushort UnitVehicleId { get; set; }
+    [UInt(32)] public uint OwnerId { get; set; }
+    [Array(CountBits = 3)] public List<Passenger> Passengers { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

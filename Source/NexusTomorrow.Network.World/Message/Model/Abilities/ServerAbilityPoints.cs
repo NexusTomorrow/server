@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
 [Message(GameMessageOpcode.ServerAbilityPoints)]
-public class ServerAbilityPoints : IWritable
+[WireMessage(GameMessageOpcode.ServerAbilityPoints, Direction.ServerToClient)]
+public sealed partial class ServerAbilityPoints : IWritable
 {
-    public uint AbilityPoints { get; set; }
-    public uint TotalAbilityPoints { get; set; }
+    [UInt(32)] public uint AbilityPoints { get; set; }
+    [UInt(32)] public uint TotalAbilityPoints { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

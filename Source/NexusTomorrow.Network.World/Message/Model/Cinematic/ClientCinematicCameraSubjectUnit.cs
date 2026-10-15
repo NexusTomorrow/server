@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ClientCinematicCameraSubjectUnit)]
-public class ClientCinematicCameraSubjectUnit : IReadable
+[WireMessage(GameMessageOpcode.ClientCinematicCameraSubjectUnit, Direction.ClientToServer)]
+public sealed partial class ClientCinematicCameraSubjectUnit : IReadable
 {
-    public uint UnitId { get; private set; }
+    [UInt(32)] public uint UnitId { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

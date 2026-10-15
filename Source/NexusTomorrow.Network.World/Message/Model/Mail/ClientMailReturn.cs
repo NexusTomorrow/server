@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
 [Message(GameMessageOpcode.ClientMailReturn)]
-public class ClientMailReturn : IReadable
+[WireMessage(GameMessageOpcode.ClientMailReturn, Direction.ClientToServer)]
+public sealed partial class ClientMailReturn : IReadable
 {
-    public ulong MailId { get; private set; }
+    [UInt(64)] public ulong MailId { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

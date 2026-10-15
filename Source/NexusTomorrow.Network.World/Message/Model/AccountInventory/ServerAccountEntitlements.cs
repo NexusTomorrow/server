@@ -1,15 +1,18 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 [Message(GameMessageOpcode.ServerAccountEntitlements)]
-public class ServerAccountEntitlements : IWritable
+[WireMessage(GameMessageOpcode.ServerAccountEntitlements, Direction.ServerToClient)]
+public sealed partial class ServerAccountEntitlements : IWritable
 {
-    public class AccountEntitlement : IWritable
+    [WireStruct]
+    public sealed partial class AccountEntitlement : IWritable
     {
-        public EntitlementType EntitlementId { get; set; }
-        public uint Count { get; set; }
+        [UInt(32)] public EntitlementType EntitlementId { get; set; }
+        [UInt(32)] public uint Count { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -18,7 +21,7 @@ public class ServerAccountEntitlements : IWritable
         }
     }
 
-    public List<AccountEntitlement> AccountEntitlements { get; set; } = [];
+    [Array(CountBits = 32)] public List<AccountEntitlement> AccountEntitlements { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

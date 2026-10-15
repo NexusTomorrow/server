@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model;
@@ -8,10 +9,12 @@ namespace NexusTomorrow.Network.World.Message.Model;
 /// 27, 30, 31, 35, 39, 40, 42, 63, 72, 132 and 156 are handled, anything else defaults to "You can't use that"
 /// </remarks>
 [Message(GameMessageOpcode.ServerItemError)]
-public class ServerItemError : IWritable
+[WireMessage(GameMessageOpcode.ServerItemError, Direction.ServerToClient)]
+public sealed partial class ServerItemError : IWritable
 {
-    public ulong ItemGuid { get; set; }
-    public GenericError ErrorCode { get; set; }
+    [UInt(64)] public ulong ItemGuid { get; set; }
+    [UInt(32)] public GenericError ErrorCode { get; set; }
+    [Pad(32)] public Pad ErrorCodeHigh { get; }
 
     public void Write(GamePacketWriter writer)
     {

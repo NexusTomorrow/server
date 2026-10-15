@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogDispel : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogDispel : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.Dispel;
+    [NotOnWire] public CombatLogType Type => CombatLogType.Dispel;
 
-    public bool BRemovesSingleInstance { get; set; }
-    public uint InstancesRemoved { get; set; }
-    public uint SpellRemovedId { get; set; } // 18u
+    [UInt(1)] public bool BRemovesSingleInstance { get; set; }
+    [UInt(32)] public uint InstancesRemoved { get; set; }
+    [UInt(18)] public uint SpellRemovedId { get; set; } // 18u
 
     public void Write(GamePacketWriter writer)
     {

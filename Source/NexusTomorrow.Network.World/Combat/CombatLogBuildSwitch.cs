@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogBuildSwitch : ICombatLog
+[WireStruct]
+public sealed partial class CombatLogBuildSwitch : ICombatLog
 {
-    public CombatLogType Type => CombatLogType.BuildSwitch;
+    [NotOnWire] public CombatLogType Type => CombatLogType.BuildSwitch;
 
-    public uint UnitId { get; set; }
-    public byte NewSpecIndex { get; set; } // 3u
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(3)] public byte NewSpecIndex { get; set; } // 3u
 
     public void Write(GamePacketWriter writer)
     {

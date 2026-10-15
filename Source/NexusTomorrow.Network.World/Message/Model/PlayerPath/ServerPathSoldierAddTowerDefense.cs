@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathSoldierAddTowerDefense)]
-public class ServerPathSoldierAddTowerDefense : IWritable
+[WireMessage(GameMessageOpcode.ServerPathSoldierAddTowerDefense, Direction.ServerToClient)]
+public sealed partial class ServerPathSoldierAddTowerDefense : IWritable
 {
-    public ushort PathSoldierEventId { get; set; }
-    public ushort PathSoldierTowerDefenseId { get; set; }
+    [UInt(14)] public ushort PathSoldierEventId { get; set; }
+    [UInt(14)] public ushort PathSoldierTowerDefenseId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

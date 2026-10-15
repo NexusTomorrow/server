@@ -1,15 +1,17 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [Message(GameMessageOpcode.ServerGuildRoster)]
-public class ServerGuildRoster : IWritable
+[WireMessage(GameMessageOpcode.ServerGuildRoster, Direction.ServerToClient)]
+public sealed partial class ServerGuildRoster : IWritable
 {
     public Identity GuildIdentity { get; set; }
-    public List<GuildMember> GuildMembers { get; set; } = [];
-    public bool Done { get; set; } = true; // Indicates if the roster is complete (true) or if more members are expected (false)
-                                           // Possibly used for rate limiting the information flow or dealing with packets that grow too large, TBD
+    [Array(CountBits = 32)] public List<GuildMember> GuildMembers { get; set; } = [];
+    [UInt(1)] public bool Done { get; set; } = true; // Indicates if the roster is complete (true) or if more members are expected (false)
+                                                     // Possibly used for rate limiting the information flow or dealing with packets that grow too large, TBD
 
     public void Write(GamePacketWriter writer)
     {

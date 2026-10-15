@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.Matching;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerMatchingGroupMemberRoleSelection)]
-public class ServerMatchingGroupMemberRoleSelection : IWritable
+[WireMessage(GameMessageOpcode.ServerMatchingGroupMemberRoleSelection, Direction.ServerToClient)]
+public sealed partial class ServerMatchingGroupMemberRoleSelection : IWritable
 {
     public Identity Identity { get; set; } = new();
-    public Role Role { get; set; }
+    [UInt(32)] public Role Role { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

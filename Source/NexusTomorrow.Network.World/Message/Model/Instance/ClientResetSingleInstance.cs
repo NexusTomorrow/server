@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Instance;
 
 [Message(GameMessageOpcode.ClientResetSingleInstance)]
-public class ClientResetSingleInstance : IReadable
+[WireMessage(GameMessageOpcode.ClientResetSingleInstance, Direction.ClientToServer)]
+public sealed partial class ClientResetSingleInstance : IReadable
 {
-    public uint InstancePortalUnitId { get; private set; }
+    [UInt(32)] public uint InstancePortalUnitId { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

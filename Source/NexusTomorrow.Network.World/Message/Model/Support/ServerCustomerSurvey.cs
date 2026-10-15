@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Support;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Support;
 
 [Message(GameMessageOpcode.ServerCustomerSurveyRequest)]
-public class ServerCustomerSurveyRequest : IWritable
+[WireMessage(GameMessageOpcode.ServerCustomerSurveyRequest, Direction.ServerToClient)]
+public sealed partial class ServerCustomerSurveyRequest : IWritable
 {
-    public SurveyType CustomerSurveyId { get; set; }
-    public uint ObjectId { get; set; }
+    [UInt(14)] public SurveyType CustomerSurveyId { get; set; }
+    [UInt(32)] public uint ObjectId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,17 +1,19 @@
 ﻿using NexusTomorrow.Game.Static.Cinematic;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ServerCinematicCamera)]
-public class ServerCinematicCamera : IWritable
+[WireMessage(GameMessageOpcode.ServerCinematicCamera, Direction.ServerToClient)]
+public sealed partial class ServerCinematicCamera : IWritable
 {
-    public uint Delay { get; set; }
-    public CameraAddFlags Flags { get; set; }
-    public uint EndTransition { get; set; } // specifies type of transition
-    public ushort TranDurationStart { get; set; }
-    public ushort TranDurationMid { get; set; }
-    public ushort TranDurationEnd { get; set; }
+    [UInt(32)] public uint Delay { get; set; }
+    [UInt(32)] public CameraAddFlags Flags { get; set; }
+    [UInt(32)] public uint EndTransition { get; set; } // specifies type of transition
+    [UInt(16)] public ushort TranDurationStart { get; set; }
+    [UInt(16)] public ushort TranDurationMid { get; set; }
+    [UInt(16)] public ushort TranDurationEnd { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

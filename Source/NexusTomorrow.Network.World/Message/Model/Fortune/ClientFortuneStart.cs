@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Fortune;
 
 [Message(GameMessageOpcode.ClientFortuneStart)]
-public class ClientFortuneStart : IReadable
+[WireMessage(GameMessageOpcode.ClientFortuneStart, Direction.ClientToServer)]
+public sealed partial class ClientFortuneStart : IReadable
 {
     public void Read(GamePacketReader reader)
     {

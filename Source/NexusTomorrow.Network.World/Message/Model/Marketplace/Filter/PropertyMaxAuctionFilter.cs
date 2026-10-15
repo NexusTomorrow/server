@@ -1,11 +1,13 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
 
-public class PropertyMaxAuctionFilter : IAuctionFilter
+[WireStruct]
+public sealed partial class PropertyMaxAuctionFilter : IAuctionFilter
 {
-    public Property UnitProperty2Id { get; private set; }
-    public float Maximum { get; private set; }
+    [UInt(8)] public Property UnitProperty2Id { get; private set; }
+    [Float32] public float Maximum { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

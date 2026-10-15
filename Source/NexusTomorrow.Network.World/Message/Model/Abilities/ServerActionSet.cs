@@ -1,4 +1,5 @@
 ﻿using NexusTomorrow.Game.Static.Spell;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 using NexusTomorrow.Network.World.Message.Static;
@@ -6,13 +7,15 @@ using NexusTomorrow.Network.World.Message.Static;
 namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
 [Message(GameMessageOpcode.ServerActionSet)]
-public class ServerActionSet : IWritable
+[WireMessage(GameMessageOpcode.ServerActionSet, Direction.ServerToClient)]
+public sealed partial class ServerActionSet : IWritable
 {
-    public class Action : IWritable
+    [WireStruct]
+    public sealed partial class Action : IWritable
     {
-        public ShortcutType ShortcutType { get; set; }
+        [UInt(4)] public ShortcutType ShortcutType { get; set; }
         public ItemLocation Location { get; set; } = new();
-        public uint ObjectId { get; set; }
+        [UInt(32)] public uint ObjectId { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -22,10 +25,10 @@ public class ServerActionSet : IWritable
         }
     }
 
-    public byte SpecIndex { get; set; }
-    public byte Unlocked { get; set; } // Set to 1 to unlock spec index
-    public LimitedActionSetResult Result { get; set; }
-    public List<Action> Actions { get; set; } = [];
+    [UInt(3)] public byte SpecIndex { get; set; }
+    [UInt(2)] public byte Unlocked { get; set; } // Set to 1 to unlock spec index
+    [UInt(6)] public LimitedActionSetResult Result { get; set; }
+    [Array(CountBits = 6)] public List<Action> Actions { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

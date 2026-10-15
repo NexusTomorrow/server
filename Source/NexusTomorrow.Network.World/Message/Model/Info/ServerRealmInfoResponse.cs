@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Info;
 
 [Message(GameMessageOpcode.ServerRealmInfoResponse)]
-public class ServerRealmInfoResponse : IWritable
+[WireMessage(GameMessageOpcode.ServerRealmInfoResponse, Direction.ServerToClient)]
+public sealed partial class ServerRealmInfoResponse : IWritable
 {
-    public uint RealmId { get; set; }
-    public string RealmName { get; set; }
+    [UInt(32)] public uint RealmId { get; set; }
+    [WideString] public string RealmName { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

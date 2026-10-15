@@ -1,15 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-public class GuildStandard : IWritable, IReadable
+[WireStruct]
+public sealed partial class GuildStandard : IWritable, IReadable
 {
-    public class GuildStandardPart : IWritable, IReadable
+    [WireStruct]
+    public sealed partial class GuildStandardPart : IWritable, IReadable
     {
-        public ushort GuildStandardPartId { get; set; }
-        public ushort DyeColorRampId1 { get; set; }
-        public ushort DyeColorRampId2 { get; set; }
-        public ushort DyeColorRampId3 { get; set; }
+        [UInt(14)] public ushort GuildStandardPartId { get; set; }
+        [UInt(14)] public ushort DyeColorRampId1 { get; set; }
+        [UInt(14)] public ushort DyeColorRampId2 { get; set; }
+        [UInt(14)] public ushort DyeColorRampId3 { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

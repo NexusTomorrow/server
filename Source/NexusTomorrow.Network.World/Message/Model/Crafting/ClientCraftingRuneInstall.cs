@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
 [Message(GameMessageOpcode.ClientCraftingRuneInstall)]
-public class ClientCraftingRuneInstall : IReadable
+[WireMessage(GameMessageOpcode.ClientCraftingRuneInstall, Direction.ClientToServer)]
+public sealed partial class ClientCraftingRuneInstall : IReadable
 {
-    public ulong ItemGuid { get; private set; }
-    public uint[] RuneSlotItem2Id { get; private set; } // Item2Id of rune, arranged in order of slot
+    [UInt(64)] public ulong ItemGuid { get; private set; }
+    [Array(CountBits = 32), UInt(32)] public uint[] RuneSlotItem2Id { get; private set; } // Item2Id of rune, arranged in order of slot
 
     public void Read(GamePacketReader reader)
     {

@@ -1,16 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerExperienceGained)]
-public class ServerExperienceGained : IWritable
+[WireMessage(GameMessageOpcode.ServerExperienceGained, Direction.ServerToClient)]
+public sealed partial class ServerExperienceGained : IWritable
 {
-    public uint TotalXpGained { get; set; }
-    public uint RestXpAmount { get; set; }
-    public uint SignatureXpAmount { get; set; }
-    public ExpReason Reason { get; set; }
-    public uint UnitTarget { get; set; }
+    [UInt(32)] public uint TotalXpGained { get; set; }
+    [UInt(32)] public uint RestXpAmount { get; set; }
+    [UInt(32)] public uint SignatureXpAmount { get; set; }
+    [UInt(32)] public ExpReason Reason { get; set; }
+    [UInt(32)] public uint UnitTarget { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

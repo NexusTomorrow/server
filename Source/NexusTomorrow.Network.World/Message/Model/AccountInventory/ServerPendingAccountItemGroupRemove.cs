@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 [Message(GameMessageOpcode.ServerPendingAccountItemGroupRemove)]
-public class ServerPendingAccountItemGroupRemove : IWritable
+[WireMessage(GameMessageOpcode.ServerPendingAccountItemGroupRemove, Direction.ServerToClient)]
+public sealed partial class ServerPendingAccountItemGroupRemove : IWritable
 {
-    public ulong PendingItemGroupId { get; set; } // a bit of a guess
-    public bool Unused { get; set; }
+    [UInt(64)] public ulong PendingItemGroupId { get; set; } // a bit of a guess
+    [UInt(1)] public bool Unused { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

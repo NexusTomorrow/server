@@ -1,9 +1,12 @@
-﻿namespace NexusTomorrow.Network.World.Entity.Model;
+﻿using NexusTomorrow.Network.Codec;
 
-public class InstancePortalEntityModel : IEntityModel
+namespace NexusTomorrow.Network.World.Entity.Model;
+
+[WireStruct]
+public sealed partial class InstancePortalEntityModel : IEntityModel
 {
-    public uint CreatureId { get; set; }
-    public uint RemainingTimeMs { get; set; }
+    [UInt(18)] public uint CreatureId { get; set; }
+    [UInt(32)] public uint RemainingTimeMs { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

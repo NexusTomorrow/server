@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Loot;
 
 [Message(GameMessageOpcode.ServerLootGrant)]
-public class ServerLootGrant : IWritable
+[WireMessage(GameMessageOpcode.ServerLootGrant, Direction.ServerToClient)]
+public sealed partial class ServerLootGrant : IWritable
 {
-    public uint OwnerUnitId { get; set; }
-    public uint LooterUnitId { get; set; }
+    [UInt(32)] public uint OwnerUnitId { get; set; }
+    [UInt(32)] public uint LooterUnitId { get; set; }
     public LootItem LootItem { get; set; }
 
     public void Write(GamePacketWriter writer)

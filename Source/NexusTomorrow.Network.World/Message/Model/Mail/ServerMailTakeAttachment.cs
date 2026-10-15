@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
 [Message(GameMessageOpcode.ServerMailTakeAttachment)]
-public class ServerMailTakeAttachment : IWritable
+[WireMessage(GameMessageOpcode.ServerMailTakeAttachment, Direction.ServerToClient)]
+public sealed partial class ServerMailTakeAttachment : IWritable
 {
-    public ulong MailId { get; set; }
-    public GenericError Result { get; set; }
-    public uint Index { get; set; }
+    [UInt(64)] public ulong MailId { get; set; }
+    [UInt(8)] public GenericError Result { get; set; }
+    [UInt(32)] public uint Index { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

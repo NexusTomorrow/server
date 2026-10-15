@@ -1,10 +1,12 @@
 ﻿using NexusTomorrow.Game.Static.Setting;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerInstanceSettings)]
-public class ServerInstanceSettings : IWritable
+[WireMessage(GameMessageOpcode.ServerInstanceSettings, Direction.ServerToClient)]
+public sealed partial class ServerInstanceSettings : IWritable
 {
     [Flags]
     public enum WorldSetting
@@ -14,10 +16,10 @@ public class ServerInstanceSettings : IWritable
         HoloCryptTeleport = 0x08, // Causes holocrypt voice over if this is sent before OnPlayerWorld (0x61)
     }
 
-    public WorldDifficulty Difficulty { get; set; }
-    public uint PrimeLevel { get; set; }
-    public WorldSetting Flags { get; set; }
-    public uint ClientEntitySendUpdateInterval { get; set; }
+    [UInt(2)] public WorldDifficulty Difficulty { get; set; }
+    [UInt(32)] public uint PrimeLevel { get; set; }
+    [UInt(8)] public WorldSetting Flags { get; set; }
+    [UInt(32)] public uint ClientEntitySendUpdateInterval { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

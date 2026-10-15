@@ -1,19 +1,21 @@
 ﻿using NexusTomorrow.Game.Static.Group;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientGroupSetRole)]
-public class ClientGroupSetRole : IReadable
+[WireMessage(GameMessageOpcode.ClientGroupSetRole, Direction.ClientToServer)]
+public sealed partial class ClientGroupSetRole : IReadable
 {
-    public ulong GroupId { get; set; }
+    [UInt(64)] public ulong GroupId { get; set; }
 
     public Identity TargetedPlayer { get; set; } = new();
 
-    public GroupMemberInfoFlags CurrentFlags { get; set; }
+    [UInt(32)] public GroupMemberInfoFlags CurrentFlags { get; set; }
 
-    public GroupMemberInfoFlags ChangedFlag { get; set; }
+    [UInt(32)] public GroupMemberInfoFlags ChangedFlag { get; set; }
 
     public void Read(GamePacketReader reader)
     {

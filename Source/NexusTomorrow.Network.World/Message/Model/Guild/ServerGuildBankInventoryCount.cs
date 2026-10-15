@@ -1,15 +1,17 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 /// <summary> Updates stack count of item in guild bank inventory. </summary>
 [Message(GameMessageOpcode.ServerGuildBankInventoryCount)]
-public class ServerGuildBankInventoryCount : IWritable
+[WireMessage(GameMessageOpcode.ServerGuildBankInventoryCount, Direction.ServerToClient)]
+public sealed partial class ServerGuildBankInventoryCount : IWritable
 {
     public Identity GuildIdentity { get; set; }
-    public ulong ItemGuid { get; set; }
-    public uint Count { get; set; }
+    [UInt(64)] public ulong ItemGuid { get; set; }
+    [UInt(32)] public uint Count { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

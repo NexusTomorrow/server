@@ -1,8 +1,10 @@
 ﻿using NexusTomorrow.Game.Static.Combat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public class CombatLogDamageShield : CombatLogDamage
+[WireStruct]
+public sealed partial class CombatLogDamageShield : CombatLogDamage
 {
-    public override CombatLogType Type => CombatLogType.DamageShields;
+    [NotOnWire] public override CombatLogType Type => CombatLogType.DamageShields;
 }

@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 // Removes all spell visual effects from a unit
 [Message(GameMessageOpcode.ServerSpellVisualEffectRemoveFromUnit)]
-public class ServerSpellVisualEffectRemoveFromUnit : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellVisualEffectRemoveFromUnit, Direction.ServerToClient)]
+public sealed partial class ServerSpellVisualEffectRemoveFromUnit : IWritable
 {
-    public uint TargetUnitId { get; set; }
+    [UInt(18)] public uint TargetUnitId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

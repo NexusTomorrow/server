@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class ItemLocation : IReadable, IWritable
+[WireStruct]
+public sealed partial class ItemLocation : IReadable, IWritable
 {
-    public InventoryLocation Location { get; set; }
-    public uint BagIndex { get; set; }
+    [UInt(9)] public InventoryLocation Location { get; set; }
+    [UInt(32)] public uint BagIndex { get; set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ServerCinematicFullScreenEffectAdd)]
-public class ServerCinematicFullScreenEffectAdd : IWritable
+[WireMessage(GameMessageOpcode.ServerCinematicFullScreenEffectAdd, Direction.ServerToClient)]
+public sealed partial class ServerCinematicFullScreenEffectAdd : IWritable
 {
-    public uint Delay { get; set; }
-    public uint FullScreenEffectId { get; set; }
+    [UInt(32)] public uint Delay { get; set; }
+    [UInt(32)] public uint FullScreenEffectId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

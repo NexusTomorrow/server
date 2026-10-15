@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Map;
 
 [Message(GameMessageOpcode.ServerGenericMapNode)]
-public class ServerGenericMapNode : IWritable
+[WireMessage(GameMessageOpcode.ServerGenericMapNode, Direction.ServerToClient)]
+public sealed partial class ServerGenericMapNode : IWritable
 {
     public GenericMapNode Node { get; set; } = new();
 

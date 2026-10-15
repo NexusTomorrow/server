@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Quest;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerQuestInit)]
-public class ServerQuestInit : IWritable
+public partial class ServerQuestInit : IWritable
 {
-    public class QuestComplete : IWritable
+    [WireStruct]
+    public sealed partial class QuestComplete : IWritable
     {
-        public ushort QuestId { get; set; }
-        public bool CompletedToday { get; set; }
+        [UInt(15)] public ushort QuestId { get; set; }
+        [UInt(1)] public bool CompletedToday { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -18,10 +20,11 @@ public class ServerQuestInit : IWritable
         }
     }
 
-    public class QuestInactive : IWritable
+    [WireStruct]
+    public sealed partial class QuestInactive : IWritable
     {
-        public ushort QuestId { get; set; }
-        public QuestState State { get; set; }
+        [UInt(15)] public ushort QuestId { get; set; }
+        [UInt(4)] public QuestState State { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

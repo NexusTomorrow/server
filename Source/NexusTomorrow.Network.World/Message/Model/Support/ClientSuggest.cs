@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Support;
 
 // From the /suggest command
 [Message(GameMessageOpcode.ClientSuggest)]
-public class ClientSuggest : IReadable
+[WireMessage(GameMessageOpcode.ClientSuggest, Direction.ClientToServer)]
+public sealed partial class ClientSuggest : IReadable
 {
-    public string SuggestionText { get; private set; }
+    [WideString] public string SuggestionText { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

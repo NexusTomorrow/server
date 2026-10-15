@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Loot;
 
 [Message(GameMessageOpcode.ServerLootNotify)]
-public class ServerLootNotify : IWritable
+[WireMessage(GameMessageOpcode.ServerLootNotify, Direction.ServerToClient)]
+public sealed partial class ServerLootNotify : IWritable
 {
-    public uint OwnerUnitId { get; set; }
-    public uint ParentUnitId { get; set; } // to be confirmed
-    public bool Explosion { get; set; }
-    public List<LootItem> LootItems { get; set; } = [];
+    [UInt(32)] public uint OwnerUnitId { get; set; }
+    [UInt(32)] public uint ParentUnitId { get; set; } // to be confirmed
+    [UInt(1)] public bool Explosion { get; set; }
+    [Array(CountBits = 32)] public List<LootItem> LootItems { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

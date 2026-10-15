@@ -1,9 +1,12 @@
-﻿namespace NexusTomorrow.Network.World.Entity.Model;
+﻿using NexusTomorrow.Network.Codec;
 
-public class HousingPlantEntityModel : IEntityModel
+namespace NexusTomorrow.Network.World.Entity.Model;
+
+[WireStruct]
+public sealed partial class HousingPlantEntityModel : IEntityModel
 {
-    public ushort PlugId { get; set; }
-    public ushort SocketId { get; set; }
+    [UInt(15)] public ushort PlugId { get; set; }
+    [UInt(14)] public ushort SocketId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

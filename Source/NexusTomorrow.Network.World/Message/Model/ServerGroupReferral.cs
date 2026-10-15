@@ -1,16 +1,18 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerGroupReferral)]
-public class ServerGroupReferral : IWritable
+[WireMessage(GameMessageOpcode.ServerGroupReferral, Direction.ServerToClient)]
+public sealed partial class ServerGroupReferral : IWritable
 {
-    public ulong GroupId { get; set; }
+    [UInt(64)] public ulong GroupId { get; set; }
 
     public Identity InviteeIdentity { get; set; }
 
-    public string InviteeName { get; set; }
+    [WideString] public string InviteeName { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

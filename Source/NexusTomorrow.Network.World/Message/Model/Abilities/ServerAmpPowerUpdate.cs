@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
 [Message(GameMessageOpcode.ServerAmpPowerUpdate)]
-public class ServerAmpPowerUpdate : IWritable
+[WireMessage(GameMessageOpcode.ServerAmpPowerUpdate, Direction.ServerToClient)]
+public sealed partial class ServerAmpPowerUpdate : IWritable
 {
-    public ushort BonusPower { get; set; }
+    [UInt(16)] public ushort BonusPower { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

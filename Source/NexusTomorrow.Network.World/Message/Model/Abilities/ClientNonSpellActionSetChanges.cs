@@ -1,15 +1,17 @@
 ﻿using NexusTomorrow.Game.Static.Spell;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
 [Message(GameMessageOpcode.ClientNonSpellActionSetChanges)]
-public class ClientNonSpellActionSetChanges : IReadable
+[WireMessage(GameMessageOpcode.ClientNonSpellActionSetChanges, Direction.ClientToServer)]
+public sealed partial class ClientNonSpellActionSetChanges : IReadable
 {
-    public UILocation ActionBarIndex { get; private set; }
-    public ShortcutType ShortcutType { get; private set; }
-    public uint ObjectId { get; private set; } // depending on ShortcutType can be Spell4Id, Item2Id, GameCommandType
-    public byte SpecIndex { get; private set; }
+    [UInt(6)] public UILocation ActionBarIndex { get; private set; }
+    [UInt(4)] public ShortcutType ShortcutType { get; private set; }
+    [UInt(32)] public uint ObjectId { get; private set; } // depending on ShortcutType can be Spell4Id, Item2Id, GameCommandType
+    [UInt(4)] public byte SpecIndex { get; private set; }
 
     public void Read(GamePacketReader reader)
     {

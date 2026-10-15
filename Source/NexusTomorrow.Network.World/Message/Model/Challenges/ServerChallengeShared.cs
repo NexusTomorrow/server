@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Challenges;
 
 [Message(GameMessageOpcode.ServerChallengeShared)]
-public class ServerChallengeShared : IWritable
+[WireMessage(GameMessageOpcode.ServerChallengeShared, Direction.ServerToClient)]
+public sealed partial class ServerChallengeShared : IWritable
 {
-    public ushort ChallengeId { get; set; }
-    public uint SharerUnitId { get; set; }
+    [UInt(14)] public ushort ChallengeId { get; set; }
+    [UInt(32)] public uint SharerUnitId { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

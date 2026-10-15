@@ -1,4 +1,5 @@
 ﻿using NexusTomorrow.Game.Static.Group;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
@@ -9,12 +10,13 @@ namespace NexusTomorrow.Network.World.Message.Model;
 /// Invokes the 'Group_Leave' event in Apollo. Which is invoked only for the current player.
 /// </summary>
 [Message(GameMessageOpcode.ServerGroupRemove)]
-public class ServerGroupRemove : IWritable
+[WireMessage(GameMessageOpcode.ServerGroupRemove, Direction.ServerToClient)]
+public sealed partial class ServerGroupRemove : IWritable
 {
-    public ulong GroupId { get; set; }
-    public uint Unk0 { get; set; }
+    [UInt(64)] public ulong GroupId { get; set; }
+    [UInt(32)] public uint Unk0 { get; set; }
     public Identity TargetPlayer { get; set; } = new();
-    public RemoveReason Reason { get; set; }
+    [UInt(4)] public RemoveReason Reason { get; set; }
 
     public void Write(GamePacketWriter writer)
     {

@@ -1,4 +1,5 @@
 ﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 using FactionId = NexusTomorrow.Game.Static.Reputation.Faction;
@@ -6,14 +7,16 @@ using FactionId = NexusTomorrow.Game.Static.Reputation.Faction;
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ServerPlayerCreate)]
-public class ServerPlayerCreate : IWritable
+public partial class ServerPlayerCreate : IWritable
 {
-    public class Faction : IWritable
+    [WireStruct]
+    public sealed partial class Faction : IWritable
     {
-        public class FactionReputation : IWritable
+        [WireStruct]
+        public sealed partial class FactionReputation : IWritable
         {
-            public FactionId FactionId { get; set; }
-            public float Value { get; set; }
+            [UInt(14)] public FactionId FactionId { get; set; }
+            [Float32] public float Value { get; set; }
 
             public void Write(GamePacketWriter writer)
             {
@@ -22,8 +25,8 @@ public class ServerPlayerCreate : IWritable
             }
         }
 
-        public FactionId FactionId { get; set; }
-        public List<FactionReputation> FactionReputations { get; set; } = [];
+        [UInt(14)] public FactionId FactionId { get; set; }
+        [Array(CountBits = 16)] public List<FactionReputation> FactionReputations { get; set; } = [];
 
         public void Write(GamePacketWriter writer)
         {
@@ -34,12 +37,13 @@ public class ServerPlayerCreate : IWritable
         }
     }
 
-    public class Pet : IWritable
+    [WireStruct]
+    public sealed partial class Pet : IWritable
     {
-        public uint Guid { get; set; }
-        public uint SummoningSpell { get; set; }
-        public byte ValidStances { get; set; }
-        public byte Stance { get; set; }
+        [UInt(32)] public uint Guid { get; set; }
+        [UInt(18)] public uint SummoningSpell { get; set; }
+        [UInt(5)] public byte ValidStances { get; set; }
+        [UInt(5)] public byte Stance { get; set; }
 
         public void Write(GamePacketWriter writer)
         {
@@ -50,10 +54,11 @@ public class ServerPlayerCreate : IWritable
         }
     }
 
-    public class CharacterEntitlement : IWritable
+    [WireStruct]
+    public sealed partial class CharacterEntitlement : IWritable
     {
-        public EntitlementType Entitlement { get; set; }
-        public uint Count { get; set; }
+        [UInt(14)] public EntitlementType Entitlement { get; set; }
+        [UInt(32)] public uint Count { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

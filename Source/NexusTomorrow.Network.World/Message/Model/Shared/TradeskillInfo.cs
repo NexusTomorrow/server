@@ -1,16 +1,18 @@
 ﻿using NexusTomorrow.Game.Static.Crafting;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class TradeskillInfo : IWritable
+[WireStruct]
+public sealed partial class TradeskillInfo : IWritable
 {
-    public TradeskillType TradeskillId { get; set; }
-    public uint TradeskillXp { get; set; }
-    public uint IsActive { get; set; }
-    public uint PropertyProficiencyFlags { get; set; }
-    public uint TalentPoints { get; set; }
-    public uint[] TradeskillTalentTierIds { get; set; } = new uint[10];
+    [UInt(32)] public TradeskillType TradeskillId { get; set; }
+    [UInt(32)] public uint TradeskillXp { get; set; }
+    [UInt(32)] public uint IsActive { get; set; }
+    [UInt(32)] public uint PropertyProficiencyFlags { get; set; }
+    [UInt(32)] public uint TalentPoints { get; set; }
+    [FixedArray(10), UInt(32)] public uint[] TradeskillTalentTierIds { get; set; } = new uint[10];
 
     public void Write(GamePacketWriter writer)
     {

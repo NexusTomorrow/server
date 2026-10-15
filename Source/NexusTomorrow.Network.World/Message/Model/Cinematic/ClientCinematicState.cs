@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Cinematic;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 [Message(GameMessageOpcode.ClientCinematicState)]
-public class ClientCinematicState : IReadable
+[WireMessage(GameMessageOpcode.ClientCinematicState, Direction.ClientToServer)]
+public sealed partial class ClientCinematicState : IReadable
 {
-    public CinematicState State { get; private set; }
-    public bool NotifyOfCancelledCameraAction { get; private set; } // set by message 0x218
+    [UInt(8)] public CinematicState State { get; private set; }
+    [UInt(1)] public bool NotifyOfCancelledCameraAction { get; private set; } // set by message 0x218
 
     public void Read(GamePacketReader reader)
     {

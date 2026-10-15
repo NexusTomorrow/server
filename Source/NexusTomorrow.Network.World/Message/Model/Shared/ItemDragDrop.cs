@@ -1,11 +1,13 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class ItemDragDrop : IReadable, IWritable
+[WireStruct]
+public sealed partial class ItemDragDrop : IReadable, IWritable
 {
-    public ulong Guid { get; set; }
-    public ulong DragDrop { get; set; }
+    [UInt(64)] public ulong Guid { get; set; }
+    [UInt(64)] public ulong DragDrop { get; set; }
 
     public void Read(GamePacketReader reader)
     {

@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.GenericUnlock;
 
@@ -6,9 +7,10 @@ namespace NexusTomorrow.Network.World.Message.Model.GenericUnlock;
 // uses the provided array to set the state again. Seems to be used preferentially
 // over ServerGenericUnlockCharacterList (0x0983).
 [Message(GameMessageOpcode.ServerGenericUnlockCharacterRefresh)]
-public class ServerGenericUnlockCharacterRefresh : IWritable
+[WireMessage(GameMessageOpcode.ServerGenericUnlockCharacterRefresh, Direction.ServerToClient)]
+public sealed partial class ServerGenericUnlockCharacterRefresh : IWritable
 {
-    public List<uint> GenericUnlockEntryIds { get; set; } = [];
+    [Array(CountBits = 32), UInt(32)] public List<uint> GenericUnlockEntryIds { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

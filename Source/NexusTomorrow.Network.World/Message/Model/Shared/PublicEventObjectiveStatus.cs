@@ -1,14 +1,16 @@
 ﻿using NexusTomorrow.Game.Static.PublicEvent;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-public class PublicEventObjectiveStatus : IWritable
+public partial class PublicEventObjectiveStatus : IWritable
 {
-    public class VirtualItem : IWritable
+    [WireStruct]
+    public sealed partial class VirtualItem : IWritable
     {
-        public uint ItemId { get; set; }
-        public uint Count { get; set; }
+        [UInt(14)] public uint ItemId { get; set; }
+        [UInt(32)] public uint Count { get; set; }
 
         public void Write(GamePacketWriter writer)
         {

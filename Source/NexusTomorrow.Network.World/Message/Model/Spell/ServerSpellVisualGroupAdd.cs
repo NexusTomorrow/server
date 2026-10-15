@@ -1,14 +1,16 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 [Message(GameMessageOpcode.ServerSpellVisualGroupAdd)]
-public class ServerSpellVisualGroupAdd : IWritable
+[WireMessage(GameMessageOpcode.ServerSpellVisualGroupAdd, Direction.ServerToClient)]
+public sealed partial class ServerSpellVisualGroupAdd : IWritable
 {
-    public uint UnitId { get; set; }
-    public ushort Spell4VisualGroupId { get; set; }
-    public uint Unknown { get; set; } // mostly 0, sometimes 1 TODO: research more
-    public List<uint> SpellVisualEffectUniqueIds { get; set; } = [];
+    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(16)] public ushort Spell4VisualGroupId { get; set; }
+    [UInt(32)] public uint Unknown { get; set; } // mostly 0, sometimes 1 TODO: research more
+    [Array(CountBits = 32), UInt(32)] public List<uint> SpellVisualEffectUniqueIds { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

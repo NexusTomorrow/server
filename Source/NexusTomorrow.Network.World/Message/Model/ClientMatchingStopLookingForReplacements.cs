@@ -1,9 +1,11 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
 [Message(GameMessageOpcode.ClientMatchingStopLookingForReplacements)]
-public class ClientMatchingStopLookingForReplacements : IReadable
+[WireMessage(GameMessageOpcode.ClientMatchingStopLookingForReplacements, Direction.ClientToServer)]
+public sealed partial class ClientMatchingStopLookingForReplacements : IReadable
 {
     public void Read(GamePacketReader reader)
     {

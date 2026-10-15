@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NexusTomorrow.Cryptography\NexusTomorrow.Cryptography.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Network.Codec\NexusTomorrow.Network.Codec.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Network.Codec.Generator\NexusTomorrow.Network.Codec.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\NexusTomorrow.Shared\NexusTomorrow.Shared.csproj" />
   </ItemGroup>
 

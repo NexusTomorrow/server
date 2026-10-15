@@ -1,12 +1,14 @@
 ﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
 using NexusTomorrow.Game.Static.Entity.Movement.Command.State;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
 [EntityCommand(EntityCommand.SetState)]
-public class SetStateCommand : IEntityCommandModel
+[WireStruct]
+public sealed partial class SetStateCommand : IEntityCommandModel
 {
-    public StateFlags State { get; set; }
+    [UInt(32)] public StateFlags State { get; set; }
 
     public void Read(GamePacketReader reader)
     {

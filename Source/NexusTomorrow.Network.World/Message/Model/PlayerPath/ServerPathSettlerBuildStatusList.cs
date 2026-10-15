@@ -1,12 +1,14 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [Message(GameMessageOpcode.ServerPathSettlerBuildStatusList)]
-public class ServerPathSettlerBuildStatusList : IWritable
+[WireMessage(GameMessageOpcode.ServerPathSettlerBuildStatusList, Direction.ServerToClient)]
+public sealed partial class ServerPathSettlerBuildStatusList : IWritable
 {
-    public ushort PathSettlerHubId { get; set; }
-    public List<SettlerImprovementGroupStatus> ImprovementGroupStatuses { get; set; } = [];
+    [UInt(14)] public ushort PathSettlerHubId { get; set; }
+    [Array(CountBits = 32)] public List<SettlerImprovementGroupStatus> ImprovementGroupStatuses { get; set; } = [];
 
     public void Write(GamePacketWriter writer)
     {

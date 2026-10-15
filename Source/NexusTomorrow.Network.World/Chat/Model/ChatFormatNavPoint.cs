@@ -1,13 +1,15 @@
 ﻿using NexusTomorrow.Game.Static.Chat;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Chat.Model;
 
-public class ChatFormatNavPoint : IChatFormatModel
+[WireStruct]
+public sealed partial class ChatFormatNavPoint : IChatFormatModel
 {
-    public ChatFormatType Type => ChatFormatType.NavPoint;
-    public ushort MapZoneId { get; set; }
-    public float X { get; set; }
-    public float Y { get; set; }
+    [NotOnWire] public ChatFormatType Type => ChatFormatType.NavPoint;
+    [UInt(14)] public ushort MapZoneId { get; set; }
+    [Float32] public float X { get; set; }
+    [Float32] public float Y { get; set; }
 
     public void Read(GamePacketReader reader)
     {

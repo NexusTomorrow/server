@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
@@ -6,9 +7,10 @@ namespace NexusTomorrow.Network.World.Message.Model;
 // If MatchType is a PvP type, is a vote to surrender
 // If MatchType is a PvE type, is a vote to disband
 [Message(GameMessageOpcode.ClientMatchingMatchCastVoteSurrender)]
-public class ClientMatchingMatchCastVoteSurrender : IReadable
+[WireMessage(GameMessageOpcode.ClientMatchingMatchCastVoteSurrender, Direction.ClientToServer)]
+public sealed partial class ClientMatchingMatchCastVoteSurrender : IReadable
 {
-    public bool Vote { get; private set; } // true = yes, false = no
+    [UInt(1)] public bool Vote { get; private set; } // true = yes, false = no
 
     public void Read(GamePacketReader reader)
     {
