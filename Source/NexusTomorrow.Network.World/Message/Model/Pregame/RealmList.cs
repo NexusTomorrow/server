@@ -12,7 +12,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// the first whose <see cref="RealmListEntry.Flags"/> has bit 0 set, else the first.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Message0761, Direction.Both)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class RealmList
 {
     /// <summary>

@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// The client registers a writer for it as well.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Message0862, Direction.Both)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class TransferDestinationList
 {
     /// <summary>

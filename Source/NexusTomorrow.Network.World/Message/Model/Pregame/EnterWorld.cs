@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// On character select the client takes it only while a selection is pending, shows the world's loading screen and loads the world.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server00AD, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class EnterWorld
 {
     /// <summary>
@@ -19,9 +19,18 @@ public sealed partial class EnterWorld
     /// </summary>
     [UInt(15)] public ushort WorldId { get; set; }
 
-    [Float32] public Vector3 Unknown1 { get; set; }
+    /// <summary>
+    /// The point in the world the client loads it around.
+    /// </summary>
+    [Float32] public Vector3 Position { get; set; }
 
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
     [Float32] public float Unknown2 { get; set; }
 
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
     [Float32] public float Unknown3 { get; set; }
 }

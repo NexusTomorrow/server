@@ -7,15 +7,15 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// Asks for the realms a character could transfer to.
 /// </summary>
 /// <remarks>
-/// The client sends it only while the account's subscription has not expired (0x033D); the answer is
+/// The client sends it only while the account's subscription has not expired (<see cref="SubscriptionState"/>); the answer is
 /// <see cref="TransferDestinationList"/>.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client03EE, Direction.ClientToServer)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class TransferDestinationsRequest
 {
     /// <summary>
-    /// The client gives this value no meaning. It sends whatever its interface passes.
+    /// True when the player asks from the interface's paid transfer, false from its free transfer.
     /// </summary>
-    [UInt(1)] public bool Unknown0 { get; private set; }
+    [UInt(1)] public bool Paid { get; private set; }
 }

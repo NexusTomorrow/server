@@ -57,17 +57,17 @@ public partial class RealmListEntry
     [UInt(32)] public uint Flags { get; set; }
 
     /// <summary>
-    /// The realm's PvP type, shown to the player.
+    /// The realm's PvP type: 0 PvE, 1 PvP. The interface treats any other value as PvE.
     /// </summary>
     [UInt(2)] public byte PvpType { get; set; }
 
     /// <summary>
-    /// The realm's status, shown to the player.
+    /// The realm's status: 0 unknown, 1 offline, 2 down, 3 on standby, 4 up. The interface shows any other value as unknown.
     /// </summary>
     [UInt(3)] public byte Status { get; set; }
 
     /// <summary>
-    /// The realm's population, shown to the player.
+    /// The realm's population: 0 low, 1 medium, 2 high, 3 full. The interface labels no other value.
     /// </summary>
     [UInt(3)] public byte Population { get; set; }
 

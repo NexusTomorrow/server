@@ -4,14 +4,25 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 /// <summary>
-/// The account's subscription state. While it says the subscription has expired, the client refuses to create, delete, rename or
-/// select characters.
+/// The account's subscription state.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server033D, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class SubscriptionState
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
-    [UInt(1)] public bool Unknown1 { get; set; }
-    [Float32] public float Unknown2 { get; set; }
+    /// <summary>
+    /// Bit 0 set makes the interface offer a free realm transfer; the client reads no other bit.
+    /// </summary>
+    [UInt(32)] public uint TransferFlags { get; set; }
+
+    /// <summary>
+    /// Whether the subscription has expired. While it has, the client refuses to create, delete, rename or select characters and to
+    /// ask for transfer destinations.
+    /// </summary>
+    [UInt(1)] public bool Expired { get; set; }
+
+    /// <summary>
+    /// The game time left, in hours.
+    /// </summary>
+    [Float32] public float GameTimeHours { get; set; }
 }
