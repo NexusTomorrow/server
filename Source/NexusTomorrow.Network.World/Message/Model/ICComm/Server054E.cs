@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.ICComm;
 public sealed partial class Server054E
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
-    [NarrowString] public string Unknown1 { get; set; }
-    [WideString] public string Unknown2 { get; set; }
+    [NarrowString] public string Unknown1 { get; set; } = "";
+    [WideString] public string Unknown2 { get; set; } = "";
 }
 

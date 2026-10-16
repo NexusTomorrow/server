@@ -16,5 +16,5 @@ public sealed partial class Server076D
         [Array(CountFrom = nameof(Unknown2)), UInt(1)] public List<bool> Unknown4 { get; set; } = [];
     }
 
-    [Array(CountBits = 32)] public List<Server076DPart0> Unknown0 { get; set; }
+    [Array(CountBits = 32)] public List<Server076DPart0> Unknown0 { get; set; } = [];
 }

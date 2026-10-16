@@ -10,7 +10,7 @@ public sealed partial class Client0453
 
     [UInt(1)] public bool Unknown1 { get; set; }
 
-    [WideString] public string Unknown2 { get; set; }
+    [WideString] public string Unknown2 { get; set; } = "";
 
     [UInt(1)] public bool Unknown3 { get; set; }
 }

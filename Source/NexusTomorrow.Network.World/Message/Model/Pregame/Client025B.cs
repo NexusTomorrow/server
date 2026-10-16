@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 public sealed partial class Client025B
 {
     [UInt(32)] public uint Unknown0 { get; private set; }
-    [WideString] public string Unknown1 { get; private set; }
+    [WideString] public string Unknown1 { get; private set; } = "";
     [UInt(3)] public byte Unknown2 { get; private set; }
     [UInt(32), Count] public uint Unknown3 { get; set; }
     [Array(CountFrom = nameof(Unknown3)), UInt(32)] public List<uint> Unknown4 { get; } = [];

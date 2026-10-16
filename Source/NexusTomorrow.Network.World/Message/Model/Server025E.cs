@@ -1,8 +1,6 @@
-﻿using NexusTomorrow.Game.Static.Entity;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
-using FactionId = NexusTomorrow.Game.Static.Reputation.Faction;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
@@ -49,7 +47,7 @@ public sealed partial class Server025E
     [UInt(3)] public byte Unknown7 { get; set; }
     [UInt(16)] public ushort Unknown8 { get; set; }
     [UInt(32)] public uint Unknown9 { get; set; }
-    public Server025EPart0 Unknown10 { get; set; }
+    public Server025EPart0 Unknown10 { get; set; } = new();
     [Array(CountBits = 32)] public List<Server025EPart2> Unknown11 { get; } = [];
     [UInt(32)] public uint Unknown12 { get; set; }
     [UInt(16)] public ushort Unknown13 { get; set; }

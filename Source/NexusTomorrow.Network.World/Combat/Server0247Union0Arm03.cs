@@ -1,6 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Combat;
-using NexusTomorrow.Game.Static.Spell;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
@@ -20,5 +18,5 @@ public partial class Server0247Union0Arm03 : IServer0247Union0
     [UInt(1)] public bool Unknown8 { get; set; }
     [UInt(3)] public byte Unknown9 { get; set; }
     [UInt(8)] public byte Unknown10 { get; set; }
-    public Server0247Part0 Unknown11 { get; set; }
+    public Server0247Part0 Unknown11 { get; set; } = new();
 }

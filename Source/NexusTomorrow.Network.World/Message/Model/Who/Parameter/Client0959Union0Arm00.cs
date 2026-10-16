@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Who;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
 

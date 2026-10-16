@@ -8,5 +8,5 @@ public sealed partial class Server014B
 {
     [UInt(6)] public byte Unknown0 { get; set; }
     [UInt(64)] public ulong Unknown1 { get; set; }
-    [WideString] public string Unknown2 { get; set; }
+    [WideString] public string Unknown2 { get; set; } = "";
 }

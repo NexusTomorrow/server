@@ -1,6 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Entity;
-using NexusTomorrow.Network.Codec;
-using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.Leaderboard;
 
@@ -12,6 +10,6 @@ public sealed partial class Server057APart0
     [UInt(32)] public uint Unknown2 { get; set; }
     [UInt(32)] public uint Unknown3 { get; set; }
     [UInt(32)] public uint Unknown4 { get; set; }
-    [WideString] public string Unknown5 { get; set; }
+    [WideString] public string Unknown5 { get; set; } = "";
     [Array(CountBits = 32)] public List<Server0579Part1> Unknown6 { get; set; } = [];
 }

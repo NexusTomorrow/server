@@ -7,5 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 public sealed partial class Server03AE
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
-    [WideString] public string Unknown1 { get; set; }
+    [WideString] public string Unknown1 { get; set; } = "";
 }

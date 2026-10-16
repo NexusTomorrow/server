@@ -3,13 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-    <!-- Replaced in Part B: the declared models keep the seed's names and style until stage 3's last task brings them under the analyzers and removes these two lines. -->
-    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
-    <AnalysisLevel>10-none</AnalysisLevel>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <!-- Wire declarations carry the summaries their [Verified] rung requires; the registry verification tests enforce that, so CS1591 does not. NTC003 and NTC006 stand until the models are brought under the analyzers. -->
-    <NoWarn>$(NoWarn);CS1591;NTC003;NTC006</NoWarn>
+    <!-- Wire declarations carry the summaries their [Verified] rung requires; the registry verification tests enforce that, so CS1591 does not. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

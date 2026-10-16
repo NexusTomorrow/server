@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Friendship;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
@@ -12,8 +11,8 @@ public sealed partial class Server039F
     {
         [UInt(64)] public ulong Unknown0 { get; set; }
         [UInt(2)] public byte Unknown1 { get; set; }
-        [WideString] public string Unknown2 { get; set; }
-        [WideString] public string Unknown3 { get; set; }
+        [WideString] public string Unknown2 { get; set; } = "";
+        [WideString] public string Unknown3 { get; set; } = "";
         [Float32] public float Unknown4 { get; set; }
         [UInt(32)] public uint Unknown5 { get; set; }
     }

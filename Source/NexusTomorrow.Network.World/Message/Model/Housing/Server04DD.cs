@@ -10,8 +10,8 @@ public sealed partial class Server04DD
     [WireStruct]
     public sealed partial class Server04DDPart0
     {
-        public Client00B5Part0 Unknown0 { get; set; }
-        [WideString] public string Unknown1 { get; set; }
+        public Client00B5Part0 Unknown0 { get; set; } = new();
+        [WideString] public string Unknown1 { get; set; } = "";
         [UInt(32)] public uint Unknown2 { get; set; }
     }
 

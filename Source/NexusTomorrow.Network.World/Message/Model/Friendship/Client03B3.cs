@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Friendship;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
@@ -10,5 +9,5 @@ public sealed partial class Client03B3
 {
     public Client00B5Part0 Unknown0 { get; set; } = new();
     [UInt(4)] public byte Unknown1 { get; set; }
-    [WideString] public string Unknown2 { get; set; }
+    [WideString] public string Unknown2 { get; set; } = "";
 }

@@ -11,7 +11,7 @@ public sealed partial class Server0116
     {
         [UInt(64)] public ulong Unknown0 { get; set; }
         [UInt(32)] public uint Unknown1 { get; set; }
-        [WideString] public string Unknown2 { get; set; }
+        [WideString] public string Unknown2 { get; set; } = "";
         [UInt(32)] public uint Unknown3 { get; set; }
         [UInt(14)] public ushort Unknown4 { get; set; }
         [UInt(14)] public ushort Unknown5 { get; set; }

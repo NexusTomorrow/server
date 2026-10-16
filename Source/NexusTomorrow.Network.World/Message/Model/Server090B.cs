@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Entity;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
@@ -36,8 +35,8 @@ public sealed partial class Server090B
         [UInt(32)] public uint Unknown8 { get; set; }
         [UInt(64)] public ulong Unknown9 { get; set; }
         [UInt(32)] public uint Unknown10 { get; set; }
-        public Server090BPart2 Unknown11 { get; set; }
-        public Server090BPart2 Unknown12 { get; set; }
+        public Server090BPart2 Unknown11 { get; set; } = new();
+        public Server090BPart2 Unknown12 { get; set; } = new();
     }
 
     [UInt(32)] public uint Unknown0 { get; set; }

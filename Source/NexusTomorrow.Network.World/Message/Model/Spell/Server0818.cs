@@ -8,5 +8,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell;
 public sealed partial class Server0818
 {
     [UInt(32)] public uint Unknown0 { get; set; }
-    public Server0262Part8 Unknown1 { get; set; }
+    public Server0262Part8 Unknown1 { get; set; } = new();
 }

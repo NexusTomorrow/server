@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using NexusTomorrow.Game.Static.Housing;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
@@ -12,7 +11,7 @@ public sealed partial class Server04DE
     [WireStruct]
     public sealed partial class Server04DEPart0
     {
-        public Client00B5Part0 Unknown0 { get; set; }
+        public Client00B5Part0 Unknown0 { get; set; } = new();
         [UInt(64)] public ulong Unknown1 { get; set; }
         [UInt(32)] public uint Unknown2 { get; set; }
         [UInt(32)] public uint Unknown3 { get; set; }

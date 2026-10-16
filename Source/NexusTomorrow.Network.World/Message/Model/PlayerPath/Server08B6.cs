@@ -9,7 +9,7 @@ public sealed partial class Server08B6
     [WireStruct]
     public sealed partial class Server08B6Part0
     {
-        [WideString] public string Unknown0 { get; set; }
+        [WideString] public string Unknown0 { get; set; } = "";
         [UInt(32)] public uint Unknown1 { get; set; }
     }
 

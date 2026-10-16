@@ -13,5 +13,5 @@ public sealed partial class Server0263
     [UInt(17)] public uint Unknown3 { get; set; }
     [UInt(17)] public uint Unknown4 { get; set; }
     [UInt(32)] public uint Unknown5 { get; set; }
-    public Client0096Part0 Unknown6 { get; set; }
+    public Client0096Part0 Unknown6 { get; set; } = new();
 }

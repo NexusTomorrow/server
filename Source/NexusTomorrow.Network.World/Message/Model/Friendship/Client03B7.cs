@@ -6,6 +6,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 [WireMessage(GameMessageOpcode.Client03B7, Direction.ClientToServer)]
 public sealed partial class Client03B7
 {
-    [WideString] public string Unknown0 { get; private set; }
-    [WideString] public string Unknown1 { get; private set; }
+    [WideString] public string Unknown0 { get; private set; } = "";
+    [WideString] public string Unknown1 { get; private set; } = "";
 }

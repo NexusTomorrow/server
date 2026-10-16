@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Housing;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
@@ -23,14 +22,8 @@ public sealed partial class Server04E1
         [UInt(32)] public uint Unknown9 { get; set; }
         [Float32] public float Unknown10 { get; set; }
         [Float32] public float Unknown11 { get; set; }
-
-        public Server04E1Part0()
-        {
-            Array.Fill(Unknown4, 0u);
-            Array.Fill(Unknown5, 0u);
-        }
     }
 
-    public Client00B5Part0 Unknown0 { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; } = new();
     [Array(CountBits = 32)] public List<Server04E1Part0> Unknown1 { get; set; } = [];
 }

@@ -6,5 +6,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 [WireMessage(GameMessageOpcode.Server0564, Direction.ServerToClient)]
 public sealed partial class Server0564
 {
-    public Server055FPart0 Unknown0 { get; set; }
+    public Server055FPart0 Unknown0 { get; set; } = new();
 }

@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Matching;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 

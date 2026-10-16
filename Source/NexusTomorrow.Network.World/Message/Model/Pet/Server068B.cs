@@ -1,6 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Entity;
-using NexusTomorrow.Game.Static.Pet;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pet;

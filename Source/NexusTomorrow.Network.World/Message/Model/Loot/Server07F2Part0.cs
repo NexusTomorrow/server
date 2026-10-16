@@ -1,6 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Loot;
-using NexusTomorrow.Network.Codec;
-using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Loot;

@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Reward;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Reward;
@@ -17,5 +16,5 @@ public sealed partial class Server07CA
         [UInt(32)] public uint Unknown4 { get; set; }
     }
 
-    [Array(CountBits = 32)] public List<Server07CAPart0> Unknown0 { get; set; }
+    [Array(CountBits = 32)] public List<Server07CAPart0> Unknown0 { get; set; } = [];
 }

@@ -1,6 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Group;
-using NexusTomorrow.Network.Codec;
-using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
@@ -21,5 +19,5 @@ public sealed partial class Server0427Part0
     public Client00B5Part0 Unknown9 { get; set; } = new();
     [UInt(14)] public ushort Unknown10 { get; set; }
 
-    public Server0427Part1 Unknown11 { get; set; }
+    public Server0427Part1 Unknown11 { get; set; } = new();
 }

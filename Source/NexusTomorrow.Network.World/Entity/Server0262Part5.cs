@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Entity.Movement.Command;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Entity.Command;
 
 namespace NexusTomorrow.Network.World.Entity;

@@ -7,5 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 public sealed partial class Server0672
 {
     [UInt(14)] public ushort Unknown0 { get; set; }
-    [WideString] public string Unknown1 { get; set; }
+    [WideString] public string Unknown1 { get; set; } = "";
 }

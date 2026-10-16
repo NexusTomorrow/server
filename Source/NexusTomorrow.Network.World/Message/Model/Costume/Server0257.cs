@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Costume;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Costume;

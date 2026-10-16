@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Combat;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Combat;
 
@@ -8,5 +7,5 @@ namespace NexusTomorrow.Network.World.Combat;
 public sealed partial class Server0247Union0Arm12 : IServer0247Union0
 {
 
-    public Server0247Part0 Unknown0 { get; set; }
+    public Server0247Part0 Unknown0 { get; set; } = new();
 }

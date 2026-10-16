@@ -1,9 +1,5 @@
-﻿using NexusTomorrow.Game.Static.Entity;
-using NexusTomorrow.Game.Static.Reputation;
-using NexusTomorrow.Game.Static.Who;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
-using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
 
 namespace NexusTomorrow.Network.World.Message.Model.Who;
 
@@ -13,8 +9,8 @@ public sealed partial class Server095A
     [WireStruct]
     public sealed partial class Server095APart0
     {
-        [WideString] public string Unknown0 { get; set; }
-        [WideString] public string Unknown1 { get; set; }
+        [WideString] public string Unknown0 { get; set; } = "";
+        [WideString] public string Unknown1 { get; set; } = "";
         [UInt(32)] public uint Unknown2 { get; set; }
         [UInt(5)] public byte Unknown3 { get; set; }
         [UInt(5)] public byte Unknown4 { get; set; }
@@ -24,6 +20,6 @@ public sealed partial class Server095A
         [UInt(15)] public uint Unknown8 { get; set; }
     }
 
-    [Array(CountBits = 32)] public List<Server095APart0> Unknown0 { get; set; }
+    [Array(CountBits = 32)] public List<Server095APart0> Unknown0 { get; set; } = [];
     [UInt(2)] public byte Unknown1 { get; set; }
 }

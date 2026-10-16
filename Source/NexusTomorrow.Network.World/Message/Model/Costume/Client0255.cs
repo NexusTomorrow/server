@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Costume;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Costume;
@@ -17,7 +16,7 @@ public sealed partial class Client0255
     [SInt(32)] public int Unknown0 { get; private set; }
     [UInt(2)] public byte Unknown1 { get; private set; }
     [UInt(64)] public ulong Unknown2 { get; private set; }
-    [FixedArray(Server00D8Part0.MaxCostumeItems)] public Client0255Part0[] Unknown3 { get; } = new Client0255Part0[Server00D8Part0.MaxCostumeItems];
+    [FixedArray(7)] public Client0255Part0[] Unknown3 { get; } = new Client0255Part0[7];
     [UInt(32)] public uint Unknown4 { get; private set; }
     [UInt(1)] public bool Unknown5 { get; private set; }
 }

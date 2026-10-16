@@ -130,12 +130,6 @@ dotnet_diagnostic.CA1707.severity = none
 [Source/NexusTomorrow.Network.Codec.Generator/**.cs]
 dotnet_diagnostic.RS2008.severity = none
 
-# Replaced in Part B: these wire models are declarations that keep the seed's member names until
-# stage 3 brings them under the analyzers; Network.World and Network.Auth switch their analyzers
-# off in their project files until then. Part B deletes this section when it does.
-[{Source/NexusTomorrow.Network.World/**.cs,Source/NexusTomorrow.Network.Auth/**.cs,Source/NexusTomorrow.Network/Message/Model/**.cs}]
-dotnet_diagnostic.IDE1006.severity = none
-
 # Wire declarations carry the summaries their [Verified] rung requires, which the registry
 # verification tests enforce; the opcode enum is a data declaration.
 [{Source/NexusTomorrow.Network/Message/Model/**.cs,Source/NexusTomorrow.Network/Message/GameMessageOpcode.cs}]

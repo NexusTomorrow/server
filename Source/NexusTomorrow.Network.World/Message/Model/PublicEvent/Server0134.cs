@@ -8,5 +8,5 @@ namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 public sealed partial class Server0134
 {
     [UInt(15)] public uint Unknown0 { get; set; }
-    public Server0112Part1 Unknown1 { get; set; }
+    public Server0112Part1 Unknown1 { get; set; } = new();
 }

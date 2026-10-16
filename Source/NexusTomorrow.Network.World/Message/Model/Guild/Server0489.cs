@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 [WireMessage(GameMessageOpcode.Server0489, Direction.ServerToClient)]
 public sealed partial class Server0489
 {
-    public Client00B5Part0 Unknown0 { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; } = new();
     [UInt(1)] public bool Unknown1 { get; set; }
-    [Array(CountBits = 32)] public List<Server0487Part0> Unknown2 { get; set; }
+    [Array(CountBits = 32)] public List<Server0487Part0> Unknown2 { get; set; } = [];
 }

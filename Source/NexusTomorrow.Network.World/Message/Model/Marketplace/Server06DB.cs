@@ -7,6 +7,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 public sealed partial class Server06DB
 {
     [UInt(8)] public byte Unknown0 { get; set; }
-    public Server024APart0 Unknown1 { get; set; }
+    public Server024APart0 Unknown1 { get; set; } = new();
     [UInt(64)] public ulong Unknown2 { get; set; }
 }

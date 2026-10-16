@@ -21,7 +21,7 @@ public sealed partial class Server0359
     [UnionCase(1)]
     public sealed partial class Server0359Union0Arm01 : IServer0359Union0
     {
-        [WideString] public string Unknown0 { get; set; }
+        [WideString] public string Unknown0 { get; set; } = "";
     }
 
     [WireStruct]
@@ -49,7 +49,7 @@ public sealed partial class Server0359
     public sealed partial class Server0359Part0
     {
         [UInt(32)] public uint Unknown0 { get; set; }
-        [Union(nameof(Unknown0))] public IServer0359Union0 Unknown1 { get; set; }
+        [Union(nameof(Unknown0))] public IServer0359Union0 Unknown1 { get; set; } = new Server0359Union0Arm00();
     }
 
     [UInt(14)] public ushort Unknown0 { get; set; }

@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using NexusTomorrow.Game.Static.Housing;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;

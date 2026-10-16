@@ -7,5 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 public sealed partial class Server067E
 {
     [UInt(32)] public uint Unknown0 { get; set; }
-    [Array(CountBits = 32), UInt(32)] public uint[] Unknown1 { get; set; }
+    [Array(CountBits = 32), UInt(32)] public uint[] Unknown1 { get; set; } = [];
 }

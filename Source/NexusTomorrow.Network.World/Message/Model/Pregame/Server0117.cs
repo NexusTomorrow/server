@@ -1,6 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Entity;
-using NexusTomorrow.Game.Static.Reputation;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Message.Model.Shared;
@@ -22,7 +20,7 @@ public sealed partial class Server0117
         }
 
         [UInt(64)] public ulong Unknown0 { get; set; }
-        [WideString] public string Unknown1 { get; set; }
+        [WideString] public string Unknown1 { get; set; } = "";
         [UInt(2)] public byte Unknown2 { get; set; }
         [UInt(5)] public byte Unknown3 { get; set; }
         [UInt(5)] public byte Unknown4 { get; set; }

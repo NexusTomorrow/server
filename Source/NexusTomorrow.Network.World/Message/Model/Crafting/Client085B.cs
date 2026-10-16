@@ -7,5 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 public sealed partial class Client085B
 {
     [UInt(64)] public ulong Unknown0 { get; private set; }
-    [Array(CountBits = 32), UInt(32)] public uint[] Unknown1 { get; private set; }
+    [Array(CountBits = 32), UInt(32)] public uint[] Unknown1 { get; private set; } = [];
 }

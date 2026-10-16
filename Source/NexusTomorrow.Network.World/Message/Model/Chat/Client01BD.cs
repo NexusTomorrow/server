@@ -7,5 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Chat;
 public sealed partial class Client01BD
 {
     public Server01B5Part0 Unknown0 { get; private set; } = new();
-    [WideString] public string Unknown1 { get; private set; }
+    [WideString] public string Unknown1 { get; private set; } = "";
 }

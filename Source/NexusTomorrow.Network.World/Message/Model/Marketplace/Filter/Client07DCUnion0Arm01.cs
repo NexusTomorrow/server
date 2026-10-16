@@ -1,6 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Entity;
-using NexusTomorrow.Game.Static.Marketplace;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
 

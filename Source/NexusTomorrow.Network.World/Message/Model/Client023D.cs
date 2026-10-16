@@ -14,5 +14,5 @@ public sealed partial class Client023D
     [UInt(64)] public ulong Unknown5 { get; private set; }
     [UInt(64)] public ulong Unknown6 { get; private set; }
     [UInt(64)] public ulong Unknown7 { get; private set; }
-    [WideString] public string Unknown8 { get; private set; }
+    [WideString] public string Unknown8 { get; private set; } = "";
 }

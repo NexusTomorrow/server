@@ -7,5 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell;
 [WireMessage(GameMessageOpcode.Server0804, Direction.ServerToClient)]
 public sealed partial class Server0804
 {
-    public Server0804Part0 Unknown0 { get; set; }
+    public Server0804Part0 Unknown0 { get; set; } = new();
 }

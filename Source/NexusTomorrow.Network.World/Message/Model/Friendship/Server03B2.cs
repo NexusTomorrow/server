@@ -8,6 +8,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 public sealed partial class Server03B2
 {
     [UInt(32)] public uint Unknown0 { get; set; }
-    public Client00B5Part0 Unknown1 { get; set; }
+    public Client00B5Part0 Unknown1 { get; set; } = new();
     [UInt(8)] public uint Unknown2 { get; set; }
 }

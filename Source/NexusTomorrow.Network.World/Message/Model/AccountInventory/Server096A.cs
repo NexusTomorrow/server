@@ -7,5 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 public sealed partial class Server096A
 {
     [UInt(32)] public uint Unknown0 { get; set; }
-    public Server096APart0 Unknown1 { get; set; }
+    public Server096APart0 Unknown1 { get; set; } = new();
 }

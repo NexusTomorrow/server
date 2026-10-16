@@ -13,5 +13,5 @@ public sealed partial class Client084F
     public Client084FPart0 Unknown3 { get; private set; } = new Client084FPart0();
     [UInt(18)] public uint Unknown4 { get; private set; }
     [UInt(32)] public uint Unknown5 { get; private set; }
-    [Array(CountBits = 3), UInt(32)] public uint[] Unknown6 { get; private set; }
+    [Array(CountBits = 3), UInt(32)] public uint[] Unknown6 { get; private set; } = [];
 }

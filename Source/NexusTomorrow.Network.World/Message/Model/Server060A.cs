@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Reputation;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
@@ -25,8 +24,8 @@ public sealed partial class Server060A
     [WireStruct]
     public sealed partial class Server060APart0
     {
-        public Client00B5Part0 Unknown0 { get; set; }
-        [WideString] public string Unknown1 { get; set; }
+        public Client00B5Part0 Unknown0 { get; set; } = new();
+        [WideString] public string Unknown1 { get; set; } = "";
         [UInt(14)] public ushort Unknown2 { get; set; }
         [UInt(14)] public uint Unknown3 { get; set; }
         [UInt(14)] public uint Unknown4 { get; set; }
@@ -37,7 +36,7 @@ public sealed partial class Server060A
         [UInt(1)] public bool Unknown9 { get; set; }
         [UInt(32)] public uint Unknown10 { get; set; }
         [Float32] public float Unknown11 { get; set; }
-        [FixedArray(5)] public Server060APart1[] Unknown12 = new Server060APart1[5];
+        [FixedArray(5)] public Server060APart1[] Unknown12 { get; set; } = new Server060APart1[5];
         [Array(CountBits = 32)] public List<Server060APart2> Unknown13 { get; set; } = [];
 
     }

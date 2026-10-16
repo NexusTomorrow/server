@@ -1,7 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Entity;
-using NexusTomorrow.Game.Static.Reputation;
-using NexusTomorrow.Network.Codec;
-using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
@@ -22,7 +19,7 @@ public sealed partial class Server0405Part1
         [UInt(16)] public ushort Unknown1 { get; set; }
     }
 
-    [WideString] public string Unknown0 { get; set; }
+    [WideString] public string Unknown0 { get; set; } = "";
     [UInt(14)] public ushort Unknown1 { get; set; }
     [UInt(8)] public byte Unknown2 { get; set; }
     [UInt(6)] public byte Unknown3 { get; set; }
@@ -35,7 +32,7 @@ public sealed partial class Server0405Part1
     [UInt(17)] public uint Unknown10 { get; set; }
     [UInt(16)] public ushort Unknown11 { get; set; }
 
-    [FixedArray(5)] public Server0405Part2[] Unknown12 = [new(), new(), new(), new(), new()];
+    [FixedArray(5)] public Server0405Part2[] Unknown12 { get; set; } = [new(), new(), new(), new(), new()];
 
     public Client00B5Part0 Unknown13 { get; set; } = new();
 

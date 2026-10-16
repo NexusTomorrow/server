@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Entity.Movement.Command.Mode;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;

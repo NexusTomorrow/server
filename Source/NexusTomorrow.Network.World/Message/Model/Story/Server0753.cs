@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Story;
 [WireMessage(GameMessageOpcode.Server0753, Direction.ServerToClient)]
 public sealed partial class Server0753
 {
-    public Server0738Part0 Unknown0 { get; set; }
+    public Server0738Part0 Unknown0 { get; set; } = new();
     [UInt(32)] public uint Unknown1 { get; set; }
     [UInt(1)] public bool Unknown2 { get; set; }
     [UInt(1)] public bool Unknown3 { get; set; }

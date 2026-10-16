@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Storefront;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
@@ -59,8 +58,8 @@ public sealed partial class Server098B
             }
 
             [UInt(32)] public uint Unknown0 { get; set; }
-            [WideString] public string Unknown1 { get; set; }
-            [WideString] public string Unknown2 { get; set; }
+            [WideString] public string Unknown1 { get; set; } = "";
+            [WideString] public string Unknown2 { get; set; } = "";
             [Float32] public float Unknown3 { get; set; }
             [Float32] public float Unknown4 { get; set; }
             [UInt(32)] public uint Unknown5 { get; set; }
@@ -72,8 +71,8 @@ public sealed partial class Server098B
 
         [UInt(32)] public uint Unknown0 { get; set; }
         [UInt(32)] public uint Unknown1 { get; set; }
-        [WideString] public string Unknown2 { get; set; }
-        [WideString] public string Unknown3 { get; set; }
+        [WideString] public string Unknown2 { get; set; } = "";
+        [WideString] public string Unknown3 { get; set; } = "";
         [UInt(14)] public ushort Unknown4 { get; set; }
         [Array(CountBits = 32)] public List<Server098BPart1> Unknown5 { get; set; } = [];
 

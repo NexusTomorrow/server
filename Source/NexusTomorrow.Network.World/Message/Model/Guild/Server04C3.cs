@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Guild;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
@@ -8,6 +7,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 [WireMessage(GameMessageOpcode.Server04C3, Direction.ServerToClient)]
 public sealed partial class Server04C3
 {
-    public Client00B5Part0 Unknown0 { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; } = new();
     [UInt(3)] public byte Unknown1 { get; set; }
 }

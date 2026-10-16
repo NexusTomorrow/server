@@ -1,6 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Who;
-using NexusTomorrow.Network.Codec;
-using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
+﻿using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
 

@@ -8,6 +8,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Housing;
 public sealed partial class Client0788
 {
     public Client00B5Part0 Unknown0 { get; } = new();
-    [WideString] public string Unknown1 { get; private set; }
+    [WideString] public string Unknown1 { get; private set; } = "";
     [UInt(1)] public bool Unknown2 { get; private set; }
 }

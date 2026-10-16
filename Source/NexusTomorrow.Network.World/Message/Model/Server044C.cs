@@ -9,7 +9,7 @@ public sealed partial class Server044C
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
 
-    public Client00B5Part0 Unknown1 { get; set; }
+    public Client00B5Part0 Unknown1 { get; set; } = new();
 
-    [WideString] public string Unknown2 { get; set; }
+    [WideString] public string Unknown2 { get; set; } = "";
 }

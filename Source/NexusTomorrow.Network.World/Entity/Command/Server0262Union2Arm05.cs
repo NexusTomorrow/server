@@ -1,6 +1,4 @@
 ﻿using System.Numerics;
-using NexusTomorrow.Game.Static.Entity.Movement.Command;
-using NexusTomorrow.Game.Static.Entity.Movement.Spline;
 using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;

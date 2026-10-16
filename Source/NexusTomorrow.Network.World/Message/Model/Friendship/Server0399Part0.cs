@@ -1,7 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Entity;
-using NexusTomorrow.Game.Static.Reputation;
-using NexusTomorrow.Network.Codec;
-using NexusTomorrow.Network.Message;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;

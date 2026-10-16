@@ -10,9 +10,9 @@ public sealed partial class Server0526
     [WireStruct]
     public sealed partial class Server0526Part0
     {
-        public Client00B5Part0 Unknown0 { get; set; }
-        [WideString] public string Unknown1 { get; set; }
-        [WideString] public string Unknown2 { get; set; }
+        public Client00B5Part0 Unknown0 { get; set; } = new();
+        [WideString] public string Unknown1 { get; set; } = "";
+        [WideString] public string Unknown2 { get; set; } = "";
     }
 
     [Array(CountBits = 32)] public List<Server0526Part0> Unknown0 { get; set; } = [];

@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Game.Static.Matching;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
@@ -25,7 +24,7 @@ public sealed partial class Server05DF
         [UInt(32)] public uint Unknown3 { get; set; }
     }
 
-    public Server05DFPart0 Unknown0 { get; set; }
-    public Server05DFPart1 Unknown1 { get; set; }
+    public Server05DFPart0 Unknown0 { get; set; } = new();
+    public Server05DFPart1 Unknown1 { get; set; } = new();
     [UInt(32)] public uint Unknown2 { get; set; }
 }
