@@ -16,7 +16,7 @@ public sealed partial class CharacterRenameResult
     /// <summary>
     /// The result. 18 means the character was renamed: the client applies the new name and clears the character's rename-required
     /// mark. The interface has a message of its own for 14 (an internal error), 15 (the name is not allowed), 16 (the name is taken),
-    /// 17 (the character may not be renamed) and 43 (the character is online), and a general message for the rest.
+    /// 17 (no rename is available for the character) and 43 (the character is online), and a general message for the rest.
     /// </summary>
     [UInt(6)] public byte Result { get; set; }
 

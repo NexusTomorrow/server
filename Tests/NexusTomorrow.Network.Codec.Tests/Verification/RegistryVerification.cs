@@ -29,6 +29,7 @@ internal static class RegistryVerification
         "0x009D",
         "0x00A9",
         "0x00AA",
+        "0x00AD",
         "0x00AE",
         "0x00AF",
         "0x00B0",

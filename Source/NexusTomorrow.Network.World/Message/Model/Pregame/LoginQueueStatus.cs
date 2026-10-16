@@ -24,7 +24,7 @@ public sealed partial class LoginQueueStatus
     [UInt(32)] public uint WaitSeconds { get; set; }
 
     /// <summary>
-    /// Whether the interface shows its notice for guest accounts.
+    /// Whether the interface shows an extra notice in its queue window.
     /// </summary>
-    [UInt(1)] public bool GuestOnly { get; set; }
+    [UInt(1)] public bool ShowNotice { get; set; }
 }

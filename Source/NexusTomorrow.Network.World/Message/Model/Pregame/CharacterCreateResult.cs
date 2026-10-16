@@ -25,7 +25,8 @@ public sealed partial class CharacterCreateResult
 
     /// <summary>
     /// The result. 3 means the character was created. Any other value is a failure the client hands to its interface, which has a
-    /// message of its own for 6 (the name is taken), 9 (the account is full), 10 (the name is not allowed), 11 (the opposing faction)
+    /// message of its own for 6 (the name is taken), 9 (the account is full), 10 (the name is not allowed), 11 (refused because of the
+    /// character's faction)
     /// and 44 (a character is online), and a general message for the rest.
     /// </summary>
     [UInt(6)] public byte Result { get; set; }

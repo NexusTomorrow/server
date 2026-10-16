@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// Deletes one listed character.
 /// </summary>
 /// <remarks>
-/// The client then waits for the reply (0x00E6).
+/// The client then waits for the reply (<see cref="CharacterDeleteResult"/>).
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client0352, Direction.ClientToServer)]
 [Verified(Rung.Fields)]

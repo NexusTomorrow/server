@@ -15,7 +15,7 @@ public sealed partial class CharacterSelectFailed
 {
     /// <summary>
     /// Why the selection failed. The interface has a message of its own for 1 (the character must be renamed first), 3 (the character
-    /// is disabled) and 4 (the character is already in the world), and a general message for 2 and any other value.
+    /// is disabled) and 4 (another of the account's characters is still in the world), and a general message for 2 and any other value.
     /// </summary>
     [UInt(3)] public byte Reason { get; set; }
 }

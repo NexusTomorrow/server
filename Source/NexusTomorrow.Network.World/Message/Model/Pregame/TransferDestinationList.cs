@@ -21,7 +21,7 @@ public sealed partial class TransferDestinationList
     public sealed partial class TransferDestination : RealmListEntry
     {
         /// <summary>
-        /// Whether the transfer to this realm costs nothing, as the client shows it.
+        /// Whether the transfer to this realm is free; the interface leaves such realms out of its paid-transfer list.
         /// </summary>
         [UInt(1)] public bool IsFree { get; set; }
     }
