@@ -12,6 +12,7 @@ internal static class RegistryDisagreements
     private const string FieldsDiffer = "unsettled: the bits agree, but the client takes them as fields of other widths";
     private const string PartMissing = "unsettled: the client takes a part the declaration lacks";
     private const string TreeDiffers = "unsettled: the client's full layout differs; settled when its area is read";
+    private const string ReadAsBytes = "settled: the client reads these 32-bit values as one run of bytes, the same bits on the wire";
 
     public static IReadOnlyDictionary<string, Pin> Pinned { get; } = new Dictionary<string, Pin>(StringComparer.Ordinal)
     {
@@ -108,7 +109,7 @@ internal static class RegistryDisagreements
         ["0x0638 server to client [5].element[1].arm 0x0C[2].element[0]"] = new(TreeDiffers, "the client has 48, the declaration 16"), // Message0638
         ["0x0667 server to client [1]"] = new(FieldsDiffer, "the client has 8, the declaration 32"), // Server0667
         ["0x066A client to server [0]"] = new(FieldsDiffer, "the client has 8, the declaration 32"), // Client066A
-        ["0x06BC server to client [1]"] = new(FieldsDiffer, "the client has 8, the declaration 32"), // Server06BC
+        ["0x06BC server to client [1]"] = new(ReadAsBytes, "the client has 8, the declaration 32"), // PathState
         ["0x0738 server to client [3].element[0]"] = new(TreeDiffers, "the client has 3, the declaration 32"), // Server0738
         ["0x073A server to client [3].element"] = new(TreeDiffers, "the client's sequence has 4 nodes, the declaration's 2"), // Server073A
         ["0x073A server to client [3].element[1].arm 0x00"] = new(TreeDiffers, "the client's sequence has 1 nodes, the declaration's 3"), // Server073A
