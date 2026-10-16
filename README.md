@@ -20,7 +20,7 @@ A server for the WildStar client, build 16042, written in C# on .NET 10.
 
 | Project | What it holds |
 |---|---|
-| `NexusTomorrow.Cryptography` | SRP6 login, the packet cipher, password and random helpers |
+| `NexusTomorrow.Cryptography` | SRP6 login, the STS's RC4, password and random helpers |
 | `NexusTomorrow.GameTable` | Typed loading of the client's game tables (`.tbl`) and text tables |
 | `NexusTomorrow.Game.Static` | The game's enums and flags, by system |
 | `NexusTomorrow.IO` | Readers for the client's area files and the server's own map format (`.nfmap`) |
@@ -29,6 +29,7 @@ A server for the WildStar client, build 16042, written in C# on .NET 10.
 | `NexusTomorrow.Network.Auth` | Messages for the auth server |
 | `NexusTomorrow.Network.World` | Messages for the world server |
 | `NexusTomorrow.Shared` | Shared helpers: factories, configuration binding, the update timer |
+| `NexusTomorrow.Transport` | Frames, envelopes and the packet cipher, on the hot-path rules |
 | `NexusTomorrow.MapGenerator` | Tool: extracts tables from your client and generates map files |
 | `NexusTomorrow.ClientConnector` | Tool: starts your client pointed at a server |
 
