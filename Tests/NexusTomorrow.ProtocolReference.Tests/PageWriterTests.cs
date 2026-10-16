@@ -69,7 +69,7 @@ public sealed class PageWriterTests
 
         string page = PageWriter.AreaPage("Sample", [ReferenceMessage.Of(typeof(SampleRequest)), ReferenceMessage.Of(typeof(ServerFF21))], s_walk, s_docs, s_stamp);
 
-        Assert.Equal(expected.ReplaceLineEndings("\r\n") + "\r\n", page);
+        Assert.Equal(expected.ReplaceLineEndings("\n") + "\n", page);
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public sealed class PageWriterTests
     public void AnAreaWithNothingVerifiedSaysItsNameIsOnlyAGrouping()
     {
         const string Grouping = "This grouping comes from where the declarations sit today. It claims nothing about what these messages do, and it changes when the client's areas are settled.";
-        string[] blocks = PageWriter.AreaPage("Sample", [ReferenceMessage.Of(typeof(ServerFF22))], s_walk, s_docs, s_stamp).Split("\r\n\r\n");
+        string[] blocks = PageWriter.AreaPage("Sample", [ReferenceMessage.Of(typeof(ServerFF22))], s_walk, s_docs, s_stamp).Split("\n\n");
 
         Assert.Equal("Every message in the Sample area: its opcode, direction, how far it is verified, and its fields.", blocks[1]);
         Assert.Equal(Grouping, blocks[2]);
@@ -99,7 +99,7 @@ public sealed class PageWriterTests
     public void TheIndexListsEveryMessageInOpcodeOrder()
     {
         string page = PageWriter.IndexPage([ReferenceMessage.Of(typeof(ServerFF21)), ReferenceMessage.Of(typeof(SampleRequest))], s_stamp);
-        string[] lines = page.Split("\r\n");
+        string[] lines = page.Split("\n");
 
         Assert.StartsWith("![reference, committed]", lines[0], StringComparison.Ordinal);
         int first = Array.IndexOf(lines, "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | client to server | fields | [Sample](Messages-Sample) |");
@@ -107,7 +107,8 @@ public sealed class PageWriterTests
         Assert.True(first > 0, "the SampleRequest row is missing");
         Assert.Equal(first + 1, second);
         Assert.Contains("| [Sample](Messages-Sample) | 2 | 1 |", lines);
-        Assert.EndsWith("\r\n", page, StringComparison.Ordinal);
+        Assert.EndsWith("\n", page, StringComparison.Ordinal);
+        Assert.DoesNotContain("\r", page, StringComparison.Ordinal);
     }
 
     [Fact]
