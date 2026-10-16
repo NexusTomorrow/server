@@ -1,10 +1,10 @@
 ﻿using System.Globalization;
 using System.Reflection;
-using System.Text;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.ProtocolReference;
 
-// Writes Messages.md and one Messages-<area>.md per area into --out, stamped with the branch, commit and date the pages describe.
+// Writes Messages.md and one Messages-<area>.md per area into --out, stamped with the branch, commit and date the pages describe, and
+// removes a Messages-<area>.md no area has any more.
 var options = new Dictionary<string, string>(StringComparer.Ordinal);
 for (int i = 0; i + 1 < args.Length; i += 2)
     options[args[i]] = args[i + 1];
@@ -35,16 +35,13 @@ var walk = new LayoutWalk(models);
 var docs = DocText.Load(models);
 var stamp = new PageStamp(options["--branch"], options["--commit"], options["--date"]);
 string output = options["--out"];
-Directory.CreateDirectory(output);
-var encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
-File.WriteAllText(Path.Combine(output, "Messages.md"), PageWriter.IndexPage(messages, stamp), encoding);
-int pages = 1;
+List<(string Name, string Text)> pages = [("Messages.md", PageWriter.IndexPage(messages, stamp))];
 foreach (IGrouping<string, ReferenceMessage> area in messages.GroupBy(message => message.Area, StringComparer.Ordinal).OrderBy(group => group.Key, StringComparer.Ordinal))
-{
-    File.WriteAllText(Path.Combine(output, $"Messages-{area.Key}.md"), PageWriter.AreaPage(area.Key, [.. area], walk, docs, stamp), encoding);
-    pages++;
-}
+    pages.Add(($"Messages-{area.Key}.md", PageWriter.AreaPage(area.Key, [.. area], walk, docs, stamp)));
 
-Console.WriteLine(string.Create(CultureInfo.InvariantCulture, $"{messages.Count} messages; {pages} pages written to {output}"));
+IReadOnlyList<string> removed = ReferenceSet.Write(output, pages);
+Console.WriteLine(string.Create(CultureInfo.InvariantCulture, $"{messages.Count} messages; {pages.Count} pages written to {output}"));
+foreach (string name in removed)
+    Console.WriteLine($"removed {name}: no area has it any more");
 return 0;

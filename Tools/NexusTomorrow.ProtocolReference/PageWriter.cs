@@ -11,7 +11,7 @@ namespace NexusTomorrow.ProtocolReference;
 public sealed record PageStamp(string Branch, string Commit, string Date);
 
 /// <summary>
-/// Renders the reference pages in the wiki's shape: CRLF text, the badge row first, then the scope sentence and the generated-page note.
+/// Renders the reference pages in the wiki's shape: LF text, as the wiki stores it, the badge row first, then the scope sentence and the generated-page note.
 /// A message's summary and remarks appear from <see cref="Rung.Purpose"/>, its fields' meanings from <see cref="Rung.Fields"/>.
 /// </summary>
 public static class PageWriter
@@ -111,7 +111,7 @@ public static class PageWriter
             + $"[![{stamp.Branch} {stamp.Commit}](https://img.shields.io/badge/{Shield(stamp.Branch)}-{Shield(stamp.Commit)}-6e7781)]({Repository}/commit/{stamp.Commit})");
         blocks.Add(scope);
         blocks.Add(
-            "> [!NOTE]\r\n"
+            "> [!NOTE]\n"
             + $"> Generated from the message declarations at {stamp.Branch} `{stamp.Commit}` by `{Generator.TrimEnd('/')}`. Don't edit it by hand: change the declaration's documentation and regenerate.");
     }
 
@@ -164,13 +164,13 @@ public static class PageWriter
     private static string Table(string[] header, IReadOnlyList<string[]> rows)
     {
         var text = new StringBuilder();
-        text.Append(Row(header)).Append("\r\n");
-        text.Append('|').Append(string.Concat(header.Select(_ => "---|"))).Append("\r\n");
+        text.Append(Row(header)).Append('\n');
+        text.Append('|').Append(string.Concat(header.Select(_ => "---|"))).Append('\n');
         for (int i = 0; i < rows.Count; i++)
         {
             text.Append(Row(rows[i]));
             if (i < rows.Count - 1)
-                text.Append("\r\n");
+                text.Append('\n');
         }
 
         return text.ToString();
@@ -180,7 +180,7 @@ public static class PageWriter
     private static string Row(IEnumerable<string> cells) =>
         "|" + string.Concat(cells.Select(cell => cell.Length == 0 ? " |" : $" {cell.Replace("|", "\\|", StringComparison.Ordinal)} |"));
 
-    private static string Join(List<string> blocks) => string.Join("\r\n\r\n", blocks) + "\r\n";
+    private static string Join(List<string> blocks) => string.Join("\n\n", blocks) + "\n";
 
     // The anchor GitHub makes from a "### `0x0036` Server0036" heading.
     private static string Anchor(ReferenceMessage message) =>
