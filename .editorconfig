@@ -136,16 +136,10 @@ dotnet_diagnostic.CA1707.severity = none
 dotnet_diagnostic.RS2008.severity = none
 
 # Replaced in Part B: these wire models are declarations that keep the seed's member names until
-# stage 3's last task brings them under the analyzers; Network.World and Network.Auth switch their
-# analyzers off in their project files until then. The legacy snapshot keeps the seed's names until
-# stage 3 deletes it with the primitives. Part B deletes each section as its files go.
-[{Source/NexusTomorrow.Network.World/**.cs,Source/NexusTomorrow.Network.Auth/**.cs,Source/NexusTomorrow.Network/Message/Model/**.cs,Tests/NexusTomorrow.Network.Legacy/**.cs}]
+# stage 3 brings them under the analyzers; Network.World and Network.Auth switch their analyzers
+# off in their project files until then. Part B deletes this section when it does.
+[{Source/NexusTomorrow.Network.World/**.cs,Source/NexusTomorrow.Network.Auth/**.cs,Source/NexusTomorrow.Network/Message/Model/**.cs}]
 dotnet_diagnostic.IDE1006.severity = none
-
-# The legacy snapshot copies Network's message models and NetworkGuid while referencing Network for the
-# legacy reader and writer, so its copies shadow the originals there; the copies are the ones it compares.
-[Tests/NexusTomorrow.Network.Legacy/**.cs]
-dotnet_diagnostic.CS0436.severity = none
 
 [Source/NexusTomorrow.Network/{GamePacketReader,GamePacketWriter,NetworkBitArray,NetworkGuid}.cs]
 dotnet_diagnostic.IDE1006.severity = none
