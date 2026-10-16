@@ -1,7 +1,8 @@
 ﻿namespace NexusTomorrow.Network.Codec.Tests.Facts;
 
 /// <summary>
-/// Compares a declared layout with the client's facts for its opcode, and lists every disagreement.
+/// Compares a declared layout with the client's facts for its opcode, and lists every disagreement: node by node against the client's tree
+/// (<see cref="WireTreeComparison"/>), or by empty path for a side the facts give no tree.
 /// </summary>
 internal static class WireFactsComparison
 {
@@ -25,8 +26,6 @@ internal static class WireFactsComparison
             return problems;
         }
 
-        if (!layout.IsComplete)
-            problems.Add($"{opcode}: a union has no arm for selector 0, so the declaration's empty path is incomplete");
         if ((layout.Direction & Direction.ClientToServer) != 0)
             CompareSide(layout, row.ClientToServer, readerView: false, $"{opcode} client to server", problems);
         if ((layout.Direction & Direction.ServerToClient) != 0)
@@ -44,6 +43,16 @@ internal static class WireFactsComparison
 
         if (side.Kind == "unknown")
             return;
+
+        if (side.Tree is not null)
+        {
+            problems.AddRange(WireTreeComparison.Compare(label, layout.Tree, WireTree.Parse(side.Tree)));
+            return;
+        }
+
+        // A union without arm 0 leaves the empty path incomplete; the tree comparison names the arm itself.
+        if (!layout.IsComplete)
+            problems.Add($"{label}: a union has no arm for selector 0, so the declaration's empty path is incomplete");
 
         List<int> widths = readerView ? ReaderWidths(layout) : [.. layout.EmptyPathWidths.Select(width => (int)width)];
         bool clientFixed = side.Kind == "fixed";

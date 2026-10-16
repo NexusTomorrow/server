@@ -93,3 +93,47 @@ public sealed partial class OuterFixture
         [UInt(6)] public byte Value { get; set; }
     }
 }
+
+// A counted array of elements that each hold a union, behind a nested struct and a wide string.
+[WireMessage((GameMessageOpcode)0xFF06, Direction.ClientToServer)]
+public sealed partial class UnionArrayFixture
+{
+    public UnionArrayHeaderFixture Unknown0 { get; set; } = new();
+    [WideString] public string Unknown1 { get; set; } = "";
+    [Array(CountBits = 5)] public List<UnionArrayElementFixture> Unknown2 { get; } = [];
+    [UInt(16)] public ushort Unknown3 { get; set; }
+}
+
+[WireStruct]
+public sealed partial class UnionArrayHeaderFixture
+{
+    [UInt(14)] public ushort Unknown0 { get; set; }
+    [UInt(64)] public ulong Unknown1 { get; set; }
+}
+
+[WireStruct]
+public sealed partial class UnionArrayElementFixture
+{
+    [UInt(4)] public byte Unknown0 { get; set; }
+    [UInt(16)] public ushort Unknown1 { get; set; }
+    [UInt(16)] public ushort Unknown2 { get; set; }
+    [Union(nameof(Unknown0))] public IUnionArrayArmFixture Unknown3 { get; set; } = new UnionArrayArm00Fixture();
+}
+
+public interface IUnionArrayArmFixture : IWireStruct
+{
+}
+
+[WireStruct]
+[UnionCase(0)]
+public sealed partial class UnionArrayArm00Fixture : IUnionArrayArmFixture
+{
+    [UInt(1)] public bool Unknown0 { get; set; }
+}
+
+[WireStruct]
+[UnionCase(2)]
+public sealed partial class UnionArrayArm02Fixture : IUnionArrayArmFixture
+{
+    [UInt(18)] public uint Unknown0 { get; set; }
+}

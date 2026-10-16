@@ -32,7 +32,7 @@ public sealed class LayoutTreeTests
     [Fact]
     public void AUnionListsEachArmBySelectorValue()
     {
-        Assert.Equal("14 64 w 5 [3:4 16 16 {0:0=(1),2=(18)}] 16", LayoutOf<Client01C3Fixture>().TreeText);
+        Assert.Equal("14 64 w 5 [3:4 16 16 {0:0=(1),2=(18)}] 16", LayoutOf<UnionArrayFixture>().TreeText);
     }
 
     [Fact]

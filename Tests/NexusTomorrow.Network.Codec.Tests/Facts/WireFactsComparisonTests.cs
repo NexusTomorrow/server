@@ -89,6 +89,24 @@ public sealed class WireFactsComparisonTests
     }
 
     [Fact]
+    public void ASideWithATreeIsComparedNodeByNode()
+    {
+        WireFactsRow row = new(0x0198, "c2s", new WireFactsSide("computed", 13, [8, 5], [], "8 5 [1:16 32]"), null);
+        WireLayout layout = new(0x0198, Direction.ClientToServer, false, isComplete: true, [8, 5], [], "8 5 [1:16 16]");
+
+        Assert.Equal(["0x0198 client to server [2].element[1]: the client has 32, the declaration 16"], WireFactsComparison.Compare(layout, row));
+    }
+
+    [Fact]
+    public void AgreeingTreesReportNothing()
+    {
+        WireFactsRow row = new(0x0198, "s2c", null, new WireFactsSide("computed", 13, [8, 5], [], "8 5 [1:16 32]"));
+        WireLayout layout = new(0x0198, Direction.ServerToClient, false, isComplete: true, [8, 5], [], "8 5 [1:16 32]");
+
+        Assert.Empty(WireFactsComparison.Compare(layout, row));
+    }
+
+    [Fact]
     public void AnIncompleteLayoutIsReported()
     {
         WireFactsRow row = new(0x0198, "c2s", Fixed(8), null);

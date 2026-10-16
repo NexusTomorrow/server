@@ -203,16 +203,16 @@ public sealed class GeneratedCodeTests
     [Fact]
     public void AUnionWritesItsArmsSelectorAndReadsTheArmBack()
     {
-        var message = new Client01C3Fixture { Unknown0 = new Client01C3Part0Fixture { Unknown0 = 4, Unknown1 = 0x1122334455667788 }, Unknown1 = "Hi", Unknown3 = 7 };
-        message.Unknown2.Add(new Client01C3Part1Fixture { Unknown1 = 0, Unknown2 = 2, Unknown3 = new Client01C3Union0Arm02Fixture { Unknown0 = 0x2ABCD } });
+        var message = new UnionArrayFixture { Unknown0 = new UnionArrayHeaderFixture { Unknown0 = 4, Unknown1 = 0x1122334455667788 }, Unknown1 = "Hi", Unknown3 = 7 };
+        message.Unknown2.Add(new UnionArrayElementFixture { Unknown1 = 0, Unknown2 = 2, Unknown3 = new UnionArrayArm02Fixture { Unknown0 = 0x2ABCD } });
 
-        Client01C3Fixture read = ReadAll<Client01C3Fixture>(WriteAll(message));
+        UnionArrayFixture read = ReadAll<UnionArrayFixture>(WriteAll(message));
 
         Assert.Equal(2, message.Unknown2[0].Unknown0);
         Assert.Equal(193, message.MeasureBits());
         Assert.Equal(0x1122334455667788ul, read.Unknown0.Unknown1);
         Assert.Equal("Hi", read.Unknown1);
-        Client01C3Union0Arm02Fixture arm = Assert.IsType<Client01C3Union0Arm02Fixture>(read.Unknown2[0].Unknown3);
+        UnionArrayArm02Fixture arm = Assert.IsType<UnionArrayArm02Fixture>(read.Unknown2[0].Unknown3);
         Assert.Equal(0x2ABCDu, arm.Unknown0);
         Assert.Equal(7, read.Unknown3);
     }
@@ -221,13 +221,13 @@ public sealed class GeneratedCodeTests
     public void ASelectorWithNoArmFailsTheRead()
     {
         // Selector 7 in 4 bits, then two zero 16-bit values.
-        Assert.Throws<CodecException>(() => ReadAll<Client01C3Part1Fixture>([0x07, 0x00, 0x00, 0x00, 0x00]));
+        Assert.Throws<CodecException>(() => ReadAll<UnionArrayElementFixture>([0x07, 0x00, 0x00, 0x00, 0x00]));
     }
 
     [Fact]
     public void AUnionArrayCarriesTheElementBitsOfArmZero()
     {
-        WireLayout layout = LayoutOf<Client01C3Fixture>();
+        WireLayout layout = LayoutOf<UnionArrayFixture>();
 
         Assert.Equal([14, 64, 1, 7, 5, 16], layout.EmptyPathWidths);
         Assert.Equal([WirePartShape.WideString, WirePartShape.Array], layout.Parts.Select(part => part.Shape));
@@ -296,7 +296,7 @@ public sealed class GeneratedCodeTests
     public void TheRegistryListsEveryLayoutInOpcodeOrder()
     {
         Assert.Equal(
-            [0x009A, 0x0104, 0x01C3, 0xFF01, 0xFF02, 0xFF03, 0xFF04, 0xFF05],
+            [0x009A, 0x0104, 0xFF01, 0xFF02, 0xFF03, 0xFF04, 0xFF05, 0xFF06],
             WireMessages.Layouts.Select(layout => (int)layout.Opcode));
     }
 }
