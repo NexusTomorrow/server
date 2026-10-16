@@ -9,7 +9,7 @@ public sealed class WireFactsComparisonTests
 
     private static WireFactsSide Fixed(params int[] widths)
     {
-        return new WireFactsSide("fixed", widths.Sum(), widths, []);
+        return new WireFactsSide("fixed", widths.Sum(), widths, [], null);
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public sealed class WireFactsComparisonTests
     [Fact]
     public void AFixedDeclarationOfAComputedMessageIsReported()
     {
-        WireFactsRow row = new(0x0198, "c2s", new WireFactsSide("computed", 8, [1, 7], [new WireFactsPart("wide-string", null)]), null);
+        WireFactsRow row = new(0x0198, "c2s", new WireFactsSide("computed", 8, [1, 7], [new WireFactsPart("wide-string", null)], null), null);
 
         List<string> problems = WireFactsComparison.Compare(Layout(Direction.ClientToServer, true, [1, 7]), row);
 
@@ -45,7 +45,7 @@ public sealed class WireFactsComparisonTests
     [Fact]
     public void AReaderRowOmitsTheTerminatorOfAnEmptyTerminatedString()
     {
-        WireFactsRow row = new(0x0198, "s2c", null, new WireFactsSide("computed", 16, [16], []));
+        WireFactsRow row = new(0x0198, "s2c", null, new WireFactsSide("computed", 16, [16], [], null));
         WireLayout layout = Layout(Direction.ServerToClient, false, [16, 16], new WirePart { Shape = WirePartShape.TerminatedWideString, At = 0, ElementBits = -1 });
 
         Assert.Empty(WireFactsComparison.Compare(layout, row));
@@ -54,7 +54,7 @@ public sealed class WireFactsComparisonTests
     [Fact]
     public void AnArrayWhoseElementSizeDiffersIsReported()
     {
-        WireFactsRow row = new(0x0198, "c2s", new WireFactsSide("computed", 5, [5], [new WireFactsPart("array", 37)]), null);
+        WireFactsRow row = new(0x0198, "c2s", new WireFactsSide("computed", 5, [5], [new WireFactsPart("array", 37)], null), null);
         WireLayout layout = Layout(Direction.ClientToServer, false, [5], new WirePart { Shape = WirePartShape.Array, At = 0, ElementBits = 36 });
 
         List<string> problems = WireFactsComparison.Compare(layout, row);
@@ -66,7 +66,7 @@ public sealed class WireFactsComparisonTests
     [Fact]
     public void AnUnknownSideReportsNothing()
     {
-        WireFactsRow row = new(0x0198, "s2c", null, new WireFactsSide("unknown", null, null, []));
+        WireFactsRow row = new(0x0198, "s2c", null, new WireFactsSide("unknown", null, null, [], null));
 
         Assert.Empty(WireFactsComparison.Compare(Layout(Direction.ServerToClient, true, [8]), row));
     }

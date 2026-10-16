@@ -8,9 +8,10 @@ namespace NexusTomorrow.Network.Codec.Tests.Facts;
 internal sealed record WireFactsPart(string Shape, int? ElementBits);
 
 /// <summary>
-/// One direction of a facts row: the client-to-server layout, or the server-to-client one. An unknown side has a kind and nothing else.
+/// One direction of a facts row: the client-to-server layout, or the server-to-client one, with its full layout tree in the codec's text form.
+/// An unknown side has a kind and nothing else.
 /// </summary>
-internal sealed record WireFactsSide(string Kind, int? Bits, IReadOnlyList<int>? Widths, IReadOnlyList<WireFactsPart> Parts);
+internal sealed record WireFactsSide(string Kind, int? Bits, IReadOnlyList<int>? Widths, IReadOnlyList<WireFactsPart> Parts, string? Tree);
 
 /// <summary>
 /// One opcode's row of the client facts table.
@@ -55,7 +56,8 @@ internal static class WireFacts
         List<WireFactsPart> parts = side.TryGetProperty("parts", out JsonElement partsElement)
             ? [.. partsElement.EnumerateArray().Select(ReadPart)]
             : [];
-        return new WireFactsSide(side.GetProperty("kind").GetString() ?? "", bits, widths, parts);
+        string? tree = side.TryGetProperty("tree", out JsonElement treeElement) ? treeElement.GetString() : null;
+        return new WireFactsSide(side.GetProperty("kind").GetString() ?? "", bits, widths, parts, tree);
     }
 
     private static WireFactsPart ReadPart(JsonElement part)
