@@ -14,8 +14,10 @@ public sealed partial class RealmNotice
     [UInt(32)] public uint Unknown0 { get; set; }
 
     /// <summary>
-    /// The notice's text per language: the client shows the string at its language number less one, and the first string when that one is
-    /// empty. It does not check that index against the notice's own string count, so every notice carries a string for every language.
+    /// The notice's text per language: the client shows the string at its language id less one (the id its Language table gives the
+    /// language), and the first string when that one is empty. It does not check that index against the notice's own string count, and the
+    /// ids are not consecutive, so every notice carries strings through the highest language id less one, with any string at an index no
+    /// language uses.
     /// </summary>
     [Array(CountBits = 8), WideString] public List<string> Translations { get; set; } = [];
 }
