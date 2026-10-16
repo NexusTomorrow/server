@@ -7,7 +7,7 @@
 public sealed class WireLayoutDataAttribute : Attribute
 {
     /// <summary>
-    /// Record a type's empty-path layout.
+    /// Record a type's empty-path layout and its full tree.
     /// </summary>
     /// <param name="isFixed">True when the layout holds no computed part.</param>
     /// <param name="isComplete">False when a union has no arm for selector 0.</param>

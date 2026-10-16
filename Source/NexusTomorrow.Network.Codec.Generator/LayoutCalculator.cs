@@ -4,7 +4,7 @@ using System.Linq;
 namespace NexusTomorrow.Network.Codec.Generator;
 
 /// <summary>
-/// Computes each type's empty-path layout from the models, resolving nested types, bases and union arms across the compilation.
+/// Computes each type's empty-path layout and full tree from the models, resolving nested types, bases and union arms across the compilation.
 /// </summary>
 internal sealed class LayoutCalculator
 {

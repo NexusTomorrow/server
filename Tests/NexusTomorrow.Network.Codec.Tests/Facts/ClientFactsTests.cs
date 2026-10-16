@@ -32,7 +32,7 @@ public sealed class ClientFactsTests
         Assert.All(rows.Keys, opcode => Assert.InRange(opcode, 0, ushort.MaxValue));
     }
 
-    // A known side the client's layout could not be explored for keeps its widths and no tree; the meta counts those sides, so one losing
+    // A known side whose layout the facts give by its widths alone has no tree; the meta counts those sides, so one losing
     // its tree shows up as a count that no longer matches.
     [Fact]
     public void EveryTreeGivesItsSideWidthsAndTheMetaCountsTheSidesWithout()

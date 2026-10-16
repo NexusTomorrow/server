@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.Codec;
 
 /// <summary>
-/// A message's layout on the empty path: the field widths, in order, that the writer emits when every string is empty, every counted array is empty and every union takes its arm for selector 0.
+/// A message's layout: its full tree (<see cref="Tree"/>), and the field widths, in order, that the writer emits on the empty path, when every string is empty, every counted array is empty and every union takes its arm for selector 0.
 /// The client's writers give the same widths; its readers read an empty terminated string as the count alone, which the facts check accounts for.
 /// </summary>
 public sealed class WireLayout

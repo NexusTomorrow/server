@@ -52,13 +52,13 @@ public sealed class WireTreeComparisonTests
     }
 
     [Fact]
-    public void ValuesAWideSelectorWasNeverTriedAtAreNotCompared()
+    public void ValuesAWideSelectorHasNoFactsForAreNotCompared()
     {
         Assert.Empty(Compare("12 {0:0=(),300=(8)}", "12 {0:0=()}"));
     }
 
     [Fact]
-    public void AOneBitCountedArrayEqualsTheUnionTheProbeReports()
+    public void AOneBitCountedArrayEqualsItsUnionForm()
     {
         Assert.Empty(Compare("1 [0:8 8]", "1 {0:0=(),1=(8 8)}"));
     }

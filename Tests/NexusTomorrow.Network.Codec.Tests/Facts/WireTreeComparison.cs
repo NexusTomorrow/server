@@ -17,10 +17,10 @@ internal static class WireTreeComparison
     }
 
     /// <summary>
-    /// The values the probe tries a selector at: every value up to 8 bits, else 0, 1, 2, 3, 0xFF, 0x100, the top bit alone and all ones
-    /// (the probe's <c>values_for</c>). Null means every value.
+    /// The selector values at which the client facts give a union's arms: every value of a selector up to 8 bits wide, else 0, 1, 2, 3,
+    /// 0xFF, 0x100, the top bit alone and all ones. Null means every value.
     /// </summary>
-    public static HashSet<ulong>? TriedValues(int width)
+    public static HashSet<ulong>? KnownSelectorValues(int width)
     {
         if (width <= 8)
             return null;
@@ -68,7 +68,7 @@ internal static class WireTreeComparison
                     CompareArms(label, here, mine, theirs, declared[mine.Reference].Bits, problems);
                     break;
 
-                // The probe cannot see where a blob starts, so only its length's width is compared.
+                // The client facts do not give whether a blob starts on a byte boundary, so only its length's width is compared.
                 case WireNodeKind.Blob:
                     if (mine.Bits != theirs.Bits)
                         problems.Add($"{label} {here}: the client's blob length is {theirs.Bits} bits, the declaration's {mine.Bits}");
@@ -84,7 +84,7 @@ internal static class WireTreeComparison
     {
         var declaredArms = mine.Arms.ToDictionary(arm => arm.Selector);
         var clientArms = theirs.Arms.ToDictionary(arm => arm.Selector);
-        HashSet<ulong>? tried = TriedValues(selectorBits);
+        HashSet<ulong>? known = KnownSelectorValues(selectorBits);
         var emptyRun = new List<ulong>();
 
         void FlushEmptyRun()
@@ -98,7 +98,7 @@ internal static class WireTreeComparison
 
         foreach (ulong value in declaredArms.Keys.Union(clientArms.Keys).Order())
         {
-            if (tried is not null && !tried.Contains(value))
+            if (known is not null && !known.Contains(value))
                 continue;
 
             bool declaredHas = declaredArms.TryGetValue(value, out WireArm? declaredArm);
@@ -131,7 +131,7 @@ internal static class WireTreeComparison
     }
 
     /// <summary>
-    /// Rewrite the forms the wire cannot tell apart into the one the probe reports: an array counted by a 1-bit field becomes the union
+    /// Rewrite the forms the wire cannot tell apart into one form, on both sides alike: an array counted by a 1-bit field becomes the union
     /// {0=(), 1=(element)}; consecutive arrays sharing one count whose elements are all fields of one width become one array of their
     /// elements together. Each sequence's references are renumbered when nodes merge.
     /// </summary>

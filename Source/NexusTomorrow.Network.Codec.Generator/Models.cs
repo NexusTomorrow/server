@@ -79,7 +79,7 @@ internal sealed record MemberModel(
 internal sealed record PartModel(int Shape, int At, int ElementBits);
 
 /// <summary>
-/// A type's empty-path layout and its full tree in the codec's text form (<c>WireTree</c>); a scalar's or a string's layout has no tree.
+/// A type's empty-path layout and its full tree in the codec's text form (<c>WireTree</c>); a layout from <c>ValueLayout</c>, and the one a type that contains itself gets, has no tree.
 /// </summary>
 internal sealed record LayoutModel(bool IsFixed, bool IsComplete, EquatableArray<byte> Widths, EquatableArray<PartModel> Parts, string Tree = "")
 {
