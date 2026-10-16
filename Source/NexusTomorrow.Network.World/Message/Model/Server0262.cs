@@ -10,8 +10,6 @@ namespace NexusTomorrow.Network.World.Message.Model;
 [WireMessage(GameMessageOpcode.Server0262, Direction.ServerToClient)]
 public sealed partial class Server0262
 {
-    #region Unknown Structures
-
     [WireStruct]
     public sealed partial class Server0262Part14
     {
@@ -88,8 +86,6 @@ public sealed partial class Server0262
         [UInt(2)] public byte Unknown0 { get; set; }
         [Union(nameof(Unknown0))] public IServer0262Union6 Unknown1 { get; set; } = new Server0262Union6Arm00();
     }
-
-    #endregion
 
     [UInt(32)] public uint Unknown0 { get; set; }
     [UInt(6)] public byte Unknown1 { get; set; }

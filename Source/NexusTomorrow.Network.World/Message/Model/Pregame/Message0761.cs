@@ -1,6 +1,6 @@
 ﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
-using NetworkMessage = NexusTomorrow.Network.Message.Model.Shared.Message0761Part2;
+using NexusTomorrow.Network.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
@@ -9,5 +9,5 @@ public sealed partial class Message0761
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
     [Array(CountBits = 32)] public List<Message0761Part0> Unknown1 { get; set; } = [];
-    [Array(CountBits = 32)] public List<NetworkMessage> Unknown2 { get; set; } = [];
+    [Array(CountBits = 32)] public List<Message0761Part2> Unknown2 { get; set; } = [];
 }
