@@ -7,13 +7,13 @@
 public enum Rung
 {
     /// <summary>
-    /// What the message is for is read: its type carries the client's name and a summary.
+    /// What the message is for is read: its type is named for that purpose instead of its neutral opcode name, and carries a summary.
     /// </summary>
     Purpose = 1,
 
     /// <summary>
-    /// Every field is read: each wire member of every layout the message reaches carries the client's name and a summary of its meaning,
-    /// unit and range.
+    /// Every field is read: each wire member of every layout the message reaches is named for its meaning and carries a summary of
+    /// that meaning, unit and range. A member the client gives no meaning keeps its neutral name, and its summary says so first.
     /// </summary>
     Fields = 2,
 

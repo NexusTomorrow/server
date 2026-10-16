@@ -36,6 +36,13 @@ public sealed partial class PurposeFixture
 }
 
 [WireStruct]
+[Verified(Rung.Purpose)]
+public sealed partial class ServerFFFF
+{
+    [UInt(8)] public byte Unknown0 { get; set; }
+}
+
+[WireStruct]
 public sealed partial class UnreadFixture
 {
     [UInt(8)] public byte Unknown0 { get; set; }

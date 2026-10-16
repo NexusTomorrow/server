@@ -11,9 +11,10 @@ namespace NexusTomorrow.Network.Codec.Tests.Verification;
 internal static partial class MessageVerification
 {
     /// <summary>
-    /// The sentence a member's summary begins with when the member keeps its neutral name at <see cref="Rung.Fields"/>.
+    /// The sentence a member's summary begins with when the member keeps its neutral name at <see cref="Rung.Fields"/>; it holds in
+    /// either direction, for a value the client ignores on read or writes without meaning.
     /// </summary>
-    public const string IgnoredByTheClient = "The client reads this value and ignores it.";
+    public const string GivenNoMeaning = "The client gives this value no meaning.";
 
     public static Rung? RungOf(Type message) => message.GetCustomAttribute<VerifiedAttribute>()?.Rung;
 
@@ -22,6 +23,8 @@ internal static partial class MessageVerification
         var problems = new List<string>();
         if (RungOf(message) is not { } rung)
             return problems;
+        if (NeutralMessageName().IsMatch(message.Name))
+            problems.Add($"{key}: {rung} needs a name of its own on {message.Name}");
         if (!summaries.ContainsKey("T:" + DocName(message)))
             problems.Add($"{key}: {rung} needs a summary on {message.Name}");
         if (rung < Rung.Fields)
@@ -34,8 +37,8 @@ internal static partial class MessageVerification
                 string id = (member is PropertyInfo ? "P:" : "F:") + DocName(type) + "." + member.Name;
                 if (!summaries.TryGetValue(id, out string? summary))
                     problems.Add($"{key}: {rung} needs a summary on {type.Name}.{member.Name}");
-                else if (NeutralName().IsMatch(member.Name) && !summary.StartsWith(IgnoredByTheClient, StringComparison.Ordinal))
-                    problems.Add($"{key}: {type.Name}.{member.Name} keeps a neutral name, so its summary must begin with the ignored-by-the-client sentence");
+                else if (NeutralName().IsMatch(member.Name) && !summary.StartsWith(GivenNoMeaning, StringComparison.Ordinal))
+                    problems.Add($"{key}: {type.Name}.{member.Name} keeps a neutral name, so its summary must begin with the no-meaning sentence");
             }
         }
 
@@ -87,4 +90,7 @@ internal static partial class MessageVerification
 
     [GeneratedRegex("^Unknown[0-9]+$")]
     private static partial Regex NeutralName();
+
+    [GeneratedRegex("^(Client|Server|Message)[0-9A-F]{4}$")]
+    private static partial Regex NeutralMessageName();
 }

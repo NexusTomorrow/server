@@ -26,6 +26,14 @@ public sealed class MessageVerificationTests
     }
 
     [Fact]
+    public void PurposeNeedsANameOfItsOwn()
+    {
+        Assert.Equal(
+            ["0xFFFF: Purpose needs a name of its own on ServerFFFF"],
+            MessageVerification.Problems(typeof(ServerFFFF), Key, Summaries(($"T:{Fixtures}ServerFFFF", "What it is for.")), s_fixtures));
+    }
+
+    [Fact]
     public void FieldsNeedsASummaryOnEveryMemberOfEveryLayoutTheMessageReaches()
     {
         List<string> problems = MessageVerification.Problems(typeof(FieldsFixture), Key, Summaries(($"T:{Fixtures}FieldsFixture", "What it is for.")), s_fixtures);
@@ -64,7 +72,7 @@ public sealed class MessageVerificationTests
     }
 
     [Fact]
-    public void ANeutralNameAtFieldsNeedsTheIgnoredSentence()
+    public void ANeutralNameAtFieldsNeedsTheNoMeaningSentence()
     {
         Dictionary<string, string> summaries = Summaries(
             ($"T:{Fixtures}FieldsFixture", "What it is for."),
@@ -75,10 +83,10 @@ public sealed class MessageVerificationTests
             ($"P:{Fixtures}VerifiedArm.Unknown0", "Something."));
 
         Assert.Equal(
-            ["0xFFFF: VerifiedArm.Unknown0 keeps a neutral name, so its summary must begin with the ignored-by-the-client sentence"],
+            ["0xFFFF: VerifiedArm.Unknown0 keeps a neutral name, so its summary must begin with the no-meaning sentence"],
             MessageVerification.Problems(typeof(FieldsFixture), Key, summaries, s_fixtures));
 
-        summaries[$"P:{Fixtures}VerifiedArm.Unknown0"] = MessageVerification.IgnoredByTheClient + " It is always zero on the wire.";
+        summaries[$"P:{Fixtures}VerifiedArm.Unknown0"] = "The client gives this value no meaning. It is always zero on the wire.";
         Assert.Empty(MessageVerification.Problems(typeof(FieldsFixture), Key, summaries, s_fixtures));
     }
 }

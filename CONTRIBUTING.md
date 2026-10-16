@@ -121,9 +121,12 @@ through an interface or a generic, and exceptions used for control flow.
 Every public type and member gets a `/// <summary>`. Data declarations are the exception: game
 table row models and enums document the type, and a member only when its name can't carry its
 meaning (units, a bit layout, why an unknown value is still unknown). Wire messages document what
-their `[Verified]` rung requires, which the registry verification tests enforce: a summary on the
-type from `Purpose`, and on every wire member of every layout it reaches from `Fields`. Private
-members and test methods need none.
+their `[Verified]` rung requires, which the registry verification tests enforce: from `Purpose`, a
+name for what the message does in place of its neutral `Client`, `Server` or `Message` number, and
+a summary on the type; from `Fields`, a summary on every wire member of every layout it reaches. A
+member that keeps its neutral `Unknown<n>` name at `Fields` begins its summary with "The client
+gives this value no meaning." Wire members count at any accessibility; elsewhere, private members
+and test methods need none.
 
 ### Comments
 
