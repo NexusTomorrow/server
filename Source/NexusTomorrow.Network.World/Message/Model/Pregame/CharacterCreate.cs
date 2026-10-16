@@ -25,7 +25,7 @@ public sealed partial class CharacterCreate
     [WideString] public string Name { get; private set; } = "";
 
     /// <summary>
-    /// The character's path: 0 soldier, 1 settler, 2 scientist, 3 explorer.
+    /// The character's path: 0 Soldier, 1 Settler, 2 Scientist, 3 Explorer.
     /// </summary>
     [UInt(3)] public byte Path { get; private set; }
 
@@ -35,18 +35,17 @@ public sealed partial class CharacterCreate
     [UInt(32), Count] public uint LookCount { get; set; }
 
     /// <summary>
-    /// The look labels, as ids in the CharacterCustomizationLabel table.
+    /// The look options the player set, by the ids the client keys its look options by.
     /// </summary>
-    [Array(CountFrom = nameof(LookCount)), UInt(32)] public List<uint> LookLabels { get; } = [];
+    [Array(CountFrom = nameof(LookCount)), UInt(32)] public List<uint> LookIds { get; } = [];
 
     /// <summary>
-    /// The value chosen for each label in <see cref="LookLabels"/>.
+    /// The value chosen for each option in <see cref="LookIds"/>.
     /// </summary>
     [Array(CountFrom = nameof(LookCount)), UInt(32)] public List<uint> LookValues { get; } = [];
 
     /// <summary>
-    /// Values the client's model produces from the player's bone settings, one per bone component listed for the character's race
-    /// and gender.
+    /// Values the client's model produces from the player's bone settings.
     /// </summary>
     [Array(CountBits = 32), Float32] public List<float> Bones { get; } = [];
 }
