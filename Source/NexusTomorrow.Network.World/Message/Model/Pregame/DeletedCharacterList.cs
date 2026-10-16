@@ -3,8 +3,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
+/// <summary>
+/// The account's deleted characters, kept for the character-select interface to show.
+/// </summary>
 [WireMessage(GameMessageOpcode.Server0116, Direction.ServerToClient)]
-public sealed partial class Server0116
+[Verified(Rung.Purpose)]
+public sealed partial class DeletedCharacterList
 {
     [WireStruct]
     public sealed partial class Server0116Part0

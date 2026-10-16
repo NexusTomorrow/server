@@ -5,8 +5,13 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
+/// <summary>
+/// The account's characters and its character creation options, the answer to <see cref="CharacterListRequest"/>. The client
+/// replaces its list with this one.
+/// </summary>
 [WireMessage(GameMessageOpcode.Server0117, Direction.ServerToClient)]
-public sealed partial class Server0117
+[Verified(Rung.Purpose)]
+public sealed partial class CharacterList
 {
     [WireStruct]
     public sealed partial class Server0117Part0

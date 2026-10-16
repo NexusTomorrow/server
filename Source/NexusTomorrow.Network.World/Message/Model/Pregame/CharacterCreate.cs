@@ -3,8 +3,16 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
+/// <summary>
+/// Creates a character from a character creation option, a name and the player's choices.
+/// </summary>
+/// <remarks>
+/// Sent inside a <see cref="Network.Message.Model.NestedMessage"/>, itself inside a
+/// <see cref="Network.Message.Model.ClientEnvelope"/>; the client then waits for <see cref="CharacterCreateResult"/>.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Client025B, Direction.ClientToServer)]
-public sealed partial class Client025B
+[Verified(Rung.Purpose)]
+public sealed partial class CharacterCreate
 {
     [UInt(32)] public uint Unknown0 { get; private set; }
     [WideString] public string Unknown1 { get; private set; } = "";

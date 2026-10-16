@@ -3,8 +3,13 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
+/// <summary>
+/// The answer to <see cref="CharacterCreate"/>. On success the client selects the new character, at once or after its creation
+/// scene.
+/// </summary>
 [WireMessage(GameMessageOpcode.Server00DC, Direction.ServerToClient)]
-public sealed partial class Server00DC
+[Verified(Rung.Purpose)]
+public sealed partial class CharacterCreateResult
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
     [UInt(32)] public uint Unknown1 { get; set; }
