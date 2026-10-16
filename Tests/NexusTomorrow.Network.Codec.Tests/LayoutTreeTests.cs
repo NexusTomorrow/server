@@ -47,7 +47,7 @@ public sealed class LayoutTreeTests
         Assert.Equal("8 12 4", LayoutOf<DerivedFixture>().TreeText);
     }
 
-    // Client0592 nests NetworkGuid (32, 16, 16, then eight 8-bit fields) from the Network assembly, so its tree comes through [WireLayoutData].
+    // The login request (0x0592) nests NetworkGuid (32, 16, 16, then eight 8-bit fields) from the Network assembly, so its tree comes through [WireLayoutData].
     [Fact]
     public void AStructFromAnotherAssemblyNestsThroughItsLayoutData()
     {
