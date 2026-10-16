@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// <see cref="Network.Message.Model.ClientEnvelope"/>; the client then waits for <see cref="CharacterCreateResult"/>.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client025B, Direction.ClientToServer)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class CharacterCreate
 {
     /// <summary>
@@ -29,11 +29,24 @@ public sealed partial class CharacterCreate
     /// </summary>
     [UInt(3)] public byte Path { get; private set; }
 
-    [UInt(32), Count] public uint Unknown3 { get; set; }
+    /// <summary>
+    /// How many look entries follow.
+    /// </summary>
+    [UInt(32), Count] public uint LookCount { get; set; }
 
-    [Array(CountFrom = nameof(Unknown3)), UInt(32)] public List<uint> Unknown4 { get; } = [];
+    /// <summary>
+    /// The look labels, as ids in the CharacterCustomizationLabel table.
+    /// </summary>
+    [Array(CountFrom = nameof(LookCount)), UInt(32)] public List<uint> LookLabels { get; } = [];
 
-    [Array(CountFrom = nameof(Unknown3)), UInt(32)] public List<uint> Unknown5 { get; } = [];
+    /// <summary>
+    /// The value chosen for each label in <see cref="LookLabels"/>.
+    /// </summary>
+    [Array(CountFrom = nameof(LookCount)), UInt(32)] public List<uint> LookValues { get; } = [];
 
-    [Array(CountBits = 32), Float32] public List<float> Unknown6 { get; } = [];
+    /// <summary>
+    /// Values the client's model produces from the player's bone settings, one per bone component listed for the character's race
+    /// and gender.
+    /// </summary>
+    [Array(CountBits = 32), Float32] public List<float> Bones { get; } = [];
 }
