@@ -20,8 +20,8 @@ public sealed partial class WorldLogout
     [UInt(1)] public bool ToCharacterSelect { get; set; }
 
     /// <summary>
-    /// Why the session ended: 6, 7, 8, 12, 15, 16, 19 and 20 always disconnect with a message of their own, whatever
-    /// <see cref="ToCharacterSelect"/> says; any other value uses a general message.
+    /// Why the session ended. 6, 7, 8, 12, 15, 16, 19 and 20 always end in a disconnect message, whatever
+    /// <see cref="ToCharacterSelect"/> says; with any other value <see cref="ToCharacterSelect"/> decides.
     /// </summary>
     [UInt(5)] public byte Reason { get; set; }
 }

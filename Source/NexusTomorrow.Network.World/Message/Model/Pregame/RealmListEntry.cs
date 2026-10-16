@@ -9,10 +9,10 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 public partial class RealmListEntry
 {
     /// <summary>
-    /// The player's account on a realm.
+    /// Values the client shows with a realm.
     /// </summary>
     [WireStruct]
-    public sealed partial class RealmAccountSummary
+    public sealed partial class RealmSummary
     {
         /// <summary>
         /// The client gives this value no meaning.
@@ -25,7 +25,7 @@ public partial class RealmListEntry
         [UInt(32)] public uint Count { get; set; }
 
         /// <summary>
-        /// A character name the client shows as last played on the realm, when not empty.
+        /// A character name the client shows as last played on the realm, when present.
         /// </summary>
         [WideString] public string LastPlayed { get; set; } = "";
 
@@ -36,7 +36,7 @@ public partial class RealmListEntry
     }
 
     /// <summary>
-    /// The realm's id, which <see cref="RealmChoice"/> sends back.
+    /// The realm's id; <see cref="RealmChoice"/> names a realm by it.
     /// </summary>
     [UInt(32)] public uint RealmId { get; set; }
 
@@ -82,9 +82,9 @@ public partial class RealmListEntry
     [FixedArray(16), UInt(8)] public byte[] Unknown8 { get; set; } = new byte[16];
 
     /// <summary>
-    /// The player's account on the realm.
+    /// Values the client shows with the realm.
     /// </summary>
-    public RealmAccountSummary Account { get; set; } = new();
+    public RealmSummary Summary { get; set; } = new();
 
     /// <summary>
     /// The client gives this value no meaning.

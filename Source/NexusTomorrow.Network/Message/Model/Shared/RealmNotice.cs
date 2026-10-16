@@ -15,7 +15,7 @@ public sealed partial class RealmNotice
 
     /// <summary>
     /// The notice's text per language: the client shows the string at its language number less one, and the first string when that one is
-    /// empty.
+    /// empty. It does not check that index against the notice's own string count, so every notice carries a string for every language.
     /// </summary>
     [Array(CountBits = 8), WideString] public List<string> Translations { get; set; } = [];
 }

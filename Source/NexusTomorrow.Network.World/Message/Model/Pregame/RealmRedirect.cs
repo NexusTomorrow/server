@@ -7,11 +7,11 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// The server's answer to a <see cref="RealmChoice"/> of another realm: its world server, the session key and the realm's details.
 /// </summary>
 /// <remarks>
-/// Taken on the realm-select connection. The client connects to <see cref="Gateway"/>, starts that connection under the build's fixed
-/// key, and waits there for <see cref="Network.Message.Model.ServerHello"/>.
+/// Taken on the realm-select connection. The client connects to <see cref="Gateway"/> and waits there for
+/// <see cref="Network.Message.Model.ServerHello"/>.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server07A1, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class RealmRedirect
 {
     /// <summary>

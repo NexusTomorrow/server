@@ -8,12 +8,11 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// The realm-select screen's list of realms, and the realm notices.
 /// </summary>
 /// <remarks>
-/// The client registers a writer for it as well, and no client code sends it. When a client-side switch is set, the client selects a
-/// realm from the list on its own (the first whose <see cref="RealmListEntry.Flags"/> has bit 0 set, else the first) and sends
-/// <see cref="RealmChoice"/> for it.
+/// The client registers a writer for it as well. When a client-side switch is set, the client selects a realm from the list on its own:
+/// the first whose <see cref="RealmListEntry.Flags"/> has bit 0 set, else the first.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Message0761, Direction.Both)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class RealmList
 {
     /// <summary>

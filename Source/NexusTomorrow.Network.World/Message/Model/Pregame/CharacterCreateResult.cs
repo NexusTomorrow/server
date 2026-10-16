@@ -4,8 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 /// <summary>
-/// The answer to <see cref="CharacterCreate"/>. On success the client selects the new character, at once or after its creation
-/// scene.
+/// The answer to <see cref="CharacterCreate"/>. On success the client selects the new character.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server00DC, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]

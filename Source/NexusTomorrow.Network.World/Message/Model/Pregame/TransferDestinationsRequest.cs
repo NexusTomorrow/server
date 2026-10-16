@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// <see cref="TransferDestinationList"/>.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client03EE, Direction.ClientToServer)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class TransferDestinationsRequest
 {
     /// <summary>

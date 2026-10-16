@@ -7,8 +7,8 @@ namespace NexusTomorrow.Network.Auth.Message.Model;
 /// The login server refuses the login.
 /// </summary>
 /// <remarks>
-/// Taken on the login connection in any state. The client shows a message chosen by <see cref="Result"/>, closes its connections and returns
-/// to the login screen.
+/// Taken on the login connection in any state until the client has greeted the world server. The client shows a message chosen by
+/// <see cref="Result"/>, closes its connections and returns to the login screen.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server063D, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

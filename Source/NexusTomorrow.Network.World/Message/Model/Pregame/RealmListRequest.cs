@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// Asks for the realm list when the player opens realm select from character select.
 /// </summary>
 /// <remarks>
-/// Sent on the character-select connection, which realm select takes over; the client then waits for <see cref="RealmList"/>.
+/// Sent on the character-select connection, which realm select takes over.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client07A4, Direction.ClientToServer)]
 [Verified(Rung.Fields)]

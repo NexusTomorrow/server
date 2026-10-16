@@ -13,8 +13,8 @@ namespace NexusTomorrow.Network.Message.Model;
 public sealed partial class ClientEnvelope
 {
     /// <summary>
-    /// A 32-bit length that counts its own four bytes, then the encrypted message. Decrypted with the connection's key, the bytes after the
-    /// length are one whole message.
+    /// One whole message, which begins with its own 32-bit length (counting those four bytes). The length travels in clear and the bytes
+    /// after it are encrypted with the key of the connection it is sent on.
     /// </summary>
     [Blob(32, LengthIncludesSelf = true)] public byte[] Payload { get; private set; } = [];
 }

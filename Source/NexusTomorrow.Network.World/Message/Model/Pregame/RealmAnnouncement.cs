@@ -11,8 +11,8 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 public sealed partial class RealmAnnouncement
 {
     /// <summary>
-    /// How prominent the announcement is. On character and realm select every tier is shown alike; in the world, 0 and 1 each raise an
-    /// announcement of their own, 0 the higher, and 2 and 3 do not.
+    /// The announcement's tier. On character and realm select the client passes it to its interface with the text; in the world, 0 and 1
+    /// each raise an announcement of their own, and 2 and 3 do not.
     /// </summary>
     [UInt(2)] public byte Tier { get; set; }
 

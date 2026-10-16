@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.Auth.Message.Model;
 /// under the build's fixed key, and waits there for <see cref="Network.Message.Model.ServerHello"/>; the login connection stays open.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server03DB, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class RealmHandoff
 {
     /// <summary>
@@ -33,7 +33,7 @@ public sealed partial class RealmHandoff
     /// <summary>
     /// A value the client keeps and sends back unchanged as the first field of <c>WorldHello</c> (0x058F).
     /// </summary>
-    [UInt(32)] public uint HandoffId { get; set; }
+    [UInt(32)] public uint Echo { get; set; }
 
     /// <summary>
     /// The realm's name, shown to the player and used to name the client's settings file for the realm.

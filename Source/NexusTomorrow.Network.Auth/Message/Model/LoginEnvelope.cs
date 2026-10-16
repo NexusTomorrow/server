@@ -16,8 +16,8 @@ namespace NexusTomorrow.Network.Auth.Message.Model;
 public sealed partial class LoginEnvelope
 {
     /// <summary>
-    /// A 32-bit length that counts its own four bytes, then the encrypted message; the length must be at least 4. The client decrypts the
-    /// bytes after the length and handles them as one whole message.
+    /// One whole message, which begins with its own 32-bit length (counting those four bytes). The length travels in clear and the bytes
+    /// after it are encrypted with the login connection's key; the client decrypts them and handles the result as that message.
     /// </summary>
     [Blob(32, LengthIncludesSelf = true)] public byte[] Payload { get; set; } = [];
 }
