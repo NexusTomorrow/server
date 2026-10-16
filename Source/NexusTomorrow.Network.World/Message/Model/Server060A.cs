@@ -38,7 +38,6 @@ public sealed partial class Server060A
         [Float32] public float Unknown11 { get; set; }
         [FixedArray(5)] public Server060APart1[] Unknown12 { get; set; } = new Server060APart1[5];
         [Array(CountBits = 32)] public List<Server060APart2> Unknown13 { get; set; } = [];
-
     }
 
     [UInt(32)] public uint Unknown0 { get; set; }

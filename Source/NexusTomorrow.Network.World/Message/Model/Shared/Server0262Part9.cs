@@ -30,5 +30,4 @@ public sealed partial class Server0262Part9
     [UInt(32)] public uint Unknown3 { get; set; }
     [UInt(2)] public byte Unknown4 { get; set; }
     [Union(nameof(Unknown4))] public IServer0262Union3 Unknown5 { get; set; } = new Server0262Union3Arm00();
-
 }

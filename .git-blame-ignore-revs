@@ -4,3 +4,5 @@
 94b4127c37c8a61056ed36ab2d9064349c5891c5
 # Rename fields and British-spelled symbols to the code standard
 103cccbc87d17e63d2f5c4bf7599abcdb5a23f77
+# Give every unread message, struct and field a neutral name
+4bce375aec06c5207a85aba41db19b7854e28ea5

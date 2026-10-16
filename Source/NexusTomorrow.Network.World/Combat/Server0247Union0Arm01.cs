@@ -6,7 +6,6 @@ namespace NexusTomorrow.Network.World.Combat;
 [UnionCase(1)]
 public sealed partial class Server0247Union0Arm01 : IServer0247Union0
 {
-
     [UInt(5)] public byte Unknown0 { get; set; }
     [UInt(1)] public bool Unknown1 { get; set; }
     [UInt(32)] public uint Unknown2 { get; set; }

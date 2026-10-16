@@ -12,5 +12,4 @@ public sealed partial class Server0262Part8
     [UInt(4)] public byte Unknown4 { get; set; }
 
     [Array(CountBits = 8)] public List<Server0262Part9> Unknown5 { get; set; } = [];
-
 }
