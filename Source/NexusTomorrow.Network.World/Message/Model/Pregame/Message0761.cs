@@ -9,5 +9,5 @@ public sealed partial class Message0761
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
     [Array(CountBits = 32)] public List<Message0761Part0> Unknown1 { get; set; } = [];
-    [Array(CountBits = 32)] public List<Message0761Part2> Unknown2 { get; set; } = [];
+    [Array(CountBits = 32)] public List<RealmNotice> Unknown2 { get; set; } = [];
 }

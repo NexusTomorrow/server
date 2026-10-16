@@ -3,8 +3,15 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.Auth.Message.Model;
 
+/// <summary>
+/// The client's login request on the login connection, its answer to a valid <see cref="Network.Message.Model.ServerHello"/>.
+/// </summary>
+/// <remarks>
+/// The client sends it only once it has an account name, and then waits for <see cref="LoginAccepted"/> or <see cref="LoginDenied"/>.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Client0592, Direction.ClientToServer)]
-public sealed partial class Client0592
+[Verified(Rung.Purpose)]
+public sealed partial class LoginRequest
 {
     [WireStruct]
     public sealed partial class Client0592Part0
