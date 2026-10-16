@@ -166,7 +166,7 @@ public enum GameMessageOpcode
     ServerSpecChanged = 0x0175,
     ServerQuestSpellShortcut = 0x0176,
     ClientToggleWeapons = 0x0177,
-    Server_0x178_SoundTrigger = 0x0178,
+    Server0178 = 0x0178,
     ServerTutorial = 0x0179,
     ClientAbilityBookActivateSpell = 0x017A,
     ServerSpellUpdate = 0x017B,
