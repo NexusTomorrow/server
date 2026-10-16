@@ -144,8 +144,7 @@ internal static class RegistryDisagreements
         ["0x075C server to client [3].element[1].arm 0x03"] = TreeDiffers, // Server075C
         ["0x075C server to client [3].element[1].arm 0x04"] = TreeDiffers, // Server075C
         ["0x075C server to client [3].element[1].arm 0x05"] = TreeDiffers, // Server075C
-        ["0x0761 server to client [2]"] = TreeDiffers, // Message0761
-        ["0x07A1 server to client [1]"] = FieldsDiffer, // Server07A1
+        ["0x0761 server to client [2]"] = TreeDiffers, // RealmList
         ["0x07CD server to client [2]"] = FieldsDiffer, // Server07CD
         ["0x07D3 server to client [1].element[2]"] = TreeDiffers, // Server07D3
         ["0x07D5 server to client [2]"] = FieldsDiffer, // Server07D5
