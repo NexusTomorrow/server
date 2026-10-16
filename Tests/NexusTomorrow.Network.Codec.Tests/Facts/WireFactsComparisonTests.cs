@@ -4,7 +4,7 @@ public sealed class WireFactsComparisonTests
 {
     private static WireLayout Layout(Direction direction, bool isFixed, byte[] widths, params WirePart[] parts)
     {
-        return new WireLayout(0x0198, direction, isFixed, isComplete: true, [.. widths], [.. parts]);
+        return new WireLayout(0x0198, direction, isFixed, isComplete: true, [.. widths], [.. parts], "");
     }
 
     private static WireFactsSide Fixed(params int[] widths)
@@ -92,7 +92,7 @@ public sealed class WireFactsComparisonTests
     public void AnIncompleteLayoutIsReported()
     {
         WireFactsRow row = new(0x0198, "c2s", Fixed(8), null);
-        WireLayout layout = new(0x0198, Direction.ClientToServer, false, isComplete: false, [8], []);
+        WireLayout layout = new(0x0198, Direction.ClientToServer, false, isComplete: false, [8], [], "8");
 
         Assert.Contains(WireFactsComparison.Compare(layout, row), problem => problem.Contains("selector 0", StringComparison.Ordinal));
     }

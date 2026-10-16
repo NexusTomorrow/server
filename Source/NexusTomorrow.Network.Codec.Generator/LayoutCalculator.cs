@@ -13,6 +13,8 @@ internal sealed class LayoutCalculator
     private readonly Dictionary<string, TypeModel> _types;
     private readonly Dictionary<string, LayoutModel> _layouts = [];
     private readonly HashSet<string> _inProgress = [];
+    private readonly Dictionary<string, List<string>> _trees = [];
+    private readonly HashSet<string> _treesInProgress = [];
 
     public LayoutCalculator(Dictionary<string, TypeModel> types)
     {
@@ -102,9 +104,183 @@ internal sealed class LayoutCalculator
         }
 
         _inProgress.Remove(type.FullName);
-        LayoutModel layout = builder.ToLayout();
+        LayoutModel layout = builder.ToLayout() with { Tree = TreeOf(type) };
         _layouts[type.FullName] = layout;
         return layout;
+    }
+
+    /// <summary>
+    /// A type's layout tree in the codec's text form (<c>WireTree</c>): its base's nodes, then each member's, with every struct inline.
+    /// </summary>
+    public string TreeOf(TypeModel type)
+    {
+        return string.Join(" ", NodesOf(type));
+    }
+
+    private List<string> NodesOf(TypeModel type)
+    {
+        if (_trees.TryGetValue(type.FullName, out List<string>? done))
+            return done;
+
+        // A type that contains itself has no finite tree.
+        if (!_treesInProgress.Add(type.FullName))
+            return ["?"];
+
+        var nodes = new List<string>();
+        if (type.WireBase is not null)
+            AppendInline(nodes, StructNodes(type.WireBase, type.WireBaseMetadataLayout));
+
+        var index = new Dictionary<string, int>(System.StringComparer.Ordinal);
+        foreach (MemberModel member in type.Members)
+        {
+            index[member.Name] = nodes.Count;
+            switch (member.Shape)
+            {
+                case MemberShape.Value when member.Value is not null:
+                    AppendInline(nodes, ValueNodes(member.Value));
+                    break;
+                case MemberShape.Array when member.Value is not null:
+                    {
+                        int count;
+                        if (member.CountFrom is not null && index.TryGetValue(member.CountFrom, out int countAt))
+                        {
+                            count = countAt;
+                        }
+                        else
+                        {
+                            count = nodes.Count;
+                            nodes.Add(Number(member.CountBits));
+                        }
+
+                        nodes.Add("[" + Number(count) + ":" + string.Join(" ", ValueNodes(member.Value)) + "]");
+                        break;
+                    }
+
+                case MemberShape.FixedArray when member.Value is not null:
+                    {
+                        List<string> element = ValueNodes(member.Value);
+                        for (int i = 0; i < member.FixedLength; i++)
+                            AppendInline(nodes, element);
+                        break;
+                    }
+
+                case MemberShape.Union:
+                    {
+                        int selector = member.UnionSelector is not null && index.TryGetValue(member.UnionSelector, out int selectorAt) ? selectorAt : -1;
+                        ScalarModel? scalar = type.Members.FirstOrDefault(candidate => candidate.Name == member.UnionSelector)?.Value?.Scalar;
+                        IEnumerable<string> arms = ArmsOf(member.UnionType)
+                            .Select(arm => (Label: WireBits(arm.UnionCaseValue, scalar), Arm: arm))
+                            .OrderBy(arm => arm.Label)
+                            .Select(arm => Number(arm.Label) + "=(" + string.Join(" ", NodesOf(arm.Arm)) + ")");
+                        nodes.Add("{" + Number(selector) + ":" + string.Join(",", arms) + "}");
+                        break;
+                    }
+
+                case MemberShape.Blob:
+                    nodes.Add("b" + Number(member.BlobLengthBits) + (member.BlobAlign ? "a" : ""));
+                    break;
+                case MemberShape.Pad:
+                    for (int remaining = member.PadBits; remaining > 0; remaining -= 64)
+                        nodes.Add(Number(System.Math.Min(64, remaining)));
+                    break;
+            }
+        }
+
+        _treesInProgress.Remove(type.FullName);
+        _trees[type.FullName] = nodes;
+        return nodes;
+    }
+
+    private List<string> ValueNodes(ValueModel value)
+    {
+        switch (value.Kind)
+        {
+            case ValueKind.Scalar when value.Scalar is not null:
+                return [.. Enumerable.Repeat(Number(value.Scalar.Bits), value.Scalar.Components)];
+            case ValueKind.String:
+                return [value.String switch { StringEncoding.Wide => "w", StringEncoding.Narrow => "n", _ => "t" }];
+            case ValueKind.Struct when value.StructType is not null:
+                return StructNodes(value.StructType, value.StructMetadataLayout);
+            default:
+                return ["?"];
+        }
+    }
+
+    private List<string> StructNodes(string fullName, LayoutModel? metadata)
+    {
+        if (metadata is not null)
+            return SplitTop(metadata.Tree);
+        return _types.TryGetValue(fullName, out TypeModel? type) ? NodesOf(type) : ["?"];
+    }
+
+    /// <summary>
+    /// Append a struct's nodes inline: each of its top-level arrays and unions names its count or selector by index, so shift that index by
+    /// where the struct starts.
+    /// </summary>
+    private static void AppendInline(List<string> nodes, List<string> inner)
+    {
+        int offset = nodes.Count;
+        foreach (string node in inner)
+            nodes.Add(offset == 0 ? node : Shift(node, offset));
+    }
+
+    private static string Shift(string node, int offset)
+    {
+        if (node.Length == 0 || (node[0] != '[' && node[0] != '{'))
+            return node;
+        int colon = node.IndexOf(':');
+        int index = int.Parse(node.Substring(1, colon - 1), System.Globalization.CultureInfo.InvariantCulture);
+        return node[0] + Number(index + offset) + node.Substring(colon);
+    }
+
+    /// <summary>
+    /// The top-level nodes of a tree's text: split at the spaces outside brackets.
+    /// </summary>
+    private static List<string> SplitTop(string text)
+    {
+        var nodes = new List<string>();
+        int depth = 0;
+        int start = 0;
+        for (int i = 0; i < text.Length; i++)
+        {
+            char c = text[i];
+            if (c is '[' or '{' or '(')
+            {
+                depth++;
+            }
+            else if (c is ']' or '}' or ')')
+            {
+                depth--;
+            }
+            else if (c == ' ' && depth == 0)
+            {
+                nodes.Add(text.Substring(start, i - start));
+                start = i + 1;
+            }
+        }
+
+        if (text.Length > 0)
+            nodes.Add(text.Substring(start));
+        return nodes;
+    }
+
+    /// <summary>
+    /// A case value as the selector's bits read unsigned, which is how the client's tree keys an arm: a negative [SInt] case is its two's
+    /// complement in the selector's width. <see cref="UnionCases.Label"/> is not this: it masks to the selector's C# type.
+    /// </summary>
+    private static ulong WireBits(ulong value, ScalarModel? selector)
+    {
+        return selector is null || selector.Bits >= 64 ? value : value & ((1UL << selector.Bits) - 1);
+    }
+
+    private static string Number(int value)
+    {
+        return value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    }
+
+    private static string Number(ulong value)
+    {
+        return value.ToString(System.Globalization.CultureInfo.InvariantCulture);
     }
 
     public LayoutModel ValueLayout(ValueModel value)

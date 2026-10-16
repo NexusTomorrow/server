@@ -122,7 +122,7 @@ internal static class ModelBuilder
     public static LayoutModel? ReadLayoutData(INamedTypeSymbol type)
     {
         AttributeData? data = FindAttribute(type.GetAttributes(), WireNames.WireLayoutData);
-        if (data is null || data.ConstructorArguments.Length != 4)
+        if (data is null || data.ConstructorArguments.Length != 5)
             return null;
 
         bool isFixed = data.ConstructorArguments[0].Value is true;
@@ -134,7 +134,8 @@ internal static class ModelBuilder
         for (int i = 0; i + 2 < flat.Length; i += 3)
             parts.Add(new PartModel(flat[i], flat[i + 1], flat[i + 2]));
 
-        return new LayoutModel(isFixed, isComplete, new EquatableArray<byte>(widths), new EquatableArray<PartModel>([.. parts]));
+        string tree = data.ConstructorArguments[4].Value as string ?? "";
+        return new LayoutModel(isFixed, isComplete, new EquatableArray<byte>(widths), new EquatableArray<PartModel>([.. parts]), tree);
     }
 
     private static MessageModel? BuildMessage(AttributeData attribute, string typeName, Location typeLocation, List<DiagnosticInfo> diagnostics)

@@ -117,7 +117,8 @@ internal static class SourceEmitter
         writer.Line($"    {Bool(layout.IsFixed)},");
         writer.Line($"    {Bool(layout.IsComplete)},");
         writer.Line($"    {Immutable}.Create<byte>({widths}),");
-        writer.Line($"    {Immutable}.Create<{Codec}.WirePart>({parts}));");
+        writer.Line($"    {Immutable}.Create<{Codec}.WirePart>({parts}),");
+        writer.Line($"    {Quote(layout.Tree)});");
         writer.Line();
         writer.Line($"// GameMessageOpcode.{message.OpcodeExpression}");
         writer.Line($"static ushort {Codec}.IWireMessage.Opcode => {Hex(message.Opcode)};");
@@ -585,7 +586,7 @@ internal static class SourceEmitter
     {
         string widths = string.Join(", ", layout.Widths.Select(width => Num(width)));
         string parts = string.Join(", ", layout.Parts.SelectMany(part => new[] { part.Shape, part.At, part.ElementBits }).Select(Num));
-        return $"[{Codec}.WireLayoutData({Bool(layout.IsFixed)}, {Bool(layout.IsComplete)}, new byte[] {{ {widths} }}, new int[] {{ {parts} }})]";
+        return $"[{Codec}.WireLayoutData({Bool(layout.IsFixed)}, {Bool(layout.IsComplete)}, new byte[] {{ {widths} }}, new int[] {{ {parts} }}, {Quote(layout.Tree)})]";
     }
 
     private static string NamespaceOf(string assemblyName)

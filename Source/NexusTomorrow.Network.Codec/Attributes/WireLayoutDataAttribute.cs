@@ -13,12 +13,14 @@ public sealed class WireLayoutDataAttribute : Attribute
     /// <param name="isComplete">False when a union has no arm for selector 0.</param>
     /// <param name="widths">The empty-path field widths in order.</param>
     /// <param name="parts">Each computed part as three numbers: shape, index of its first width, element bits or -1.</param>
-    public WireLayoutDataAttribute(bool isFixed, bool isComplete, byte[] widths, int[] parts)
+    /// <param name="tree">The layout tree in <see cref="WireTree"/>'s text form.</param>
+    public WireLayoutDataAttribute(bool isFixed, bool isComplete, byte[] widths, int[] parts, string tree)
     {
         IsFixed = isFixed;
         IsComplete = isComplete;
         Widths = widths;
         Parts = parts;
+        Tree = tree;
     }
 
     /// <summary>
@@ -40,4 +42,9 @@ public sealed class WireLayoutDataAttribute : Attribute
     /// Each computed part as three numbers: shape, index of its first width, element bits or -1.
     /// </summary>
     public IReadOnlyList<int> Parts { get; }
+
+    /// <summary>
+    /// The layout tree in <see cref="WireTree"/>'s text form.
+    /// </summary>
+    public string Tree { get; }
 }
