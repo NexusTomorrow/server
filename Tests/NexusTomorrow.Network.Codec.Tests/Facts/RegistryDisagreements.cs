@@ -20,7 +20,6 @@ internal static class RegistryDisagreements
         ["0x00D6 server to client [9].element[4]"] = TreeDiffers, // Server00D6
         ["0x00D8 server to client [3]"] = FieldsDiffer, // Server00D8
         ["0x00D9 server to client [1].element[3]"] = TreeDiffers, // Server00D9
-        ["0x010B server to client [1]"] = TreeDiffers, // Message010B
         ["0x0112 server to client [5].element[7].arm 0x03"] = TreeDiffers, // Server0112
         ["0x0112 server to client [9]"] = FieldsDiffer, // Server0112
         ["0x012E server to client [65].element[3]"] = TreeDiffers, // Server012E
@@ -46,18 +45,20 @@ internal static class RegistryDisagreements
         ["0x0247 server to client [1]"] = TreeDiffers, // Server0247
         ["0x0247 server to client [1].arm 0x05[5]"] = TreeDiffers, // Server0247
         ["0x0247 server to client [1].arm 0x0B"] = TreeDiffers, // Server0247
-        ["0x0247 server to client [1].arm 0x0F[8]"] = TreeDiffers, // Server0247
+        ["0x0247 server to client [1].arm 0x0F"] = TreeDiffers, // Server0247
         ["0x0247 server to client [1].arm 0x23"] = TreeDiffers, // Server0247
         ["0x0248 client to server [0]"] = FieldsDiffer, // Client0248
         ["0x024C server to client [2]"] = FieldsDiffer, // Server024C
         ["0x0252 server to client [0]"] = FieldsDiffer, // Server0252
         ["0x0255 client to server [4]"] = FieldsDiffer, // Client0255
         ["0x025E server to client [2]"] = FieldsDiffer, // Server025E
-        ["0x0262 server to client [14]"] = TreeDiffers, // Server0262
         ["0x0262 server to client [2].arm 0x09[2]"] = TreeDiffers, // Server0262
         ["0x0262 server to client [2].arm 0x22[0]"] = TreeDiffers, // Server0262
         ["0x0262 server to client [2].arm 0x23[0]"] = TreeDiffers, // Server0262
-        ["0x0262 server to client [5].element[2]"] = TreeDiffers, // Server0262
+        ["0x0262 server to client [5].element"] = TreeDiffers, // Server0262
+        ["0x0262 server to client [5].element[2].arm 0x00"] = TreeDiffers, // Server0262
+        ["0x0262 server to client [5].element[2].arm 0x01"] = TreeDiffers, // Server0262
+        ["0x0262 server to client [5].element[2].arm 0x02"] = TreeDiffers, // Server0262
         ["0x0262 server to client [8].element[1].arm 0x09[2].element[0]"] = TreeDiffers, // Server0262
         ["0x0262 server to client [8].element[1].arm 0x0C[2].element[0]"] = TreeDiffers, // Server0262
         ["0x026A server to client [1]"] = FieldsDiffer, // Server026A
@@ -72,7 +73,7 @@ internal static class RegistryDisagreements
         ["0x0405 server to client [7]"] = FieldsDiffer, // Server0405
         ["0x041F server to client [4].element[2]"] = TreeDiffers, // Server041F
         ["0x0424 server to client [6]"] = FieldsDiffer, // Server0424
-        ["0x0427 server to client [10]"] = TreeDiffers, // Server0427
+        ["0x0427 server to client [10].element[5]"] = TreeDiffers, // Server0427
         ["0x046F server to client"] = BitsDiffer, // Server046F
         ["0x047A server to client [4].element"] = TreeDiffers, // Server047A
         ["0x0487 server to client [4]"] = FieldsDiffer, // Server0487
@@ -106,7 +107,6 @@ internal static class RegistryDisagreements
         ["0x0638 server to client [5].element[1].arm 0x0C[2].element[0]"] = TreeDiffers, // Message0638
         ["0x0667 server to client [1]"] = FieldsDiffer, // Server0667
         ["0x066A client to server [0]"] = FieldsDiffer, // Client066A
-        ["0x067B server to client [2]"] = TreeDiffers, // Server067B
         ["0x06BC server to client [1]"] = FieldsDiffer, // Server06BC
         ["0x0738 server to client [3].element[0]"] = TreeDiffers, // Server0738
         ["0x073A server to client [3].element"] = TreeDiffers, // Server073A
@@ -144,7 +144,6 @@ internal static class RegistryDisagreements
         ["0x075C server to client [3].element[1].arm 0x03"] = TreeDiffers, // Server075C
         ["0x075C server to client [3].element[1].arm 0x04"] = TreeDiffers, // Server075C
         ["0x075C server to client [3].element[1].arm 0x05"] = TreeDiffers, // Server075C
-        ["0x0761 server to client [2]"] = TreeDiffers, // RealmList
         ["0x07CD server to client [2]"] = FieldsDiffer, // Server07CD
         ["0x07D3 server to client [1].element[2]"] = TreeDiffers, // Server07D3
         ["0x07D5 server to client [2]"] = FieldsDiffer, // Server07D5
@@ -155,11 +154,10 @@ internal static class RegistryDisagreements
         ["0x084C server to client [1].element"] = TreeDiffers, // Server084C
         ["0x084F client to server [3]"] = FieldsDiffer, // Client084F
         ["0x0854 server to client [1]"] = FieldsDiffer, // Server0854
-        ["0x0856 server to client [1]"] = TreeDiffers, // Server0856
+        ["0x0856 server to client [1].element[5]"] = TreeDiffers, // Server0856
         ["0x0860 server to client [5]"] = FieldsDiffer, // Server0860
         ["0x08B7 server to client [1]"] = FieldsDiffer, // Server08B7
         ["0x0909 server to client [1]"] = FieldsDiffer, // Server0909
-        ["0x090B server to client [2]"] = TreeDiffers, // Server090B
         ["0x092C server to client [1].element[3]"] = TreeDiffers, // Server092C
         ["0x0954 server to client"] = BitsDiffer, // Server0954
         ["0x0959 client to server [1].element[1].arm 0x01[0]"] = TreeDiffers, // Client0959
@@ -167,6 +165,6 @@ internal static class RegistryDisagreements
         ["0x0959 client to server [1].element[1].arm 0x07[1]"] = TreeDiffers, // Client0959
         ["0x0967 server to client"] = BitsDiffer, // Server0967
         ["0x0978 server to client [1].element[1]"] = TreeDiffers, // Server0978
-        ["0x098B server to client [1].element[6]"] = TreeDiffers, // Server098B
+        ["0x098B server to client [1].element[6].element[3]"] = TreeDiffers, // Server098B
     };
 }
