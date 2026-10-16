@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// </summary>
 /// <remarks>
 /// The client takes the realm id from the character list (0x0117) as its current realm, then waits for <see cref="EnterWorld"/> or
-/// the selection's failure (0x0162).
+/// the selection's failure (<see cref="CharacterSelectFailed"/>).
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client07DD, Direction.ClientToServer)]
 [Verified(Rung.Fields)]

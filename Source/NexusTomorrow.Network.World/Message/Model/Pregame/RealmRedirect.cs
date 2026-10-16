@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// <see cref="Network.Message.Model.ServerHello"/>.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server07A1, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class RealmRedirect
 {
     /// <summary>
@@ -63,7 +63,7 @@ public sealed partial class RealmRedirect
     [UInt(32)] public uint RealmFlags { get; set; }
 
     /// <summary>
-    /// The realm's PvP type, shown to the player.
+    /// The realm's PvP type: 0 PvE, 1 PvP. The interface treats any other value as PvE.
     /// </summary>
     [UInt(2)] public byte PvpType { get; set; }
 

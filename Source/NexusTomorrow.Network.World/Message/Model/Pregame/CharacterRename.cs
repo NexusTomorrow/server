@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// Renames one listed character.
 /// </summary>
 /// <remarks>
-/// The client then waits for the reply (0x014B).
+/// The client then waits for the reply (<see cref="CharacterRenameResult"/>).
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client0786, Direction.ClientToServer)]
 [Verified(Rung.Fields)]
