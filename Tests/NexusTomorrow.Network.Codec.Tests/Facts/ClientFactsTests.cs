@@ -36,7 +36,7 @@ public sealed class ClientFactsTests
     public void TheFixturesThatMirrorClientMessagesMatchTheClientFacts()
     {
         Dictionary<int, WireFactsRow> rows = WireFacts.Load(WireFacts.TablePath);
-        WireLayout[] layouts = [LayoutOf<CastSpellFixture>(), LayoutOf<ArchiveUpdateFixture>(), LayoutOf<ChatFixture>()];
+        WireLayout[] layouts = [LayoutOf<Client009AFixture>(), LayoutOf<Server0104Fixture>(), LayoutOf<Client01C3Fixture>()];
 
         List<string> problems = [.. layouts.SelectMany(layout => WireFactsComparison.Compare(layout, rows.GetValueOrDefault(layout.Opcode)))];
 

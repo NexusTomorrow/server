@@ -35,20 +35,20 @@ public sealed class GeneratedCodeTests
     [Fact]
     public void AFixedMessageWritesItsFieldsInDeclarationOrder()
     {
-        var message = new CastSpellFixture { ClientSpellCastUniqueId = 0x01020304, BagIndex = 0x0506, TargetUnitId = 0x0708090A, ButtonPressed = true };
+        var message = new Client009AFixture { Unknown0 = 0x01020304, Unknown1 = 0x0506, Unknown2 = 0x0708090A, Unknown3 = true };
 
         byte[] bytes = WriteAll(message);
 
         Assert.Equal([0x04, 0x03, 0x02, 0x01, 0x06, 0x05, 0x0A, 0x09, 0x08, 0x07, 0x01], bytes);
-        CastSpellFixture read = ReadAll<CastSpellFixture>(bytes);
-        Assert.Equal(0x0708090Au, read.TargetUnitId);
-        Assert.True(read.ButtonPressed);
+        Client009AFixture read = ReadAll<Client009AFixture>(bytes);
+        Assert.Equal(0x0708090Au, read.Unknown2);
+        Assert.True(read.Unknown3);
     }
 
     [Fact]
     public void AFixedMessageDeclaresItsOpcodeDirectionAndWidths()
     {
-        WireLayout layout = LayoutOf<CastSpellFixture>();
+        WireLayout layout = LayoutOf<Client009AFixture>();
 
         Assert.Equal(0x009A, layout.Opcode);
         Assert.Equal(Direction.ClientToServer, layout.Direction);
@@ -203,31 +203,31 @@ public sealed class GeneratedCodeTests
     [Fact]
     public void AUnionWritesItsArmsSelectorAndReadsTheArmBack()
     {
-        var message = new ChatFixture { Channel = new ChannelFixture { ChannelType = 4, ChatId = 0x1122334455667788 }, Message = "Hi", ChatMessageId = 7 };
-        message.Formats.Add(new ChatFormatFixture { StartIndex = 0, StopIndex = 2, Model = new ChatFormatItemFixture { ItemId = 0x2ABCD } });
+        var message = new Client01C3Fixture { Unknown0 = new Client01C3Part0Fixture { Unknown0 = 4, Unknown1 = 0x1122334455667788 }, Unknown1 = "Hi", Unknown3 = 7 };
+        message.Unknown2.Add(new Client01C3Part1Fixture { Unknown1 = 0, Unknown2 = 2, Unknown3 = new Client01C3Union0Arm02Fixture { Unknown0 = 0x2ABCD } });
 
-        ChatFixture read = ReadAll<ChatFixture>(WriteAll(message));
+        Client01C3Fixture read = ReadAll<Client01C3Fixture>(WriteAll(message));
 
-        Assert.Equal(2, message.Formats[0].Type);
+        Assert.Equal(2, message.Unknown2[0].Unknown0);
         Assert.Equal(193, message.MeasureBits());
-        Assert.Equal(0x1122334455667788ul, read.Channel.ChatId);
-        Assert.Equal("Hi", read.Message);
-        ChatFormatItemFixture arm = Assert.IsType<ChatFormatItemFixture>(read.Formats[0].Model);
-        Assert.Equal(0x2ABCDu, arm.ItemId);
-        Assert.Equal(7, read.ChatMessageId);
+        Assert.Equal(0x1122334455667788ul, read.Unknown0.Unknown1);
+        Assert.Equal("Hi", read.Unknown1);
+        Client01C3Union0Arm02Fixture arm = Assert.IsType<Client01C3Union0Arm02Fixture>(read.Unknown2[0].Unknown3);
+        Assert.Equal(0x2ABCDu, arm.Unknown0);
+        Assert.Equal(7, read.Unknown3);
     }
 
     [Fact]
     public void ASelectorWithNoArmFailsTheRead()
     {
-        // Type 7 in 4 bits, then two zero 16-bit indexes.
-        Assert.Throws<CodecException>(() => ReadAll<ChatFormatFixture>([0x07, 0x00, 0x00, 0x00, 0x00]));
+        // Selector 7 in 4 bits, then two zero 16-bit values.
+        Assert.Throws<CodecException>(() => ReadAll<Client01C3Part1Fixture>([0x07, 0x00, 0x00, 0x00, 0x00]));
     }
 
     [Fact]
     public void AUnionArrayCarriesTheElementBitsOfArmZero()
     {
-        WireLayout layout = LayoutOf<ChatFixture>();
+        WireLayout layout = LayoutOf<Client01C3Fixture>();
 
         Assert.Equal([14, 64, 1, 7, 5, 16], layout.EmptyPathWidths);
         Assert.Equal([WirePartShape.WideString, WirePartShape.Array], layout.Parts.Select(part => part.Shape));
@@ -285,7 +285,7 @@ public sealed class GeneratedCodeTests
     [Fact]
     public void TheRegistryCreatesEachMessageForItsDirections()
     {
-        Assert.IsType<CastSpellFixture>(WireMessages.CreateClientToServer(0x009A));
+        Assert.IsType<Client009AFixture>(WireMessages.CreateClientToServer(0x009A));
         Assert.Null(WireMessages.CreateServerToClient(0x009A));
         Assert.IsType<ScalarsFixture>(WireMessages.CreateClientToServer(0xFF01));
         Assert.IsType<ScalarsFixture>(WireMessages.CreateServerToClient(0xFF01));
