@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// <see cref="Network.Message.Model.ClientEnvelope"/>; the client then waits for <see cref="CharacterCreateResult"/>.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client025B, Direction.ClientToServer)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class CharacterCreate
 {
     /// <summary>
@@ -25,15 +25,27 @@ public sealed partial class CharacterCreate
     [WideString] public string Name { get; private set; } = "";
 
     /// <summary>
-    /// The character's path: 0 soldier, 1 settler, 2 scientist, 3 explorer.
+    /// The character's path: 0 Soldier, 1 Settler, 2 Scientist, 3 Explorer.
     /// </summary>
     [UInt(3)] public byte Path { get; private set; }
 
-    [UInt(32), Count] public uint Unknown3 { get; set; }
+    /// <summary>
+    /// How many look entries follow.
+    /// </summary>
+    [UInt(32), Count] public uint LookCount { get; set; }
 
-    [Array(CountFrom = nameof(Unknown3)), UInt(32)] public List<uint> Unknown4 { get; } = [];
+    /// <summary>
+    /// The look options the player set, by the ids the client keys its look options by.
+    /// </summary>
+    [Array(CountFrom = nameof(LookCount)), UInt(32)] public List<uint> LookIds { get; } = [];
 
-    [Array(CountFrom = nameof(Unknown3)), UInt(32)] public List<uint> Unknown5 { get; } = [];
+    /// <summary>
+    /// The value chosen for each option in <see cref="LookIds"/>.
+    /// </summary>
+    [Array(CountFrom = nameof(LookCount)), UInt(32)] public List<uint> LookValues { get; } = [];
 
-    [Array(CountBits = 32), Float32] public List<float> Unknown6 { get; } = [];
+    /// <summary>
+    /// Values the client's model produces from the player's bone settings.
+    /// </summary>
+    [Array(CountBits = 32), Float32] public List<float> Bones { get; } = [];
 }
