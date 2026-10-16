@@ -37,7 +37,8 @@ public sealed partial class CharacterList
         [UInt(14)] public ushort ColorSetId { get; set; }
 
         /// <summary>
-        /// The slot's colour; 0 means the colour comes from <see cref="ColorSetId"/>.
+        /// The slot's colour, with the top bit set and three 10-bit channels below it; 0 means the colour comes from
+        /// <see cref="ColorSetId"/>.
         /// </summary>
         [UInt(32)] public uint Color { get; set; }
     }
@@ -116,7 +117,8 @@ public sealed partial class CharacterList
         [UInt(15)] public ushort WorldId { get; set; }
 
         /// <summary>
-        /// A zone id the client uses, with <see cref="WorldId"/> and <see cref="Position"/>, to find the zone it shows.
+        /// A zone id the client uses, with <see cref="WorldId"/> and <see cref="Position"/>, to pick the zone whose name it hands to its
+        /// interface.
         /// </summary>
         [UInt(15)] public ushort ZoneId { get; set; }
 
@@ -126,8 +128,8 @@ public sealed partial class CharacterList
         [UInt(14)] public ushort Unknown11 { get; set; }
 
         /// <summary>
-        /// Where the character is: the client uses x and z, with <see cref="WorldId"/> and <see cref="ZoneId"/>, to find the zone it shows,
-        /// and reads no y.
+        /// A point the client uses, x and z only, with <see cref="WorldId"/> and <see cref="ZoneId"/>, to pick the zone whose name it hands
+        /// to its interface.
         /// </summary>
         [Float32] public Vector3 Position { get; set; }
 
@@ -178,19 +180,19 @@ public sealed partial class CharacterList
         [Array(CountFrom = nameof(CostumeCount)), UInt(32)] public List<uint> CostumeColors { get; } = [];
 
         /// <summary>
-        /// The character's bone slider values, which the client applies to its model.
+        /// Values the client applies to the character's model.
         /// </summary>
         [Array(CountBits = 32), Float32] public List<float> Bones { get; } = [];
 
         /// <summary>
-        /// Days relative to now, negative in the past, which the client shows as when the character was last played.
+        /// Days relative to when the list arrives, negative in the past; 0 hands nothing over. The client hands it to its interface as the
+        /// character's last logout, and the interface first selects the character with the largest value.
         /// </summary>
         [Float32] public float LastLoggedOutDays { get; set; }
     }
 
     /// <summary>
-    /// The server's clock, as a Windows file time. The client keeps its difference from its own clock and adds it back when its interface
-    /// asks for the server's time.
+    /// The server's clock, as a Windows file time. The client keeps its difference from its own clock.
     /// </summary>
     [UInt(64)] public ulong ServerTime { get; set; }
 
@@ -200,7 +202,7 @@ public sealed partial class CharacterList
     [Array(CountBits = 32)] public List<Character> Characters { get; } = [];
 
     /// <summary>
-    /// Character creation options to offer although they are off by default, as ids in the CharacterCreation table.
+    /// Character creation options to add to those the client considers, as ids in the CharacterCreation table.
     /// </summary>
     [Array(CountBits = 32), UInt(32)] public List<uint> OfferedCreationIds { get; set; } = [];
 
@@ -210,7 +212,7 @@ public sealed partial class CharacterList
     [Array(CountBits = 32), UInt(32)] public List<uint> WithheldCreationIds { get; set; } = [];
 
     /// <summary>
-    /// The realm the characters are on; the client takes it as its current realm when a character is selected.
+    /// A realm id; the client takes it as its current realm when a character is selected.
     /// </summary>
     [UInt(14)] public ushort RealmId { get; set; }
 
@@ -240,13 +242,14 @@ public sealed partial class CharacterList
     [UInt(32)] public uint Unknown9 { get; set; }
 
     /// <summary>
-    /// The faction new characters are limited to: 166 Dominion, 167 Exile, 0 none. The client hands it to its interface.
+    /// The faction the interface shows the account locked to: 166 Dominion, 167 Exile, 0 none. The client hands it to its interface, which
+    /// applies it only on a realm that keeps characters to one faction.
     /// </summary>
     [UInt(14)] public ushort FactionRestriction { get; set; }
 
     /// <summary>
     /// Whether the account may create characters at level 50 for free: it gates the interface's count of those and lets character
-    /// creation skip an entitlement check for such options.
+    /// creation skip an entitlement check for one type of creation option.
     /// </summary>
     [UInt(1)] public bool FreeLevel50 { get; set; }
 }

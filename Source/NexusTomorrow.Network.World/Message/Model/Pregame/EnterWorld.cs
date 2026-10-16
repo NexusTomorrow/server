@@ -20,7 +20,7 @@ public sealed partial class EnterWorld
     [UInt(15)] public ushort WorldId { get; set; }
 
     /// <summary>
-    /// The point the client centres the world's loading on, until its camera takes over.
+    /// A point in the world. The client hands it to the world it loads on every update, until it replaces it with a point of its own.
     /// </summary>
     [Float32] public Vector3 Position { get; set; }
 

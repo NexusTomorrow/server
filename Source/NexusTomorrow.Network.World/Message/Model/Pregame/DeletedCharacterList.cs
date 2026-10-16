@@ -7,7 +7,8 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// The account's deleted characters, kept for the character-select interface to look up.
 /// </summary>
 /// <remarks>
-/// The client replaces the list it holds, in any state, and raises nothing.
+/// Taken while character select is active; the client replaces the list it holds and raises nothing. No interface script looks the
+/// list up.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0116, Direction.ServerToClient)]
 [Verified(Rung.Fields)]
@@ -75,7 +76,7 @@ public sealed partial class DeletedCharacterList
         [UInt(15)] public ushort WorldZoneId { get; set; }
 
         /// <summary>
-        /// The client gives this value no meaning. It hands it to its interface as the character's purge date, which no script reads.
+        /// The client gives this value no meaning. It hands it to its interface as the character's purge date.
         /// </summary>
         [Float32] public float Unknown11 { get; set; }
     }
