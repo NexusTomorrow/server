@@ -4,60 +4,198 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.Auth.Message.Model;
 
 /// <summary>
-/// The client's login request on the login connection, its answer to a valid <see cref="Network.Message.Model.ServerHello"/>.
+/// The client's login request on the login connection, its answer to a valid <see cref="Network.Message.Model.ServerHello"/>: its build,
+/// the account and the game token the STS issued, and a description of the client and its machine.
 /// </summary>
 /// <remarks>
-/// The client sends it only once it has an account name, and then waits for <see cref="LoginAccepted"/> or <see cref="LoginDenied"/>.
+/// The client sends it once per login connection, inside a <see cref="Network.Message.Model.ClientEnvelope"/>, only once it has an account
+/// name, and then waits for <see cref="LoginAccepted"/> or <see cref="LoginDenied"/>.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client0592, Direction.ClientToServer)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class LoginRequest
 {
+    /// <summary>
+    /// A description of the client's machine.
+    /// </summary>
     [WireStruct]
-    public sealed partial class Client0592Part0
+    public sealed partial class MachineInfo
     {
+        /// <summary>
+        /// The processor, as Windows' management interface describes it.
+        /// </summary>
         [WireStruct]
-        public sealed partial class Client0592Part1
+        public sealed partial class ProcessorInfo
         {
-            [WideString] public string Unknown0 { get; private set; } = "";
-            [WideString] public string Unknown1 { get; private set; } = "";
-            [WideString] public string Unknown2 { get; private set; } = "";
-            [UInt(32)] public uint Unknown3 { get; private set; }
-            [UInt(32)] public uint Unknown4 { get; private set; }
-            [UInt(32)] public uint Unknown5 { get; private set; }
-            [UInt(32)] public uint Unknown6 { get; private set; }
-            [UInt(32)] public uint Unknown7 { get; private set; }
+            /// <summary>
+            /// The processor's manufacturer.
+            /// </summary>
+            [WideString] public string Manufacturer { get; private set; } = "";
+
+            /// <summary>
+            /// The processor's name.
+            /// </summary>
+            [WideString] public string Name { get; private set; } = "";
+
+            /// <summary>
+            /// The processor's description.
+            /// </summary>
+            [WideString] public string Description { get; private set; } = "";
+
+            /// <summary>
+            /// The processor's family code.
+            /// </summary>
+            [UInt(32)] public uint Family { get; private set; }
+
+            /// <summary>
+            /// The processor's level.
+            /// </summary>
+            [UInt(32)] public uint Level { get; private set; }
+
+            /// <summary>
+            /// The processor's revision; 0 when Windows gives none.
+            /// </summary>
+            [UInt(32)] public uint Revision { get; private set; }
+
+            /// <summary>
+            /// The processor's maximum clock speed, in MHz.
+            /// </summary>
+            [UInt(32)] public uint ClockMhz { get; private set; }
+
+            /// <summary>
+            /// The processor's core count; its logical processor count when Windows reports no cores.
+            /// </summary>
+            [UInt(32)] public uint Cores { get; private set; }
         }
 
+        /// <summary>
+        /// The default display adapter, as Direct3D 9 identifies it.
+        /// </summary>
         [WireStruct]
-        public sealed partial class Client0592Part2
+        public sealed partial class AdapterInfo
         {
-            [WideString] public string Unknown0 { get; private set; } = "";
-            [UInt(32)] public uint Unknown1 { get; private set; }
-            [UInt(32)] public uint Unknown2 { get; private set; }
-            [UInt(32)] public uint Unknown3 { get; private set; }
-            [UInt(32)] public uint Unknown4 { get; private set; }
-            [UInt(32)] public uint Unknown5 { get; private set; }
+            /// <summary>
+            /// The adapter's description.
+            /// </summary>
+            [WideString] public string Description { get; private set; } = "";
+
+            /// <summary>
+            /// The adapter's vendor id.
+            /// </summary>
+            [UInt(32)] public uint VendorId { get; private set; }
+
+            /// <summary>
+            /// The adapter's device id.
+            /// </summary>
+            [UInt(32)] public uint DeviceId { get; private set; }
+
+            /// <summary>
+            /// The adapter's subsystem id.
+            /// </summary>
+            [UInt(32)] public uint SubsystemId { get; private set; }
+
+            /// <summary>
+            /// The adapter's revision.
+            /// </summary>
+            [UInt(32)] public uint Revision { get; private set; }
+
+            /// <summary>
+            /// The adapter's memory, in MiB. Windows' own figure stops at 4095.
+            /// </summary>
+            [UInt(32)] public uint MemoryMb { get; private set; }
         }
 
-        public Client0592Part1 Unknown0 { get; } = new();
-        [UInt(32)] public uint Unknown1 { get; private set; }
-        public Client0592Part2 Unknown2 { get; } = new();
-        [UInt(32)] public uint Unknown3 { get; private set; }
-        [UInt(32)] public uint Unknown4 { get; private set; }
-        [UInt(32)] public uint Unknown5 { get; private set; }
-        [UInt(32)] public uint Unknown6 { get; private set; }
+        /// <summary>
+        /// The processor.
+        /// </summary>
+        public ProcessorInfo Processor { get; } = new();
+
+        /// <summary>
+        /// The machine's physical memory, in MiB, rounded up.
+        /// </summary>
+        [UInt(32)] public uint MemoryMb { get; private set; }
+
+        /// <summary>
+        /// The default display adapter.
+        /// </summary>
+        public AdapterInfo Adapter { get; } = new();
+
+        /// <summary>
+        /// The processor architecture: 0x10000 plus a code, 1 for x86, 2 for x64, 3 for IA-64, 4 for ARM and 0 for any other.
+        /// </summary>
+        [UInt(32)] public uint Architecture { get; private set; }
+
+        /// <summary>
+        /// The Windows version, as (major &lt;&lt; 16) | minor.
+        /// </summary>
+        [UInt(32)] public uint OsVersion { get; private set; }
+
+        /// <summary>
+        /// The Windows service pack, as (major &lt;&lt; 16) | minor.
+        /// </summary>
+        [UInt(32)] public uint OsServicePack { get; private set; }
+
+        /// <summary>
+        /// The Windows edition: the suite mask in bits 16 to 31, the product type in bits 8 to 15, and in bits 0 to 3 whether Windows is
+        /// Server R2, Media Center, Starter and Tablet PC.
+        /// </summary>
+        [UInt(32)] public uint OsEdition { get; private set; }
     }
 
-    [UInt(32)] public uint Unknown0 { get; private set; }
-    [UInt(64)] public ulong Unknown1 { get; private set; }
-    [TerminatedWideString] public string Unknown2 { get; private set; } = "";
-    public NetworkGuid Unknown3 { get; } = new();
-    public NetworkGuid Unknown4 { get; } = new();
-    [UInt(32)] public uint Unknown5 { get; private set; }
-    [UInt(32)] public uint Unknown6 { get; private set; }
-    [UInt(32)] public uint Unknown7 { get; private set; }
+    /// <summary>
+    /// The client's build, 16042.
+    /// </summary>
+    [UInt(32)] public uint Build { get; private set; }
+
+    /// <summary>
+    /// A fingerprint of the client's install: a fixed seed folded, byte by byte, over the SHA-1 digests of the running executable and of its
+    /// patch index file. The same install sends the same value on every login.
+    /// </summary>
+    [UInt(64)] public ulong Fingerprint { get; private set; }
+
+    /// <summary>
+    /// The account name the player logged in with, as typed. At most 251 characters.
+    /// </summary>
+    [TerminatedWideString] public string AccountName { get; private set; } = "";
+
+    /// <summary>
+    /// The user id the STS returned when the login finished, parsed from its text form.
+    /// </summary>
+    public NetworkGuid StsUserId { get; } = new();
+
+    /// <summary>
+    /// The game token the STS issued for this login, parsed from its text form.
+    /// </summary>
+    public NetworkGuid GameToken { get; } = new();
+
+    /// <summary>
+    /// The client's own IPv4 address on its STS connection, as its socket reports the local end, as a host-order integer: a.b.c.d is
+    /// (a &lt;&lt; 24) | (b &lt;&lt; 16) | (c &lt;&lt; 8) | d.
+    /// </summary>
+    [UInt(32)] public uint ClientAddress { get; private set; }
+
+    /// <summary>
+    /// The client's interface language, as an id in the client's Language table.
+    /// </summary>
+    [UInt(32)] public uint LanguageId { get; private set; }
+
+    /// <summary>
+    /// The client's game mode, set when it starts: 0 by default, and any value of 2 or more becomes 0.
+    /// </summary>
+    [UInt(32)] public uint GameMode { get; private set; }
+
+    /// <summary>
+    /// The client gives this value no meaning. It always sends 0.
+    /// </summary>
     [UInt(32)] public uint Unknown8 { get; private set; }
-    public Client0592Part0 Unknown9 { get; } = new();
-    [UInt(32)] public uint Unknown10 { get; private set; }
+
+    /// <summary>
+    /// A description of the client's machine.
+    /// </summary>
+    public MachineInfo Machine { get; } = new();
+
+    /// <summary>
+    /// The realm data center the client was started for, as an id in the client's RealmDataCenter table.
+    /// </summary>
+    [UInt(32)] public uint RealmDataCenterId { get; private set; }
 }
