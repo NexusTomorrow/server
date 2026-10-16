@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using NexusTomorrow.Network.Message;
 
@@ -16,7 +17,7 @@ internal static partial class MessageVerification
 
     public static Rung? RungOf(Type message) => message.GetCustomAttribute<VerifiedAttribute>()?.Rung;
 
-    public static List<string> Problems(Type message, string key, IReadOnlyDictionary<string, string> summaries)
+    public static List<string> Problems(Type message, string key, IReadOnlyDictionary<string, string> summaries, IReadOnlyCollection<Assembly> models)
     {
         var problems = new List<string>();
         if (RungOf(message) is not { } rung)
@@ -26,7 +27,7 @@ internal static partial class MessageVerification
         if (rung < Rung.Fields)
             return problems;
 
-        foreach (Type type in Reachable(message))
+        foreach (Type type in Reachable(message, models))
         {
             foreach (MemberInfo member in WireMembers(type))
             {
@@ -43,9 +44,12 @@ internal static partial class MessageVerification
 
     private static string DocName(Type type) => type.FullName!.Replace('+', '.');
 
+    // Any accessibility, as the generator takes it; an auto-property's compiler-generated backing field is not a member of its own.
     private static IEnumerable<MemberInfo> WireMembers(Type type) =>
-        type.GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-            .Where(m => m is PropertyInfo or FieldInfo && m.GetCustomAttribute<NotOnWireAttribute>() is null);
+        type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+            .Where(m => m is PropertyInfo or FieldInfo
+                && !m.IsDefined(typeof(CompilerGeneratedAttribute), inherit: false)
+                && m.GetCustomAttribute<NotOnWireAttribute>() is null);
 
     private static Type TypeOf(MemberInfo member) => member is PropertyInfo property ? property.PropertyType : ((FieldInfo)member).FieldType;
 
@@ -53,7 +57,8 @@ internal static partial class MessageVerification
 
     private static bool IsLayout(Type type) => type.GetCustomAttribute<WireStructAttribute>() is not null || type.GetCustomAttribute<WireMessageAttribute>() is not null;
 
-    private static IEnumerable<Type> Reachable(Type root)
+    // Arms are found in every model assembly, since a union's arms need not live beside the message that holds it.
+    private static IEnumerable<Type> Reachable(Type root, IReadOnlyCollection<Assembly> models)
     {
         var seen = new HashSet<Type>();
         var pending = new Stack<Type>([root]);
@@ -69,7 +74,7 @@ internal static partial class MessageVerification
                 Type memberType = TypeOf(member);
                 if (member.GetCustomAttribute<UnionAttribute>() is not null)
                 {
-                    foreach (Type arm in memberType.Assembly.GetTypes().Where(t => memberType.IsAssignableFrom(t) && t.GetCustomAttribute<UnionCaseAttribute>() is not null))
+                    foreach (Type arm in models.SelectMany(a => a.GetTypes()).Where(t => memberType.IsAssignableFrom(t) && t.GetCustomAttribute<UnionCaseAttribute>() is not null))
                         pending.Push(arm);
                 }
                 else if (IsLayout(ElementOf(memberType)))

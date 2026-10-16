@@ -39,11 +39,11 @@ public sealed class RegistryVerificationTests
     public void EveryMessageCarriesTheDocumentationItsRungRequires()
     {
         var problems = new List<string>();
+        Dictionary<string, string> summaries = XmlDocs.SummariesOf(s_models);
         foreach (Assembly assembly in s_models)
         {
-            Dictionary<string, string> summaries = XmlDocs.SummariesOf(assembly);
             foreach ((Type type, string key) in Messages(assembly))
-                problems.AddRange(MessageVerification.Problems(type, key, summaries));
+                problems.AddRange(MessageVerification.Problems(type, key, summaries, s_models));
         }
 
         Assert.Empty(problems);
