@@ -48,6 +48,13 @@ jobs:
             exit 1
           fi
 
+      - name: Method words
+        run: |
+          if git grep -n -i -E 'probe|probing|decompil|disassembl|emulat|reverse[- ]engineer|ghidra|rizin|unicorn|values_for' -- '*.cs' '*.md' ':!CONTRIBUTING.md'; then
+            echo "::error::Public text states a client fact as a fact, never how it was found (listed above)"
+            exit 1
+          fi
+
       - name: Set up .NET
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:

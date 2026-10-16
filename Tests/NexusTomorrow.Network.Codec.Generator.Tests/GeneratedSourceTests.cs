@@ -199,7 +199,7 @@ public sealed class GeneratedSourceTests
     {
         GeneratorRun run = GeneratorHarness.Run(FixedMessage + """
 
-            public static class Probe
+            public static class Runner
             {
                 public static long WriteAllocations()
                 {
@@ -225,7 +225,7 @@ public sealed class GeneratedSourceTests
 
         Assert.Empty(run.Diagnostics);
         Assert.Empty(run.CompilationErrors);
-        object? allocated = GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "WriteAllocations");
+        object? allocated = GeneratorHarness.Invoke(run.Compilation, "Tests.Runner", "WriteAllocations");
         Assert.Equal(0L, Assert.IsType<long>(allocated));
     }
 
@@ -248,7 +248,7 @@ public sealed class GeneratedSourceTests
                 [Array(CountFrom = nameof(Length)), UInt(8)] public byte[] Values { get; set; } = [];
             }
 
-            public static class Probe
+            public static class Runner
             {
                 public static bool WriteThrows()
                 {
@@ -269,7 +269,7 @@ public sealed class GeneratedSourceTests
 
         Assert.Empty(run.Diagnostics);
         Assert.Empty(run.CompilationErrors);
-        object? threw = GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "WriteThrows");
+        object? threw = GeneratorHarness.Invoke(run.Compilation, "Tests.Runner", "WriteThrows");
         Assert.True(threw is true, "Writing 256 elements under an 8-bit count did not throw.");
     }
 
@@ -307,7 +307,7 @@ public sealed class GeneratedSourceTests
                 [Union(nameof(Selector))] public IArm Arm { get; set; } = new Zero();
             }
 
-            public static class Probe
+            public static class Runner
             {
                 public static string RoundTrip()
                 {
@@ -334,7 +334,7 @@ public sealed class GeneratedSourceTests
 
         Assert.Empty(run.Diagnostics);
         Assert.Empty(run.CompilationErrors);
-        Assert.Equal("Minus", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
+        Assert.Equal("Minus", GeneratorHarness.Invoke(run.Compilation, "Tests.Runner", "RoundTrip"));
     }
 
     // A [UInt] selector on a signed type carries its value's unsigned bits: 200 in an 8-bit sbyte
@@ -401,7 +401,7 @@ public sealed class GeneratedSourceTests
                 [Union(nameof(Selector))] public IShape Shape { get; set; } = new ZeroShape();
             }
 
-            public static class Probe
+            public static class Runner
             {
                 public static string RoundTrip()
                 {
@@ -426,7 +426,7 @@ public sealed class GeneratedSourceTests
 
         Assert.Empty(run.Diagnostics);
         Assert.Empty(run.CompilationErrors);
-        Assert.Equal("200 High 255 NegativeShape", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
+        Assert.Equal("200 High 255 NegativeShape", GeneratorHarness.Invoke(run.Compilation, "Tests.Runner", "RoundTrip"));
     }
 
     [Fact]
@@ -446,7 +446,7 @@ public sealed class GeneratedSourceTests
                 [PackedFloat] public Vector2 Packed { get; set; }
             }
 
-            public static class Probe
+            public static class Runner
             {
                 public static string RoundTrip()
                 {
@@ -465,7 +465,7 @@ public sealed class GeneratedSourceTests
         Assert.Empty(run.Diagnostics);
         Assert.Empty(run.CompilationErrors);
         // 1.5f is 0x3FC00000, written least significant byte first.
-        Assert.Equal("96 1.5 -2 0.5 4 0000C03F", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
+        Assert.Equal("96 1.5 -2 0.5 4 0000C03F", GeneratorHarness.Invoke(run.Compilation, "Tests.Runner", "RoundTrip"));
     }
 
     [Fact]
@@ -483,7 +483,7 @@ public sealed class GeneratedSourceTests
                 [Float32] public Quaternion Rotation { get; set; }
             }
 
-            public static class Probe
+            public static class Runner
             {
                 public static string RoundTrip()
                 {
@@ -502,7 +502,7 @@ public sealed class GeneratedSourceTests
         Assert.Empty(run.Diagnostics);
         Assert.Empty(run.CompilationErrors);
         // Each float goes out as its IEEE bits, low byte first: 1f is 0x3F800000, 2f 0x40000000, 3f 0x40400000, 4f 0x40800000.
-        Assert.Equal("128 {X:1 Y:2 Z:3 W:4} 0000803F000000400000404000008040", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
+        Assert.Equal("128 {X:1 Y:2 Z:3 W:4} 0000803F000000400000404000008040", GeneratorHarness.Invoke(run.Compilation, "Tests.Runner", "RoundTrip"));
     }
 
     // NTC003 keeps a member whose enum has a value too wide for it, such as a sentinel never sent; that value must not reach the wire.
@@ -526,7 +526,7 @@ public sealed class GeneratedSourceTests
                 [UInt(4)] public Slot Where { get; set; }
             }
 
-            public static class Probe
+            public static class Runner
             {
                 public static string Write()
                 {
@@ -548,7 +548,7 @@ public sealed class GeneratedSourceTests
 
         Assert.Equal("NTC003", Assert.Single(run.Diagnostics).Id);
         Assert.Empty(run.CompilationErrors);
-        Assert.Equal("CodecException", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "Write"));
+        Assert.Equal("CodecException", GeneratorHarness.Invoke(run.Compilation, "Tests.Runner", "Write"));
     }
 
     // The analysis and the sources are values, so an edit that touches no wire type reruns neither.
@@ -610,7 +610,7 @@ public sealed class GeneratedSourceTests
                 [Array(CountBits = 3)] public List<Item> Entries { get; set; } = [];
             }
 
-            public static class Probe
+            public static class Runner
             {
                 public static string RoundTrip()
                 {
@@ -628,7 +628,7 @@ public sealed class GeneratedSourceTests
 
         Assert.Empty(run.Diagnostics);
         Assert.Empty(run.CompilationErrors);
-        Assert.Equal("13 2 9 30", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
+        Assert.Equal("13 2 9 30", GeneratorHarness.Invoke(run.Compilation, "Tests.Runner", "RoundTrip"));
     }
 
     [Fact]
@@ -652,7 +652,7 @@ public sealed class GeneratedSourceTests
                 [UInt(8)] public byte Second { get; set; }
             }
 
-            public static class Probe
+            public static class Runner
             {
                 public static string RoundTrip()
                 {
@@ -670,7 +670,7 @@ public sealed class GeneratedSourceTests
 
         Assert.Empty(run.Diagnostics);
         Assert.Empty(run.CompilationErrors);
-        Assert.Equal("1 2 16 1 2", GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "RoundTrip"));
+        Assert.Equal("1 2 16 1 2", GeneratorHarness.Invoke(run.Compilation, "Tests.Runner", "RoundTrip"));
     }
 
     // A reader takes a terminated string's count of 0 as "", so an element holding one guarantees only
@@ -696,7 +696,7 @@ public sealed class GeneratedSourceTests
                 [Array(CountBits = 8)] public List<Note> Items { get; } = [];
             }
 
-            public static class Probe
+            public static class Runner
             {
                 public static int ReadTwo()
                 {
@@ -710,7 +710,7 @@ public sealed class GeneratedSourceTests
 
         Assert.Empty(run.Diagnostics);
         Assert.Empty(run.CompilationErrors);
-        Assert.Equal(2, GeneratorHarness.Invoke(run.Compilation, "Tests.Probe", "ReadTwo"));
+        Assert.Equal(2, GeneratorHarness.Invoke(run.Compilation, "Tests.Runner", "ReadTwo"));
     }
 
     private static string WritePathOf(string generated)
