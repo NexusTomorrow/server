@@ -141,11 +141,3 @@ dotnet_diagnostic.RS2008.severity = none
 [{Source/NexusTomorrow.Network.World/**.cs,Source/NexusTomorrow.Network.Auth/**.cs,Source/NexusTomorrow.Network/Message/Model/**.cs}]
 dotnet_diagnostic.IDE1006.severity = none
 
-[Source/NexusTomorrow.Network/{GamePacketReader,GamePacketWriter,NetworkBitArray,NetworkGuid}.cs]
-dotnet_diagnostic.IDE1006.severity = none
-dotnet_diagnostic.CA1720.severity = none
-dotnet_diagnostic.CA1816.severity = none
-dotnet_diagnostic.CA2208.severity = none
-
-[Source/NexusTomorrow.Network/Packet/ClientGamePacketReader.cs]
-dotnet_diagnostic.IDE1006.severity = none

@@ -7,8 +7,6 @@ namespace NexusTomorrow.Network;
 [WireStruct]
 public sealed partial class NetworkGuid
 {
-    [NotOnWire] public Guid Guid => new(Data1, Data2, Data3, Data4);
-
     [SInt(32)] public int Data1 { get; private set; }
     [SInt(16)] public short Data2 { get; private set; }
     [SInt(16)] public short Data3 { get; private set; }
