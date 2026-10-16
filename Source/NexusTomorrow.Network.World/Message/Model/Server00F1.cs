@@ -7,14 +7,6 @@ namespace NexusTomorrow.Network.World.Message.Model;
 [WireMessage(GameMessageOpcode.Server00F1, Direction.ServerToClient)]
 public sealed partial class Server00F1
 {
-    [Flags]
-    public enum WorldSetting
-    {
-        WorldForcesLevelScaling = 0x01,
-        TransmatTeleport = 0x04,
-        HoloCryptTeleport = 0x08,
-    }
-
     [UInt(2)] public byte Unknown0 { get; set; }
     [UInt(32)] public uint Unknown1 { get; set; }
     [UInt(8)] public byte Unknown2 { get; set; }

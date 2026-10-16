@@ -1,5 +1,4 @@
-﻿using NexusTomorrow.Network.Auth.Static;
-using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.Auth.Message.Model;

@@ -6,16 +6,6 @@ namespace NexusTomorrow.Network.World.Message.Model;
 [WireMessage(GameMessageOpcode.Server0359, Direction.ServerToClient)]
 public sealed partial class Server0359
 {
-    public enum LuaEventType
-    {
-        Int = 0,
-        String = 1,
-        Unit = 2,
-        Bool = 3,
-        Item = 4,
-        Quest = 5,
-    }
-
     public interface IServer0359Union0 : IWireStruct
     {
     }
