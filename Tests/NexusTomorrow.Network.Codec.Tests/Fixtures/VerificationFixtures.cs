@@ -1,0 +1,42 @@
+﻿using NexusTomorrow.Network.Message;
+
+namespace NexusTomorrow.Network.Codec.Tests.Fixtures;
+
+[WireStruct]
+public sealed partial class VerifiedPart
+{
+    [UInt(8)] public byte Speed { get; set; }
+}
+
+public interface IVerifiedUnion : IWireStruct
+{
+}
+
+[WireStruct]
+[UnionCase(1)]
+public sealed partial class VerifiedArm : IVerifiedUnion
+{
+    [UInt(8)] public byte Unknown0 { get; set; }
+}
+
+[WireStruct]
+[Verified(Rung.Fields)]
+public sealed partial class FieldsFixture
+{
+    [UInt(8)] public byte Selector { get; set; }
+    [Union(nameof(Selector))] public IVerifiedUnion Payload { get; set; } = new VerifiedArm();
+    public VerifiedPart Part { get; set; } = new();
+}
+
+[WireStruct]
+[Verified(Rung.Purpose)]
+public sealed partial class PurposeFixture
+{
+    [UInt(8)] public byte Unknown0 { get; set; }
+}
+
+[WireStruct]
+public sealed partial class UnreadFixture
+{
+    [UInt(8)] public byte Unknown0 { get; set; }
+}
