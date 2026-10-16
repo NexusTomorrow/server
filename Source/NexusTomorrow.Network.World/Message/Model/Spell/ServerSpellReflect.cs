@@ -3,13 +3,13 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ServerSpellReflect, Direction.ServerToClient)]
-public sealed partial class ServerSpellReflect
+[WireMessage(GameMessageOpcode.Server07F6, Direction.ServerToClient)]
+public sealed partial class Server07F6
 {
-    [UInt(32)] public uint SpellUniqueId { get; set; }
-    [UInt(19)] public uint Spell4EffectId { get; set; } = 0;
-    [UInt(32)] public uint CasterUnitId { get; set; } = 0;
-    [UInt(32)] public uint TargetUnitId { get; set; } = 0;
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(19)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
 
-    public SpellEffectResult SpellEffectResult { get; set; } = new();
+    public Server0262Part10 Unknown4 { get; set; } = new();
 }

@@ -4,10 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-// Triggers MatchVoteKickBegin lua event on client
-[WireMessage(GameMessageOpcode.ServerMatchingMatchVoteKickBegin, Direction.ServerToClient)]
-public sealed partial class ServerMatchingMatchVoteKickBegin
+[WireMessage(GameMessageOpcode.Server0614, Direction.ServerToClient)]
+public sealed partial class Server0614
 {
-    public Identity Initiator { get; set; } = new();
-    public Identity MemberToKick { get; set; } = new();
+    public Client00B5Part0 Unknown0 { get; set; } = new();
+    public Client00B5Part0 Unknown1 { get; set; } = new();
 }

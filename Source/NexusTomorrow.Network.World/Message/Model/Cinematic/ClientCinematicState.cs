@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[WireMessage(GameMessageOpcode.ClientCinematicState, Direction.ClientToServer)]
-public sealed partial class ClientCinematicState
+[WireMessage(GameMessageOpcode.Client0720, Direction.ClientToServer)]
+public sealed partial class Client0720
 {
-    [UInt(8)] public CinematicState State { get; private set; }
-    [UInt(1)] public bool NotifyOfCancelledCameraAction { get; private set; } // set by message 0x218
+    [UInt(8)] public byte Unknown0 { get; private set; }
+    [UInt(1)] public bool Unknown1 { get; private set; }
 }

@@ -4,10 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Option;
 
-// If sent without a CharacterId, applies to all characters on the account
-[WireMessage(GameMessageOpcode.BiInputKeySet, Direction.Both)]
-public sealed partial class BiInputKeySet
+[WireMessage(GameMessageOpcode.Message056F, Direction.Both)]
+public sealed partial class Message056F
 {
-    [Array(CountBits = 32)] public List<Binding> Bindings { get; set; } = [];
-    [UInt(64)] public ulong CharacterId { get; set; }
+    [Array(CountBits = 32)] public List<Message056FPart0> Unknown0 { get; set; } = [];
+    [UInt(64)] public ulong Unknown1 { get; set; }
 }

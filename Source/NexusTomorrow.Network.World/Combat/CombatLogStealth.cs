@@ -4,11 +4,10 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
-[UnionCase(CombatLogType.Stealth)]
-public sealed partial class CombatLogStealth : ICombatLog
+[UnionCase(24)]
+public sealed partial class Server0247Union0Arm18 : IServer0247Union0
 {
-    [NotOnWire] public CombatLogType Type => CombatLogType.Stealth;
 
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(1)] public bool BExiting { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(1)] public bool Unknown1 { get; set; }
 }

@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-// Can add a new entry or change an existing entry; the entry's own GuildIdentity names the guild
-[WireMessage(GameMessageOpcode.ServerGuildEventLogChange, Direction.ServerToClient)]
-public sealed partial class ServerGuildEventLogChange
+[WireMessage(GameMessageOpcode.Server0487, Direction.ServerToClient)]
+public sealed partial class Server0487
 {
-    public GuildEventLog LogEntry { get; set; }
+    public Server0487Part0 Unknown0 { get; set; }
 }

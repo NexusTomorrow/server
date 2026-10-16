@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pet;
 
-[WireMessage(GameMessageOpcode.ServerPetDespawned, Direction.ServerToClient)]
-public sealed partial class ServerPetDespawned
+[WireMessage(GameMessageOpcode.Server077F, Direction.ServerToClient)]
+public sealed partial class Server077F
 {
-    [UInt(32)] public uint PetUnitId { get; set; } // TBC if this follows other messages, 0 means all engineer pets
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

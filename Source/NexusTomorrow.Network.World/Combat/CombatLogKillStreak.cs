@@ -4,12 +4,11 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
-[UnionCase(CombatLogType.KillStreak)]
-public sealed partial class CombatLogKillStreak : ICombatLog
+[UnionCase(20)]
+public sealed partial class Server0247Union0Arm14 : IServer0247Union0
 {
-    [NotOnWire] public CombatLogType Type => CombatLogType.KillStreak;
 
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(5)] public CombatMomentumStat StatType { get; set; } // 5u
-    [UInt(32)] public uint StreakAmount { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(5)] public byte Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }

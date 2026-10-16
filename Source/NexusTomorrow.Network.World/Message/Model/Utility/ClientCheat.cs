@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Utility;
 
-[WireMessage(GameMessageOpcode.ClientCheat, Direction.ClientToServer)]
-public sealed partial class ClientCheat
+[WireMessage(GameMessageOpcode.Client03E0, Direction.ClientToServer)]
+public sealed partial class Client03E0
 {
-    [WideString] public string Message { get; private set; }
+    [WideString] public string Unknown0 { get; private set; }
 }

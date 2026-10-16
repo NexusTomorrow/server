@@ -4,10 +4,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Loot;
 
-[WireMessage(GameMessageOpcode.ClientLootAssignMaster, Direction.ClientToServer)]
-public sealed partial class ClientLootAssignMaster
+[WireMessage(GameMessageOpcode.Client00B5, Direction.ClientToServer)]
+public sealed partial class Client00B5
 {
-    [UInt(32)] public uint OwnerUnitId { get; private set; }
-    [UInt(32)] public uint LootUnitId { get; private set; }
-    public Identity Assignee { get; private set; } = new Identity();
+    [UInt(32)] public uint Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
+    public Client00B5Part0 Unknown2 { get; private set; } = new Client00B5Part0();
 }

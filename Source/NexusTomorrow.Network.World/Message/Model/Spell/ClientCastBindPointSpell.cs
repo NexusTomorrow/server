@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ClientCastBindPointSpell, Direction.ClientToServer)]
-public sealed partial class ClientCastBindPointSpell
+[WireMessage(GameMessageOpcode.Client0098, Direction.ClientToServer)]
+public sealed partial class Client0098
 {
-    [UInt(32)] public uint ClientSpellCastUniqueId { get; private set; }
-    [UInt(32)] public uint UnitId { get; private set; } // Bind point units
+    [UInt(32)] public uint Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
 }

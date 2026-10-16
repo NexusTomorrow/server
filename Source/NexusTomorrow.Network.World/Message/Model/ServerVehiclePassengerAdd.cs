@@ -4,11 +4,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerVehiclePassengerAdd, Direction.ServerToClient)]
-public sealed partial class ServerVehiclePassengerAdd
+[WireMessage(GameMessageOpcode.Server086F, Direction.ServerToClient)]
+public sealed partial class Server086F
 {
-    [UInt(32)] public uint Self { get; set; }
-    [UInt(2)] public VehicleSeatType SeatType { get; set; }
-    [UInt(3)] public byte SeatPosition { get; set; }
-    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(2)] public byte Unknown1 { get; set; }
+    [UInt(3)] public byte Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
 }

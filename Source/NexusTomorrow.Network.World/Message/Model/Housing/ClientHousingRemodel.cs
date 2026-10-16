@@ -4,16 +4,16 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ClientHousingRemodel, Direction.ClientToServer)]
-public sealed partial class ClientHousingRemodel
+[WireMessage(GameMessageOpcode.Client050A, Direction.ClientToServer)]
+public sealed partial class Client050A
 {
-    public Identity TargetResidence { get; } = new();
-    [UInt(32)] public uint WallpaperId { get; private set; }
-    [UInt(32)] public uint RoofDecorInfoId { get; private set; }
-    [UInt(32)] public uint EntrywayDecorInfoId { get; private set; }
-    [UInt(32)] public uint DoorDecorInfoId { get; private set; }
-    [UInt(32)] public uint SkyWallpaperId { get; private set; }
-    [UInt(32)] public uint MusicId { get; private set; }
-    [UInt(32)] public uint GroundWallpaperId { get; private set; }
-    [UInt(3)] public byte Operation { get; private set; } // always set to 1, can be ignored
+    public Client00B5Part0 Unknown0 { get; } = new();
+    [UInt(32)] public uint Unknown1 { get; private set; }
+    [UInt(32)] public uint Unknown2 { get; private set; }
+    [UInt(32)] public uint Unknown3 { get; private set; }
+    [UInt(32)] public uint Unknown4 { get; private set; }
+    [UInt(32)] public uint Unknown5 { get; private set; }
+    [UInt(32)] public uint Unknown6 { get; private set; }
+    [UInt(32)] public uint Unknown7 { get; private set; }
+    [UInt(3)] public byte Unknown8 { get; private set; }
 }

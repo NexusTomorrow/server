@@ -3,10 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-// Can be used for AccountFriends or the player when they update their account display name
-[WireMessage(GameMessageOpcode.ServerFriendshipAccountDisplayNameUpdate, Direction.ServerToClient)]
-public sealed partial class ServerFriendshipAccountDisplayNameUpdate
+[WireMessage(GameMessageOpcode.Server039C, Direction.ServerToClient)]
+public sealed partial class Server039C
 {
-    [UInt(32)] public uint AccountId { get; set; }
-    [WideString] public string DisplayName { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [WideString] public string Unknown1 { get; set; }
 }

@@ -3,11 +3,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ClientGuildHolomarkUpdate, Direction.ClientToServer)]
-public sealed partial class ClientGuildHolomarkUpdate
+[WireMessage(GameMessageOpcode.Client010C, Direction.ClientToServer)]
+public sealed partial class Client010C
 {
-    [UInt(1)] public bool LeftHidden { get; private set; }
-    [UInt(1)] public bool RightHidden { get; private set; }
-    [UInt(1)] public bool BackHidden { get; private set; }
-    [UInt(1)] public bool DistanceNear { get; private set; }
+    [UInt(1)] public bool Unknown0 { get; private set; }
+    [UInt(1)] public bool Unknown1 { get; private set; }
+    [UInt(1)] public bool Unknown2 { get; private set; }
+    [UInt(1)] public bool Unknown3 { get; private set; }
 }

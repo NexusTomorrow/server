@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ServerFriendshipTypeUpdate, Direction.ServerToClient)]
-public sealed partial class ServerFriendshipTypeUpdate
+[WireMessage(GameMessageOpcode.Server03CB, Direction.ServerToClient)]
+public sealed partial class Server03CB
 {
-    [UInt(64)] public ulong FriendshipId { get; set; }
-    [UInt(4)] public FriendshipType Type { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [UInt(4)] public byte Unknown1 { get; set; }
 }

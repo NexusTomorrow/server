@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[WireMessage(GameMessageOpcode.ServerPathSettlerInfrastructureUpdated, Direction.ServerToClient)]
-public sealed partial class ServerPathSettlerInfrastructureUpdated
+[WireMessage(GameMessageOpcode.Server0674, Direction.ServerToClient)]
+public sealed partial class Server0674
 {
-    [UInt(32)] public uint PathMissionId { get; set; }
-    [UInt(2)] public SettlerInfrastructureState State { get; set; }
-    [Float32] public float PercentComplete { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(2)] public byte Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
 }

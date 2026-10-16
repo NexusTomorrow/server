@@ -4,10 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-// Functionally the same as ClientGuildSetStandard
-[WireMessage(GameMessageOpcode.ClientGuildStandardModify, Direction.ClientToServer)]
-public sealed partial class ClientGuildStandardModify
+[WireMessage(GameMessageOpcode.Client04A6, Direction.ClientToServer)]
+public sealed partial class Client04A6
 {
-    public Identity GuildIdentity { get; private set; } = new();
-    public GuildStandard GuildStandard { get; private set; } = new();
+    public Client00B5Part0 Unknown0 { get; private set; } = new();
+    public Client0481Part0 Unknown1 { get; private set; } = new();
 }

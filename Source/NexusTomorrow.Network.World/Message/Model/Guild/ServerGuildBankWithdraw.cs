@@ -4,10 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-// Fires whenever a player successfully withdraws money or items from the guild bank.  This only fires for the player who performed the withdraw action.
-[WireMessage(GameMessageOpcode.ServerGuildBankWithdraw, Direction.ServerToClient)]
-public sealed partial class ServerGuildBankWithdraw
+[WireMessage(GameMessageOpcode.Server04A1, Direction.ServerToClient)]
+public sealed partial class Server04A1
 {
-    public Identity GuildIdentity { get; private set; }
-    public GuildWithdrawlInfo WithdrawlInfo { get; private set; }
+    public Client00B5Part0 Unknown0 { get; private set; }
+    public Server0493Part6 Unknown1 { get; private set; }
 }

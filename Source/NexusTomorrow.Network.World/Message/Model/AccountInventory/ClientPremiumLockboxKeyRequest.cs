@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.AccountInventory;
 
-[WireMessage(GameMessageOpcode.ClientPremiumLockboxKeyRequest, Direction.ClientToServer)]
-public sealed partial class ClientPremiumLockboxKeyRequest
+[WireMessage(GameMessageOpcode.Client079E, Direction.ClientToServer)]
+public sealed partial class Client079E
 {
 }

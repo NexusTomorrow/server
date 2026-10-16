@@ -5,16 +5,16 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Entity;
 
 [WireStruct]
-public sealed partial class Position
+public sealed partial class Client0096Part0
 {
-    [Float32] public Vector3 Vector { get; private set; }
+    [Float32] public Vector3 Unknown0 { get; private set; }
 
-    public Position()
+    public Client0096Part0()
     {
     }
 
-    public Position(Vector3 vector)
+    public Client0096Part0(Vector3 vector)
     {
-        Vector = vector;
+        Unknown0 = vector;
     }
 }

@@ -4,8 +4,8 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
 
 [WireStruct]
-public sealed partial class AuctionFilter : IAuctionFilter
+public sealed partial class Client07DCPart0 : IClient07DCUnion0
 {
-    [UInt(3)] public AuctionFilterType Type { get; private set; }
-    [Union(nameof(Type))] public IAuctionFilter Filter { get; private set; }
+    [UInt(3)] public byte Unknown0 { get; private set; }
+    [Union(nameof(Unknown0))] public IClient07DCUnion0 Unknown1 { get; private set; }
 }

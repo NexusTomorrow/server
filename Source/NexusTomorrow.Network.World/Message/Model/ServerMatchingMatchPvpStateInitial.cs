@@ -5,9 +5,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerMatchingMatchPvpStateInitial, Direction.ServerToClient)]
-public sealed partial class ServerMatchingMatchPvpStateInitial
+[WireMessage(GameMessageOpcode.Server05E8, Direction.ServerToClient)]
+public sealed partial class Server05E8
 {
-    [UInt(2)] public MatchTeam Team { get; set; }
-    public StateInfo State { get; set; }
+    [UInt(2)] public byte Unknown0 { get; set; }
+    public Server05E8Part0 Unknown1 { get; set; }
 }

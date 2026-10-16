@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[WireMessage(GameMessageOpcode.ServerSchematicRemoveLearned, Direction.ServerToClient)]
-public sealed partial class ServerSchematicRemoveLearned
+[WireMessage(GameMessageOpcode.Server085E, Direction.ServerToClient)]
+public sealed partial class Server085E
 {
-    [UInt(32)] public TradeskillType TradeskillId { get; set; }
-    [UInt(32)] public uint TradeskillSchematic2Id { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

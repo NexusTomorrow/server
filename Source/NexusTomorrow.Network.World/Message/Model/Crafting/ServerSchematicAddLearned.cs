@@ -5,10 +5,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[WireMessage(GameMessageOpcode.ServerSchematicAddLearned, Direction.ServerToClient)]
-public sealed partial class ServerSchematicAddLearned
+[WireMessage(GameMessageOpcode.Server085F, Direction.ServerToClient)]
+public sealed partial class Server085F
 {
-    [UInt(32)] public TradeskillType TradeskillId { get; set; }
-    [UInt(32)] public uint TradeskillSchematic2Id { get; set; }
-    [Float32] public Vector2 DiscoveryCoordinates { get; set; } // Coordinates on the discovery panel
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [Float32] public Vector2 Unknown2 { get; set; }
 }

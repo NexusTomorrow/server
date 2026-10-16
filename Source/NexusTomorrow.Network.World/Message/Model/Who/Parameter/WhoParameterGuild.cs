@@ -4,8 +4,8 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
 
 [WireStruct]
-[UnionCase(WhoParameterType.Guild)]
-public sealed partial class WhoParameterGuild : IWhoParameterData
+[UnionCase(5)]
+public sealed partial class Client0959Union0Arm05 : IClient0959Union0
 {
-    [WideString] public string GuildName { get; private set; }
+    [WideString] public string Unknown0 { get; private set; }
 }

@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ServerGuildBankInventoryRemove, Direction.ServerToClient)]
-public sealed partial class ServerGuildBankInventoryRemove
+[WireMessage(GameMessageOpcode.Server0470, Direction.ServerToClient)]
+public sealed partial class Server0470
 {
-    public Identity GuildIdentity { get; set; }
-    [UInt(64)] public ulong ItemGuid { get; private set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [UInt(64)] public ulong Unknown1 { get; private set; }
 }

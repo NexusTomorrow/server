@@ -4,9 +4,9 @@ using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerSetUnitPathType, Direction.ServerToClient)]
-public sealed partial class ServerSetUnitPathType
+[WireMessage(GameMessageOpcode.Server08B8, Direction.ServerToClient)]
+public sealed partial class Server08B8
 {
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(3)] public Path Path { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(3)] public byte Unknown1 { get; set; }
 }

@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ClientFriendshipIgnoreStrangersState, Direction.ClientToServer)]
-public sealed partial class ClientFriendshipIgnoreStrangersState
+[WireMessage(GameMessageOpcode.Client039E, Direction.ClientToServer)]
+public sealed partial class Client039E
 {
-    [UInt(1)] public bool IgnoreStrangerInvites { get; private set; }
+    [UInt(1)] public bool Unknown0 { get; private set; }
 }

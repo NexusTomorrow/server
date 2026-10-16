@@ -4,11 +4,10 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
-[UnionCase(CombatLogType.Crafting)]
-public sealed partial class CombatLogCrafting : ICombatLog
+[UnionCase(30)]
+public sealed partial class Server0247Union0Arm1E : IServer0247Union0
 {
-    [NotOnWire] public CombatLogType Type => CombatLogType.Crafting;
 
-    [UInt(32)] public uint CasterUnitId { get; set; }
-    [UInt(18)] public uint Item2Id { get; set; } // 18u
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(18)] public uint Unknown1 { get; set; }
 }

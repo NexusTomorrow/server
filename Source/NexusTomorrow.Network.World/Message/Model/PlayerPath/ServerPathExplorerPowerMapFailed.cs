@@ -3,10 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-// Fires whenever the player fails a Tracking mission.
-
-[WireMessage(GameMessageOpcode.ServerPathExplorerPowerMapFailed, Direction.ServerToClient)]
-public sealed partial class ServerPathExplorerPowerMapFailed
+[WireMessage(GameMessageOpcode.Server00F8, Direction.ServerToClient)]
+public sealed partial class Server00F8
 {
-    [UInt(14)] public ushort PathMissionId { get; set; }
+    [UInt(14)] public ushort Unknown0 { get; set; }
 }

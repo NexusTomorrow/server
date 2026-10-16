@@ -3,10 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Reward;
 
-// Clears all existing RewardTrack data then loads it from this message
-// Triggers RewardTrackedLoaded event
-[WireMessage(GameMessageOpcode.ServerRewardTracksReload, Direction.ServerToClient)]
-public sealed partial class ServerRewardTracksReload
+[WireMessage(GameMessageOpcode.Server07D3, Direction.ServerToClient)]
+public sealed partial class Server07D3
 {
-    [Array(CountBits = 32)] public List<RewardTrack> RewardsTracks { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server07CDPart0> Unknown0 { get; set; } = [];
 }

@@ -4,10 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-// Possibly for when an account friend deletes a character while the player is online
-[WireMessage(GameMessageOpcode.ServerFriendshipAccountRemovedCharacter, Direction.ServerToClient)]
-public sealed partial class ServerFriendshipAccountRemovedCharacter
+[WireMessage(GameMessageOpcode.Server039A, Direction.ServerToClient)]
+public sealed partial class Server039A
 {
-    [UInt(32)] public uint AccountId { get; set; }
-    public Identity CharacterRemoved { get; set; } = new();
+    [UInt(32)] public uint Unknown0 { get; set; }
+    public Client00B5Part0 Unknown1 { get; set; } = new();
 }

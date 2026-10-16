@@ -4,11 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
-[WireMessage(GameMessageOpcode.ServerPublicEventBombStatus, Direction.ServerToClient)]
-public sealed partial class ServerPublicEventBombStatus
+[WireMessage(GameMessageOpcode.Server06F6, Direction.ServerToClient)]
+public sealed partial class Server06F6
 {
-    [NotOnWire] public PublicEventTeam Team { get; set; }
     [UInt(14)] public ushort Unknown0 { get; set; }
-    [UInt(32)] public uint CarrierUnitId { get; set; }
-    [UInt(32)] public uint TimeInMs { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }

@@ -5,9 +5,9 @@ using NexusTomorrow.Network.World.Combat;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerCombatLog, Direction.ServerToClient)]
-public partial class ServerCombatLog
+[WireMessage(GameMessageOpcode.Server0247, Direction.ServerToClient)]
+public partial class Server0247
 {
-    [UInt(6)] public CombatLogType Type { get; set; }
-    [Union(nameof(Type))] public ICombatLog CombatLog { get; set; }
+    [UInt(6)] public byte Unknown0 { get; set; }
+    [Union(nameof(Unknown0))] public IServer0247Union0 Unknown1 { get; set; }
 }

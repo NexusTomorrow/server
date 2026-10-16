@@ -6,16 +6,16 @@ using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[WireMessage(GameMessageOpcode.ServerCinematicActorAdd, Direction.ServerToClient)]
-public sealed partial class ServerCinematicActorAdd
+[WireMessage(GameMessageOpcode.Server0228, Direction.ServerToClient)]
+public sealed partial class Server0228
 {
-    [UInt(32)] public uint Delay { get; set; }
-    [UInt(16)] public EntityCreateFlag CreateFlags { get; set; }
-    [UInt(16)] public ushort TextureLevelOfDetailBias { get; set; } // outside chance this is a signed value but sniffs do not show it used that way
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(32)] public uint Creature2Id { get; set; }
-    [UInt(32)] public ModeType MovementMode { get; set; }
-    public Position Position { get; set; }
-    [UInt(64)] public ulong ActivePropId { get; set; }
-    [UInt(32)] public uint WorldSocketId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(16)] public ushort Unknown1 { get; set; }
+    [UInt(16)] public ushort Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
+    [UInt(32)] public uint Unknown5 { get; set; }
+    public Client0096Part0 Unknown6 { get; set; }
+    [UInt(64)] public ulong Unknown7 { get; set; }
+    [UInt(32)] public uint Unknown8 { get; set; }
 }

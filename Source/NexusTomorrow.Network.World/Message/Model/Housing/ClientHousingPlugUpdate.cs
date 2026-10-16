@@ -5,24 +5,24 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ClientHousingPlugUpdate, Direction.ClientToServer)]
-public sealed partial class ClientHousingPlugUpdate
+[WireMessage(GameMessageOpcode.Client0510, Direction.ClientToServer)]
+public sealed partial class Client0510
 {
     [WireStruct]
-    public sealed partial class HousingContribution
+    public sealed partial class Client0510Part0
     {
-        [UInt(32)] public uint ContributionPointRequirement { get; private set; } // derived from tbl housingPlugItem.housingContributionInfoId
-        [UInt(32)] public uint Unused1 { get; private set; }
-        [UInt(32)] public uint Unused2 { get; private set; }
-        [UInt(32)] public uint Unused3 { get; private set; }
-        [UInt(32)] public uint Unused4 { get; private set; }
+        [UInt(32)] public uint Unknown0 { get; private set; }
+        [UInt(32)] public uint Unknown1 { get; private set; }
+        [UInt(32)] public uint Unknown2 { get; private set; }
+        [UInt(32)] public uint Unknown3 { get; private set; }
+        [UInt(32)] public uint Unknown4 { get; private set; }
     }
 
-    public Identity ResidenceIdentity { get; private set; } = new();
-    [UInt(32)] public uint HousingPlotInfoId { get; private set; }
-    [UInt(32)] public uint HousingPlugItemId { get; private set; }
-    [UInt(32)] public uint PlugFacing { get; private set; }
-    [UInt(32)] public uint PlotFlags { get; private set; } // unused
-    [UInt(3)] public HousingPlugOperation Operation { get; private set; }
-    [FixedArray(5)] public HousingContribution[] HousingContributions { get; private set; } = new HousingContribution[5];
+    public Client00B5Part0 Unknown0 { get; private set; } = new();
+    [UInt(32)] public uint Unknown1 { get; private set; }
+    [UInt(32)] public uint Unknown2 { get; private set; }
+    [UInt(32)] public uint Unknown3 { get; private set; }
+    [UInt(32)] public uint Unknown4 { get; private set; }
+    [UInt(3)] public byte Unknown5 { get; private set; }
+    [FixedArray(5)] public Client0510Part0[] Unknown6 { get; private set; } = new Client0510Part0[5];
 }

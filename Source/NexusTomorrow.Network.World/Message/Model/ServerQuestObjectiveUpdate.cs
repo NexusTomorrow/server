@@ -3,10 +3,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerQuestObjectiveUpdate, Direction.ServerToClient)]
-public sealed partial class ServerQuestObjectiveUpdate
+[WireMessage(GameMessageOpcode.Server0361, Direction.ServerToClient)]
+public sealed partial class Server0361
 {
-    [UInt(15)] public ushort QuestId { get; set; }
-    [UInt(32)] public uint QuestObjectiveIndex { get; set; } // Not to be confused with QuestObjectiveId for tbl records
-    [UInt(32)] public uint Completed { get; set; } // Objective completion flags, can represent different types of data i.e. not always flags, sometimes a number
+    [UInt(15)] public ushort Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }

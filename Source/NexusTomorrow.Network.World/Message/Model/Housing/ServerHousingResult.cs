@@ -5,10 +5,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ServerHousingResult, Direction.ServerToClient)]
-public sealed partial class ServerHousingResult
+[WireMessage(GameMessageOpcode.Server0536, Direction.ServerToClient)]
+public sealed partial class Server0536
 {
-    public Identity ResidenceIdentity { get; set; } // not used by client
-    [WideString] public string PlayerName { get; set; }
-    [UInt(7)] public HousingResult Result { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [WideString] public string Unknown1 { get; set; }
+    [UInt(7)] public byte Unknown2 { get; set; }
 }

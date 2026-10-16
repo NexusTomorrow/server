@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Challenges;
 
-[WireMessage(GameMessageOpcode.ServerChallengeResult, Direction.ServerToClient)]
-public sealed partial class ServerChallengeResult
+[WireMessage(GameMessageOpcode.Server00C6, Direction.ServerToClient)]
+public sealed partial class Server00C6
 {
-    [UInt(14)] public ushort ChallengeId { get; set; }
-    [UInt(5)] public ChallengeResult Result { get; set; }
-    [UInt(32)] public int Data { get; set; } // Sometimes localizedStringId, sometimes tier value
+    [UInt(14)] public ushort Unknown0 { get; set; }
+    [UInt(5)] public byte Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }

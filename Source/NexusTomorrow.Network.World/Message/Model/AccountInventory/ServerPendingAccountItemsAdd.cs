@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
-// Clears all items from client's PendingAccountItem list before adding these
-[WireMessage(GameMessageOpcode.ServerPendingAccountItemsAdd, Direction.ServerToClient)]
-public sealed partial class ServerPendingAccountItemsAdd
+[WireMessage(GameMessageOpcode.Server0979, Direction.ServerToClient)]
+public sealed partial class Server0979
 {
-    [Array(CountBits = 32)] public List<PendingAccountItem> PendingItems { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server0976Part0> Unknown0 { get; set; } = [];
 }

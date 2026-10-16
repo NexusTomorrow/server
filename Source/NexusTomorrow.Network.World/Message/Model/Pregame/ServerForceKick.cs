@@ -4,8 +4,8 @@ using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-[WireMessage(GameMessageOpcode.ServerForceKick, Direction.ServerToClient)]
-public sealed partial class ServerForceKick
+[WireMessage(GameMessageOpcode.Server036A, Direction.ServerToClient)]
+public sealed partial class Server036A
 {
-    [UInt(5)] public ForceKickReason Reason { get; set; } = ForceKickReason.WorldDisconnect;
+    [UInt(5)] public byte Unknown0 { get; set; }
 }

@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
-[WireMessage(GameMessageOpcode.ServerAuctionWon, Direction.ServerToClient)]
-public sealed partial class ServerAuctionWon
+[WireMessage(GameMessageOpcode.Server0564, Direction.ServerToClient)]
+public sealed partial class Server0564
 {
-    public AuctionInfo Auction { get; set; }
+    public Server055FPart0 Unknown0 { get; set; }
 }

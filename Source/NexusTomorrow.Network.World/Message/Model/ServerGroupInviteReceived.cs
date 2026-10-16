@@ -4,12 +4,12 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerGroupInviteReceived, Direction.ServerToClient)]
-public sealed partial class ServerGroupInviteReceived
+[WireMessage(GameMessageOpcode.Server041F, Direction.ServerToClient)]
+public sealed partial class Server041F
 {
-    [UInt(64)] public ulong GroupId { get; set; }
-    [UInt(32)] public uint LeaderIndex { get; set; }
-    [UInt(32)] public uint InviterIndex { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 
-    [Array(CountBits = 32)] public List<GroupCharacter> Members = [];
+    [Array(CountBits = 32)] public List<Server0405Part1> Unknown3 = [];
 }

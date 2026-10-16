@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.AccountInventory;
 
-[WireMessage(GameMessageOpcode.ClientAccountItemTake, Direction.ClientToServer)]
-public sealed partial class ClientAccountItemTake
+[WireMessage(GameMessageOpcode.Client0839, Direction.ClientToServer)]
+public sealed partial class Client0839
 {
-    [UInt(64)] public ulong UserInventoryId { get; private set; }
+    [UInt(64)] public ulong Unknown0 { get; private set; }
 }

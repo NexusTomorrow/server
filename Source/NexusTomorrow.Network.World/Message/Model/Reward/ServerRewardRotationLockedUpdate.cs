@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Reward;
 
-// Can only update rewards already added via LockedList or LockedAdd
-[WireMessage(GameMessageOpcode.ServerRewardRotationLockedUpdate, Direction.ServerToClient)]
-public sealed partial class ServerRewardRotationLockedUpdate
+[WireMessage(GameMessageOpcode.Server07C9, Direction.ServerToClient)]
+public sealed partial class Server07C9
 {
-    public LockedReward Reward { get; set; }
+    public Server07C7Part0 Unknown0 { get; set; }
 }

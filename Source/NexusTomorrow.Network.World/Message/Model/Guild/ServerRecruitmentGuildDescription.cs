@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ServerRecruitmentGuildDescription, Direction.ServerToClient)]
-public sealed partial class ServerRecruitmentGuildDescription
+[WireMessage(GameMessageOpcode.Server0769, Direction.ServerToClient)]
+public sealed partial class Server0769
 {
-    public Identity GuildIdentity { get; set; }
-    [WideString] public string Description { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [WideString] public string Unknown1 { get; set; }
 }

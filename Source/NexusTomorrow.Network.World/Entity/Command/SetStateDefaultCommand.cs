@@ -3,10 +3,9 @@ using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
-[EntityCommand(EntityCommand.SetStateDefault)]
 [WireStruct]
-[UnionCase(EntityCommand.SetStateDefault)]
-public sealed partial class SetStateDefaultCommand : IEntityCommandModel
+[UnionCase(26)]
+public sealed partial class Server0262Union2Arm1A : IServer0262Union2
 {
-    [UInt(1)] public bool Strafe { get; set; }
+    [UInt(1)] public bool Unknown0 { get; set; }
 }

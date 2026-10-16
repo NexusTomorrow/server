@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerMatchingMatchLeft, Direction.ServerToClient)]
-public sealed partial class ServerMatchingMatchLeft
+[WireMessage(GameMessageOpcode.Server05DC, Direction.ServerToClient)]
+public sealed partial class Server05DC
 {
-    [UInt(5)] public Game.Static.Matching.MatchType Type { get; set; } // Not used by client, but server did fill this
+    [UInt(5)] public byte Unknown0 { get; set; }
 }

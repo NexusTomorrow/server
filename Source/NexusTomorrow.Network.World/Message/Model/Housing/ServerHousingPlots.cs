@@ -5,32 +5,32 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ServerHousingPlots, Direction.ServerToClient)]
-public sealed partial class ServerHousingPlots
+[WireMessage(GameMessageOpcode.Server04E1, Direction.ServerToClient)]
+public sealed partial class Server04E1
 {
     [WireStruct]
-    public sealed partial class Plot
+    public sealed partial class Server04E1Part0
     {
-        [UInt(32)] public uint PlotPropertyIndex { get; set; }
-        [UInt(32)] public uint PlugItemId { get; set; }
-        [UInt(32)] public HousingPlugFacing PlugFacing { get; set; }
-        [UInt(32)] public uint PlotInfoId { get; set; }
-        [FixedArray(5), UInt(32)] public uint[] HousingContributionTotals { get; } = new uint[5];
-        [FixedArray(5), UInt(32)] public uint[] HousingDecayTotals { get; } = new uint[5];
-        [UInt(32)] public uint HousingUpkeepCharges { get; set; }
-        [Float32] public float HousingUpkeepTime { get; set; }
-        [UInt(3)] public BuildState BuildState { get; set; }
-        [UInt(32)] public uint BuildStage { get; set; } // changes the model's sequenceId
-        [Float32] public float BuildBonus { get; set; } // 0.0f to 1.0f, higher is faster build
-        [Float32] public float BuildStartTime { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
+        [UInt(32)] public uint Unknown1 { get; set; }
+        [UInt(32)] public uint Unknown2 { get; set; }
+        [UInt(32)] public uint Unknown3 { get; set; }
+        [FixedArray(5), UInt(32)] public uint[] Unknown4 { get; } = new uint[5];
+        [FixedArray(5), UInt(32)] public uint[] Unknown5 { get; } = new uint[5];
+        [UInt(32)] public uint Unknown6 { get; set; }
+        [Float32] public float Unknown7 { get; set; }
+        [UInt(3)] public byte Unknown8 { get; set; }
+        [UInt(32)] public uint Unknown9 { get; set; }
+        [Float32] public float Unknown10 { get; set; }
+        [Float32] public float Unknown11 { get; set; }
 
-        public Plot()
+        public Server04E1Part0()
         {
-            Array.Fill(HousingContributionTotals, 0u);
-            Array.Fill(HousingDecayTotals, 0u);
+            Array.Fill(Unknown4, 0u);
+            Array.Fill(Unknown5, 0u);
         }
     }
 
-    public Identity ResidenceIdentity { get; set; }
-    [Array(CountBits = 32)] public List<Plot> Plots { get; set; } = [];
+    public Client00B5Part0 Unknown0 { get; set; }
+    [Array(CountBits = 32)] public List<Server04E1Part0> Unknown1 { get; set; } = [];
 }

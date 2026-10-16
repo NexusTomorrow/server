@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ClientFriendshipAccountInviteResponse, Direction.ClientToServer)]
-public sealed partial class ClientFriendshipAccountInviteResponse
+[WireMessage(GameMessageOpcode.Client03A1, Direction.ClientToServer)]
+public sealed partial class Client03A1
 {
-    [UInt(64)] public ulong AccountFriendInviteId { get; private set; }
-    [UInt(1)] public bool Response { get; private set; }
+    [UInt(64)] public ulong Unknown0 { get; private set; }
+    [UInt(1)] public bool Unknown1 { get; private set; }
 }

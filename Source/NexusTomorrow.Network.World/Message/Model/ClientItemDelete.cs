@@ -4,8 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientItemDelete, Direction.ClientToServer)]
-public sealed partial class ClientItemDelete
+[WireMessage(GameMessageOpcode.Client0149, Direction.ClientToServer)]
+public sealed partial class Client0149
 {
-    public ItemLocation From { get; } = new();
+    public Server0111Part2 Unknown0 { get; } = new();
 }

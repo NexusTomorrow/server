@@ -4,8 +4,8 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Map;
 
 [WireStruct]
-public sealed partial class GenericMapNode
+public sealed partial class Server0737Part0
 {
-    [UInt(14)] public uint GenericMapModeId { get; set; }
-    [UInt(1)] public bool Enabled { get; set; }
+    [UInt(14)] public uint Unknown0 { get; set; }
+    [UInt(1)] public bool Unknown1 { get; set; }
 }

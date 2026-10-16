@@ -4,10 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Entity;
 
-// May send this multiple times while the player is stunned.
-[WireMessage(GameMessageOpcode.ClientCCStateStunUpdate, Direction.ClientToServer)]
-public sealed partial class ClientCCStateStunUpdate
+[WireMessage(GameMessageOpcode.Client00C3, Direction.ClientToServer)]
+public sealed partial class Client00C3
 {
-    [UInt(8)] public CCStateStunVictimGameplay InputPressed { get; private set; }
-    [UInt(8)] public CCStateStunVictimGameplay InputHeld { get; private set; }
+    [UInt(8)] public byte Unknown0 { get; private set; }
+    [UInt(8)] public byte Unknown1 { get; private set; }
 }

@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Achievement;
 
-[WireMessage(GameMessageOpcode.ServerAchievementInit, Direction.ServerToClient)]
-public sealed partial class ServerAchievementInit
+[WireMessage(GameMessageOpcode.Server00AE, Direction.ServerToClient)]
+public sealed partial class Server00AE
 {
-    [Array(CountBits = 32)] public List<Achievement> Achievements { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server00AEPart0> Unknown0 { get; set; } = [];
 }

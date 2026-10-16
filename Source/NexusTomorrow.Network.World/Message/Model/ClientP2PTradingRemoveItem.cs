@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientP2PTradingRemoveItem, Direction.ClientToServer)]
-public sealed partial class ClientP2PTradingRemoveItem
+[WireMessage(GameMessageOpcode.Client0194, Direction.ClientToServer)]
+public sealed partial class Client0194
 {
-    [UInt(64)] public ulong ItemGuid { get; private set; }
+    [UInt(64)] public ulong Unknown0 { get; private set; }
 }

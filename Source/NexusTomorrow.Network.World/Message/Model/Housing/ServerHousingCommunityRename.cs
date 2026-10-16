@@ -5,9 +5,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ServerHousingCommunityRename, Direction.ServerToClient)]
-public sealed partial class ServerHousingCommunityRename
+[WireMessage(GameMessageOpcode.Server024D, Direction.ServerToClient)]
+public sealed partial class Server024D
 {
-    public Identity TargetGuild { get; set; } // Not used in the client
-    [UInt(7)] public HousingResult Result { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [UInt(7)] public byte Unknown1 { get; set; }
 }

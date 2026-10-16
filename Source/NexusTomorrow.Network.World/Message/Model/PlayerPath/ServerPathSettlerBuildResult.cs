@@ -3,12 +3,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[WireMessage(GameMessageOpcode.ServerPathSettlerBuildResult, Direction.ServerToClient)]
-public sealed partial class ServerPathSettlerBuildResult
+[WireMessage(GameMessageOpcode.Server066C, Direction.ServerToClient)]
+public sealed partial class Server066C
 {
-    [UInt(32)] public uint Result { get; set; }  // Is an enum but was never used in client. Passed to SetterBuildResult lua event.
+    [UInt(32)] public uint Unknown0 { get; set; }
 
-    [UInt(15)] public uint Unknown { get; set; } // If this is not zero, client gets localizedTextId from PathSettlerImproveGroup
-                                                 // tbl entry to pass name of improvement that was build to SetterBuildResult event.
-    [UInt(14)] public uint PathSettlerImprovementGroupId { get; set; }
+    [UInt(15)] public uint Unknown1 { get; set; }
+    [UInt(14)] public uint Unknown2 { get; set; }
 }

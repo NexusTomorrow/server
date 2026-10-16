@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerTutorial, Direction.ServerToClient)]
-public sealed partial class ServerTutorial
+[WireMessage(GameMessageOpcode.Server0179, Direction.ServerToClient)]
+public sealed partial class Server0179
 {
-    [UInt(32)] public uint TutorialId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

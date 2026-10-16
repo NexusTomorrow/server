@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ServerFriendshipLastOnlineUpdate, Direction.ServerToClient)]
-public sealed partial class ServerFriendshipLastOnlineUpdate
+[WireMessage(GameMessageOpcode.Server03CA, Direction.ServerToClient)]
+public sealed partial class Server03CA
 {
-    public Identity PlayerIdentity { get; set; }
-    [Float32] public float LastOnlineInDays { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [Float32] public float Unknown1 { get; set; }
 }

@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientMatchingMatchReadyResponse, Direction.ClientToServer)]
-public sealed partial class ClientMatchingGameReadyResponse
+[WireMessage(GameMessageOpcode.Client05C8, Direction.ClientToServer)]
+public sealed partial class Client05C8
 {
-    [UInt(1)] public bool Response { get; private set; } // decline = false, join = true
+    [UInt(1)] public bool Unknown0 { get; private set; }
 }

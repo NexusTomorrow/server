@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientSellItemToVendor, Direction.ClientToServer)]
-public sealed partial class ClientVendorSell
+[WireMessage(GameMessageOpcode.Client0166, Direction.ClientToServer)]
+public sealed partial class Client0166
 {
-    public ItemLocation ItemLocation { get; } = new();
-    [UInt(32)] public uint Quantity { get; private set; }
+    public Server0111Part2 Unknown0 { get; } = new();
+    [UInt(32)] public uint Unknown1 { get; private set; }
 }

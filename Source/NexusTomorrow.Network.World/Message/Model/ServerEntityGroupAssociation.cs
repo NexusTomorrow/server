@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerEntityGroupAssociation, Direction.ServerToClient)]
-public sealed partial class ServerEntityGroupAssociation
+[WireMessage(GameMessageOpcode.Server0936, Direction.ServerToClient)]
+public sealed partial class Server0936
 {
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(64)] public ulong GroupId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(64)] public ulong Unknown1 { get; set; }
 }

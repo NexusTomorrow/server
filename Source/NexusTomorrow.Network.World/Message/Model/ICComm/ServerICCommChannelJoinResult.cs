@@ -4,11 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.ICComm;
 
-// Presumably sent if a client is not allowed to join a channel but none seen in sniffs
-[WireMessage(GameMessageOpcode.ServerICCommChannelJoinResult, Direction.ServerToClient)]
-public sealed partial class ServerICCommChannelJoinResult
+[WireMessage(GameMessageOpcode.Server0547, Direction.ServerToClient)]
+public sealed partial class Server0547
 {
-    [UInt(3)] public ICCommChannelType Type { get; set; }
-    [UInt(4)] public ICCommJoinResult Result { get; set; }
-    [WideString] public string ChannelName { get; set; }
+    [UInt(3)] public byte Unknown0 { get; set; }
+    [UInt(4)] public byte Unknown1 { get; set; }
+    [WideString] public string Unknown2 { get; set; }
 }

@@ -4,7 +4,6 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Combat;
 
-public interface ICombatLog : IWireStruct
+public interface IServer0247Union0 : IWireStruct
 {
-    CombatLogType Type { get; }
 }

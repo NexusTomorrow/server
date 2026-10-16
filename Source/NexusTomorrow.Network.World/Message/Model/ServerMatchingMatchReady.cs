@@ -3,12 +3,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerMatchingMatchReady, Direction.ServerToClient)]
+[WireMessage(GameMessageOpcode.Server05CA, Direction.ServerToClient)]
 
-// Specifically sent for a match that has not started yet
-public sealed partial class ServerMatchingMatchReady
+public sealed partial class Server05CA
 {
-    [UInt(5)] public Game.Static.Matching.MatchType MatchType { get; set; }
-    [UInt(32)] public uint PendingAllies { get; set; }
-    [UInt(32)] public uint PendingEnemies { get; set; }
+    [UInt(5)] public byte Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }

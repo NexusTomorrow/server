@@ -5,60 +5,58 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireStruct]
-public sealed partial class GuildData
+public sealed partial class Server0493Part0
 {
     [WireStruct]
-    public sealed partial class Info
+    public sealed partial class Server0493Part3
     {
         [WireStruct]
-        public sealed partial class PvPRating
+        public sealed partial class Server0493Part4
         {
-            [UInt(32)] public uint Wins { get; set; }
-            [UInt(32)] public uint Losses { get; set; }
-            [UInt(32)] public uint Draws { get; set; }
-            [UInt(32)] public uint Rating { get; set; }
-            [UInt(32)] public uint PvpSeason { get; set; }
-            [UInt(32)] public uint KFactor { get; set; }
+            [UInt(32)] public uint Unknown0 { get; set; }
+            [UInt(32)] public uint Unknown1 { get; set; }
+            [UInt(32)] public uint Unknown2 { get; set; }
+            [UInt(32)] public uint Unknown3 { get; set; }
+            [UInt(32)] public uint Unknown4 { get; set; }
+            [UInt(32)] public uint Unknown5 { get; set; }
         }
 
-        [WideString] public string MessageOfTheDay { get; set; }
-        [WideString] public string GuildInfo { get; set; }
-        [UInt(3)] public GuildQueueState QueueState { get; set; }
-        public PvPRating PvPRatings { get; set; } = new();
-        [Float32] public float GuildCreationDateInDays { get; set; }
+        [WideString] public string Unknown0 { get; set; }
+        [WideString] public string Unknown1 { get; set; }
+        [UInt(3)] public byte Unknown2 { get; set; }
+        public Server0493Part4 Unknown3 { get; set; } = new();
+        [Float32] public float Unknown4 { get; set; }
     }
 
     [WireStruct]
-    public sealed partial class ActivePerk
+    public sealed partial class Server0493Part2
     {
-        [UInt(14)] public GuildPerk Perk { get; set; } // Is the guildPerkId, see guildPerk tbl or GuildPerk enum
-        [Float32] public float EndTime { get; set; }
+        [UInt(14)] public ushort Unknown0 { get; set; }
+        [Float32] public float Unknown1 { get; set; }
     }
 
-    [UInt(64)] public ulong GuildId { get; set; }
-    [WideString] public string GuildName { get; set; }
-    [UInt(32)] public GuildFlag Flags { get; set; }
-    [UInt(4)] public GuildType Type { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [WideString] public string Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(4)] public byte Unknown3 { get; set; }
 
-    [FixedArray(10)] public GuildRank[] Ranks { get; set; } = [.. Enumerable.Range(0, 10).Select(_ => new GuildRank())];
+    [FixedArray(10)] public Server0493Part1[] Unknown4 { get; set; } = [.. Enumerable.Range(0, 10).Select(_ => new Server0493Part1())];
 
-    public GuildStandard GuildStandard { get; set; } = new();
+    public Client0481Part0 Unknown5 { get; set; } = new();
 
-    [UInt(32)] public uint MemberCount { get; set; }
-    [UInt(32)] public uint OnlineMemberCount { get; set; }
-    [UInt(32)] public uint Influence { get; set; }
-    [UInt(32)] public uint BonusInfluenceRemaining { get; set; }
+    [UInt(32)] public uint Unknown6 { get; set; }
+    [UInt(32)] public uint Unknown7 { get; set; }
+    [UInt(32)] public uint Unknown8 { get; set; }
+    [UInt(32)] public uint Unknown9 { get; set; }
 
-    [UInt(64)] public ulong Money { get; set; }
-    [UInt(32)] public uint WarCoins { get; set; }
-    [UInt(32)] public uint BankTabCount { get; set; }
-    [FixedArray(10), WideString] public string[] BankTabNames { get; set; } = [.. Enumerable.Repeat(string.Empty, 10)];
+    [UInt(64)] public ulong Unknown10 { get; set; }
+    [UInt(32)] public uint Unknown11 { get; set; }
+    [UInt(32)] public uint Unknown12 { get; set; }
+    [FixedArray(10), WideString] public string[] Unknown13 { get; set; } = [.. Enumerable.Repeat(string.Empty, 10)];
 
-    [FixedArray(16), UInt(8)] public byte[] UnlockedPerks { get; set; } = new byte[16];
-    // Set of flags represeting the unlock state of a GuildPerkId
-    // GuildPerkId = 1 is bit 0, least significant bit of each byte first
+    [FixedArray(16), UInt(8)] public byte[] Unknown14 { get; set; } = new byte[16];
 
-    [Array(CountBits = 32)] public List<ActivePerk> ActivePerks { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server0493Part2> Unknown15 { get; set; } = [];
 
-    public Info GuildInfo { get; set; } = new();
+    public Server0493Part3 Unknown16 { get; set; } = new();
 }

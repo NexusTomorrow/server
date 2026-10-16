@@ -5,10 +5,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientMatchingQueue, Direction.ClientToServer)]
-public sealed partial class ClientMatchingQueue
+[WireMessage(GameMessageOpcode.Client05EF, Direction.ClientToServer)]
+public sealed partial class Client05EF
 {
-    public MatchingMap MapData { get; private set; }
-    [UInt(32)] public Role Roles { get; private set; }
-    [UInt(32)] public uint PrimeLevel { get; private set; }
+    public Client05EFPart0 Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
+    [UInt(32)] public uint Unknown2 { get; private set; }
 }

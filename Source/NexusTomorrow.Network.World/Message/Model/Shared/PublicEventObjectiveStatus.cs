@@ -5,57 +5,52 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class PublicEventObjectiveStatus
+public sealed partial class Server0112Part1
 {
     [WireStruct]
-    public sealed partial class VirtualItem
+    public sealed partial class Server0112Part2
     {
-        [UInt(14)] public uint ItemId { get; set; }
-        [UInt(32)] public uint Count { get; set; }
+        [UInt(14)] public uint Unknown0 { get; set; }
+        [UInt(32)] public uint Unknown1 { get; set; }
     }
 
-    /// <summary>
-    /// The objective data <see cref="DataType"/> selects.
-    /// </summary>
-    public interface IPayload : IWireStruct
+    public interface IServer0112Union0 : IWireStruct
     {
     }
 
     [WireStruct]
-    [UnionCase(PublicEventObjectiveDataType.Empty)]
-    public sealed partial class EmptyData : IPayload
+    [UnionCase(0)]
+    public sealed partial class Server0112Union0Arm00 : IServer0112Union0
     {
-        [Pad(8)] public Pad Unknown { get; }
+        [UInt(8)] public byte Unknown0 { get; set; }
     }
 
     [WireStruct]
-    [UnionCase(PublicEventObjectiveDataType.CapturePointDefend)]
-    public sealed partial class CapturePointDefendData : IPayload
+    [UnionCase(1)]
+    public sealed partial class Server0112Union0Arm01 : IServer0112Union0
     {
-        [UInt(32)] public PublicEventTeam ControllingTeam { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
     }
 
     [WireStruct]
-    [UnionCase(PublicEventObjectiveDataType.CapturePoint)]
-    public sealed partial class CapturePointData : IPayload
+    [UnionCase(2)]
+    public sealed partial class Server0112Union0Arm02 : IServer0112Union0
     {
-        [UInt(32)] public PublicEventTeam CapturingTeam { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
     }
 
     [WireStruct]
-    [UnionCase(PublicEventObjectiveDataType.VirtualItemDepot)]
-    public sealed partial class VirtualItemDepotData : IPayload
+    [UnionCase(3)]
+    public sealed partial class Server0112Union0Arm03 : IServer0112Union0
     {
-        [Array(CountBits = 32)] public List<VirtualItem> VirtualItems { get; set; } = [];
+        [Array(CountBits = 32)] public List<Server0112Part2> Unknown0 { get; set; } = [];
     }
 
-    [UInt(32)] public PublicEventStatus Status { get; set; }
-    [UInt(32)] public uint ObjectiveData { get; set; } // Contents depends on objective type
-                                                       // For ActivateTargetGroupChecklist and TalkToChecklist, is a bitfield for objective completion
-                                                       // For ContestedArea and CapturePoint, is PublicEventTeamId indicating team owning the objective
-    [UInt(32)] public uint DynamicMax { get; set; }
-    [Float32] public float Count { get; set; }
-    [UInt(32)] public uint UnkState { get; set; }
-    [UInt(3)] public PublicEventObjectiveDataType DataType { get; set; }
-    [Union(nameof(DataType))] public IPayload Payload { get; set; } = new EmptyData();
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [Float32] public float Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
+    [UInt(3)] public byte Unknown5 { get; set; }
+    [Union(nameof(Unknown5))] public IServer0112Union0 Unknown6 { get; set; } = new Server0112Union0Arm00();
 }

@@ -3,10 +3,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
-[WireMessage(GameMessageOpcode.ClientCommodityOrderCancel, Direction.ClientToServer)]
-public sealed partial class ClientCommodityOrderCancel
+[WireMessage(GameMessageOpcode.Client0093, Direction.ClientToServer)]
+public sealed partial class Client0093
 {
-    [UInt(64)] public ulong CommodityOrderId { get; private set; }
-    [UInt(18)] public uint Item2Id { get; private set; }
-    [UInt(1)] public bool IsBuyOrder { get; private set; }
+    [UInt(64)] public ulong Unknown0 { get; private set; }
+    [UInt(18)] public uint Unknown1 { get; private set; }
+    [UInt(1)] public bool Unknown2 { get; private set; }
 }

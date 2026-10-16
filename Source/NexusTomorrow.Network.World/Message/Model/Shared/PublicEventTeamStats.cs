@@ -5,8 +5,8 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class PublicEventTeamStats
+public sealed partial class Server00D6Part1
 {
-    [UInt(14)] public PublicEventTeam TeamId { get; set; }
-    public PublicEventStats Stats { get; set; }
+    [UInt(14)] public ushort Unknown0 { get; set; }
+    public Server00D6Part0 Unknown1 { get; set; }
 }

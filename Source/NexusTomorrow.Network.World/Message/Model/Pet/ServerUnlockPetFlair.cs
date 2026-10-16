@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pet;
 
-[WireMessage(GameMessageOpcode.ServerUnlockPetFlair, Direction.ServerToClient)]
-public sealed partial class ServerUnlockPetFlair
+[WireMessage(GameMessageOpcode.Server068D, Direction.ServerToClient)]
+public sealed partial class Server068D
 {
-    [UInt(14)] public ushort PetFlairId { get; set; }
+    [UInt(14)] public ushort Unknown0 { get; set; }
 }

@@ -5,17 +5,16 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Story.Message;
 
 [WireStruct]
-public sealed partial class StoryMessage
+public sealed partial class Server0738Part0
 {
-    // One element of Actors: the 3-bit source type, then the actor it selects.
     [WireStruct]
-    public sealed partial class ActorEntry
+    public sealed partial class Server0738Part1
     {
-        [UInt(3)] public StoryTextSourceType Type { get; set; }
-        [Union(nameof(Type))] public Actor Actor { get; set; }
+        [UInt(3)] public byte Unknown0 { get; set; }
+        [Union(nameof(Unknown0))] public Server0738Union0 Unknown1 { get; set; }
     }
 
-    [UInt(32)] public uint MsgId { get; set; } // StoryPanelId for message 0x75A otherwise LocalizedTextId
-    [UInt(32)] public uint RandomTextLineId { get; set; }
-    [Array(CountBits = 8)] public List<ActorEntry> Actors { get; set; } = [];
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [Array(CountBits = 8)] public List<Server0738Part1> Unknown2 { get; set; } = [];
 }

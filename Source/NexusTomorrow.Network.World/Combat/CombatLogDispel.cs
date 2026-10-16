@@ -4,12 +4,11 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
-[UnionCase(CombatLogType.Dispel)]
-public sealed partial class CombatLogDispel : ICombatLog
+[UnionCase(11)]
+public sealed partial class Server0247Union0Arm0B : IServer0247Union0
 {
-    [NotOnWire] public CombatLogType Type => CombatLogType.Dispel;
 
-    [UInt(1)] public bool BRemovesSingleInstance { get; set; }
-    [UInt(32)] public uint InstancesRemoved { get; set; }
-    [UInt(18)] public uint SpellRemovedId { get; set; } // 18u
+    [UInt(1)] public bool Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(18)] public uint Unknown2 { get; set; }
 }

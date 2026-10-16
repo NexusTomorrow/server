@@ -4,8 +4,8 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 [WireStruct]
-public sealed partial class AccountItemCooldown
+public sealed partial class Server0969Part0
 {
-    [UInt(32)] public uint AccountItemCooldownGroup { get; set; }
-    [UInt(32)] public uint CooldownInSeconds { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

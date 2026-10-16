@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientCommunicatorAction, Direction.ClientToServer)]
-public sealed partial class ClientCommunicatorAction
+[WireMessage(GameMessageOpcode.Client0360, Direction.ClientToServer)]
+public sealed partial class Client0360
 {
-    [UInt(15)] public uint QuestId { get; private set; }
-    [UInt(1)] public bool Engaged { get; private set; } // 1 = Player engaged with communicator, 0 = ignored
+    [UInt(15)] public uint Unknown0 { get; private set; }
+    [UInt(1)] public bool Unknown1 { get; private set; }
 }

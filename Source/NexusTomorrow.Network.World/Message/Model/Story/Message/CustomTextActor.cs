@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Message.Model.Story.Message;
 
 [WireStruct]
-[UnionCase(StoryTextSourceType.CustomText)]
-public sealed partial class CustomTextActor : Actor
+[UnionCase(1)]
+public sealed partial class Server0738Union0Arm01 : Server0738Union0
 {
-    [WideString] public string Text { get; set; }
-    [UInt(32)] public new uint TokenReplacementValue { get => base.TokenReplacementValue; set => base.TokenReplacementValue = value; }
-    [NarrowString] public new string TokenName { get => base.TokenName; set => base.TokenName = value; }
+    [WideString] public string Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [NarrowString] public string Unknown2 { get; set; }
 }

@@ -5,16 +5,12 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ServerGuildResult, Direction.ServerToClient)]
-public partial class ServerGuildResult
+[WireMessage(GameMessageOpcode.Server04C9, Direction.ServerToClient)]
+public partial class Server04C9
 {
-    public Identity GuildIdentity { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
 
-    /// <summary>
-    /// If the operation was a rank update, then this value is the index of the rank that was updated.
-    /// Otherwise, this can be 1 or 0.
-    /// </summary>
-    [UInt(32)] public uint ReferenceId { get; set; }
-    [WideString] public string TargetName { get; set; } // The name of the target of the operation.  This can be a character name or rank name.
-    [UInt(8)] public GuildResult Result { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [WideString] public string Unknown2 { get; set; }
+    [UInt(8)] public byte Unknown3 { get; set; }
 }

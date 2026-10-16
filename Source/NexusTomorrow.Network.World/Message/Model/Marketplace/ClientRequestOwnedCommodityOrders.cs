@@ -3,8 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
-// MarketplaceLib.RequestOwnedCommodityOrders()
-[WireMessage(GameMessageOpcode.ClientRequestOwnedCommodityOrders, Direction.ClientToServer)]
-public sealed partial class ClientRequestOwnedCommodityOrders
+[WireMessage(GameMessageOpcode.Client03EC, Direction.ClientToServer)]
+public sealed partial class Client03EC
 {
 }

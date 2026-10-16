@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Utility;
 
-[WireMessage(GameMessageOpcode.ServerInspectPlayerResponse, Direction.ServerToClient)]
-public sealed partial class ServerInspectPlayerResponse
+[WireMessage(GameMessageOpcode.Server0553, Direction.ServerToClient)]
+public sealed partial class Server0553
 {
-    [UInt(32)] public uint UnitId { get; set; }
-    [Array(CountBits = 5)] public List<Item> Items { get; set; } = [];
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [Array(CountBits = 5)] public List<Server0111Part1> Unknown1 { get; set; } = [];
 }

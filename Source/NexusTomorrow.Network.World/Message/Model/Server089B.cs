@@ -7,8 +7,8 @@ namespace NexusTomorrow.Network.World.Message.Model;
 [WireMessage(GameMessageOpcode.Server089B, Direction.ServerToClient)]
 public sealed partial class Server089B
 {
-    [UInt(32)] public uint Self { get; set; }
-    [UInt(32)] public uint Vehicle { get; set; }
-    [UInt(2)] public VehicleSeatType SeatType { get; set; }
-    [UInt(3)] public byte SeatPosition { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(2)] public byte Unknown2 { get; set; }
+    [UInt(3)] public byte Unknown3 { get; set; }
 }

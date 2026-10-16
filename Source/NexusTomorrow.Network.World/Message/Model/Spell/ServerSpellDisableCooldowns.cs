@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-// Resets all cooldowns and gives spells infinite charges
-[WireMessage(GameMessageOpcode.ServerSpellDisableCooldowns, Direction.ServerToClient)]
-public sealed partial class ServerSpellDisableCooldowns
+[WireMessage(GameMessageOpcode.Server080E, Direction.ServerToClient)]
+public sealed partial class Server080E
 {
-    [UInt(1)] public bool DisableCooldowns { get; set; }
+    [UInt(1)] public bool Unknown0 { get; set; }
 }

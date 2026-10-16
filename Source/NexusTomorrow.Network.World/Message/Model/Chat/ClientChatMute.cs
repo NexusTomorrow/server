@@ -3,10 +3,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
-[WireMessage(GameMessageOpcode.ClientChatMute, Direction.ClientToServer)]
-public sealed partial class ClientChatMute
+[WireMessage(GameMessageOpcode.Client01CE, Direction.ClientToServer)]
+public sealed partial class Client01CE
 {
-    public Channel Channel { get; private set; }
-    [WideString] public string CharacterName { get; private set; } // if left empty, mutes the entire channel
-    [UInt(1)] public bool Muted { get; private set; }
+    public Server01B5Part0 Unknown0 { get; private set; }
+    [WideString] public string Unknown1 { get; private set; }
+    [UInt(1)] public bool Unknown2 { get; private set; }
 }

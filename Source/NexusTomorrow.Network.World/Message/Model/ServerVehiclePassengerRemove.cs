@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerVehiclePassengerRemove, Direction.ServerToClient)]
-public sealed partial class ServerVehiclePassengerRemove
+[WireMessage(GameMessageOpcode.Server08C7, Direction.ServerToClient)]
+public sealed partial class Server08C7
 {
-    [UInt(32)] public uint Self { get; set; }
-    [UInt(32)] public uint Passenger { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

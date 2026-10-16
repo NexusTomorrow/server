@@ -3,10 +3,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ClientSpellClientSideInteraction, Direction.ClientToServer)]
-public sealed partial class ClientSpellClientSideInteraction
+[WireMessage(GameMessageOpcode.Client0805, Direction.ClientToServer)]
+public sealed partial class Client0805
 {
-    [UInt(32)] public uint ServerUniqueId { get; private set; }
-    [UInt(3)] public byte CSIResponse { get; private set; } // value of 2 or 0
-    [UInt(32)] public uint Spell4IdBaseIdBaseSpell { get; private set; } // Is actually spell4IdBaseIdBaseSpell from spell plus 1, see spell4 tbl
+    [UInt(32)] public uint Unknown0 { get; private set; }
+    [UInt(3)] public byte Unknown1 { get; private set; }
+    [UInt(32)] public uint Unknown2 { get; private set; }
 }

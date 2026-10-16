@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[WireMessage(GameMessageOpcode.ClientPathExplorerProgressReport, Direction.ClientToServer)]
-public sealed partial class ClientPathExplorerProgressReport
+[WireMessage(GameMessageOpcode.Client00F3, Direction.ClientToServer)]
+public sealed partial class Client00F3
 {
-    [UInt(15)] public uint PathMissionId { get; private set; }
-    [UInt(32)] public uint ExplorerNodeIndex { get; private set; } // Reports when player unit has reached radius threshold around WorldLocation.
+    [UInt(15)] public uint Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
 }

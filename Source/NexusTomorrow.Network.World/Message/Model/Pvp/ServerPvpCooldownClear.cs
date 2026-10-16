@@ -3,8 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pvp;
 
-// Sets the players PVP cooldown to zero
-[WireMessage(GameMessageOpcode.ServerPvpCooldownClear, Direction.ServerToClient)]
-public sealed partial class ServerPvpCooldownClear
+[WireMessage(GameMessageOpcode.Server013D, Direction.ServerToClient)]
+public sealed partial class Server013D
 {
 }

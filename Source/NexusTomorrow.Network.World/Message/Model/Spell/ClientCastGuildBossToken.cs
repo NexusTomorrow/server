@@ -4,10 +4,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ClientCastGuildBossToken, Direction.ClientToServer)]
-public sealed partial class ClientCastGuildBossToken
+[WireMessage(GameMessageOpcode.Client094F, Direction.ClientToServer)]
+public sealed partial class Client094F
 {
-    public Identity GuildIdentity { get; private set; } = new Identity();
-    [UInt(18)] public uint Item2Id { get; private set; } // item2Id of the guild boss token item being used
-    [UInt(32)] public uint ClientSpellCastUniqueId { get; private set; }
+    public Client00B5Part0 Unknown0 { get; private set; } = new Client00B5Part0();
+    [UInt(18)] public uint Unknown1 { get; private set; }
+    [UInt(32)] public uint Unknown2 { get; private set; }
 }

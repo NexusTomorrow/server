@@ -3,6 +3,6 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
 
-public interface IAuctionFilter : IWireStruct
+public interface IClient07DCUnion0 : IWireStruct
 {
 }

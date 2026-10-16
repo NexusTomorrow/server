@@ -4,12 +4,12 @@ using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerExperienceGained, Direction.ServerToClient)]
-public sealed partial class ServerExperienceGained
+[WireMessage(GameMessageOpcode.Server01AC, Direction.ServerToClient)]
+public sealed partial class Server01AC
 {
-    [UInt(32)] public uint TotalXpGained { get; set; }
-    [UInt(32)] public uint RestXpAmount { get; set; }
-    [UInt(32)] public uint SignatureXpAmount { get; set; }
-    [UInt(32)] public ExpReason Reason { get; set; }
-    [UInt(32)] public uint UnitTarget { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
 }

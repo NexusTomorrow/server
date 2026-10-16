@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientMatchingRoleCheckResponse, Direction.ClientToServer)]
-public sealed partial class ClientMatchingRoleCheckResponse
+[WireMessage(GameMessageOpcode.Client05B2, Direction.ClientToServer)]
+public sealed partial class Client05B2
 {
-    [UInt(5)] public Game.Static.Matching.MatchType Type { get; private set; } // Uses ReadyMatchType sent in 0x05E3
-    [UInt(32)] public Role Roles { get; private set; }
-    [UInt(1)] public bool Response { get; private set; }
+    [UInt(5)] public byte Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
+    [UInt(1)] public bool Unknown2 { get; private set; }
 }

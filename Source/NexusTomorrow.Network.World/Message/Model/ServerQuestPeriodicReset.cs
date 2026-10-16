@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerQuestPeriodicReset, Direction.ServerToClient)]
-public sealed partial class ServerQuestPeriodicReset
+[WireMessage(GameMessageOpcode.Server0362, Direction.ServerToClient)]
+public sealed partial class Server0362
 {
-    [UInt(64)] public ulong DailyRandomSeed { get; set; }
-    [UInt(4)] public QuestRepeatPeriodFlags ResetFlags { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [UInt(4)] public byte Unknown1 { get; set; }
 }

@@ -4,7 +4,6 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Chat;
 
-public interface IChatFormatModel : IWireStruct
+public interface IClient01C3Union0 : IWireStruct
 {
-    ChatFormatType Type { get; }
 }

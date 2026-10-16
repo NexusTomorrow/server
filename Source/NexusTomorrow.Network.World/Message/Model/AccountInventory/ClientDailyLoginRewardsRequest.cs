@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.AccountInventory;
 
-[WireMessage(GameMessageOpcode.ClientDailyLoginRewardsRequest, Direction.ClientToServer)]
-public sealed partial class ClientDailyLoginRewardsRequest
+[WireMessage(GameMessageOpcode.Client078F, Direction.ClientToServer)]
+public sealed partial class Client078F
 {
 }

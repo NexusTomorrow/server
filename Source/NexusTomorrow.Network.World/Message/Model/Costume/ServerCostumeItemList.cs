@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Costume;
 
-[WireMessage(GameMessageOpcode.ServerCostumeItemList, Direction.ServerToClient)]
-public sealed partial class ServerCostumeItemList
+[WireMessage(GameMessageOpcode.Server025A, Direction.ServerToClient)]
+public sealed partial class Server025A
 {
-    [Array(CountBits = 32), UInt(32)] public List<uint> Item2Ids { get; set; } = [];
+    [Array(CountBits = 32), UInt(32)] public List<uint> Unknown0 { get; set; } = [];
 }

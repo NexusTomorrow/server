@@ -3,11 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.GenericUnlock;
 
-// Sets bCharacterUnlocked state on all GenericUnlocks on the client.
-// Seems that ServerGenericUnlocksCharacterRefreshed was the preferred method
-// as that clears the bCharacterUnlocked state on everything first
-[WireMessage(GameMessageOpcode.ServerGenericUnlockCharacterList, Direction.ServerToClient)]
-public sealed partial class ServerGenericUnlockCharacterList
+[WireMessage(GameMessageOpcode.Server0983, Direction.ServerToClient)]
+public sealed partial class Server0983
 {
-    [Array(CountBits = 32), UInt(32)] public List<uint> GenericUnlockEntryIds { get; set; } = [];
+    [Array(CountBits = 32), UInt(32)] public List<uint> Unknown0 { get; set; } = [];
 }

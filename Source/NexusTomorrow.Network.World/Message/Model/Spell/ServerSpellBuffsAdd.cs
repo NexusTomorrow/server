@@ -3,17 +3,16 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-// Triggers buffs and spelleffects from ActiveSpell on the client to be applied to the target.
-[WireMessage(GameMessageOpcode.ServerSpellBuffsAdd, Direction.ServerToClient)]
-public sealed partial class ServerSpellBuffsAdd
+[WireMessage(GameMessageOpcode.Server080F, Direction.ServerToClient)]
+public sealed partial class Server080F
 {
     [WireStruct]
-    public sealed partial class BuffInfo
+    public sealed partial class Server080FPart0
     {
-        [UInt(32)] public uint ServerUniqueId { get; set; }
-        [UInt(32)] public uint TargetUnitId { get; set; }
-        [UInt(32)] public uint Unused { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
+        [UInt(32)] public uint Unknown1 { get; set; }
+        [UInt(32)] public uint Unknown2 { get; set; }
     };
 
-    [Array(CountBits = 32)] public List<BuffInfo> Buffs { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server080FPart0> Unknown0 { get; set; } = [];
 }

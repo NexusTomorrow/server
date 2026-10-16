@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Instance;
 
-[WireMessage(GameMessageOpcode.ClientResetSingleInstance, Direction.ClientToServer)]
-public sealed partial class ClientResetSingleInstance
+[WireMessage(GameMessageOpcode.Client0153, Direction.ClientToServer)]
+public sealed partial class Client0153
 {
-    [UInt(32)] public uint InstancePortalUnitId { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
 }

@@ -4,87 +4,83 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerStoreOffers, Direction.ServerToClient)]
-public sealed partial class ServerStoreOffers
+[WireMessage(GameMessageOpcode.Server098B, Direction.ServerToClient)]
+public sealed partial class Server098B
 {
     [WireStruct]
-    public sealed partial class OfferGroup
+    public sealed partial class Server098BPart0
     {
         [WireStruct]
-        public sealed partial class Offer
+        public sealed partial class Server098BPart1
         {
             [WireStruct]
-            public sealed partial class OfferCurrencyData
+            public sealed partial class Server098BPart2
             {
-                [UInt(5)] public byte CurrencyId { get; set; } // 5
-                [Float32] public float Price { get; set; }
-                [UInt(2)] public DiscountType DiscountType { get; set; } // 2
-                [Float32] public float DiscountValue { get; set; }
-                [UInt(64)] public long DiscountTimeRemaining { get; set; }
-                [UInt(64)] public long TimeSinceExpiry { get; set; }
+                [UInt(5)] public byte Unknown0 { get; set; }
+                [Float32] public float Unknown1 { get; set; }
+                [UInt(2)] public byte Unknown2 { get; set; }
+                [Float32] public float Unknown3 { get; set; }
+                [UInt(64)] public ulong Unknown4 { get; set; }
+                [UInt(64)] public ulong Unknown5 { get; set; }
             }
 
             [WireStruct]
-            public sealed partial class OfferItemData
+            public sealed partial class Server098BPart3
             {
-                /// <summary>
-                /// The item data <see cref="Type"/> selects.
-                /// </summary>
-                public interface IPayload : IWireStruct
+                public interface IServer098BUnion0 : IWireStruct
                 {
                 }
 
                 [WireStruct]
                 [UnionCase(0)]
-                public sealed partial class AccountItem : IPayload
+                public sealed partial class Server098BUnion0Arm00 : IServer098BUnion0
                 {
-                    [UInt(15)] public ushort AccountItemId { get; set; }
-                    [UInt(32)] public uint Amount { get; set; }
+                    [UInt(15)] public ushort Unknown0 { get; set; }
+                    [UInt(32)] public uint Unknown1 { get; set; }
                 }
 
                 [WireStruct]
                 [UnionCase(1)]
-                public sealed partial class UnknownPayload1 : IPayload
+                public sealed partial class Server098BUnion0Arm01 : IServer098BUnion0
                 {
-                    [UInt(32)] public uint Type1Unknown0 { get; set; }
-                    [UInt(32)] public uint Type1Unknown1 { get; set; }
+                    [UInt(32)] public uint Unknown0 { get; set; }
+                    [UInt(32)] public uint Unknown1 { get; set; }
                 }
 
                 [WireStruct]
                 [UnionCase(2)]
-                public sealed partial class UnknownPayload2 : IPayload
+                public sealed partial class Server098BUnion0Arm02 : IServer098BUnion0
                 {
-                    [UInt(32)] public uint Type2Unknown0 { get; set; }
+                    [UInt(32)] public uint Unknown0 { get; set; }
                 }
 
-                [UInt(32)] public uint Type { get; set; } // Should be 0
-                [Union(nameof(Type))] public IPayload Payload { get; set; } = new AccountItem();
+                [UInt(32)] public uint Unknown0 { get; set; }
+                [Union(nameof(Unknown0))] public IServer098BUnion0 Unknown1 { get; set; } = new Server098BUnion0Arm00();
             }
 
-            [UInt(32)] public uint Id { get; set; }
-            [WideString] public string Name { get; set; }
-            [WideString] public string Description { get; set; }
-            [Float32] public float PricePremium { get; set; }
-            [Float32] public float PriceAlternative { get; set; }
-            [UInt(32)] public DisplayFlag DisplayFlags { get; set; }
-            [UInt(64)] public long Unknown6 { get; set; }
+            [UInt(32)] public uint Unknown0 { get; set; }
+            [WideString] public string Unknown1 { get; set; }
+            [WideString] public string Unknown2 { get; set; }
+            [Float32] public float Unknown3 { get; set; }
+            [Float32] public float Unknown4 { get; set; }
+            [UInt(32)] public uint Unknown5 { get; set; }
+            [UInt(64)] public ulong Unknown6 { get; set; }
             [UInt(8)] public byte Unknown7 { get; set; }
-            [Array(CountBits = 32)] public List<OfferCurrencyData> CurrencyData { get; set; } = [];
-            [Array(CountBits = 32)] public List<OfferItemData> ItemData { get; set; } = [];
+            [Array(CountBits = 32)] public List<Server098BPart2> Unknown8 { get; set; } = [];
+            [Array(CountBits = 32)] public List<Server098BPart3> Unknown9 { get; set; } = [];
         }
 
-        [UInt(32)] public uint Id { get; set; }
-        [UInt(32)] public DisplayFlag DisplayFlags { get; set; }
-        [WideString] public string Name { get; set; }
-        [WideString] public string Description { get; set; }
-        [UInt(14)] public ushort DisplayInfoOverride { get; set; }
-        [Array(CountBits = 32)] public List<Offer> Offers { get; set; } = [];
+        [UInt(32)] public uint Unknown0 { get; set; }
+        [UInt(32)] public uint Unknown1 { get; set; }
+        [WideString] public string Unknown2 { get; set; }
+        [WideString] public string Unknown3 { get; set; }
+        [UInt(14)] public ushort Unknown4 { get; set; }
+        [Array(CountBits = 32)] public List<Server098BPart1> Unknown5 { get; set; } = [];
 
-        // The categories go on the wire as two columns, every Id and then every Index, sharing one count.
-        [UInt(32), Count] public uint CategoryCount { get; set; }
-        [Array(CountFrom = nameof(CategoryCount)), UInt(32)] public List<uint> CategoryIds { get; set; } = [];
-        [Array(CountFrom = nameof(CategoryCount)), UInt(32)] public List<uint> CategoryIndexes { get; set; } = [];
+        [UInt(32), Count] public uint Unknown6 { get; set; }
+        [Array(CountFrom = nameof(Unknown6)), UInt(32)] public List<uint> Unknown7 { get; set; } = [];
+        [Array(CountFrom = nameof(Unknown6)), UInt(32)] public List<uint> Unknown8 { get; set; } = [];
     }
 
-    [Array(CountBits = 32)] public List<OfferGroup> OfferGroups { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server098BPart0> Unknown0 { get; set; } = [];
 }

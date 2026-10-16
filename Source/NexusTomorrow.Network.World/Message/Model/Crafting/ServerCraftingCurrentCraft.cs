@@ -5,18 +5,18 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[WireMessage(GameMessageOpcode.ServerCraftingCurrentCraft, Direction.ServerToClient)]
-public sealed partial class ServerCraftingCurrentCraft
+[WireMessage(GameMessageOpcode.Server0854, Direction.ServerToClient)]
+public sealed partial class Server0854
 {
-    [UInt(15)] public uint TradeskillSchematic2Id { get; set; }
-    public CraftStats CraftStats { get; set; } = new CraftStats();
-    [UInt(32)] public uint GlyphData { get; set; } // is of type RuneSlots in "Item / Inventory message" pull request
-    [UInt(32)] public uint SchematicCount { get; set; }
-    [UInt(32)] public uint AdditiveCount { get; set; }
-    [UInt(32)] public uint Unused { get; set; } = 0;
-    [FixedArray(5), UInt(32)] public uint[] Item2IdModifiers { get; set; } = new uint[5];
-    [UInt(18)] public uint Item2Id { get; set; }
-    [Float32] public Vector2 DiscoveryCoordinates { get; set; }
-    [Float32] public Vector2 DiscoveryVectorMultiplier { get; set; }
-    [Float32] public float DiscoveryRadiusMultiplier { get; set; }
+    [UInt(15)] public uint Unknown0 { get; set; }
+    public Client084FPart0 Unknown1 { get; set; } = new Client084FPart0();
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
+    [UInt(32)] public uint Unknown5 { get; set; }
+    [FixedArray(5), UInt(32)] public uint[] Unknown6 { get; set; } = new uint[5];
+    [UInt(18)] public uint Unknown7 { get; set; }
+    [Float32] public Vector2 Unknown8 { get; set; }
+    [Float32] public Vector2 Unknown9 { get; set; }
+    [Float32] public float Unknown10 { get; set; }
 }

@@ -4,11 +4,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-/// <summary> Updates stack count of item in guild bank inventory. </summary>
-[WireMessage(GameMessageOpcode.ServerGuildBankInventoryCount, Direction.ServerToClient)]
-public sealed partial class ServerGuildBankInventoryCount
+[WireMessage(GameMessageOpcode.Server0476, Direction.ServerToClient)]
+public sealed partial class Server0476
 {
-    public Identity GuildIdentity { get; set; }
-    [UInt(64)] public ulong ItemGuid { get; set; }
-    [UInt(32)] public uint Count { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [UInt(64)] public ulong Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }

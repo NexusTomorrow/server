@@ -4,10 +4,9 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
-[UnionCase(CombatLogType.Immune)]
-public sealed partial class CombatLogImmune : ICombatLog
+[UnionCase(18)]
+public sealed partial class Server0247Union0Arm12 : IServer0247Union0
 {
-    [NotOnWire] public CombatLogType Type => CombatLogType.Immune;
 
-    public CombatLogCastData CastData { get; set; }
+    public Server0247Part0 Unknown0 { get; set; }
 }

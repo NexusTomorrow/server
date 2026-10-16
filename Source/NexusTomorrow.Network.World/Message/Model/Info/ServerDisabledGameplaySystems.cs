@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Info;
 
-[WireMessage(GameMessageOpcode.ServerDisabledGameplaySystems, Direction.ServerToClient)]
-public sealed partial class ServerDisabledGameplaySystems
+[WireMessage(GameMessageOpcode.Server0366, Direction.ServerToClient)]
+public sealed partial class Server0366
 {
-    [UInt(3)] public GameplaySystem SystemType { get; set; }
-    [UInt(32)] public uint Unused { get; set; }
-    [UInt(1)] public bool Disabled { get; set; }
+    [UInt(3)] public byte Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(1)] public bool Unknown2 { get; set; }
 }

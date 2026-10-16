@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ServerGuildPerkUnlocked, Direction.ServerToClient)]
-public sealed partial class ServerGuildPerkUnlocked
+[WireMessage(GameMessageOpcode.Server04BD, Direction.ServerToClient)]
+public sealed partial class Server04BD
 {
-    public Identity GuildIdentity { get; set; }
-    [UInt(14)] public ushort GuildPerkId { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [UInt(14)] public ushort Unknown1 { get; set; }
 }

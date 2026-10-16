@@ -1,6 +1,5 @@
 ﻿namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
-// TODO: research this more, from what I can see these are the only 2 flags
 [Flags]
 public enum UpdateHealthMask
 {

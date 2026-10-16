@@ -4,9 +4,8 @@ using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-// Client only processes message when on CharacterSelect screen.
-[WireMessage(GameMessageOpcode.ServerRealmTransferResult, Direction.ServerToClient)]
-public sealed partial class ServerRealmTransferResult
+[WireMessage(GameMessageOpcode.Server0765, Direction.ServerToClient)]
+public sealed partial class Server0765
 {
-    [UInt(6)] public CharacterModifyResult Result { get; set; }
+    [UInt(6)] public byte Unknown0 { get; set; }
 }

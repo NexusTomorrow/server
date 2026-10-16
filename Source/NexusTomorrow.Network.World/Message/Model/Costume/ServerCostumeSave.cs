@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Costume;
 
-[WireMessage(GameMessageOpcode.ServerCostumeSaveResult, Direction.ServerToClient)]
-public sealed partial class ServerCostumeSave
+[WireMessage(GameMessageOpcode.Server0257, Direction.ServerToClient)]
+public sealed partial class Server0257
 {
-    [UInt(32)] public int Index { get; set; }
-    [UInt(2)] public CostumeType Type { get; set; }
-    [UInt(4)] public CostumeSaveResult Result { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(2)] public byte Unknown1 { get; set; }
+    [UInt(4)] public byte Unknown2 { get; set; }
 }

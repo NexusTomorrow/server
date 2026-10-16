@@ -4,9 +4,8 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Chat.Model;
 
 [WireStruct]
-[UnionCase(ChatFormatType.Loot)]
-public sealed partial class ChatFormatLoot : IChatFormatModel
+[UnionCase(11)]
+public sealed partial class Client01C3Union0Arm0B : IClient01C3Union0
 {
-    [NotOnWire] public ChatFormatType Type => ChatFormatType.Loot;
-    [UInt(32)] public uint LootUnitId { get; set; } // must match loot sent in ServerLootNotification (0x8A6)
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

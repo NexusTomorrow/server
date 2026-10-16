@@ -6,38 +6,35 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerMatchingPvpKillNotification, Direction.ServerToClient)]
-public sealed partial class ServerMatchingPvpKillNotification
+[WireMessage(GameMessageOpcode.Server05E7, Direction.ServerToClient)]
+public sealed partial class Server05E7
 {
-    /// <summary>
-    /// A killer or victim, a player or a creature as the <see cref="OpponentType"/> before it says.
-    /// </summary>
-    public interface IOpponent : IWireStruct
+    public interface IServer05E7Union0 : IWireStruct
     {
     }
 
     [WireStruct]
-    [UnionCase(OpponentType.Player)]
-    public sealed partial class OpponentPlayer : IOpponent
+    [UnionCase(0)]
+    public sealed partial class Server05E7Union0Arm00 : IServer05E7Union0
     {
-        public Identity Identity { get; set; } = new();
-        [UInt(5)] public Class Class { get; set; }
+        public Client00B5Part0 Unknown0 { get; set; } = new();
+        [UInt(5)] public byte Unknown1 { get; set; }
     }
 
     [WireStruct]
-    [UnionCase(OpponentType.Creature)]
-    public sealed partial class OpponentCreature : IOpponent
+    [UnionCase(1)]
+    public sealed partial class Server05E7Union0Arm01 : IServer05E7Union0
     {
-        [UInt(32)] public uint UnitId { get; set; }
-        [UInt(18)] public uint Creature2Id { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
+        [UInt(18)] public uint Unknown1 { get; set; }
     }
 
-    [UInt(2)] public OpponentType KillerType { get; set; }
-    [Union(nameof(KillerType))] public IOpponent Killer { get; set; } = new OpponentPlayer();
+    [UInt(2)] public byte Unknown0 { get; set; }
+    [Union(nameof(Unknown0))] public IServer05E7Union0 Unknown1 { get; set; } = new Server05E7Union0Arm00();
 
-    [UInt(2)] public OpponentType VictimType { get; set; }
-    [Union(nameof(VictimType))] public IOpponent Victim { get; set; } = new OpponentPlayer();
+    [UInt(2)] public byte Unknown2 { get; set; }
+    [Union(nameof(Unknown2))] public IServer05E7Union0 Unknown3 { get; set; } = new Server05E7Union0Arm00();
 
-    [UInt(2)] public MatchTeam VictimTeam { get; set; }
-    [UInt(3)] public PvpDeathReason DeathReason { get; set; }
+    [UInt(2)] public byte Unknown4 { get; set; }
+    [UInt(3)] public byte Unknown5 { get; set; }
 }

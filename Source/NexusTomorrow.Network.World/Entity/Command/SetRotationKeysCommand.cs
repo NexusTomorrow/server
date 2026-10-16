@@ -4,15 +4,14 @@ using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
-[EntityCommand(EntityCommand.SetRotationKeys)]
 [WireStruct]
-[UnionCase(EntityCommand.SetRotationKeys)]
-public sealed partial class SetRotationKeysCommand : IEntityCommandModel
+[UnionCase(15)]
+public sealed partial class Server0262Union2Arm0F : IServer0262Union2
 {
-    [UInt(10), Count] public ushort TimesCount { get; set; }
-    [Array(CountFrom = nameof(TimesCount)), UInt(32)] public List<uint> Times { get; set; } = [];
-    [Array(CountFrom = nameof(TimesCount)), Float32] public List<Vector3> Rotations { get; set; } = [];
-    [UInt(2)] public byte Type { get; set; }
-    [UInt(32)] public uint Offset { get; set; }
-    [UInt(1)] public bool Blend { get; set; }
+    [UInt(10), Count] public ushort Unknown0 { get; set; }
+    [Array(CountFrom = nameof(Unknown0)), UInt(32)] public List<uint> Unknown1 { get; set; } = [];
+    [Array(CountFrom = nameof(Unknown0)), Float32] public List<Vector3> Unknown2 { get; set; } = [];
+    [UInt(2)] public byte Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
+    [UInt(1)] public bool Unknown5 { get; set; }
 }

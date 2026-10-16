@@ -4,18 +4,18 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireStruct]
-public sealed partial class GuildStandard
+public sealed partial class Client0481Part0
 {
     [WireStruct]
-    public sealed partial class GuildStandardPart
+    public sealed partial class Client0481Part1
     {
-        [UInt(14)] public ushort GuildStandardPartId { get; set; }
-        [UInt(14)] public ushort DyeColorRampId1 { get; set; }
-        [UInt(14)] public ushort DyeColorRampId2 { get; set; }
-        [UInt(14)] public ushort DyeColorRampId3 { get; set; }
+        [UInt(14)] public ushort Unknown0 { get; set; }
+        [UInt(14)] public ushort Unknown1 { get; set; }
+        [UInt(14)] public ushort Unknown2 { get; set; }
+        [UInt(14)] public ushort Unknown3 { get; set; }
     }
 
-    public GuildStandardPart BackgroundIcon { get; set; } = new();
-    public GuildStandardPart ForegroundIcon { get; set; } = new();
-    public GuildStandardPart ScanLines { get; set; } = new();
+    public Client0481Part1 Unknown0 { get; set; } = new();
+    public Client0481Part1 Unknown1 { get; set; } = new();
+    public Client0481Part1 Unknown2 { get; set; } = new();
 }

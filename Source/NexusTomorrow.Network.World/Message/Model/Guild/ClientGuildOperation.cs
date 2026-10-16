@@ -5,24 +5,18 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ClientGuildOperation, Direction.ClientToServer)]
-public partial class ClientGuildOperation
+[WireMessage(GameMessageOpcode.Client04B1, Direction.ClientToServer)]
+public partial class Client04B1
 {
-    /// <summary>
-    /// The operation's 64-bit argument; each narrower view reads its low bytes.
-    /// </summary>
     [WireStruct]
-    public sealed partial class OperationData
+    public sealed partial class Client04B1Part0
     {
-        [UInt(64)] public ulong UInt64Data { get; set; }
-        [NotOnWire] public bool BoolData => (byte)UInt64Data != 0;
-        [NotOnWire] public int Int32Data => unchecked((int)UInt64Data);
-        [NotOnWire] public uint UInt32Data => unchecked((uint)UInt64Data);
+        [UInt(64)] public ulong Unknown0 { get; set; }
     }
 
-    public Identity GuildIdentity { get; private set; } = new();
-    [UInt(32)] public uint Rank { get; private set; }
-    public OperationData Data { get; private set; } = new();
-    [WideString] public string TextValue { get; private set; } // Client has this named as "Who", but it is used for Player Names, Rank Names, Notes, MOTD, and other stuff
-    [UInt(6)] public GuildOperation Operation { get; private set; }
+    public Client00B5Part0 Unknown0 { get; private set; } = new();
+    [UInt(32)] public uint Unknown1 { get; private set; }
+    public Client04B1Part0 Unknown2 { get; private set; } = new();
+    [WideString] public string Unknown3 { get; private set; }
+    [UInt(6)] public byte Unknown4 { get; private set; }
 }

@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pvp;
 
-[WireMessage(GameMessageOpcode.ClientSetIgnoreDuelRequests, Direction.ClientToServer)]
-public sealed partial class ClientSetIgnoreDuelRequests
+[WireMessage(GameMessageOpcode.Client0170, Direction.ClientToServer)]
+public sealed partial class Client0170
 {
-    [UInt(1)] public bool Ignore { get; private set; }
+    [UInt(1)] public bool Unknown0 { get; private set; }
 }

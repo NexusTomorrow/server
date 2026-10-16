@@ -3,10 +3,9 @@ using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
-[EntityCommand(EntityCommand.SetTime)]
 [WireStruct]
-[UnionCase(EntityCommand.SetTime)]
-public sealed partial class SetTimeCommand : IEntityCommandModel
+[UnionCase(0)]
+public sealed partial class Server0262Union2Arm00 : IServer0262Union2
 {
-    [UInt(32)] public uint Time { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

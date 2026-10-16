@@ -3,10 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.ICComm;
 
-// Sent when client receives an ICComm message to a channel it is not in
-// Presumably to let server know to resend a message if the server thought the client was in the channel
-[WireMessage(GameMessageOpcode.ClientICCommChannelNotJoined, Direction.ClientToServer)]
-public sealed partial class ClientICCommChannelNotJoined
+[WireMessage(GameMessageOpcode.Client0549, Direction.ClientToServer)]
+public sealed partial class Client0549
 {
-    [UInt(64)] public ulong IccomId { get; private set; }
+    [UInt(64)] public ulong Unknown0 { get; private set; }
 }

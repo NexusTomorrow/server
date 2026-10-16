@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerQuestLuaEvent, Direction.ServerToClient)]
-public sealed partial class ServerQuestLuaEvent
+[WireMessage(GameMessageOpcode.Server0359, Direction.ServerToClient)]
+public sealed partial class Server0359
 {
     public enum LuaEventType
     {
@@ -16,59 +16,52 @@ public sealed partial class ServerQuestLuaEvent
         Quest = 5,
     }
 
-    public interface ILuaEventData : IWireStruct
+    public interface IServer0359Union0 : IWireStruct
     {
-        LuaEventType Type { get; }
     }
 
     [WireStruct]
-    [UnionCase(LuaEventType.Int)]
-    public sealed partial class LuaEventDataInt : ILuaEventData
+    [UnionCase(0)]
+    public sealed partial class Server0359Union0Arm00 : IServer0359Union0
     {
-        [NotOnWire] public LuaEventType Type => LuaEventType.Int;
-        [UInt(32)] public int Int { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
     }
 
     [WireStruct]
-    [UnionCase(LuaEventType.String)]
-    public sealed partial class LuaEventDataString : ILuaEventData
+    [UnionCase(1)]
+    public sealed partial class Server0359Union0Arm01 : IServer0359Union0
     {
-        [NotOnWire] public LuaEventType Type => LuaEventType.String;
-        [WideString] public string Text { get; set; }
+        [WideString] public string Unknown0 { get; set; }
     }
 
     [WireStruct]
-    [UnionCase(LuaEventType.Bool)]
-    public sealed partial class LuaEventDataBool : ILuaEventData
+    [UnionCase(3)]
+    public sealed partial class Server0359Union0Arm03 : IServer0359Union0
     {
-        [NotOnWire] public LuaEventType Type => LuaEventType.Bool;
-        [UInt(1)] public bool Bool { get; set; }
+        [UInt(1)] public bool Unknown0 { get; set; }
     }
 
     [WireStruct]
-    [UnionCase(LuaEventType.Item)]
-    public sealed partial class LuaEventDataItem : ILuaEventData
+    [UnionCase(4)]
+    public sealed partial class Server0359Union0Arm04 : IServer0359Union0
     {
-        [NotOnWire] public LuaEventType Type => LuaEventType.Item;
-        [UInt(18)] public uint Item2Id { get; set; }
+        [UInt(18)] public uint Unknown0 { get; set; }
     }
 
     [WireStruct]
-    [UnionCase(LuaEventType.Quest)]
-    public sealed partial class LuaEventDataQuest : ILuaEventData
+    [UnionCase(5)]
+    public sealed partial class Server0359Union0Arm05 : IServer0359Union0
     {
-        [NotOnWire] public LuaEventType Type => LuaEventType.Quest;
-        [UInt(15)] public uint QuestId { get; set; }
+        [UInt(15)] public uint Unknown0 { get; set; }
     }
 
-    // One element of LuaEvents: the 32-bit type, then the data it selects.
     [WireStruct]
-    public sealed partial class LuaEvent
+    public sealed partial class Server0359Part0
     {
-        [UInt(32)] public LuaEventType Type { get; set; }
-        [Union(nameof(Type))] public ILuaEventData Data { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
+        [Union(nameof(Unknown0))] public IServer0359Union0 Unknown1 { get; set; }
     }
 
-    [UInt(14)] public ushort LuaEventId { get; set; }
-    [Array(CountBits = 32)] public List<LuaEvent> LuaEvents { get; set; } = [];
+    [UInt(14)] public ushort Unknown0 { get; set; }
+    [Array(CountBits = 32)] public List<Server0359Part0> Unknown1 { get; set; } = [];
 }

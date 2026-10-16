@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[WireMessage(GameMessageOpcode.ClientCraftingRuneInstall, Direction.ClientToServer)]
-public sealed partial class ClientCraftingRuneInstall
+[WireMessage(GameMessageOpcode.Client085B, Direction.ClientToServer)]
+public sealed partial class Client085B
 {
-    [UInt(64)] public ulong ItemGuid { get; private set; }
-    [Array(CountBits = 32), UInt(32)] public uint[] RuneSlotItem2Id { get; private set; } // Item2Id of rune, arranged in order of slot
+    [UInt(64)] public ulong Unknown0 { get; private set; }
+    [Array(CountBits = 32), UInt(32)] public uint[] Unknown1 { get; private set; }
 }

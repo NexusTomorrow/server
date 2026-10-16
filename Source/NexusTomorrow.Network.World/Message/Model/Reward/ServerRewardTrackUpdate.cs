@@ -3,12 +3,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Reward;
 
-[WireMessage(GameMessageOpcode.ServerRewardTrackUpdate, Direction.ServerToClient)]
-public sealed partial class ServerRewardTrackUpdate
+[WireMessage(GameMessageOpcode.Server07D5, Direction.ServerToClient)]
+public sealed partial class Server07D5
 {
-    [UInt(14)] public uint RewardTrackId { get; set; }
-    [UInt(32)] public uint RewardPointsEarned { get; set; }
-    [FixedArray(4), UInt(8)] public byte[] ClaimedRewards { get; set; } = new byte[4]; // 32 flags, least significant bit of each byte first
-    [UInt(32)] public uint Unlocked { get; set; } // needs more research, unclear if this is a bit array or an integer
-    [UInt(1)] public bool IsActive { get; set; }
+    [UInt(14)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [FixedArray(4), UInt(8)] public byte[] Unknown2 { get; set; } = new byte[4];
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(1)] public bool Unknown4 { get; set; }
 }

@@ -4,8 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ServerSpellCooldownStart, Direction.ServerToClient)]
-public sealed partial class ServerSpellCooldownStart
+[WireMessage(GameMessageOpcode.Server0804, Direction.ServerToClient)]
+public sealed partial class Server0804
 {
-    public Cooldown Cooldown { get; set; }
+    public Server0804Part0 Unknown0 { get; set; }
 }

@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Instance;
 
-[WireMessage(GameMessageOpcode.ClientResetInstances, Direction.ClientToServer)]
-public sealed partial class ClientResetInstances
+[WireMessage(GameMessageOpcode.Client07B4, Direction.ClientToServer)]
+public sealed partial class Client07B4
 {
 }

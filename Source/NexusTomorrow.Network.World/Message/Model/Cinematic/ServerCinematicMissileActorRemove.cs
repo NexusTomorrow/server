@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[WireMessage(GameMessageOpcode.ServerCinematicMissileActorRemove, Direction.ServerToClient)]
-public sealed partial class ServerCinematicMissileActorRemove
+[WireMessage(GameMessageOpcode.Server0224, Direction.ServerToClient)]
+public sealed partial class Server0224
 {
-    [UInt(32)] public uint Delay { get; set; }
-    [UInt(32)] public uint MissileActorUnitId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

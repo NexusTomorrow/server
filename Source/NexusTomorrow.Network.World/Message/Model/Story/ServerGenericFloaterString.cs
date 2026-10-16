@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Story;
 
-// Appears over the player's unit
-[WireMessage(GameMessageOpcode.ServerGenericFloaterString, Direction.ServerToClient)]
-public sealed partial class ServerGenericFloaterString
+[WireMessage(GameMessageOpcode.Server0724, Direction.ServerToClient)]
+public sealed partial class Server0724
 {
-    [WideString] public string Text { get; set; }
+    [WideString] public string Unknown0 { get; set; }
 }

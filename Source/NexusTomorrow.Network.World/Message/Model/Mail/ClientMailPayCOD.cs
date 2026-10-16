@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
-[WireMessage(GameMessageOpcode.ClientMailPayCod, Direction.ClientToServer)]
-public sealed partial class ClientMailPayCod
+[WireMessage(GameMessageOpcode.Client0123, Direction.ClientToServer)]
+public sealed partial class Client0123
 {
-    [UInt(64)] public ulong MailId { get; private set; }
-    [UInt(32)] public uint MailboxUnitId { get; private set; } // Must be interacting with a mailbox to pay COD
+    [UInt(64)] public ulong Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
 }

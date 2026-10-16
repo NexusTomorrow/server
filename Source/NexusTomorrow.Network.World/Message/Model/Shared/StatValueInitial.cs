@@ -5,38 +5,35 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class StatValueInitial
+public sealed partial class Server0262Part4
 {
-    /// <summary>
-    /// The stat's value in the encoding <see cref="Type"/> selects.
-    /// </summary>
-    public interface IPayload : IWireStruct
+    public interface IServer0262Union1 : IWireStruct
     {
     }
 
     [WireStruct]
-    [UnionCase(StatType.Integer)]
-    public sealed partial class IntegerValue : IPayload
+    [UnionCase(0)]
+    public sealed partial class Server0262Union1Arm00 : IServer0262Union1
     {
-        [UInt(32)] public uint Value { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
     }
 
     [WireStruct]
-    [UnionCase(StatType.Float)]
-    public sealed partial class FloatValue : IPayload
+    [UnionCase(1)]
+    public sealed partial class Server0262Union1Arm01 : IServer0262Union1
     {
-        [Float32] public float Value { get; set; }
+        [Float32] public float Unknown0 { get; set; }
     }
 
     [WireStruct]
-    [UnionCase(StatType.Data)]
-    public sealed partial class DataValue : IPayload
+    [UnionCase(2)]
+    public sealed partial class Server0262Union1Arm02 : IServer0262Union1
     {
-        [UInt(32)] public uint Value { get; set; }
-        [UInt(32)] public uint Data { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
+        [UInt(32)] public uint Unknown1 { get; set; }
     }
 
-    [UInt(5)] public Stat Stat { get; set; }
-    [UInt(2)] public StatType Type { get; set; }
-    [Union(nameof(Type))] public IPayload Payload { get; set; } = new IntegerValue();
+    [UInt(5)] public byte Unknown0 { get; set; }
+    [UInt(2)] public byte Unknown1 { get; set; }
+    [Union(nameof(Unknown1))] public IServer0262Union1 Unknown2 { get; set; } = new Server0262Union1Arm00();
 }

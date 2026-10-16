@@ -5,8 +5,8 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public partial class StateInfo
+public partial class Server05E8Part0
 {
-    [UInt(3)] public PvpGameState State { get; set; }
-    [UInt(32)] public uint TimeElapsed { get; set; } // in milliseconds
+    [UInt(3)] public byte Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

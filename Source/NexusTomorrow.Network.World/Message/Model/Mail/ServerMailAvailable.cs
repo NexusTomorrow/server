@@ -5,43 +5,43 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
-[WireMessage(GameMessageOpcode.ServerMailAvailable, Direction.ServerToClient)]
-public sealed partial class ServerMailAvailable
+[WireMessage(GameMessageOpcode.Message05A3, Direction.ServerToClient)]
+public sealed partial class Message05A3
 {
     [WireStruct]
-    public sealed partial class Attachment
+    public sealed partial class Message05A3Part1
     {
-        [UInt(18)] public uint Item2Id { get; set; }
-        [UInt(32)] public uint StackCount { get; set; }
-        [UInt(32)] public uint Charges { get; set; }
-        [UInt(64)] public ulong ItemRandomCircuitData { get; set; }
-        [UInt(32)] public uint ItemRandomGlyphData { get; set; }
-        [UInt(64)] public ulong ThresholdData { get; set; }
-        [UInt(18)] public uint Unknown7 { get; set; }
-        [FixedArray(5), UInt(32)] public uint[] Item2IdMicrochip { get; set; } = new uint[5];
-        [FixedArray(8), UInt(32)] public uint[] Item2IdGlyph { get; set; } = new uint[8];
+        [UInt(18)] public uint Unknown0 { get; set; }
+        [UInt(32)] public uint Unknown1 { get; set; }
+        [UInt(32)] public uint Unknown2 { get; set; }
+        [UInt(64)] public ulong Unknown3 { get; set; }
+        [UInt(32)] public uint Unknown4 { get; set; }
+        [UInt(64)] public ulong Unknown5 { get; set; }
+        [UInt(18)] public uint Unknown6 { get; set; }
+        [FixedArray(5), UInt(32)] public uint[] Unknown7 { get; set; } = new uint[5];
+        [FixedArray(8), UInt(32)] public uint[] Unknown8 { get; set; } = new uint[8];
     }
 
     [WireStruct]
-    public sealed partial class Mail
+    public sealed partial class Message05A3Part0
     {
-        [UInt(64)] public ulong MailId { get; set; }
-        [UInt(32)] public SenderType SenderType { get; set; }
-        [UInt(14)] public ContentType ContentType { get; set; } // Client uses this to format the mail content. More entries TBC
-        [WideString] public string Subject { get; set; }
-        [WideString] public string Message { get; set; }
-        [UInt(21)] public uint SubjectStringId { get; set; } // LocalizedStringId. If set, Subject is ignored.
-        [UInt(21)] public uint BodyStringId { get; set; } // LocalizedStringId. If set, Message is ignored.
-        [UInt(18)] public uint FromCreatureId { get; set; }
-        [UInt(4)] public byte CurrencySentType { get; set; }
-        [UInt(64)] public ulong CurrencySentAmount { get; set; }
-        [UInt(64)] public ulong CostOnDeliveryAmount { get; set; }
-        [Float32] public float ExpiryTimeInDays { get; set; }
-        [UInt(32)] public MailFlag Flags { get; set; }
-        public Identity Sender { get; set; } = new();
-        [Array(CountBits = 32)] public List<Attachment> Attachments { get; set; } = [];
+        [UInt(64)] public ulong Unknown0 { get; set; }
+        [UInt(32)] public uint Unknown1 { get; set; }
+        [UInt(14)] public ushort Unknown2 { get; set; }
+        [WideString] public string Unknown3 { get; set; }
+        [WideString] public string Unknown4 { get; set; }
+        [UInt(21)] public uint Unknown5 { get; set; }
+        [UInt(21)] public uint Unknown6 { get; set; }
+        [UInt(18)] public uint Unknown7 { get; set; }
+        [UInt(4)] public byte Unknown8 { get; set; }
+        [UInt(64)] public ulong Unknown9 { get; set; }
+        [UInt(64)] public ulong Unknown10 { get; set; }
+        [Float32] public float Unknown11 { get; set; }
+        [UInt(32)] public uint Unknown12 { get; set; }
+        public Client00B5Part0 Unknown13 { get; set; } = new();
+        [Array(CountBits = 32)] public List<Message05A3Part1> Unknown14 { get; set; } = [];
     }
 
-    [UInt(1)] public bool NewMail { get; set; } = true;
-    [Array(CountBits = 32)] public List<Mail> MailList { get; set; } = [];
+    [UInt(1)] public bool Unknown0 { get; set; }
+    [Array(CountBits = 32)] public List<Message05A3Part0> Unknown1 { get; set; } = [];
 }

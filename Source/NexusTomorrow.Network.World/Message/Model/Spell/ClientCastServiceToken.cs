@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ClientCastServiceToken, Direction.ClientToServer)]
-public sealed partial class ClientCastServiceToken
+[WireMessage(GameMessageOpcode.Client00C2, Direction.ClientToServer)]
+public sealed partial class Client00C2
 {
-    [UInt(18)] public uint Spell4Id { get; private set; }
-    [UInt(32)] public uint ClientSpellCastUniqueId { get; private set; }
+    [UInt(18)] public uint Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
 }

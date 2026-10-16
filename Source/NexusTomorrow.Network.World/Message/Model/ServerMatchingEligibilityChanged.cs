@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerMatchingEligibilityChanged, Direction.ServerToClient)]
-public sealed partial class ServerMatchingEligibilityChanged
+[WireMessage(GameMessageOpcode.Server05B8, Direction.ServerToClient)]
+public sealed partial class Server05B8
 {
-    [UInt(32)] public uint MatchingEligibilityFlags { get; set; } // Checked against tbl matchingMapPrequisite->matchingEligibilityFlagEnum
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

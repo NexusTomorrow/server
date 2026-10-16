@@ -5,15 +5,15 @@ using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
 
 namespace NexusTomorrow.Network.World.Message.Model.Info;
 
-[WireMessage(GameMessageOpcode.ServerPlayerInfoFullResponse, Direction.ServerToClient)]
-public sealed partial class ServerPlayerInfoFullResponse
+[WireMessage(GameMessageOpcode.Server0599, Direction.ServerToClient)]
+public sealed partial class Server0599
 {
-    public PlayerInfoBase BaseData { get; set; }
-    [UInt(1)] public bool IsClassPathSet { get; set; } = true;
-    [UInt(3)] public Path Path { get; set; }
-    [UInt(8)] public Class Class { get; set; }
-    [Pad(6)] public Pad ClassHigh { get; }
-    [UInt(32)] public uint Level { get; set; }
-    [UInt(1)] public bool IsLastLoggedOnInDaysSet { get; set; }
-    [Float32] public float LastLoggedInDays { get; set; }
+    public Server0598Part0 Unknown0 { get; set; }
+    [UInt(1)] public bool Unknown1 { get; set; }
+    [UInt(3)] public byte Unknown2 { get; set; }
+    [UInt(8)] public byte Unknown3 { get; set; }
+    [UInt(6)] public byte Unknown4 { get; set; }
+    [UInt(32)] public uint Unknown5 { get; set; }
+    [UInt(1)] public bool Unknown6 { get; set; }
+    [Float32] public float Unknown7 { get; set; }
 }

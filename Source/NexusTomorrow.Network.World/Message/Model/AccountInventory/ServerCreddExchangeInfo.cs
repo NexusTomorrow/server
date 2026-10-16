@@ -4,22 +4,22 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
-[WireMessage(GameMessageOpcode.ServerCreddExchangeInfo, Direction.ServerToClient)]
-public sealed partial class ServerCreddExchangeInfo
+[WireMessage(GameMessageOpcode.Server026A, Direction.ServerToClient)]
+public sealed partial class Server026A
 {
     [WireStruct]
-    public sealed partial class CreddListing
+    public sealed partial class Server026APart0
     {
-        [UInt(64)] public ulong ListingId { get; set; }
-        [UInt(64)] public ulong Price { get; set; }
-        [UInt(1)] public bool IsBuyOrder { get; set; }
-        [UInt(64)] public ulong ListTime { get; set; } // a Win32 FILETIME
-        [UInt(64)] public ulong ExpirationTime { get; set; } // a Win32 FILETIME
+        [UInt(64)] public ulong Unknown0 { get; set; }
+        [UInt(64)] public ulong Unknown1 { get; set; }
+        [UInt(1)] public bool Unknown2 { get; set; }
+        [UInt(64)] public ulong Unknown3 { get; set; }
+        [UInt(64)] public ulong Unknown4 { get; set; }
     }
 
-    [UInt(32)] public uint BuyOrderCount { get; set; }
-    [FixedArray(3), UInt(64)] public ulong[] BuyOrderPrices { get; set; } = new ulong[3]; // average price of 1, 10, 50 purchase
-    [UInt(32)] public uint SellOrderCount { get; set; }
-    [FixedArray(3), UInt(64)] public ulong[] SellOrderPrices { get; set; } = new ulong[3]; // average price of 1, 10, 50 purchase
-    [Array(CountBits = 32)] public List<CreddListing> Listings { get; set; } = [];
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [FixedArray(3), UInt(64)] public ulong[] Unknown1 { get; set; } = new ulong[3];
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [FixedArray(3), UInt(64)] public ulong[] Unknown3 { get; set; } = new ulong[3];
+    [Array(CountBits = 32)] public List<Server026APart0> Unknown4 { get; set; } = [];
 }

@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ClientGuildBankMoneyTransaction, Direction.ClientToServer)]
-public sealed partial class ClientGuildBankMoneyTransaction
+[WireMessage(GameMessageOpcode.Client04A8, Direction.ClientToServer)]
+public sealed partial class Client04A8
 {
-    public Identity GuildIdentity { get; private set; } = new();
-    [UInt(64)] public long Amount { get; private set; } // Negative for deposit, positive for withdraw
+    public Client00B5Part0 Unknown0 { get; private set; } = new();
+    [UInt(64)] public ulong Unknown1 { get; private set; }
 }

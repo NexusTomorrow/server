@@ -4,9 +4,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Option;
 
-// Sent whenever one of the options is changed
-[WireMessage(GameMessageOpcode.ClientCombatLogDisables, Direction.ClientToServer)]
-public sealed partial class ClientCombatLogDisables
+[WireMessage(GameMessageOpcode.Client0249, Direction.ClientToServer)]
+public sealed partial class Client0249
 {
-    [UInt(32)] public CombatLogOptions DisableFlags { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

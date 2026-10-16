@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[WireMessage(GameMessageOpcode.ServerPathExplorerScavengerHuntClueRemoveByClueIdAndUnitId, Direction.ServerToClient)]
-public sealed partial class ServerPathExplorerScavengerHuntClueRemoveByClueIdAndUnitId
+[WireMessage(GameMessageOpcode.Server06B6, Direction.ServerToClient)]
+public sealed partial class Server06B6
 {
-    [UInt(14)] public ushort PathExplorerScavengerClueId { get; set; }
-    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(14)] public ushort Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

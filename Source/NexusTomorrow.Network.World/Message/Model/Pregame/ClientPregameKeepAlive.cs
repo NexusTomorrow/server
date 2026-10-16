@@ -3,9 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-// Client sents this every 60 seconds while on the CharacterSelect or RealmSelect screen.
-// Presumably sent to keep the TCP socket alive as the client is not sending any other messages.
-[WireMessage(GameMessageOpcode.ClientPregameKeepAlive, Direction.ClientToServer)]
-public sealed partial class ClientPregameKeepAlive
+[WireMessage(GameMessageOpcode.Client0241, Direction.ClientToServer)]
+public sealed partial class Client0241
 {
 }

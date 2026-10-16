@@ -3,13 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ClientGuildBankTabRename, Direction.ClientToServer)]
-public sealed partial class ClientGuildBankTabRename : ClientGuildOperation
+[WireMessage(GameMessageOpcode.Client04B3, Direction.ClientToServer)]
+public sealed partial class Client04B3 : Client04B1
 {
-    // This is the same packet structure as ClientGuildOperation (0x4B1) however this message
-    // is only sent for renaming guild tabs.
 
-    // The Data field is the bank tab index being renamed.
-
-    // The TextValue is the new name for the bank tab.
 }

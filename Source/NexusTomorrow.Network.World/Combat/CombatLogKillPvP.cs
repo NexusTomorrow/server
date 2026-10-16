@@ -4,10 +4,9 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
-[UnionCase(CombatLogType.KillPvP)]
-public sealed partial class CombatLogKillPvP : ICombatLog
+[UnionCase(21)]
+public sealed partial class Server0247Union0Arm15 : IServer0247Union0
 {
-    [NotOnWire] public CombatLogType Type => CombatLogType.KillPvP;
 
-    public CombatLogCastData CastData { get; set; }
+    public Server0247Part0 Unknown0 { get; set; }
 }

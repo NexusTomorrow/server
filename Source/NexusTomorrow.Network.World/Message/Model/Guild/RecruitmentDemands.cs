@@ -5,18 +5,18 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireStruct]
-public sealed partial class RecruitmentDemands
+public sealed partial class Server0768Part0
 {
-    [UInt(8)] public RecruitmendDemand WarriorAssault { get; set; }
-    [UInt(8)] public RecruitmendDemand WarriorSupport { get; set; }
-    [UInt(8)] public RecruitmendDemand EngineerAssault { get; set; }
-    [UInt(8)] public RecruitmendDemand EngineerSupport { get; set; }
-    [UInt(8)] public RecruitmendDemand EsperAssault { get; set; }
-    [UInt(8)] public RecruitmendDemand EsperSupport { get; set; }
-    [UInt(8)] public RecruitmendDemand MedicAssault { get; set; }
-    [UInt(8)] public RecruitmendDemand MedicSupport { get; set; }
-    [UInt(8)] public RecruitmendDemand StalkedAssault { get; set; }
-    [UInt(8)] public RecruitmendDemand StalkerSupport { get; set; }
-    [UInt(8)] public RecruitmendDemand SpellslingerAssault { get; set; }
-    [UInt(8)] public RecruitmendDemand SpellslingerSupport { get; set; }
+    [UInt(8)] public byte Unknown0 { get; set; }
+    [UInt(8)] public byte Unknown1 { get; set; }
+    [UInt(8)] public byte Unknown2 { get; set; }
+    [UInt(8)] public byte Unknown3 { get; set; }
+    [UInt(8)] public byte Unknown4 { get; set; }
+    [UInt(8)] public byte Unknown5 { get; set; }
+    [UInt(8)] public byte Unknown6 { get; set; }
+    [UInt(8)] public byte Unknown7 { get; set; }
+    [UInt(8)] public byte Unknown8 { get; set; }
+    [UInt(8)] public byte Unknown9 { get; set; }
+    [UInt(8)] public byte Unknown10 { get; set; }
+    [UInt(8)] public byte Unknown11 { get; set; }
 }

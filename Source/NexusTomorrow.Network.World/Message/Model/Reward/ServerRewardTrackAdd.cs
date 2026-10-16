@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Reward;
 
-[WireMessage(GameMessageOpcode.ServerRewardTrackAdd, Direction.ServerToClient)]
-public sealed partial class ServerRewardTrackAdd
+[WireMessage(GameMessageOpcode.Server07CD, Direction.ServerToClient)]
+public sealed partial class Server07CD
 {
-    public RewardTrack RewardTrack { get; set; }
+    public Server07CDPart0 Unknown0 { get; set; }
 }

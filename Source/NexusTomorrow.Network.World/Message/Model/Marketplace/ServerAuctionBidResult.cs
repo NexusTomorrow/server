@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
-[WireMessage(GameMessageOpcode.ServerAuctionBidResult, Direction.ServerToClient)]
-public sealed partial class ServerAuctionBidResult
+[WireMessage(GameMessageOpcode.Server0560, Direction.ServerToClient)]
+public sealed partial class Server0560
 {
-    [UInt(8)] public GenericError Result { get; set; }
-    public AuctionInfo Auction { get; set; }
+    [UInt(8)] public byte Unknown0 { get; set; }
+    public Server055FPart0 Unknown1 { get; set; }
 }

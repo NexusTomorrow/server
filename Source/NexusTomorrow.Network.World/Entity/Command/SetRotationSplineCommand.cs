@@ -3,16 +3,15 @@ using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
-[EntityCommand(EntityCommand.SetRotationSpline)]
 [WireStruct]
-[UnionCase(EntityCommand.SetRotationSpline)]
-public sealed partial class SetRotationSplineCommand : IEntityCommandModel
+[UnionCase(16)]
+public sealed partial class Server0262Union2Arm10 : IServer0262Union2
 {
-    [UInt(32)] public uint SplineId { get; set; }
-    [UInt(16)] public ushort Speed { get; set; }
-    [Float32] public float Position { get; set; }
-    [UInt(4)] public byte Mode { get; set; }
-    [UInt(32)] public uint Offset { get; set; }
-    [UInt(1)] public bool Blend { get; set; }
-    [UInt(1)] public bool AdjustSpeedToLength { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(16)] public ushort Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
+    [UInt(4)] public byte Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
+    [UInt(1)] public bool Unknown5 { get; set; }
+    [UInt(1)] public bool Unknown6 { get; set; }
 }

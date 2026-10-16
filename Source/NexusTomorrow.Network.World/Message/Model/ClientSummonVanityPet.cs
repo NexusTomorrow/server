@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientSummonVanityPet, Direction.ClientToServer)]
-public sealed partial class ClientSummonVanityPet
+[WireMessage(GameMessageOpcode.Client082F, Direction.ClientToServer)]
+public sealed partial class Client082F
 {
-    [UInt(18)] public uint Spell4BaseId { get; private set; }
+    [UInt(18)] public uint Unknown0 { get; private set; }
 }

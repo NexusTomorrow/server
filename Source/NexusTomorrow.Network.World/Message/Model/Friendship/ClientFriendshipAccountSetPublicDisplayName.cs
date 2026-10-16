@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ClientFriendshipAccountSetPublicDisplayName, Direction.ClientToServer)]
-public sealed partial class ClientFriendshipAccountSetPublicDisplayName
+[WireMessage(GameMessageOpcode.Client039B, Direction.ClientToServer)]
+public sealed partial class Client039B
 {
-    [WideString] public string PublicDisplayName { get; private set; }
+    [WideString] public string Unknown0 { get; private set; }
 }

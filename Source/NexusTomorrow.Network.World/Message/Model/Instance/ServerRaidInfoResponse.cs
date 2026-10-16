@@ -3,18 +3,18 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Instance;
 
-[WireMessage(GameMessageOpcode.ServerRaidInfoResponse, Direction.ServerToClient)]
-public sealed partial class ServerRaidInfoResponse
+[WireMessage(GameMessageOpcode.Server071A, Direction.ServerToClient)]
+public sealed partial class Server071A
 {
     [WireStruct]
-    public sealed partial class RaidInfo
+    public sealed partial class Server071APart0
     {
-        [UInt(64)] public ulong SavedInstanceId { get; set; }
-        [UInt(15)] public ushort WorldId { get; set; }
-        [UInt(64)] public ulong DateExpireUTC { get; set; } // Full date the lock resets
-        [Float32] public float DaysUntilExpire { get; set; } // Relative time from now the lock resests
-        [UInt(32)] public uint PrimeLevel { get; set; }
+        [UInt(64)] public ulong Unknown0 { get; set; }
+        [UInt(15)] public ushort Unknown1 { get; set; }
+        [UInt(64)] public ulong Unknown2 { get; set; }
+        [Float32] public float Unknown3 { get; set; }
+        [UInt(32)] public uint Unknown4 { get; set; }
     }
 
-    [Array(CountBits = 32)] private List<RaidInfo> Raids { get; set; } = [];
+    [Array(CountBits = 32)] private List<Server071APart0> Unknown0 { get; set; } = [];
 }

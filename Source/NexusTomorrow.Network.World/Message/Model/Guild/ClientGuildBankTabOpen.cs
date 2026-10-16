@@ -4,11 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-// Sent by client if inventory has not been loaded when the tab is opened.
-// Server sends ServerGuildBankTabInventory (0x47A) response
-[WireMessage(GameMessageOpcode.ClientGuildBankTabOpen, Direction.ClientToServer)]
-public sealed partial class ClientGuildBankTabOpen
+[WireMessage(GameMessageOpcode.Client0477, Direction.ClientToServer)]
+public sealed partial class Client0477
 {
-    public Identity GuildIdentity { get; private set; } = new();
-    [UInt(9)] public ushort BankTabIndex { get; private set; } // Guild bank tab indexes are 100-109, WarParty bank tabs 200-209
+    public Client00B5Part0 Unknown0 { get; private set; } = new();
+    [UInt(9)] public ushort Unknown1 { get; private set; }
 }

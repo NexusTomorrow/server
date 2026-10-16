@@ -5,9 +5,9 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class MarkerInfo
+public sealed partial class Server0427Part2
 {
 
-    [UInt(32)] public GroupMarker Marker { get; set; }
-    [UInt(32)] public uint UnitId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

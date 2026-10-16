@@ -5,9 +5,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerMatchingGroupMemberRoleSelection, Direction.ServerToClient)]
-public sealed partial class ServerMatchingGroupMemberRoleSelection
+[WireMessage(GameMessageOpcode.Server0600, Direction.ServerToClient)]
+public sealed partial class Server0600
 {
-    public Identity Identity { get; set; } = new();
-    [UInt(32)] public Role Role { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; } = new();
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

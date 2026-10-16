@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientP2PTradingCancelTrade, Direction.ClientToServer)]
-public sealed partial class ClientP2PTradingCancelTrade
+[WireMessage(GameMessageOpcode.Client018F, Direction.ClientToServer)]
+public sealed partial class Client018F
 {
 }

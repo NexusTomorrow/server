@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
-[WireMessage(GameMessageOpcode.ClientRespecAmps, Direction.ClientToServer)]
-public sealed partial class ClientRespecAmps
+[WireMessage(GameMessageOpcode.Client0151, Direction.ClientToServer)]
+public sealed partial class Client0151
 {
-    [UInt(3)] public byte SpecIndex { get; private set; }
-    [UInt(3)] public AmpRespecType RespecType { get; private set; }
-    [UInt(32)] public uint Value { get; private set; } // Is EldanAugmentationId for RespecType = Single
+    [UInt(3)] public byte Unknown0 { get; private set; }
+    [UInt(3)] public byte Unknown1 { get; private set; }
+    [UInt(32)] public uint Unknown2 { get; private set; }
 }

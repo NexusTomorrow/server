@@ -4,8 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerItemAdd, Direction.ServerToClient)]
-public sealed partial class ServerItemAdd
+[WireMessage(GameMessageOpcode.Server0111, Direction.ServerToClient)]
+public sealed partial class Server0111
 {
-    public InventoryItem InventoryItem { get; set; }
+    public Server0111Part0 Unknown0 { get; set; }
 }

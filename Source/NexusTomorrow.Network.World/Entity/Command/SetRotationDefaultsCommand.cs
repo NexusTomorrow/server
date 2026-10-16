@@ -3,10 +3,9 @@ using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
-[EntityCommand(EntityCommand.SetRotationDefaults)]
 [WireStruct]
-[UnionCase(EntityCommand.SetRotationDefaults)]
-public sealed partial class SetRotationDefaultsCommand : IEntityCommandModel
+[UnionCase(21)]
+public sealed partial class Server0262Union2Arm15 : IServer0262Union2
 {
-    [UInt(1)] public bool Blend { get; set; }
+    [UInt(1)] public bool Unknown0 { get; set; }
 }

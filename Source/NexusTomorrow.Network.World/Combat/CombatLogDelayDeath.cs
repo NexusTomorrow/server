@@ -4,10 +4,9 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
-[UnionCase(CombatLogType.DelayDeath)]
-public sealed partial class CombatLogDelayDeath : ICombatLog
+[UnionCase(10)]
+public sealed partial class Server0247Union0Arm0A : IServer0247Union0
 {
-    [NotOnWire] public CombatLogType Type => CombatLogType.DelayDeath;
 
-    public CombatLogCastData CastData { get; set; }
+    public Server0247Part0 Unknown0 { get; set; }
 }

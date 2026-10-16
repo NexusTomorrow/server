@@ -3,10 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
-// Sets the spell's activated state.  Spells are considered activated when they are able to be added to the player's limited action set.
-[WireMessage(GameMessageOpcode.ClientAbilityBookActivateSpell, Direction.ClientToServer)]
-public sealed partial class ClientAbilityBookActivateSpell
+[WireMessage(GameMessageOpcode.Client017A, Direction.ClientToServer)]
+public sealed partial class Client017A
 {
-    [UInt(18)] public uint Spell4Id { get; private set; }
-    [UInt(1)] public bool Active { get; private set; }
+    [UInt(18)] public uint Unknown0 { get; private set; }
+    [UInt(1)] public bool Unknown1 { get; private set; }
 }

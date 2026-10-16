@@ -3,14 +3,14 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientGroupRequestJoinResponse, Direction.ClientToServer)]
-public sealed partial class ClientGroupRequestJoinResponse
+[WireMessage(GameMessageOpcode.Client0453, Direction.ClientToServer)]
+public sealed partial class Client0453
 {
-    [UInt(64)] public ulong GroupId { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
 
-    [UInt(1)] public bool AcceptedRequest { get; set; }
+    [UInt(1)] public bool Unknown1 { get; set; }
 
-    [WideString] public string InviteeName { get; set; }
+    [WideString] public string Unknown2 { get; set; }
 
     [UInt(1)] public bool Unknown3 { get; set; }
 }

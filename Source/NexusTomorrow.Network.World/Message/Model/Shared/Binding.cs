@@ -4,19 +4,19 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class Binding
+public sealed partial class Message056FPart0
 {
-    [UInt(14)] public ushort InputActionId { get; set; }
-    [UInt(32)] public uint DeviceEnum00 { get; set; }
-    [UInt(32)] public uint DeviceEnum01 { get; set; }
-    [UInt(32)] public uint DeviceEnum02 { get; set; }
-    [UInt(32)] public uint Code00 { get; set; }
-    [UInt(32)] public uint Code01 { get; set; }
-    [UInt(32)] public uint Code02 { get; set; }
-    [UInt(32)] public uint MetaKeys00 { get; set; }
-    [UInt(32)] public uint MetaKeys01 { get; set; }
-    [UInt(32)] public uint MetaKeys02 { get; set; }
-    [UInt(32)] public uint EventTypeEnum00 { get; set; }
-    [UInt(32)] public uint EventTypeEnum01 { get; set; }
-    [UInt(32)] public uint EventTypeEnum02 { get; set; }
+    [UInt(14)] public ushort Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
+    [UInt(32)] public uint Unknown5 { get; set; }
+    [UInt(32)] public uint Unknown6 { get; set; }
+    [UInt(32)] public uint Unknown7 { get; set; }
+    [UInt(32)] public uint Unknown8 { get; set; }
+    [UInt(32)] public uint Unknown9 { get; set; }
+    [UInt(32)] public uint Unknown10 { get; set; }
+    [UInt(32)] public uint Unknown11 { get; set; }
+    [UInt(32)] public uint Unknown12 { get; set; }
 }

@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ServerGuildRankChange, Direction.ServerToClient)]
-public sealed partial class ServerGuildRankChange
+[WireMessage(GameMessageOpcode.Server04C5, Direction.ServerToClient)]
+public sealed partial class Server04C5
 {
-    public Identity GuildIdentity { get; set; }
-    [FixedArray(10)] public GuildRank[] Ranks { get; set; } = [.. Enumerable.Range(0, 10).Select(_ => new GuildRank())];
+    public Client00B5Part0 Unknown0 { get; set; }
+    [FixedArray(10)] public Server0493Part1[] Unknown1 { get; set; } = [.. Enumerable.Range(0, 10).Select(_ => new Server0493Part1())];
 }

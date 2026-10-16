@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ServerFriendshipResult, Direction.ServerToClient)]
-public sealed partial class ServerFriendshipResult
+[WireMessage(GameMessageOpcode.Server03C4, Direction.ServerToClient)]
+public sealed partial class Server03C4
 {
-    [WideString] public string Message { get; set; } // In UI causes Event_FireGenericEvent("GenericEvent_SystemChannelMessage", strMessage)
-    [UInt(6)] public FriendshipResult Result { get; set; }
+    [WideString] public string Unknown0 { get; set; }
+    [UInt(6)] public byte Unknown1 { get; set; }
 }

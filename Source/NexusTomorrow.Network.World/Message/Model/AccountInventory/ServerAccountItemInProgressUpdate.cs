@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
-[WireMessage(GameMessageOpcode.ServerAccountItemInProgressUpdate, Direction.ServerToClient)]
-public sealed partial class ServerAccountItemInProgressUpdate
+[WireMessage(GameMessageOpcode.Server096A, Direction.ServerToClient)]
+public sealed partial class Server096A
 {
-    [UInt(32)] public uint AccountId { get; set; } // is the AccountId sent ServerRealmInfo (0x3DB), filled by server but not used by client
-    public AccountInventoryItem Item { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    public Server096APart0 Unknown1 { get; set; }
 }

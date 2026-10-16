@@ -4,8 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[WireMessage(GameMessageOpcode.ServerProfessionUpdate, Direction.ServerToClient)]
-public sealed partial class ServerProfessionUpdate
+[WireMessage(GameMessageOpcode.Server0860, Direction.ServerToClient)]
+public sealed partial class Server0860
 {
-    public TradeskillInfo Tradeskill { get; set; } = new TradeskillInfo();
+    public Server0856Part0 Unknown0 { get; set; } = new Server0856Part0();
 }

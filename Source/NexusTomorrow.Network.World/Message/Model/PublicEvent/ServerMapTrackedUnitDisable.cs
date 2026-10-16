@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
-[WireMessage(GameMessageOpcode.ServerMapTrackedUnitDisable, Direction.ServerToClient)]
-public sealed partial class ServerMapTrackedUnitDisable
+[WireMessage(GameMessageOpcode.Server0848, Direction.ServerToClient)]
+public sealed partial class Server0848
 {
-    [UInt(32)] public uint TrackedUnitId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

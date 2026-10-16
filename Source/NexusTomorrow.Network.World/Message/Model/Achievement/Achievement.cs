@@ -4,13 +4,11 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Achievement;
 
 [WireStruct]
-public sealed partial class Achievement
+public sealed partial class Server00AEPart0
 {
-    // TODO: Determine the data types for the Data0/Data1 fields for each achievement. This is based on the achievementTypeId
 
-    [UInt(15)] public ushort AchievementId { get; set; }
-    [UInt(32)] public uint Data0 { get; set; } // simply counted type: uint number
-                                               // checklist type: flags for achievement objectives with index of 0 to 31
-    [UInt(32)] public uint Data1 { get; set; } // checklist type: flags for achievement objectives with index of 32 to 63
-    [UInt(64)] public ulong DateCompleted { get; set; }
+    [UInt(15)] public ushort Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(64)] public ulong Unknown3 { get; set; }
 }

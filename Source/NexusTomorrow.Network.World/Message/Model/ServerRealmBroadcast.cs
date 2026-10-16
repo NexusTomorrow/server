@@ -4,10 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-// Can be sent to player in Game, CharacterSelect, or RealmSelect screens
-[WireMessage(GameMessageOpcode.ServerRealmBroadcast, Direction.ServerToClient)]
-public sealed partial class ServerRealmBroadcast
+[WireMessage(GameMessageOpcode.Server03E1, Direction.ServerToClient)]
+public sealed partial class Server03E1
 {
-    [UInt(2)] public BroadcastTier Tier { get; set; }
-    [WideString] public string Message { get; set; }
+    [UInt(2)] public byte Unknown0 { get; set; }
+    [WideString] public string Unknown1 { get; set; }
 }

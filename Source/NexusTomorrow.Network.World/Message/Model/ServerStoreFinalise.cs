@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerStoreFinalize, Direction.ServerToClient)]
-public sealed partial class ServerStoreFinalise
+[WireMessage(GameMessageOpcode.Server0987, Direction.ServerToClient)]
+public sealed partial class Server0987
 {
 }

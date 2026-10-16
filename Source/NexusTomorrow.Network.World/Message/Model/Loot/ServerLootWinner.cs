@@ -5,18 +5,18 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Loot;
 
-[WireMessage(GameMessageOpcode.ServerLootWinner, Direction.ServerToClient)]
-public sealed partial class ServerLootWinner
+[WireMessage(GameMessageOpcode.Server08A3, Direction.ServerToClient)]
+public sealed partial class Server08A3
 {
     [WireStruct]
-    public sealed partial class LootRoll
+    public sealed partial class Server08A3Part0
     {
-        public Identity Identity { get; set; } = new Identity(); // If contains zero value for both properties, signals all players passed on loot
-        [UInt(32)] public uint Value { get; set; } // -1 = assigned, 1 to 100 = greed rolls, 101 to 200 = need rolls
+        public Client00B5Part0 Unknown0 { get; set; } = new Client00B5Part0();
+        [UInt(32)] public uint Unknown1 { get; set; }
     }
 
-    [UInt(32)] public uint LootUnitId { get; set; }
-    public LootRoll WinningRoll { get; set; } = new LootRoll();
-    [UInt(18)] public uint ItemId { get; set; } // Can be Item2Id, LootSpellId, VirtualItemId, AccountItemId
-    [Array(CountBits = 32)] public List<LootRoll> OtherRolls { get; set; } = [];
+    [UInt(32)] public uint Unknown0 { get; set; }
+    public Server08A3Part0 Unknown1 { get; set; } = new Server08A3Part0();
+    [UInt(18)] public uint Unknown2 { get; set; }
+    [Array(CountBits = 32)] public List<Server08A3Part0> Unknown3 { get; set; } = [];
 }

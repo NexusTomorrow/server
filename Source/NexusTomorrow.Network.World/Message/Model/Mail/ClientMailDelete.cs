@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
-[WireMessage(GameMessageOpcode.ClientMailDelete, Direction.ClientToServer)]
-public sealed partial class ClientMailDelete
+[WireMessage(GameMessageOpcode.Client011E, Direction.ClientToServer)]
+public sealed partial class Client011E
 {
-    [Array(CountBits = 32), UInt(64)] public List<ulong> MailList { get; } = [];
+    [Array(CountBits = 32), UInt(64)] public List<ulong> Unknown0 { get; } = [];
 }

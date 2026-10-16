@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientQuestRetry, Direction.ClientToServer)]
-public sealed partial class ClientQuestRetry
+[WireMessage(GameMessageOpcode.Client0365, Direction.ClientToServer)]
+public sealed partial class Client0365
 {
-    [UInt(15)] public ushort QuestId { get; private set; }
+    [UInt(15)] public ushort Unknown0 { get; private set; }
 }

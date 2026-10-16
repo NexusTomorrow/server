@@ -3,8 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pvp;
 
-// Can only be sent after being identified as OpponentUnitId in ServerDuelChallenge (0x896)
-[WireMessage(GameMessageOpcode.ClientDuelAccept, Direction.ClientToServer)]
-public sealed partial class ClientDuelAccept
+[WireMessage(GameMessageOpcode.Client00E8, Direction.ClientToServer)]
+public sealed partial class Client00E8
 {
 }

@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientDialogOpened, Direction.ClientToServer)]
-public sealed partial class ClientDialogOpened
+[WireMessage(GameMessageOpcode.Client0356, Direction.ClientToServer)]
+public sealed partial class Client0356
 {
 }

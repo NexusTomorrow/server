@@ -2,14 +2,11 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-/// <summary>
-/// The first four fields of a <see cref="Mission"/>, which the mission update and episode progress messages carry without its state and giver.
-/// </summary>
 [WireStruct]
-public sealed partial class MissionProgress
+public sealed partial class Server06B5Part0
 {
-    [UInt(15)] public uint PathMissionId { get; set; }
-    [UInt(1)] public bool Completed { get; set; }
-    [UInt(32)] public uint ObjectiveCompletionFlags { get; set; }
-    [UInt(32)] public uint StateFlags { get; set; }
+    [UInt(15)] public uint Unknown0 { get; set; }
+    [UInt(1)] public bool Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
 }

@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Costume;
 
-[WireMessage(GameMessageOpcode.ServerCostume, Direction.ServerToClient)]
-public sealed partial class ServerCostume
+[WireMessage(GameMessageOpcode.Server00D8, Direction.ServerToClient)]
+public sealed partial class Server00D8
 {
-    public Costume Costume { get; set; }
+    public Server00D8Part0 Unknown0 { get; set; }
 }

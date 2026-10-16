@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ClientHousingRequestCommunityPlacement, Direction.ClientToServer)]
-public sealed partial class ClientHousingRequestCommunityPlacement
+[WireMessage(GameMessageOpcode.Client052B, Direction.ClientToServer)]
+public sealed partial class Client052B
 {
-    public Identity ResidenceIdentity { get; } = new();
-    [UInt(32)] public uint PropertyIndex { get; private set; }
+    public Client00B5Part0 Unknown0 { get; } = new();
+    [UInt(32)] public uint Unknown1 { get; private set; }
 }

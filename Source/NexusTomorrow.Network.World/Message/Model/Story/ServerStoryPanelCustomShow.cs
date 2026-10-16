@@ -5,12 +5,12 @@ using NexusTomorrow.Network.World.Message.Model.Story.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Story;
 
-[WireMessage(GameMessageOpcode.ServerStoryPanelCustomShow, Direction.ServerToClient)]
-public sealed partial class ServerStoryPanelCustomShow
+[WireMessage(GameMessageOpcode.Server075B, Direction.ServerToClient)]
+public sealed partial class Server075B
 {
-    public StoryMessage StoryMessage { get; set; }
-    [UInt(32)] public uint SoundContextEventId { get; set; }
-    [UInt(32)] public StoryPanelType StoryPanelType { get; set; }
-    [UInt(32)] public uint DurationMS { get; set; }
-    [UInt(32)] public StoryPanelStyle StoryPanelStyle { get; set; }
+    public Server0738Part0 Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
 }

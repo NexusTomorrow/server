@@ -3,14 +3,14 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-[WireMessage(GameMessageOpcode.ClientCharacterCreate, Direction.ClientToServer)]
-public sealed partial class ClientCharacterCreate
+[WireMessage(GameMessageOpcode.Client025B, Direction.ClientToServer)]
+public sealed partial class Client025B
 {
-    [UInt(32)] public uint CharacterCreationId { get; private set; }
-    [WideString] public string Name { get; private set; }
-    [UInt(3)] public byte Path { get; private set; }
-    [UInt(32), Count] public uint LabelsCount { get; set; }
-    [Array(CountFrom = nameof(LabelsCount)), UInt(32)] public List<uint> Labels { get; } = [];
-    [Array(CountFrom = nameof(LabelsCount)), UInt(32)] public List<uint> Values { get; } = [];
-    [Array(CountBits = 32), Float32] public List<float> Bones { get; } = [];
+    [UInt(32)] public uint Unknown0 { get; private set; }
+    [WideString] public string Unknown1 { get; private set; }
+    [UInt(3)] public byte Unknown2 { get; private set; }
+    [UInt(32), Count] public uint Unknown3 { get; set; }
+    [Array(CountFrom = nameof(Unknown3)), UInt(32)] public List<uint> Unknown4 { get; } = [];
+    [Array(CountFrom = nameof(Unknown3)), UInt(32)] public List<uint> Unknown5 { get; } = [];
+    [Array(CountBits = 32), Float32] public List<float> Unknown6 { get; } = [];
 }

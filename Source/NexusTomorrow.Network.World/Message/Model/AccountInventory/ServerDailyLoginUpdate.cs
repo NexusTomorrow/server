@@ -4,14 +4,14 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
-[WireMessage(GameMessageOpcode.ServerDailyLoginUpdate, Direction.ServerToClient)]
-public sealed partial class ServerDailyLoginUpdate
+[WireMessage(GameMessageOpcode.Server096E, Direction.ServerToClient)]
+public sealed partial class Server096E
 {
-    [UInt(32)] public uint LoginDaysTotal { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
     [UInt(32)] public uint Unknown1 { get; set; }
-    [UInt(32)] public uint CurrentLoginDays { get; set; }
     [UInt(32)] public uint Unknown2 { get; set; }
-    [UInt(32)] public uint NextDailyRewardNotifyTime { get; set; } // relative time from now in milliseconds
-    [Float32] public float NextLockboxKeyTimeInDays { get; set; }
-    [UInt(3)] public PremiumLockboxKeyStatus PremiumKeyStatus { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
+    [Float32] public float Unknown5 { get; set; }
+    [UInt(3)] public byte Unknown6 { get; set; }
 }

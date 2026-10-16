@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ClientHousingEditMode, Direction.ClientToServer)]
-public sealed partial class ClientHousingEditMode
+[WireMessage(GameMessageOpcode.Client053C, Direction.ClientToServer)]
+public sealed partial class Client053C
 {
-    public Identity ResidenceIdentity { get; } = new(); // Can be a residence the player has rights to edit, a community residence, or war party plot
-    [UInt(1)] public bool Enabled { get; private set; }
+    public Client00B5Part0 Unknown0 { get; } = new();
+    [UInt(1)] public bool Unknown1 { get; private set; }
 }

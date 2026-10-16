@@ -3,11 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-// Only sent if a surrender vote is active
-// If MatchType is a PvP type, is a vote to surrender
-// If MatchType is a PvE type, is a vote to disband
-[WireMessage(GameMessageOpcode.ClientMatchingMatchCastVoteSurrender, Direction.ClientToServer)]
-public sealed partial class ClientMatchingMatchCastVoteSurrender
+[WireMessage(GameMessageOpcode.Client0624, Direction.ClientToServer)]
+public sealed partial class Client0624
 {
-    [UInt(1)] public bool Vote { get; private set; } // true = yes, false = no
+    [UInt(1)] public bool Unknown0 { get; private set; }
 }

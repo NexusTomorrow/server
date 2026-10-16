@@ -4,28 +4,28 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerMatchingQueueJoin, Direction.ServerToClient)]
-public sealed partial class ServerMatchingQueueJoin
+[WireMessage(GameMessageOpcode.Server05DF, Direction.ServerToClient)]
+public sealed partial class Server05DF
 {
     [WireStruct]
-    public sealed partial class Map
+    public sealed partial class Server05DFPart0
     {
-        [UInt(5)] public Game.Static.Matching.MatchType MatchType { get; set; }
-        [Array(CountBits = 32), UInt(32)] public List<uint> MatchingGameMapIds { get; set; } = [];
-        [UInt(14)] public ushort MatchingGameType { get; set; }
-        [UInt(32)] public MatchingQueueFlags QueueFlags { get; set; }
+        [UInt(5)] public byte Unknown0 { get; set; }
+        [Array(CountBits = 32), UInt(32)] public List<uint> Unknown1 { get; set; } = [];
+        [UInt(14)] public ushort Unknown2 { get; set; }
+        [UInt(32)] public uint Unknown3 { get; set; }
     }
 
     [WireStruct]
-    public sealed partial class Queue
+    public sealed partial class Server05DFPart1
     {
-        [UInt(5)] public Game.Static.Matching.MatchType MatchType { get; set; }
-        [UInt(1)] public bool IsParty { get; set; }
-        [UInt(32)] public uint QueueTime { get; set; }
-        [UInt(32)] public uint AverageWaitTime { get; set; }
+        [UInt(5)] public byte Unknown0 { get; set; }
+        [UInt(1)] public bool Unknown1 { get; set; }
+        [UInt(32)] public uint Unknown2 { get; set; }
+        [UInt(32)] public uint Unknown3 { get; set; }
     }
 
-    public Map MapData { get; set; }
-    public Queue QueueData { get; set; }
-    [UInt(32)] public Role QueuedRoles { get; set; }
+    public Server05DFPart0 Unknown0 { get; set; }
+    public Server05DFPart1 Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }

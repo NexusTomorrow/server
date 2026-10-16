@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ClientFriendshipSetNoteByIdentity, Direction.ClientToServer)]
-public sealed partial class ClientFriendshipSetNoteByIdentity
+[WireMessage(GameMessageOpcode.Client03C7, Direction.ClientToServer)]
+public sealed partial class Client03C7
 {
-    public Identity PlayerIdentity { get; private set; } = new();
-    [WideString] public string Note { get; private set; }
+    public Client00B5Part0 Unknown0 { get; private set; } = new();
+    [WideString] public string Unknown1 { get; private set; }
 }

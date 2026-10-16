@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerMovementControlRemove, Direction.ServerToClient)]
-public sealed partial class ServerMovementControlRemove
+[WireMessage(GameMessageOpcode.Message0639, Direction.ServerToClient)]
+public sealed partial class Message0639
 {
 }

@@ -3,10 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-// Fires whenever a settler interacts with a settler depot.
-[WireMessage(GameMessageOpcode.ServerPathSettlerBuildInvoke, Direction.ServerToClient)]
-public sealed partial class ServerPathSettlerBuildInvoke
+[WireMessage(GameMessageOpcode.Server066D, Direction.ServerToClient)]
+public sealed partial class Server066D
 {
-    [UInt(32)] public uint SettlerHubUnitId { get; set; }
-    [Array(CountBits = 32), UInt(32)] public List<uint> PathSettlerImprovementGroupIds { get; set; } = [];
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [Array(CountBits = 32), UInt(32)] public List<uint> Unknown1 { get; set; } = [];
 }

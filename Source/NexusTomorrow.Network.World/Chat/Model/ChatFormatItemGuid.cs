@@ -4,9 +4,8 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Chat.Model;
 
 [WireStruct]
-[UnionCase(ChatFormatType.ItemGuid)]
-public sealed partial class ChatFormatItemGuid : IChatFormatModel
+[UnionCase(9)]
+public sealed partial class Client01C3Union0Arm09 : IClient01C3Union0
 {
-    [NotOnWire] public ChatFormatType Type => ChatFormatType.ItemGuid;
-    [UInt(64)] public ulong ItemGuid { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
 }

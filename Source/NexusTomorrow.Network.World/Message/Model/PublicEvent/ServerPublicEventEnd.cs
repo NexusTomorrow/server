@@ -5,24 +5,24 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
-[WireMessage(GameMessageOpcode.ServerPublicEventEnd, Direction.ServerToClient)]
-public sealed partial class ServerPublicEventEnd
+[WireMessage(GameMessageOpcode.Server00D6, Direction.ServerToClient)]
+public sealed partial class Server00D6
 {
     [WireStruct]
-    public sealed partial class PublicEventObjectiveStatus
+    public sealed partial class Server00D6Part3
     {
-        [UInt(15)] public uint ObjectiveId { get; set; }
-        [UInt(32)] public PublicEventStatus Status { get; set; }
+        [UInt(15)] public uint Unknown0 { get; set; }
+        [UInt(32)] public uint Unknown1 { get; set; }
     }
 
-    [UInt(14)] public uint PublicEventId { get; set; }
-    [UInt(32)] public PublicEventRemoveReason Reason { get; set; }
-    [UInt(32)] public uint ElapsedTimeMs { get; set; }
-    public PublicEventStats PersonalStats { get; set; }
-    [Array(CountBits = 32)] public List<PublicEventTeamStats> TeamStats { get; set; } = [];
-    [Array(CountBits = 32)] public List<PublicEventParticipantStats> ParticipantStats { get; set; } = [];
-    [Array(CountBits = 32)] public List<PublicEventObjectiveStatus> ObjectiveStatus { get; set; } = [];
-    [UInt(32)] public PublicEventRewardTier RewardTier { get; set; }
-    [UInt(32)] public PublicEventRewardType RewardType { get; set; }
-    [FixedArray(3), UInt(32)] public uint[] RewardThreshold { get; set; } = new uint[3];
+    [UInt(14)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    public Server00D6Part0 Unknown3 { get; set; }
+    [Array(CountBits = 32)] public List<Server00D6Part1> Unknown4 { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server00D6Part2> Unknown5 { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server00D6Part3> Unknown6 { get; set; } = [];
+    [UInt(32)] public uint Unknown7 { get; set; }
+    [UInt(32)] public uint Unknown8 { get; set; }
+    [FixedArray(3), UInt(32)] public uint[] Unknown9 { get; set; } = new uint[3];
 }

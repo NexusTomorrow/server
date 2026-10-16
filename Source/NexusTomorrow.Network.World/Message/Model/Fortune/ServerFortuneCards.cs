@@ -4,13 +4,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Fortune;
 
-// Generally end all 0 after ClientFortunesNotifyGame/Storefront and then send with values after ClientFortunesStart
-// Fortune games can be partially played and resumed so this message is not always sent with 0's after ClientFortunesNotifyGame/Storefront
-[WireMessage(GameMessageOpcode.ServerFortuneCards, Direction.ServerToClient)]
-public sealed partial class ServerFortuneCards
+[WireMessage(GameMessageOpcode.Server03D1, Direction.ServerToClient)]
+public sealed partial class Server03D1
 {
-    [UInt(3)] public FortuneOperation Operation { get; set; }
-    [FixedArray(3), UInt(2)] public RewardRarity[] Rarity { get; set; } = new RewardRarity[3];
-    [FixedArray(3), UInt(32)] public uint[] AccountItemId { get; set; } = new uint[3];
-    [FixedArray(3), UInt(1)] public bool[] CardFlipped { get; set; } = new bool[3];
+    [UInt(3)] public byte Unknown0 { get; set; }
+    [FixedArray(3), UInt(2)] public byte[] Unknown1 { get; set; } = new byte[3];
+    [FixedArray(3), UInt(32)] public uint[] Unknown2 { get; set; } = new uint[3];
+    [FixedArray(3), UInt(1)] public bool[] Unknown3 { get; set; } = new bool[3];
 }

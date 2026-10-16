@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Entity.Model;
 
 [WireStruct]
-[UnionCase(EntityType.InstancePortal)]
-public sealed partial class InstancePortalEntityModel : IEntityModel
+[UnionCase(14)]
+public sealed partial class Server0262Union0Arm0E : IServer0262Union0
 {
-    [UInt(18)] public uint CreatureId { get; set; }
-    [UInt(32)] public uint RemainingTimeMs { get; set; }
+    [UInt(18)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

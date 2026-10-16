@@ -4,16 +4,16 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ServerHousingRandomCommunityList, Direction.ServerToClient)]
-public sealed partial class ServerHousingRandomCommunityList
+[WireMessage(GameMessageOpcode.Server0526, Direction.ServerToClient)]
+public sealed partial class Server0526
 {
     [WireStruct]
-    public sealed partial class Community
+    public sealed partial class Server0526Part0
     {
-        public Identity GuildIdentity { get; set; }
-        [WideString] public string Name { get; set; }
-        [WideString] public string CommunityLeader { get; set; }
+        public Client00B5Part0 Unknown0 { get; set; }
+        [WideString] public string Unknown1 { get; set; }
+        [WideString] public string Unknown2 { get; set; }
     }
 
-    [Array(CountBits = 32)] public List<Community> Communities { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server0526Part0> Unknown0 { get; set; } = [];
 }

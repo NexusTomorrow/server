@@ -4,10 +4,10 @@ using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ClientMoveToCast, Direction.ClientToServer)]
-public sealed partial class ClientMoveToCast
+[WireMessage(GameMessageOpcode.Client009B, Direction.ClientToServer)]
+public sealed partial class Client009B
 {
-    [UInt(32)] public uint ClientSpellCastUniqueId { get; private set; }
-    [UInt(16)] public ushort BagIndex { get; private set; }
-    public Position MoveToPosition { get; private set; } = new Position();
+    [UInt(32)] public uint Unknown0 { get; private set; }
+    [UInt(16)] public ushort Unknown1 { get; private set; }
+    public Client0096Part0 Unknown2 { get; private set; } = new Client0096Part0();
 }

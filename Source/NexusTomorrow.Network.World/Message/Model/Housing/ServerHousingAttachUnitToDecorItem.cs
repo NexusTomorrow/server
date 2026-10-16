@@ -4,10 +4,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ServerHousingAttachUnitToDecorItem, Direction.ServerToClient)]
-public sealed partial class ServerHousingAttachUnitToDecorItem
+[WireMessage(GameMessageOpcode.Server053A, Direction.ServerToClient)]
+public sealed partial class Server053A
 {
-    public Identity ResidenceIdentity { get; set; }
-    [UInt(64)] public ulong DecorId { get; set; }
-    [UInt(32)] public uint AttachedUnitId { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [UInt(64)] public ulong Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }

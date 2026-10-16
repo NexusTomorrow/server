@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
-[WireMessage(GameMessageOpcode.ServerAccountPrivilegeRestrictionUpdate, Direction.ServerToClient)]
-public sealed partial class ServerAccountPrivilegeRestrictionUpdate
+[WireMessage(GameMessageOpcode.Server0971, Direction.ServerToClient)]
+public sealed partial class Server0971
 {
-    [UInt(3)] public AccountPrivilegeRestriction Restriction { get; set; }
-    [Float32] public float PenaltyDays { get; set; }
+    [UInt(3)] public byte Unknown0 { get; set; }
+    [Float32] public float Unknown1 { get; set; }
 }

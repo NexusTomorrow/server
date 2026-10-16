@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-// Triggers SettlerInfrastructureComplete lua event
-[WireMessage(GameMessageOpcode.ServerPathSettlerInfrastructureComplete, Direction.ServerToClient)]
-public sealed partial class ServerPathSettlerInfrastructureComplete
+[WireMessage(GameMessageOpcode.Server0673, Direction.ServerToClient)]
+public sealed partial class Server0673
 {
-    [UInt(32)] public uint Unused { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

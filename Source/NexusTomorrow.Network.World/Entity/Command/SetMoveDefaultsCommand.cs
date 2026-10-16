@@ -3,10 +3,9 @@ using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
-[EntityCommand(EntityCommand.SetMoveDefaults)]
 [WireStruct]
-[UnionCase(EntityCommand.SetMoveDefaults)]
-public sealed partial class SetMoveDefaultsCommand : IEntityCommandModel
+[UnionCase(13)]
+public sealed partial class Server0262Union2Arm0D : IServer0262Union2
 {
-    [UInt(1)] public bool Blend { get; set; }
+    [UInt(1)] public bool Unknown0 { get; set; }
 }

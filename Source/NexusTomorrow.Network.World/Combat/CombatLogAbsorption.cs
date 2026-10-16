@@ -4,11 +4,10 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
-[UnionCase(CombatLogType.Absorption)]
-public sealed partial class CombatLogAbsorption : ICombatLog
+[UnionCase(0)]
+public sealed partial class Server0247Union0Arm00 : IServer0247Union0
 {
-    [NotOnWire] public CombatLogType Type => CombatLogType.Absorption;
 
-    [UInt(32)] public uint AbsorptionAmount { get; set; }
-    public CombatLogCastData CastData { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    public Server0247Part0 Unknown1 { get; set; }
 }

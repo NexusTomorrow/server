@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ClientCastDefaultAttack, Direction.ClientToServer)]
-public sealed partial class ClientCastDefaultAttack
+[WireMessage(GameMessageOpcode.Client00E3, Direction.ClientToServer)]
+public sealed partial class Client00E3
 {
-    [UInt(1)] public bool ButtonPressed { get; private set; }
+    [UInt(1)] public bool Unknown0 { get; private set; }
 }

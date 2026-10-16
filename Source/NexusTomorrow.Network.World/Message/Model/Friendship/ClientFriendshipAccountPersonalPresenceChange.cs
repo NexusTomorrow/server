@@ -4,8 +4,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ClientFriendshipAccountPersonalPresenceChange, Direction.ClientToServer)]
-public sealed partial class ClientFriendshipAccountPersonalPresenceChange
+[WireMessage(GameMessageOpcode.Client03A7, Direction.ClientToServer)]
+public sealed partial class Client03A7
 {
-    [UInt(3)] public AccountPresenceState Presence { get; private set; }
+    [UInt(3)] public byte Unknown0 { get; private set; }
 }

@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.ICComm;
 
-[WireMessage(GameMessageOpcode.ServerICCommMessageResult, Direction.ServerToClient)]
-public sealed partial class ServerICCommMessageResult
+[WireMessage(GameMessageOpcode.Server054C, Direction.ServerToClient)]
+public sealed partial class Server054C
 {
-    [UInt(64)] public ulong IccomId { get; set; }
-    [UInt(32)] public uint MessageId { get; set; }
-    [UInt(4)] public ICCommMessageResult Result { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(4)] public byte Unknown2 { get; set; }
 }

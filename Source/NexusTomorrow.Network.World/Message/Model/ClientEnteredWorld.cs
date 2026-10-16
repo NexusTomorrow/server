@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientEnteredWorld, Direction.ClientToServer)]
-public sealed partial class ClientEnteredWorld
+[WireMessage(GameMessageOpcode.Client00F2, Direction.ClientToServer)]
+public sealed partial class Client00F2
 {
-    [UInt(15)] public ushort WorldZoneId { get; private set; } // 15
+    [UInt(15)] public ushort Unknown0 { get; private set; }
 }

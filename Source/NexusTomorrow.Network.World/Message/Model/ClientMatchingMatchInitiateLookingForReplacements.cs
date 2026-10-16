@@ -4,8 +4,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientMatchingMatchInitiateLookingForReplacements, Direction.ClientToServer)]
-public sealed partial class ClientMatchingMatchInitiateLookingForReplacements
+[WireMessage(GameMessageOpcode.Client05D5, Direction.ClientToServer)]
+public sealed partial class Client05D5
 {
-    [UInt(32)] public Role Roles { get; private set; } // Roles being looked for
+    [UInt(32)] public uint Unknown0 { get; private set; }
 }

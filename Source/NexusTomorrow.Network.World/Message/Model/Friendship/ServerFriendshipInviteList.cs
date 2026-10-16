@@ -5,23 +5,23 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ServerFriendshipInviteList, Direction.ServerToClient)]
-public sealed partial class ServerFriendshipInviteList
+[WireMessage(GameMessageOpcode.Server03BA, Direction.ServerToClient)]
+public sealed partial class Server03BA
 {
     [WireStruct]
-    public sealed partial class InviteData
+    public sealed partial class Server03BAPart0
     {
-        [UInt(64)] public ulong InviteId { get; set; }
-        public Identity PlayerIdentity { get; set; }
-        [UInt(3)] public uint Seen { get; set; }
-        [Float32] public float ExpiryInDays { get; set; }
-        [WideString] public string Note { get; set; }
-        [WideString] public string Name { get; set; }
-        [UInt(8)] public Class Class { get; set; }
-        [Pad(6)] public Pad ClassHigh { get; }
-        [UInt(3)] public Game.Static.PlayerPath.Path Path { get; set; }
-        [UInt(8)] public byte Level { get; set; }
+        [UInt(64)] public ulong Unknown0 { get; set; }
+        public Client00B5Part0 Unknown1 { get; set; }
+        [UInt(3)] public uint Unknown2 { get; set; }
+        [Float32] public float Unknown3 { get; set; }
+        [WideString] public string Unknown4 { get; set; }
+        [WideString] public string Unknown5 { get; set; }
+        [UInt(8)] public byte Unknown6 { get; set; }
+        [UInt(6)] public byte Unknown7 { get; set; }
+        [UInt(3)] public byte Unknown8 { get; set; }
+        [UInt(8)] public byte Unknown9 { get; set; }
     }
 
-    [Array(CountBits = 16)] public List<InviteData> Invites { get; set; } = [];
+    [Array(CountBits = 16)] public List<Server03BAPart0> Unknown0 { get; set; } = [];
 }

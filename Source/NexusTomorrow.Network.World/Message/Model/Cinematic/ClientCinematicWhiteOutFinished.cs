@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[WireMessage(GameMessageOpcode.ClientCinematicWhiteOutFinished, Direction.ClientToServer)]
-public sealed partial class ClientCinematicWhiteOutFinished
+[WireMessage(GameMessageOpcode.Client0721, Direction.ClientToServer)]
+public sealed partial class Client0721
 {
 }

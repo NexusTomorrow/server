@@ -6,7 +6,7 @@ namespace NexusTomorrow.Network.Codec.Tests.Fixtures;
 // before any real message is declared: 0x009A is 32, 16, 32, 1 bits; 0x0104 is 14, 32, 32 bits;
 // 0x01C3 is 14, 64, a wide string, a 5-bit count of 37-bit elements, then 16 bits.
 
-[WireMessage(GameMessageOpcode.ClientCastSpell, Direction.ClientToServer)]
+[WireMessage(GameMessageOpcode.Client009A, Direction.ClientToServer)]
 public sealed partial class CastSpellFixture
 {
     [UInt(32)] public uint ClientSpellCastUniqueId { get; set; }
@@ -15,7 +15,7 @@ public sealed partial class CastSpellFixture
     [UInt(1)] public bool ButtonPressed { get; set; }
 }
 
-[WireMessage(GameMessageOpcode.ServerGalacticArchiveUpdate, Direction.ServerToClient)]
+[WireMessage(GameMessageOpcode.Server0104, Direction.ServerToClient)]
 public sealed partial class ArchiveUpdateFixture
 {
     [UInt(14)] public ushort ArticleId { get; set; }
@@ -23,7 +23,7 @@ public sealed partial class ArchiveUpdateFixture
     [UInt(32)] public uint ViewedEntries { get; set; }
 }
 
-[WireMessage(GameMessageOpcode.ClientChat, Direction.ClientToServer)]
+[WireMessage(GameMessageOpcode.Client01C3, Direction.ClientToServer)]
 public sealed partial class ChatFixture
 {
     public ChannelFixture Channel { get; set; } = new();

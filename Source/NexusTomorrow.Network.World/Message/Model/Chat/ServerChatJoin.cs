@@ -4,12 +4,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
-[WireMessage(GameMessageOpcode.ServerChatJoin, Direction.ServerToClient)]
-public sealed partial class ServerChatJoin
+[WireMessage(GameMessageOpcode.Server01BC, Direction.ServerToClient)]
+public sealed partial class Server01BC
 {
-    public Channel Channel { get; set; }
-    [WideString] public string Name { get; set; }
-    [UInt(32)] public uint MemberCount { get; set; }
-    [UInt(32)] public ChatChannelMemberFlags Flags { get; set; }
-    [UInt(32)] public uint Order { get; set; }
+    public Server01B5Part0 Unknown0 { get; set; }
+    [WideString] public string Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
 }

@@ -4,54 +4,54 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.Auth.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientHelloAuth, Direction.ClientToServer)]
-public sealed partial class ClientHelloAuth
+[WireMessage(GameMessageOpcode.Client0592, Direction.ClientToServer)]
+public sealed partial class Client0592
 {
     [WireStruct]
-    public sealed partial class HardwareInformation
+    public sealed partial class Client0592Part0
     {
         [WireStruct]
-        public sealed partial class CpuInformation
+        public sealed partial class Client0592Part1
         {
-            [WideString] public string Manufacturer { get; private set; }
-            [WideString] public string Name { get; private set; }
-            [WideString] public string Description { get; private set; }
-            [UInt(32)] public uint Family { get; private set; }
-            [UInt(32)] public uint Level { get; private set; }
-            [UInt(32)] public uint Revision { get; private set; }
-            [UInt(32)] public uint MaxClockSpeed { get; private set; }
-            [UInt(32)] public uint NumberOfCores { get; private set; }
+            [WideString] public string Unknown0 { get; private set; }
+            [WideString] public string Unknown1 { get; private set; }
+            [WideString] public string Unknown2 { get; private set; }
+            [UInt(32)] public uint Unknown3 { get; private set; }
+            [UInt(32)] public uint Unknown4 { get; private set; }
+            [UInt(32)] public uint Unknown5 { get; private set; }
+            [UInt(32)] public uint Unknown6 { get; private set; }
+            [UInt(32)] public uint Unknown7 { get; private set; }
         }
 
         [WireStruct]
-        public sealed partial class GpuInformation
+        public sealed partial class Client0592Part2
         {
-            [WideString] public string Name { get; private set; }
-            [UInt(32)] public uint VendorId { get; private set; }
-            [UInt(32)] public uint DeviceId { get; private set; }
-            [UInt(32)] public uint SubSysId { get; private set; }
-            [UInt(32)] public uint Revision { get; private set; }
-            [UInt(32)] public uint AdapterRamMB { get; private set; }
+            [WideString] public string Unknown0 { get; private set; }
+            [UInt(32)] public uint Unknown1 { get; private set; }
+            [UInt(32)] public uint Unknown2 { get; private set; }
+            [UInt(32)] public uint Unknown3 { get; private set; }
+            [UInt(32)] public uint Unknown4 { get; private set; }
+            [UInt(32)] public uint Unknown5 { get; private set; }
         }
 
-        public CpuInformation Cpu { get; } = new();
-        [UInt(32)] public uint MemoryPhysical { get; private set; }
-        public GpuInformation Gpu { get; } = new();
-        [UInt(32)] public uint Architecture { get; private set; }
-        [UInt(32)] public uint OsVersion { get; private set; }
-        [UInt(32)] public uint ServicePack { get; private set; }
-        [UInt(32)] public uint ProductType { get; private set; }
+        public Client0592Part1 Unknown0 { get; } = new();
+        [UInt(32)] public uint Unknown1 { get; private set; }
+        public Client0592Part2 Unknown2 { get; } = new();
+        [UInt(32)] public uint Unknown3 { get; private set; }
+        [UInt(32)] public uint Unknown4 { get; private set; }
+        [UInt(32)] public uint Unknown5 { get; private set; }
+        [UInt(32)] public uint Unknown6 { get; private set; }
     }
 
-    [UInt(32)] public uint Build { get; private set; }
-    [UInt(64)] public ulong CryptKeyInteger { get; private set; }
-    [TerminatedWideString] public string AccountString { get; private set; }
-    public NetworkGuid UUID_1 { get; } = new();
-    public NetworkGuid GameToken { get; } = new();
-    [UInt(32)] public uint InetAddress { get; private set; }
-    [UInt(32)] public Language Language { get; private set; }
-    [UInt(32)] public uint GameMode { get; private set; }
-    [UInt(32)] public uint Unused { get; private set; }
-    public HardwareInformation Hardware { get; } = new();
-    [UInt(32)] public uint RealmDataCenterId { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
+    [UInt(64)] public ulong Unknown1 { get; private set; }
+    [TerminatedWideString] public string Unknown2 { get; private set; }
+    public NetworkGuid Unknown3 { get; } = new();
+    public NetworkGuid Unknown4 { get; } = new();
+    [UInt(32)] public uint Unknown5 { get; private set; }
+    [UInt(32)] public uint Unknown6 { get; private set; }
+    [UInt(32)] public uint Unknown7 { get; private set; }
+    [UInt(32)] public uint Unknown8 { get; private set; }
+    public Client0592Part0 Unknown9 { get; } = new();
+    [UInt(32)] public uint Unknown10 { get; private set; }
 }

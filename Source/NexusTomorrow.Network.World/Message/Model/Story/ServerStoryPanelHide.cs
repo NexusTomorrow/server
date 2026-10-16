@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Story;
 
-[WireMessage(GameMessageOpcode.ServerStoryPanelHide, Direction.ServerToClient)]
-public sealed partial class ServerStoryPanelHide
+[WireMessage(GameMessageOpcode.Server0759, Direction.ServerToClient)]
+public sealed partial class Server0759
 {
 }

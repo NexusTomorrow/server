@@ -4,8 +4,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[WireMessage(GameMessageOpcode.ClientTradeskillResetTalents, Direction.ClientToServer)]
-public sealed partial class ClientTradeskillResetTalents
+[WireMessage(GameMessageOpcode.Client0858, Direction.ClientToServer)]
+public sealed partial class Client0858
 {
-    [UInt(32)] public TradeskillType TradeskillId { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
 }

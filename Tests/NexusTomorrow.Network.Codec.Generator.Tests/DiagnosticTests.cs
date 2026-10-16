@@ -218,12 +218,12 @@ public sealed class DiagnosticTests
 
             namespace Tests;
 
-            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            [WireMessage(GameMessageOpcode.Message0003, Direction.ServerToClient)]
             public sealed partial class Alpha
             {
             }
 
-            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            [WireMessage(GameMessageOpcode.Message0003, Direction.ServerToClient)]
             public sealed partial class Beta
             {
             }
@@ -244,12 +244,12 @@ public sealed class DiagnosticTests
 
             namespace Tests;
 
-            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            [WireMessage(GameMessageOpcode.Message0003, Direction.ServerToClient)]
             public sealed partial class Alpha
             {
             }
 
-            [WireMessage(GameMessageOpcode.ServerHello, Direction.ClientToServer)]
+            [WireMessage(GameMessageOpcode.Message0003, Direction.ClientToServer)]
             public sealed partial class Beta
             {
             }
@@ -606,7 +606,7 @@ public sealed class DiagnosticTests
 
             namespace Tests;
 
-            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            [WireMessage(GameMessageOpcode.Message0003, Direction.ServerToClient)]
             public sealed partial class Sample
             {
                 [Blob(16, Align = true)] public byte[] Payload { get; set; } = [];
@@ -931,7 +931,7 @@ public sealed class DiagnosticTests
             namespace Tests;
 
             [WireStruct]
-            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            [WireMessage(GameMessageOpcode.Message0003, Direction.ServerToClient)]
             public sealed partial class Sample
             {
                 [UInt(8)] public byte Value { get; set; }
@@ -952,7 +952,7 @@ public sealed class DiagnosticTests
 
             namespace Tests;
 
-            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            [WireMessage(GameMessageOpcode.Message0003, Direction.ServerToClient)]
             public abstract partial class Sample
             {
                 [UInt(8)] public byte Value { get; set; }
@@ -1021,7 +1021,7 @@ public sealed class DiagnosticTests
 
             namespace Tests;
 
-            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            [WireMessage(GameMessageOpcode.Message0003, Direction.ServerToClient)]
             public sealed partial class Envelope
             {
                 [Blob(32, Align = true)] public byte[] Payload { get; set; } = [];
@@ -1061,7 +1061,7 @@ public sealed class DiagnosticTests
             {
             }
 
-            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            [WireMessage(GameMessageOpcode.Message0003, Direction.ServerToClient)]
             [UnionCase(1)]
             public sealed partial class Envelope : IShape
             {

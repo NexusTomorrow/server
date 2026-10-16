@@ -5,21 +5,20 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
-[UnionCase(CombatLogType.MultiHitShields)]
-public sealed partial class CombatLogMultiHitShields : ICombatLog
+[UnionCase(7)]
+public sealed partial class Server0247Union0Arm07 : IServer0247Union0
 {
-    [NotOnWire] public CombatLogType Type => CombatLogType.MultiHitShields;
 
-    [UInt(32)] public uint DamageAmount { get; set; }
-    [UInt(32)] public uint RawDamage { get; set; }
-    [UInt(32)] public uint Shield { get; set; }
-    [UInt(32)] public uint Absorption { get; set; }
-    [UInt(32)] public uint Overkill { get; set; }
-    [UInt(32)] public uint GlanceAmount { get; set; }
-    [UInt(1)] public bool BTargetVulnerable { get; set; }
-    [UInt(1)] public bool BKilled { get; set; }
-    [UInt(1)] public bool BPeriodic { get; set; }
-    [UInt(3)] public DamageType DamageType { get; set; } // 3u
-    [UInt(8)] public SpellEffectType EffectType { get; set; } // 8u
-    public CombatLogCastData CastData { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
+    [UInt(32)] public uint Unknown5 { get; set; }
+    [UInt(1)] public bool Unknown6 { get; set; }
+    [UInt(1)] public bool Unknown7 { get; set; }
+    [UInt(1)] public bool Unknown8 { get; set; }
+    [UInt(3)] public byte Unknown9 { get; set; }
+    [UInt(8)] public byte Unknown10 { get; set; }
+    public Server0247Part0 Unknown11 { get; set; }
 }

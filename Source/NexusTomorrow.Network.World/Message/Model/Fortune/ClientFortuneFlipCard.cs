@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Fortune;
 
-[WireMessage(GameMessageOpcode.ClientFortuneFlipCard, Direction.ClientToServer)]
-public sealed partial class ClientFortuneFlipCard
+[WireMessage(GameMessageOpcode.Client03CD, Direction.ClientToServer)]
+public sealed partial class Client03CD
 {
-    [UInt(32)] public uint SelectedCardIndex { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
 }

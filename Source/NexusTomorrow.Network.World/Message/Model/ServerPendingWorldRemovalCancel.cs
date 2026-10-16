@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerPendingWorldRemovalCancel, Direction.ServerToClient)]
-public sealed partial class ServerPendingWorldRemovalCancel
+[WireMessage(GameMessageOpcode.Server0688, Direction.ServerToClient)]
+public sealed partial class Server0688
 {
 }

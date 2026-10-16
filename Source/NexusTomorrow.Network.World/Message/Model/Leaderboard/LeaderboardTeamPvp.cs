@@ -5,13 +5,13 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Leaderboard;
 
 [WireStruct]
-public sealed partial class LeaderboardTeamPvp
+public sealed partial class Server057APart0
 {
-    [UInt(64)] public ulong GuildId { get; set; }
-    [UInt(5)] public Class Class { get; set; } // value is 23 when leaderboard type is Arena3v3
-    [UInt(32)] public uint Rating { get; set; }
-    [UInt(32)] public uint Rank { get; set; }
-    [UInt(32)] public uint LastRank { get; set; }
-    [WideString] public string Name { get; set; } // can be team name or player name, depending on the leaderboard type
-    [Array(CountBits = 32)] public List<TeamMember> TeamMembers { get; set; } = []; // Battleground rankings are for individuals only, there are no team members
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [UInt(5)] public byte Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
+    [WideString] public string Unknown5 { get; set; }
+    [Array(CountBits = 32)] public List<Server0579Part1> Unknown6 { get; set; } = [];
 }

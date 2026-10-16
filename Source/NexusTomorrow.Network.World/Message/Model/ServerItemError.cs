@@ -4,13 +4,9 @@ using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-/// <remarks>
-/// Very similar to <see cref="ServerGenericError"/> except only <see cref="GenericError"/> codes
-/// 27, 30, 31, 35, 39, 40, 42, 63, 72, 132 and 156 are handled, anything else defaults to "You can't use that"
-/// </remarks>
-[WireMessage(GameMessageOpcode.ServerItemError, Direction.ServerToClient)]
-public sealed partial class ServerItemError
+[WireMessage(GameMessageOpcode.Server056A, Direction.ServerToClient)]
+public sealed partial class Server056A
 {
-    [UInt(64)] public ulong ItemGuid { get; set; }
-    [UInt(32)] public GenericError ErrorCode { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

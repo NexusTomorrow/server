@@ -5,19 +5,19 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[WireMessage(GameMessageOpcode.ServerProfessionsLoad, Direction.ServerToClient)]
-public sealed partial class ServerProfessionsLoad
+[WireMessage(GameMessageOpcode.Server0856, Direction.ServerToClient)]
+public sealed partial class Server0856
 {
     [WireStruct]
-    public sealed partial class DiscoveredSchematic
+    public sealed partial class Server0856Part1
     {
-        [UInt(32)] public uint TradeskillSchematic2Id { get; set; }
-        [Float32] public Vector2 Coordinates { get; set; } // Coordinates on the discovery panel
+        [UInt(32)] public uint Unknown0 { get; set; }
+        [Float32] public Vector2 Unknown1 { get; set; }
     }
 
-    [Array(CountBits = 32)] public List<TradeskillInfo> Tradeskills { get; set; } = [];
-    [Array(CountBits = 32), UInt(32)] public List<uint> LearnedSchematics { get; set; } = []; // TradeskillSchematic2Id
-    [Array(CountBits = 32)] public List<DiscoveredSchematic> DiscoveredSchematics { get; set; } = [];
-    [Array(CountBits = 32), UInt(32)] public List<uint> LearnedSchematicDiscoveredFlags { get; set; } = []; // which LearnedSchematics were discovered, bit order matches LearnedSchematics array
-    [UInt(32)] public uint RelearnCooldown { get; set; } // Sent as an offset from the time now, to the finish time, in milliseconds.
+    [Array(CountBits = 32)] public List<Server0856Part0> Unknown0 { get; set; } = [];
+    [Array(CountBits = 32), UInt(32)] public List<uint> Unknown1 { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server0856Part1> Unknown2 { get; set; } = [];
+    [Array(CountBits = 32), UInt(32)] public List<uint> Unknown3 { get; set; } = [];
+    [UInt(32)] public uint Unknown4 { get; set; }
 }

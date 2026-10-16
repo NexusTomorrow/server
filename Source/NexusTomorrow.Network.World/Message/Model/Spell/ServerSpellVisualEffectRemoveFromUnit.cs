@@ -3,10 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-// Removes all spell visual effects from a unit
-[WireMessage(GameMessageOpcode.ServerSpellVisualEffectRemoveFromUnit, Direction.ServerToClient)]
-public sealed partial class ServerSpellVisualEffectRemoveFromUnit
+[WireMessage(GameMessageOpcode.Server0785, Direction.ServerToClient)]
+public sealed partial class Server0785
 {
-    [UInt(32)] public uint TargetUnitId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
 }
 

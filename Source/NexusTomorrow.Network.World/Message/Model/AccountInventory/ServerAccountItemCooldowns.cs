@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
-[WireMessage(GameMessageOpcode.ServerAccountItemCooldowns, Direction.ServerToClient)]
-public sealed partial class ServerAccountItemCooldowns
+[WireMessage(GameMessageOpcode.Server0969, Direction.ServerToClient)]
+public sealed partial class Server0969
 {
-    [Array(CountBits = 32)] public List<AccountItemCooldown> AccountItemCooldowns { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server0969Part0> Unknown0 { get; set; } = [];
 }

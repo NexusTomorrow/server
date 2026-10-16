@@ -4,12 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Reputation;
 
-// For temporarily overriding a player's reputation value for a specific faction.
-// Does not affect the underlying reputation value sent in ServerReputationUpdate.
-[WireMessage(GameMessageOpcode.ServerReputationOverrideAdd, Direction.ServerToClient)]
-public sealed partial class ServerReputationOverrideAdd
+[WireMessage(GameMessageOpcode.Server08D7, Direction.ServerToClient)]
+public sealed partial class Server08D7
 {
-    [UInt(32)] public uint UnitId { get; set; } // Must be player's UnitId otherwise message is ignored
-    [UInt(14)] public Faction FactionId { get; set; }
-    [Float32] public float Value { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(14)] public ushort Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
 }

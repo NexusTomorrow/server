@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ServerSpellThresholdUpdate, Direction.ServerToClient)]
-public sealed partial class ServerSpellThresholdUpdate
+[WireMessage(GameMessageOpcode.Server0817, Direction.ServerToClient)]
+public sealed partial class Server0817
 {
-    [UInt(18)] public uint Spell4Id { get; set; }
-    [UInt(8)] public byte CurrentThreshold { get; set; }
+    [UInt(18)] public uint Unknown0 { get; set; }
+    [UInt(8)] public byte Unknown1 { get; set; }
 }

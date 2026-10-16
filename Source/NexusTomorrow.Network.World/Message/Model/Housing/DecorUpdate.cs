@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [WireStruct]
-public sealed partial class DecorUpdate
+public sealed partial class Client050BPart0
 {
-    public DecorInfo DecorInfo { get; internal set; } = new();
+    public Client04F5Part0 Unknown0 { get; internal set; } = new();
 }

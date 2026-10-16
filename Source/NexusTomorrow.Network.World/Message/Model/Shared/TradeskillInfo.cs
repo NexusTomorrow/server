@@ -5,12 +5,12 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class TradeskillInfo
+public sealed partial class Server0856Part0
 {
-    [UInt(32)] public TradeskillType TradeskillId { get; set; }
-    [UInt(32)] public uint TradeskillXp { get; set; }
-    [UInt(32)] public uint IsActive { get; set; }
-    [UInt(32)] public uint PropertyProficiencyFlags { get; set; }
-    [UInt(32)] public uint TalentPoints { get; set; }
-    [FixedArray(10), UInt(32)] public uint[] TradeskillTalentTierIds { get; set; } = new uint[10];
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
+    [FixedArray(10), UInt(32)] public uint[] Unknown5 { get; set; } = new uint[10];
 }

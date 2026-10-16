@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pet;
 
-[WireMessage(GameMessageOpcode.ServerPetClearFlair, Direction.ServerToClient)]
-public sealed partial class ServerPetClearFlair
+[WireMessage(GameMessageOpcode.Server023B, Direction.ServerToClient)]
+public sealed partial class Server023B
 {
 }

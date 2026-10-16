@@ -3,12 +3,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[WireMessage(GameMessageOpcode.ClientCraftingCraftItemAutoCraft, Direction.ClientToServer)]
-public sealed partial class ClientCraftingCraftItemAutoCraft
+[WireMessage(GameMessageOpcode.Client0851, Direction.ClientToServer)]
+public sealed partial class Client0851
 {
-    [UInt(32)] public uint ClientSpellcastUniqueId { get; private set; } // creates a spell cast when the craft is Runecrafting
-    [UInt(32)] public uint CraftingStationUnitId { get; private set; }
-    [UInt(32)] public uint TradeskillSchematic2Id { get; private set; }
-    [UInt(32)] public uint SchematicCount { get; private set; }
-    [UInt(18)] public uint CatalystItem2Id { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
+    [UInt(32)] public uint Unknown2 { get; private set; }
+    [UInt(32)] public uint Unknown3 { get; private set; }
+    [UInt(18)] public uint Unknown4 { get; private set; }
 }

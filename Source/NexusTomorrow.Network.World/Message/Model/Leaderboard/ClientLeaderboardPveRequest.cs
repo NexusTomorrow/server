@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Leaderboard;
 
-[WireMessage(GameMessageOpcode.ClientLeaderboardPveRequest, Direction.ClientToServer)]
-public sealed partial class ClientLeaderboardPveRequest
+[WireMessage(GameMessageOpcode.Client079A, Direction.ClientToServer)]
+public sealed partial class Client079A
 {
-    [UInt(4)] public LeaderboardType Type { get; private set; }
-    [UInt(32)] public uint MatchingGameMapdId { get; private set; }
-    [UInt(32)] public uint PrimeLevel { get; private set; }
+    [UInt(4)] public byte Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
+    [UInt(32)] public uint Unknown2 { get; private set; }
 }

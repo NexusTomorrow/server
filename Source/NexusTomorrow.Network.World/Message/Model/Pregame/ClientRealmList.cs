@@ -3,8 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-// Sent when the lua function CharacterScreenLib::ExitToRealmSelect is called
-[WireMessage(GameMessageOpcode.ClientRealmList, Direction.ClientToServer)]
-public sealed partial class ClientRealmList
+[WireMessage(GameMessageOpcode.Client07A4, Direction.ClientToServer)]
+public sealed partial class Client07A4
 {
 }

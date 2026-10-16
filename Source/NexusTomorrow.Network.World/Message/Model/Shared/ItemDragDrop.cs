@@ -4,8 +4,8 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class ItemDragDrop
+public sealed partial class Server0568Part0
 {
-    [UInt(64)] public ulong Guid { get; set; }
-    [UInt(64)] public ulong DragDrop { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [UInt(64)] public ulong Unknown1 { get; set; }
 }

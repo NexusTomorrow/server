@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[WireMessage(GameMessageOpcode.ServerTradeskillRelearnCooldown, Direction.ServerToClient)]
-public sealed partial class ServerTradeskillRelearnCooldown
+[WireMessage(GameMessageOpcode.Server0861, Direction.ServerToClient)]
+public sealed partial class Server0861
 {
-    [UInt(32)] public uint RelearnCooldown { get; set; } // Sent as an offset from the time now, to the finish time, in milliseconds.
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

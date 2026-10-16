@@ -5,16 +5,15 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerGroupPositionUpdate, Direction.ServerToClient)]
-public sealed partial class ServerGroupPositionUpdate
+[WireMessage(GameMessageOpcode.Server0469, Direction.ServerToClient)]
+public sealed partial class Server0469
 {
-    [UInt(64)] public ulong GroupId { get; set; }
-    [UInt(15)] public uint WorldId { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [UInt(15)] public uint Unknown1 { get; set; }
 
-    // Each member's update goes on the wire as four columns sharing one count: every Identity, every Position, every WorldZoneId, then every Flags.
-    [UInt(32), Count] public uint UpdateCount { get; set; }
-    [Array(CountFrom = nameof(UpdateCount))] public List<Identity> Identities { get; set; } = [];
-    [Array(CountFrom = nameof(UpdateCount))] public List<Position> Positions { get; set; } = [];
-    [Array(CountFrom = nameof(UpdateCount)), UInt(32)] public List<uint> WorldZoneIds { get; set; } = [];
-    [Array(CountFrom = nameof(UpdateCount)), UInt(32)] public List<uint> Flags { get; set; } = [];
+    [UInt(32), Count] public uint Unknown2 { get; set; }
+    [Array(CountFrom = nameof(Unknown2))] public List<Client00B5Part0> Unknown3 { get; set; } = [];
+    [Array(CountFrom = nameof(Unknown2))] public List<Client0096Part0> Unknown4 { get; set; } = [];
+    [Array(CountFrom = nameof(Unknown2)), UInt(32)] public List<uint> Unknown5 { get; set; } = [];
+    [Array(CountFrom = nameof(Unknown2)), UInt(32)] public List<uint> Unknown6 { get; set; } = [];
 }

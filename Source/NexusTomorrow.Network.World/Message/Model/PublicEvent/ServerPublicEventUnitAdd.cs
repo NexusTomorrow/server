@@ -4,17 +4,16 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
-// Only for adding a unit to a PublicEvent or PublicEventObjective. Ignores remove operations if specified.
-[WireMessage(GameMessageOpcode.ServerPublicEventUnitAdd, Direction.ServerToClient)]
-public sealed partial class ServerPublicEventUnitAdd
+[WireMessage(GameMessageOpcode.Server08BB, Direction.ServerToClient)]
+public sealed partial class Server08BB
 {
     [WireStruct]
-    public sealed partial class PublicEventOperation
+    public sealed partial class Server08BBPart0
     {
-        [UInt(32)] public uint ObjectId { get; set; } // PublicEventId or PublicEventObjectiveId depending on operation
-        [UInt(3)] public PublicEventOperationType Operation { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
+        [UInt(3)] public byte Unknown1 { get; set; }
     }
 
-    [UInt(32)] public uint UnitId { get; set; }
-    [Array(CountBits = 32)] public List<PublicEventOperation> Operations { get; set; } = [];
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [Array(CountBits = 32)] public List<Server08BBPart0> Unknown1 { get; set; } = [];
 }

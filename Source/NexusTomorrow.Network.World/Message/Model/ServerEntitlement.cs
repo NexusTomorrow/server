@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerEntitlement, Direction.ServerToClient)]
-public sealed partial class ServerEntitlement
+[WireMessage(GameMessageOpcode.Server0918, Direction.ServerToClient)]
+public sealed partial class Server0918
 {
-    [UInt(14)] public EntitlementType Entitlement { get; set; }
-    [UInt(32)] public uint Count { get; set; }
+    [UInt(14)] public ushort Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

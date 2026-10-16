@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[WireMessage(GameMessageOpcode.ServerPathSoliderWhackAMoleBurrows, Direction.ServerToClient)]
-public sealed partial class ServerPathSoldierWhackAMoleBurrows
+[WireMessage(GameMessageOpcode.Server067E, Direction.ServerToClient)]
+public sealed partial class Server067E
 {
-    [UInt(32)] public uint DelayUntilPop { get; set; }
-    [Array(CountBits = 32), UInt(32)] public uint[] UnitIds { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [Array(CountBits = 32), UInt(32)] public uint[] Unknown1 { get; set; }
 }

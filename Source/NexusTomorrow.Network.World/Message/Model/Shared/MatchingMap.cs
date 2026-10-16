@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class MatchingMap
+public sealed partial class Client05EFPart0
 {
-    [UInt(5)] public Game.Static.Matching.MatchType MatchType { get; private set; }
-    [Array(CountBits = 32), UInt(32)] public List<uint> Maps { get; } = []; // MatchingGameMapIds
-    [UInt(14)] public ushort MatchingGameTypeId { get; private set; }
-    [UInt(32)] public MatchingQueueFlags QueueFlags { get; private set; }
+    [UInt(5)] public byte Unknown0 { get; private set; }
+    [Array(CountBits = 32), UInt(32)] public List<uint> Unknown1 { get; } = [];
+    [UInt(14)] public ushort Unknown2 { get; private set; }
+    [UInt(32)] public uint Unknown3 { get; private set; }
 }

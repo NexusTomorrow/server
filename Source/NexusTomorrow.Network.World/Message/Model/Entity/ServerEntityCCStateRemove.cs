@@ -4,12 +4,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Entity;
 
-[WireMessage(GameMessageOpcode.ServerEntityCCStateRemove, Direction.ServerToClient)]
-public sealed partial class ServerEntityCCStateRemove
+[WireMessage(GameMessageOpcode.Server0880, Direction.ServerToClient)]
+public sealed partial class Server0880
 {
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(5)] public CCState CCType { get; set; }
-    [UInt(32)] public uint SpellCastUniqueId { get; set; } // Must match the SpellCastUniqueId from ServerSpellGo/ServerSpellExecute
-    [UInt(32)] public uint SpellEffectUniqueId { get; set; } // Must match the SpellEffectUniqueId from ServerSpellGo/ServerSpellExecute. TBC can be 0 for some CCs
-    [UInt(1)] public bool Removed { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(5)] public byte Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(1)] public bool Unknown4 { get; set; }
 }

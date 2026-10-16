@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Support;
 
-[WireMessage(GameMessageOpcode.ServerCustomerSurveyRequest, Direction.ServerToClient)]
-public sealed partial class ServerCustomerSurveyRequest
+[WireMessage(GameMessageOpcode.Server033E, Direction.ServerToClient)]
+public sealed partial class Server033E
 {
-    [UInt(14)] public SurveyType CustomerSurveyId { get; set; }
-    [UInt(32)] public uint ObjectId { get; set; }
+    [UInt(14)] public ushort Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

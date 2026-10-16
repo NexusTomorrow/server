@@ -3,11 +3,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
-[WireMessage(GameMessageOpcode.ClientChat, Direction.ClientToServer)]
-public sealed partial class ClientChat
+[WireMessage(GameMessageOpcode.Client01C3, Direction.ClientToServer)]
+public sealed partial class Client01C3
 {
-    public Channel Channel { get; private set; }
-    [WideString] public string Message { get; private set; }
-    [Array(CountBits = 5)] public List<ChatClientFormat> Formats { get; } = [];
-    [UInt(16)] public ushort ChatMessageId { get; private set; } // incremented by the client
+    public Server01B5Part0 Unknown0 { get; private set; }
+    [WideString] public string Unknown1 { get; private set; }
+    [Array(CountBits = 5)] public List<Client01C3Part0> Unknown2 { get; } = [];
+    [UInt(16)] public ushort Unknown3 { get; private set; }
 }

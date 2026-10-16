@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ServerHousingBasics, Direction.ServerToClient)]
-public sealed partial class ServerHousingBasics
+[WireMessage(GameMessageOpcode.Server010E, Direction.ServerToClient)]
+public sealed partial class Server010E
 {
     [Flags]
     public enum ResidencePrivacyLevelFlags
@@ -15,7 +15,7 @@ public sealed partial class ServerHousingBasics
         RoommatesOnly = 0x04
     }
 
-    [UInt(64)] public ulong ResidenceId { get; set; }
-    [UInt(64)] public ulong NeighbourhoodId { get; set; }
-    [UInt(32)] public ResidencePrivacyLevelFlags PrivacyLevel { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [UInt(64)] public ulong Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }

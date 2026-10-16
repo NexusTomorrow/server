@@ -4,10 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
-// Fires whenever a buy or sell order is removed from the Commodities Exchange.
-[WireMessage(GameMessageOpcode.ServerCommodityAuctionRemoved, Direction.ServerToClient)]
-public sealed partial class ServerCommodityAuctionRemoved
+[WireMessage(GameMessageOpcode.Server024B, Direction.ServerToClient)]
+public sealed partial class Server024B
 {
-    public CommodityOrder OrderRemoved { get; set; } = new();
-    [UInt(32)] public AuctionEventType Type { get; set; }
+    public Server024APart0 Unknown0 { get; set; } = new();
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

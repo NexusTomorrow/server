@@ -5,10 +5,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ClientFriendshipAccountAddByIdentity, Direction.ClientToServer)]
-public sealed partial class ClientFriendshipAddByIdentity
+[WireMessage(GameMessageOpcode.Client03B3, Direction.ClientToServer)]
+public sealed partial class Client03B3
 {
-    public Identity Target { get; set; } = new(); // Match the account from the target's identity
-    [UInt(4)] public FriendshipType Type { get; set; }
-    [WideString] public string Note { get; set; } // Optional note sent with invite
+    public Client00B5Part0 Unknown0 { get; set; } = new();
+    [UInt(4)] public byte Unknown1 { get; set; }
+    [WideString] public string Unknown2 { get; set; }
 }

@@ -5,9 +5,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Info;
 
-[WireMessage(GameMessageOpcode.ClientPlayerInfoRequest, Direction.ClientToServer)]
-public sealed partial class ClientPlayerInfoRequest
+[WireMessage(GameMessageOpcode.Client0597, Direction.ClientToServer)]
+public sealed partial class Client0597
 {
-    [UInt(4)] public PlayerInfoRequestType Type { get; private set; }
-    public Identity Identity { get; } = new();
+    [UInt(4)] public byte Unknown0 { get; private set; }
+    public Client00B5Part0 Unknown1 { get; } = new();
 }

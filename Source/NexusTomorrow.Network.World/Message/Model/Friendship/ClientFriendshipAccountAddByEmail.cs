@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ClientFriendshipAccountAddByEmail, Direction.ClientToServer)]
-public sealed partial class ClientFriendshipAccountAddByEmail
+[WireMessage(GameMessageOpcode.Client0397, Direction.ClientToServer)]
+public sealed partial class Client0397
 {
-    [WideString] public string Email { get; private set; }
-    [WideString] public string Note { get; private set; }
+    [WideString] public string Unknown0 { get; private set; }
+    [WideString] public string Unknown1 { get; private set; }
 }

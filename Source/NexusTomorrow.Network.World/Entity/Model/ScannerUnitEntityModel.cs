@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Entity.Model;
 
 [WireStruct]
-[UnionCase(EntityType.ScannerUnit)]
-public sealed partial class ScannerUnitEntityModel : IEntityModel
+[UnionCase(27)]
+public sealed partial class Server0262Union0Arm1B : IServer0262Union0
 {
-    [UInt(18)] public uint CreatureId { get; set; }
-    [UInt(32)] public uint OwnerId { get; set; }
-    [WideString] public string Name { get; set; }
+    [UInt(18)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [WideString] public string Unknown2 { get; set; }
 }

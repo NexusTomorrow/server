@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[WireMessage(GameMessageOpcode.ServerPathMissionActivate, Direction.ServerToClient)]
-public sealed partial class ServerPathMissionActivate
+[WireMessage(GameMessageOpcode.Server06BA, Direction.ServerToClient)]
+public sealed partial class Server06BA
 {
-    [Array(CountBits = 32)] public List<Mission> Missions { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server06BAPart0> Unknown0 { get; set; } = [];
 }

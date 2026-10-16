@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[WireMessage(GameMessageOpcode.ServerCinematicFullScreenEffectRemove, Direction.ServerToClient)]
-public sealed partial class ServerCinematicFullScreenEffectRemove
+[WireMessage(GameMessageOpcode.Server0223, Direction.ServerToClient)]
+public sealed partial class Server0223
 {
-    [UInt(32)] public uint Delay { get; set; }
-    [UInt(32)] public uint FullScreenEffectId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

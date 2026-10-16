@@ -5,8 +5,8 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [WireStruct]
-public sealed partial class TowerDefenseUnit
+public sealed partial class Server067BPart0
 {
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(32)] public TowerDefenseUnitType Type { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

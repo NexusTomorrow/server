@@ -4,11 +4,11 @@ using NexusTomorrow.Network.World.Message.Model.Story.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Story;
 
-[WireMessage(GameMessageOpcode.ServerStoryTextUnitYell, Direction.ServerToClient)]
-public sealed partial class ServerStoryTextUnitYell
+[WireMessage(GameMessageOpcode.Server075C, Direction.ServerToClient)]
+public sealed partial class Server075C
 {
-    public StoryMessage StoryMessage { get; set; }
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(18)] public uint Creature2Id { get; set; } // uses this if Unit has not been loaded to client yet
-    [Float32] public float TextBubbleRange { get; set; }
+    public Server0738Part0 Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(18)] public uint Unknown2 { get; set; }
+    [Float32] public float Unknown3 { get; set; }
 }

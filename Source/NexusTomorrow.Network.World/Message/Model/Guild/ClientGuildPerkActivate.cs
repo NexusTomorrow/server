@@ -3,11 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ClientGuildPerkActivate, Direction.ClientToServer)]
-public sealed partial class ClientGuildPerkActivate : ClientGuildOperation
+[WireMessage(GameMessageOpcode.Client04B2, Direction.ClientToServer)]
+public sealed partial class Client04B2 : Client04B1
 {
-    // This is the same packet structure as ClientGuildOperation (0x4B1) however this message
-    // is only sent for activating guild perks.
 
-    // The Data field is the GuildPerkId of the perk being activated.
 }

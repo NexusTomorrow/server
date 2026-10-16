@@ -62,7 +62,7 @@ public sealed class GeneratedSourceTests
             [PackedFloat] public float Size { get; set; }
         }
 
-        [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+        [WireMessage(GameMessageOpcode.Message0003, Direction.ServerToClient)]
         public sealed partial class Everything
         {
             [UInt(20)] public uint Id { get; set; }
@@ -128,7 +128,7 @@ public sealed class GeneratedSourceTests
             [UInt(16)] public ushort Version { get; set; }
         }
 
-        [WireMessage(GameMessageOpcode.ClientCastSpell, Direction.ClientToServer)]
+        [WireMessage(GameMessageOpcode.Client009A, Direction.ClientToServer)]
         public sealed partial class Fixed
         {
             [UInt(32)] public uint Id { get; set; }
@@ -598,13 +598,13 @@ public sealed class GeneratedSourceTests
 
             namespace Tests;
 
-            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            [WireMessage(GameMessageOpcode.Message0003, Direction.ServerToClient)]
             public sealed partial class Item
             {
                 [UInt(5)] public byte Value { get; set; }
             }
 
-            [WireMessage(GameMessageOpcode.ServerChat, Direction.ServerToClient)]
+            [WireMessage(GameMessageOpcode.Server01C8, Direction.ServerToClient)]
             public sealed partial class Items
             {
                 [Array(CountBits = 3)] public List<Item> Entries { get; set; } = [];
@@ -640,13 +640,13 @@ public sealed class GeneratedSourceTests
 
             namespace Tests;
 
-            [WireMessage(GameMessageOpcode.ServerHello, Direction.ServerToClient)]
+            [WireMessage(GameMessageOpcode.Message0003, Direction.ServerToClient)]
             public partial class Parent
             {
                 [UInt(8)] public byte First { get; set; }
             }
 
-            [WireMessage(GameMessageOpcode.ServerChat, Direction.ServerToClient)]
+            [WireMessage(GameMessageOpcode.Server01C8, Direction.ServerToClient)]
             public sealed partial class Child : Parent
             {
                 [UInt(8)] public byte Second { get; set; }

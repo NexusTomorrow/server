@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerUnitEnteredCombat, Direction.ServerToClient)]
-public sealed partial class ServerUnitEnteredCombat
+[WireMessage(GameMessageOpcode.Server089A, Direction.ServerToClient)]
+public sealed partial class Server089A
 {
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(1)] public bool InCombat { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(1)] public bool Unknown1 { get; set; }
 }

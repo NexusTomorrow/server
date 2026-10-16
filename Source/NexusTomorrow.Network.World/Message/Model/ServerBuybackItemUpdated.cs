@@ -4,8 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerBuybackItemUpdated, Direction.ServerToClient)]
-public sealed partial class ServerBuybackItemUpdated
+[WireMessage(GameMessageOpcode.Server00BA, Direction.ServerToClient)]
+public sealed partial class Server00BA
 {
-    public BuybackItem BuybackItem { get; set; }
+    public Server00BAPart0 Unknown0 { get; set; }
 }

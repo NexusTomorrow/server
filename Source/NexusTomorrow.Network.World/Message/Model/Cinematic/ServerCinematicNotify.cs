@@ -4,11 +4,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[WireMessage(GameMessageOpcode.ServerCinematicNotify, Direction.ServerToClient)]
-public sealed partial class ServerCinematicNotify
+[WireMessage(GameMessageOpcode.Server0232, Direction.ServerToClient)]
+public sealed partial class Server0232
 {
-    [UInt(16)] public CinematicFlags Flags { get; set; }
-    [UInt(16)] public CancelType CancelMode { get; set; }
-    [UInt(32)] public uint Delay { get; set; } // for scheduling end
-    [UInt(14)] public ushort CinematicId { get; set; }
+    [UInt(16)] public ushort Unknown0 { get; set; }
+    [UInt(16)] public ushort Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(14)] public ushort Unknown3 { get; set; }
 }

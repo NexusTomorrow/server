@@ -3,8 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
-// Clears all items from client's PendingAccountItem list
-[WireMessage(GameMessageOpcode.ServerPendingAccountItemsClear, Direction.ServerToClient)]
-public sealed partial class ServerPendingAccountItemsClear
+[WireMessage(GameMessageOpcode.Server0977, Direction.ServerToClient)]
+public sealed partial class Server0977
 {
 }

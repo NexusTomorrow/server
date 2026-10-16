@@ -4,8 +4,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
-[WireMessage(GameMessageOpcode.ServerAccountTier, Direction.ServerToClient)]
-public sealed partial class ServerAccountTier
+[WireMessage(GameMessageOpcode.Server097F, Direction.ServerToClient)]
+public sealed partial class Server097F
 {
-    [UInt(5)] public AccountTier Tier { get; set; }
+    [UInt(5)] public byte Unknown0 { get; set; }
 }

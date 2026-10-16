@@ -4,11 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-// Not seen in sniffs. Seems that ServerGuildInit and ServerGuildJoin initialise a standard set of 10 guild bank tabs.
-// In theory seems you can have more than 10 guild bank tabs using this.
-[WireMessage(GameMessageOpcode.ServerGuildBankTabCount, Direction.ServerToClient)]
-public sealed partial class ServerGuildBankTabCount
+[WireMessage(GameMessageOpcode.Server0478, Direction.ServerToClient)]
+public sealed partial class Server0478
 {
-    public Identity GuildIdentity { get; set; }
-    [UInt(32)] public uint Count { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

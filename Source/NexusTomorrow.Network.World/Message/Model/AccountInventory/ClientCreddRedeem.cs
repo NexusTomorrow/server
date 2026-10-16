@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.AccountInventory;
 
-[WireMessage(GameMessageOpcode.ClientCreddRedeem, Direction.ClientToServer)]
-public sealed partial class ClientCreddRedeem
+[WireMessage(GameMessageOpcode.Client0770, Direction.ClientToServer)]
+public sealed partial class Client0770
 {
 }

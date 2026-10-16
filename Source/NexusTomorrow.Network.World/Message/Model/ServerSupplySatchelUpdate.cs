@@ -3,10 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-
-[WireMessage(GameMessageOpcode.ServerSupplySatchelUpdate, Direction.ServerToClient)]
-public sealed partial class ServerSupplySatchelUpdate
+[WireMessage(GameMessageOpcode.Server0199, Direction.ServerToClient)]
+public sealed partial class Server0199
 {
-    [UInt(14)] public ushort MaterialId { get; set; }
-    [UInt(16)] public ushort StackCount { get; set; }
+    [UInt(14)] public ushort Unknown0 { get; set; }
+    [UInt(16)] public ushort Unknown1 { get; set; }
 }

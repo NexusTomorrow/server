@@ -3,20 +3,19 @@ using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
-[EntityCommand(EntityCommand.SetRotationMultiSpline)]
 [WireStruct]
-[UnionCase(EntityCommand.SetRotationMultiSpline)]
-public sealed partial class SetRotationMultiSplineCommand : IEntityCommandModel
+[UnionCase(17)]
+public sealed partial class Server0262Union2Arm11 : IServer0262Union2
 {
-    [Array(CountBits = 10), UInt(32)] public List<uint> SplineIds { get; set; } = [];
+    [Array(CountBits = 10), UInt(32)] public List<uint> Unknown0 { get; set; } = [];
 
-    [PackedFloat] public float Speed { get; set; }
-    [Float32] public float Position { get; set; }
-    [Float32] public float TakeoffLocationHeight { get; set; }
-    [Float32] public float LandingLocationHeight { get; set; }
+    [PackedFloat] public float Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
+    [Float32] public float Unknown3 { get; set; }
+    [Float32] public float Unknown4 { get; set; }
 
-    [UInt(4)] public byte Mode { get; set; }
-    [UInt(32)] public uint Offset { get; set; }
-    [UInt(32)] public uint MultiSplineFlags { get; set; }
-    [UInt(1)] public bool Blend { get; set; }
+    [UInt(4)] public byte Unknown5 { get; set; }
+    [UInt(32)] public uint Unknown6 { get; set; }
+    [UInt(32)] public uint Unknown7 { get; set; }
+    [UInt(1)] public bool Unknown8 { get; set; }
 }

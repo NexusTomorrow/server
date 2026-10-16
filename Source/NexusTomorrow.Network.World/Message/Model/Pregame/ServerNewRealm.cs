@@ -4,23 +4,22 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-// Client only processes message when on RealmSelect screen.
-[WireMessage(GameMessageOpcode.ServerNewRealm, Direction.ServerToClient)]
-public sealed partial class ServerNewRealm
+[WireMessage(GameMessageOpcode.Server07A1, Direction.ServerToClient)]
+public sealed partial class Server07A1
 {
     [WireStruct]
-    public sealed partial class Gateway
+    public sealed partial class Server07A1Part0
     {
-        [UInt(32)] public uint Address { get; set; }
-        [UInt(16)] public ushort Port { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
+        [UInt(16)] public ushort Unknown1 { get; set; }
     }
 
-    [UInt(32)] public uint Unused { get; set; }
-    [FixedArray(16), UInt(8)] public byte[] SessionKey { get; set; }
-    public Gateway GatewayData { get; set; }
-    [UInt(1)] public bool Unused2 { get; set; }
-    [WideString] public string RealmName { get; set; }
-    [UInt(32)] public RealmFlag Flags { get; set; }
-    [UInt(2)] public RealmType Type { get; set; }
-    [UInt(21)] public uint NoteTextId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [FixedArray(16), UInt(8)] public byte[] Unknown1 { get; set; }
+    public Server07A1Part0 Unknown2 { get; set; }
+    [UInt(1)] public bool Unknown3 { get; set; }
+    [WideString] public string Unknown4 { get; set; }
+    [UInt(32)] public uint Unknown5 { get; set; }
+    [UInt(2)] public byte Unknown6 { get; set; }
+    [UInt(21)] public uint Unknown7 { get; set; }
 }

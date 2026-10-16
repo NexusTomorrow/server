@@ -4,11 +4,10 @@ using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-// Only used by client when on the CharacterSelect screen
-[WireMessage(GameMessageOpcode.ServerCharacterRenameResult, Direction.ServerToClient)]
-public sealed partial class ServerCharacterRenameResult
+[WireMessage(GameMessageOpcode.Server014B, Direction.ServerToClient)]
+public sealed partial class Server014B
 {
-    [UInt(6)] public CharacterModifyResult Result { get; set; }
-    [UInt(64)] public ulong CharacterId { get; set; }
-    [WideString] public string Name { get; set; }
+    [UInt(6)] public byte Unknown0 { get; set; }
+    [UInt(64)] public ulong Unknown1 { get; set; }
+    [WideString] public string Unknown2 { get; set; }
 }

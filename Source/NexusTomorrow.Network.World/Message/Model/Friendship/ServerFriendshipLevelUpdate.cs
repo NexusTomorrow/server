@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ServerFriendshipLevelUpdate, Direction.ServerToClient)]
-public sealed partial class ServerFriendshipLevelUpdate
+[WireMessage(GameMessageOpcode.Server03C6, Direction.ServerToClient)]
+public sealed partial class Server03C6
 {
-    public Identity Character { get; set; }
-    [UInt(32)] public uint Level { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

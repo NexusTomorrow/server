@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[WireMessage(GameMessageOpcode.ServerPathSoldierHoldoutDeath, Direction.ServerToClient)]
-public sealed partial class ServerPathSoldierHoldoutDeath
+[WireMessage(GameMessageOpcode.Server067F, Direction.ServerToClient)]
+public sealed partial class Server067F
 {
-    [UInt(14)] public ushort PathSoldierEventId { get; set; }
+    [UInt(14)] public ushort Unknown0 { get; set; }
 }

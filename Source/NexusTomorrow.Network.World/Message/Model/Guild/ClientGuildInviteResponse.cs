@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ClientGuildInviteResponse, Direction.ClientToServer)]
-public sealed partial class ClientGuildInviteResponse
+[WireMessage(GameMessageOpcode.Client0490, Direction.ClientToServer)]
+public sealed partial class Client0490
 {
-    [UInt(1)] public bool Accepted { get; private set; }
+    [UInt(1)] public bool Unknown0 { get; private set; }
 }

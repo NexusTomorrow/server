@@ -3,12 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-/// <summary>
-/// ObjectiveIndex is used for PathMissions, Quests, Challenges, Datacubes, PublicEvents, Achievements.
-/// </summary>
-[WireMessage(GameMessageOpcode.ServerUnitUpdateObjectiveIndex, Direction.ServerToClient)]
-public sealed partial class ServerUnitUpdateObjectiveIndex
+[WireMessage(GameMessageOpcode.Server093B, Direction.ServerToClient)]
+public sealed partial class Server093B
 {
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(32)] public uint ObjectiveIndex { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

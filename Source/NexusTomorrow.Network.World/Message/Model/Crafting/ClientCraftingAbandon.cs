@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[WireMessage(GameMessageOpcode.ClientCraftingAbandon, Direction.ClientToServer)]
-public sealed partial class ClientCraftingAbandon
+[WireMessage(GameMessageOpcode.Client084D, Direction.ClientToServer)]
+public sealed partial class Client084D
 {
 }

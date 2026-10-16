@@ -4,19 +4,19 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerInstanceSettings, Direction.ServerToClient)]
-public sealed partial class ServerInstanceSettings
+[WireMessage(GameMessageOpcode.Server00F1, Direction.ServerToClient)]
+public sealed partial class Server00F1
 {
     [Flags]
     public enum WorldSetting
     {
         WorldForcesLevelScaling = 0x01,
-        TransmatTeleport = 0x04, // Causes player to transmat recall if this is sent before OnPlayerWorld (0x61)
-        HoloCryptTeleport = 0x08, // Causes holocrypt voice over if this is sent before OnPlayerWorld (0x61)
+        TransmatTeleport = 0x04,
+        HoloCryptTeleport = 0x08,
     }
 
-    [UInt(2)] public WorldDifficulty Difficulty { get; set; }
-    [UInt(32)] public uint PrimeLevel { get; set; }
-    [UInt(8)] public WorldSetting Flags { get; set; }
-    [UInt(32)] public uint ClientEntitySendUpdateInterval { get; set; }
+    [UInt(2)] public byte Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(8)] public byte Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
 }

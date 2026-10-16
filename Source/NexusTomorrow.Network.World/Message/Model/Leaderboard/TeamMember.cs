@@ -5,8 +5,8 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Leaderboard;
 
 [WireStruct]
-public sealed partial class TeamMember
+public sealed partial class Server0579Part1
 {
-    [WideString] public string Name { get; set; }
-    [UInt(5)] public Class Class { get; set; }
+    [WideString] public string Unknown0 { get; set; }
+    [UInt(5)] public byte Unknown1 { get; set; }
 }

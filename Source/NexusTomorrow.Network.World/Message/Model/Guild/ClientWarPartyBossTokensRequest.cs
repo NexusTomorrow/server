@@ -4,8 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ClientWarPartyBossTokensRequest, Direction.ClientToServer)]
-public sealed partial class ClientWarPartyBossTokensRequest
+[WireMessage(GameMessageOpcode.Client0956, Direction.ClientToServer)]
+public sealed partial class Client0956
 {
-    public Identity GuildIdentity { get; private set; } = new(); // guild to request token info for
+    public Client00B5Part0 Unknown0 { get; private set; } = new();
 }

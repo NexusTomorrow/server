@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Instance;
 
-// Not seen in sniffs but there is lua UI code for handling the triggered event
-[WireMessage(GameMessageOpcode.ServerShowInstanceRestrictedDialog, Direction.ServerToClient)]
-public sealed partial class ServerShowInstanceRestrictedDialog
+[WireMessage(GameMessageOpcode.Server0158, Direction.ServerToClient)]
+public sealed partial class Server0158
 {
     [UInt(32)] public uint Unknown0 { get; set; }
 }

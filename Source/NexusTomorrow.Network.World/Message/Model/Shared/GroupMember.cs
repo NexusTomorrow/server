@@ -5,10 +5,10 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class GroupMember
+public sealed partial class Server0405Part0
 {
-    public Identity MemberIdentity { get; set; } = new();
-    [UInt(32)] public GroupMemberInfoFlags Flags { get; set; }
-    public GroupCharacter Member { get; set; }
-    [UInt(32)] public uint GroupIndex { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; } = new();
+    [UInt(32)] public uint Unknown1 { get; set; }
+    public Server0405Part1 Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
 }

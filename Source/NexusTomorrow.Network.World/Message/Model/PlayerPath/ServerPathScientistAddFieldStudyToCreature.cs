@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[WireMessage(GameMessageOpcode.ServerPathScientistAddFieldStudyToCreature, Direction.ServerToClient)]
-public sealed partial class ServerPathScientistAddFieldStudyToCreature
+[WireMessage(GameMessageOpcode.Server08B5, Direction.ServerToClient)]
+public sealed partial class Server08B5
 {
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(14)] public uint PathScientistFieldStudyId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(14)] public uint Unknown1 { get; set; }
 }

@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[WireMessage(GameMessageOpcode.ClientPathExplorerPowerMapProgress, Direction.ClientToServer)]
-public sealed partial class ClientPathExplorerPowerMapProgress
+[WireMessage(GameMessageOpcode.Client00F9, Direction.ClientToServer)]
+public sealed partial class Client00F9
 {
-    [UInt(14)] public uint PathMissionId { get; private set; }
+    [UInt(14)] public uint Unknown0 { get; private set; }
 }

@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
-[WireMessage(GameMessageOpcode.ClientChatOwner, Direction.ClientToServer)]
-public sealed partial class ClientChatOwner
+[WireMessage(GameMessageOpcode.Client01CF, Direction.ClientToServer)]
+public sealed partial class Client01CF
 {
-    public Channel Channel { get; private set; }
-    [WideString] public string CharacterName { get; private set; }
+    public Server01B5Part0 Unknown0 { get; private set; }
+    [WideString] public string Unknown1 { get; private set; }
 }

@@ -3,11 +3,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-// One count, then every Item2Id, then every Count: element i of each list is one harvested item.
-[WireMessage(GameMessageOpcode.ServerHousingHarvestItemsSentToOwner, Direction.ServerToClient)]
-public sealed partial class ServerHousingHarvestItemsSentToOwner
+[WireMessage(GameMessageOpcode.Server04FE, Direction.ServerToClient)]
+public sealed partial class Server04FE
 {
-    [UInt(32), Count] public uint HarvestedItemCount { get; set; }
-    [Array(CountFrom = nameof(HarvestedItemCount)), UInt(32)] public List<uint> Item2Ids { get; set; } = [];
-    [Array(CountFrom = nameof(HarvestedItemCount)), UInt(32)] public List<uint> Counts { get; set; } = [];
+    [UInt(32), Count] public uint Unknown0 { get; set; }
+    [Array(CountFrom = nameof(Unknown0)), UInt(32)] public List<uint> Unknown1 { get; set; } = [];
+    [Array(CountFrom = nameof(Unknown0)), UInt(32)] public List<uint> Unknown2 { get; set; } = [];
 }

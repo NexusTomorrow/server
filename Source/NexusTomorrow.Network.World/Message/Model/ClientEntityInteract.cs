@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientEntityInteract, Direction.ClientToServer)]
-public sealed partial class ClientEntityInteract
+[WireMessage(GameMessageOpcode.Client07EA, Direction.ClientToServer)]
+public sealed partial class Client07EA
 {
-    [UInt(32)] public uint UnitId { get; private set; } // Interaction unit
-    [UInt(7)] public InteractionType Type { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
+    [UInt(7)] public byte Unknown1 { get; private set; }
 }

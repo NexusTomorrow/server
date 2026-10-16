@@ -4,8 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pet;
 
-[WireMessage(GameMessageOpcode.ServerPetCustomization, Direction.ServerToClient)]
-public sealed partial class ServerPetCustomisation
+[WireMessage(GameMessageOpcode.Server012F, Direction.ServerToClient)]
+public sealed partial class Server012F
 {
-    public PetCustomisation PetCustomisation { get; set; }
+    public Server012EPart0 Unknown0 { get; set; }
 }

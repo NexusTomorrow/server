@@ -4,13 +4,13 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientStorefrontPurchaseCharacter, Direction.ClientToServer)]
-public sealed partial class ClientStorefrontPurchaseCharacter
+[WireMessage(GameMessageOpcode.Client082A, Direction.ClientToServer)]
+public sealed partial class Client082A
 {
-    [UInt(20)] public uint OfferId { get; set; } // OfferId
+    [UInt(20)] public uint Unknown0 { get; set; }
     [UInt(5)] public byte Unknown1 { get; set; }
-    [UInt(14)] public ushort CurrencyId { get; set; } // CurrencyId - 1408 == NCCoin, 768 == Omnibits
+    [UInt(14)] public ushort Unknown2 { get; set; }
     [UInt(20)] public uint Unknown3 { get; set; }
-    public Identity Target { get; set; } = new();
-    [UInt(20)] public uint Unknown6 { get; set; }
+    public Client00B5Part0 Unknown4 { get; set; } = new();
+    [UInt(20)] public uint Unknown5 { get; set; }
 }

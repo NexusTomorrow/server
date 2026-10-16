@@ -5,9 +5,9 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class PropertyValue
+public sealed partial class Server0262Part6
 {
-    [UInt(8)] public Property Property { get; set; }
-    [Float32] public float BaseValue { get; set; }
-    [Float32] public float Value { get; set; }
+    [UInt(8)] public byte Unknown0 { get; set; }
+    [Float32] public float Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
 }

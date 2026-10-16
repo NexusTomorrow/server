@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
-// MarketplaceLib::RequestCommodityInfo()
-[WireMessage(GameMessageOpcode.ClientRequestCommodityInfo, Direction.ClientToServer)]
-public sealed partial class ClientRequestCommodityInfo
+[WireMessage(GameMessageOpcode.Client03E6, Direction.ClientToServer)]
+public sealed partial class Client03E6
 {
-    [UInt(18)] public uint Item2Id { get; private set; }
+    [UInt(18)] public uint Unknown0 { get; private set; }
 }

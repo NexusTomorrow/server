@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerGroupInviteResult, Direction.ServerToClient)]
-public sealed partial class ServerGroupInviteResult
+[WireMessage(GameMessageOpcode.Server041D, Direction.ServerToClient)]
+public sealed partial class Server041D
 {
-    [UInt(64)] public ulong GroupId { get; set; }
-    [WideString] public string Name { get; set; }
-    [UInt(5)] public GroupInviteResult Result { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [WideString] public string Unknown1 { get; set; }
+    [UInt(5)] public byte Unknown2 { get; set; }
 }

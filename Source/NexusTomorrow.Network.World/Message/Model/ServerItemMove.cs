@@ -4,8 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerItemMove, Direction.ServerToClient)]
-public sealed partial class ServerItemMove
+[WireMessage(GameMessageOpcode.Server0569, Direction.ServerToClient)]
+public sealed partial class Server0569
 {
-    public ItemDragDrop To { get; set; }
+    public Server0568Part0 Unknown0 { get; set; }
 }

@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
-[WireMessage(GameMessageOpcode.ClientChatLeave, Direction.ClientToServer)]
-public sealed partial class ClientChatLeave
+[WireMessage(GameMessageOpcode.Client01BE, Direction.ClientToServer)]
+public sealed partial class Client01BE
 {
-    public Channel Channel { get; private set; }
+    public Server01B5Part0 Unknown0 { get; private set; }
 }

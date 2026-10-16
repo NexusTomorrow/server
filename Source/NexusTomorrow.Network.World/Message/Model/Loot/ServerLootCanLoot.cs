@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Loot;
 
-// Sets CanLoot flag on the loot
-[WireMessage(GameMessageOpcode.ServerLootCanLoot, Direction.ServerToClient)]
-public sealed partial class ServerLootCanLoot
+[WireMessage(GameMessageOpcode.Server089F, Direction.ServerToClient)]
+public sealed partial class Server089F
 {
-    [UInt(32)] public uint LootUnitId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

@@ -4,8 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerDatacubeUpdate, Direction.ServerToClient)]
-public sealed partial class ServerDatacubeUpdate
+[WireMessage(GameMessageOpcode.Server00E1, Direction.ServerToClient)]
+public sealed partial class Server00E1
 {
-    public Datacube DatacubeData { get; set; }
+    public Server00E0Part0 Unknown0 { get; set; }
 }

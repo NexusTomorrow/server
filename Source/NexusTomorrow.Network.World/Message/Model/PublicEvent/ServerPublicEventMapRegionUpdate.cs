@@ -5,11 +5,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
-// Unlike PublicEVentLocationUpdate, only allows for adding/removing to PublicEventObjectives, not to the PublicEvent
-[WireMessage(GameMessageOpcode.ServerPublicEventMapRegionUpdate, Direction.ServerToClient)]
-public sealed partial class ServerPublicEventMapRegionUpdate
+[WireMessage(GameMessageOpcode.Server0138, Direction.ServerToClient)]
+public sealed partial class Server0138
 {
-    [UInt(32)] public uint ObjectiveId { get; set; }
-    [UInt(3)] public PublicEventOperationType Operation { get; set; }
-    public MapRegion MapRegion { get; set; } = new();
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(3)] public byte Unknown1 { get; set; }
+    public Server0112Part3 Unknown2 { get; set; } = new();
 }

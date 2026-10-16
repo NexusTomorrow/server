@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientVendorPurchase, Direction.ClientToServer)]
-public sealed partial class ClientVendorPurchase
+[WireMessage(GameMessageOpcode.Client00BE, Direction.ClientToServer)]
+public sealed partial class Client00BE
 {
-    [UInt(32)] public uint VendorIndex { get; set; }
-    [UInt(32)] public uint VendorItemQty { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

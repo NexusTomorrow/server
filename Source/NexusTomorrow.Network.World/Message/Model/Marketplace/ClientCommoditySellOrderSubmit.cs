@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
-// Sent from ConfirmButtonType == MarketplaceCommoditiesSubmit
-[WireMessage(GameMessageOpcode.ClientCommoditySellOrderSubmit, Direction.ClientToServer)]
-public sealed partial class ClientCommoditySellOrderSubmit
+[WireMessage(GameMessageOpcode.Client06DA, Direction.ClientToServer)]
+public sealed partial class Client06DA
 {
-    public CommodityOrder Order { get; private set; } = new();
+    public Server024APart0 Unknown0 { get; private set; } = new();
 }

@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerDialogStart, Direction.ServerToClient)]
-public sealed partial class ServerDialogStart
+[WireMessage(GameMessageOpcode.Server0357, Direction.ServerToClient)]
+public sealed partial class Server0357
 {
-    [UInt(32)] public uint DialogUnitId { get; set; }
-    [UInt(1)] public bool Unused { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(1)] public bool Unknown1 { get; set; }
 }

@@ -3,10 +3,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[WireMessage(GameMessageOpcode.ClientCraftingAdditive, Direction.ClientToServer)]
-public sealed partial class ClientCraftingAdditive
+[WireMessage(GameMessageOpcode.Client084A, Direction.ClientToServer)]
+public sealed partial class Client084A
 {
-    [UInt(32)] public uint CraftingStationUnitId { get; private set; }
-    [UInt(18)] public uint AdditiveItem2Id { get; private set; }
-    [UInt(18)] public uint CatalystItem2Id { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
+    [UInt(18)] public uint Unknown1 { get; private set; }
+    [UInt(18)] public uint Unknown2 { get; private set; }
 }

@@ -5,11 +5,11 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireStruct]
-public sealed partial class GuildRank
+public sealed partial class Server0493Part1
 {
-    [WideString] public string RankName { get; set; } = "";
-    [UInt(32)] public GuildRankPermission PermissionMask { get; set; } = GuildRankPermission.Disabled;
-    [UInt(64)] public ulong BankWithdrawalPermissions { get; set; }
-    [UInt(64)] public ulong MoneyWithdrawalLimit { get; set; }
-    [UInt(64)] public ulong RepairLimit { get; set; }
+    [WideString] public string Unknown0 { get; set; } = "";
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(64)] public ulong Unknown2 { get; set; }
+    [UInt(64)] public ulong Unknown3 { get; set; }
+    [UInt(64)] public ulong Unknown4 { get; set; }
 }

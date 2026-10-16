@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientP2PTradingInitiateTrade, Direction.ClientToServer)]
-public sealed partial class ClientP2PTradingInitiateTrade
+[WireMessage(GameMessageOpcode.Client0192, Direction.ClientToServer)]
+public sealed partial class Client0192
 {
-    [UInt(32)] public uint TargetUnitId { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
 }

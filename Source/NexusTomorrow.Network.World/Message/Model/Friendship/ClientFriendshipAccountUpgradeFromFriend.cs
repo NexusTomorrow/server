@@ -4,11 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-// Takes an existing friend and uses the identity of that character to
-// send an account friend invite.
-[WireMessage(GameMessageOpcode.ClientFriendshipAccountUpgradeFromFriend, Direction.ClientToServer)]
-public sealed partial class ClientFriendshipAccountUpgradeFromFriend
+[WireMessage(GameMessageOpcode.Client0398, Direction.ClientToServer)]
+public sealed partial class Client0398
 {
-    public Identity ExisitingFriend { get; private set; } = new();
-    [WideString] public string Note { get; private set; }
+    public Client00B5Part0 Unknown0 { get; private set; } = new();
+    [WideString] public string Unknown1 { get; private set; }
 }

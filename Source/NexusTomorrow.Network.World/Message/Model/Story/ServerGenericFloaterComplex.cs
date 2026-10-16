@@ -4,12 +4,10 @@ using NexusTomorrow.Network.World.Message.Model.Story.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Story;
 
-// Appears over the player's unit
-// In practice the only time this message was sent was to sent LocalizedTextId = 0x5F95C for the text 'Evade'
-[WireMessage(GameMessageOpcode.ServerGenericFloaterComplex, Direction.ServerToClient)]
-public sealed partial class ServerGenericFloaterComplex
+[WireMessage(GameMessageOpcode.Server0738, Direction.ServerToClient)]
+public sealed partial class Server0738
 {
-    [UInt(32)] public uint LocalisedTextId { get; set; }
-    [UInt(32)] public uint RandomTextLineId { get; set; }
-    [Array(CountBits = 8)] public List<StoryMessage> Messages { get; set; } = [];
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [Array(CountBits = 8)] public List<Server0738Part0> Unknown2 { get; set; } = [];
 }

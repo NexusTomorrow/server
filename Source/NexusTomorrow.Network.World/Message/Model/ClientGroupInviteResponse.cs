@@ -3,10 +3,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientGroupInviteResponse, Direction.ClientToServer)]
-public sealed partial class ClientGroupInviteResponse
+[WireMessage(GameMessageOpcode.Client041A, Direction.ClientToServer)]
+public sealed partial class Client041A
 {
-    [UInt(64)] public ulong GroupId { get; set; }
-    [UInt(1)] public bool Response { get; set; }
-    [UInt(32)] public uint Unk1 { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [UInt(1)] public bool Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }

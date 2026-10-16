@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Map;
 
-[WireMessage(GameMessageOpcode.ServerGenericMapShow, Direction.ServerToClient)]
-public sealed partial class ServerGenericMapShow
+[WireMessage(GameMessageOpcode.Server0758, Direction.ServerToClient)]
+public sealed partial class Server0758
 {
-    [UInt(14)] public uint GenericMapId { get; set; }
-    [Array(CountBits = 32)] public List<GenericMapNode> Nodes { get; set; } = [];
+    [UInt(14)] public uint Unknown0 { get; set; }
+    [Array(CountBits = 32)] public List<Server0737Part0> Unknown1 { get; set; } = [];
 }

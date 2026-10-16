@@ -4,8 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ClientHousingCommunityRemoval, Direction.ClientToServer)]
-public sealed partial class ClientHousingCommunityRemoval
+[WireMessage(GameMessageOpcode.Client04EA, Direction.ClientToServer)]
+public sealed partial class Client04EA
 {
-    public Identity TargetResidence { get; private set; } = new(); // This is only ever the player's own residence
+    public Client00B5Part0 Unknown0 { get; private set; } = new();
 }

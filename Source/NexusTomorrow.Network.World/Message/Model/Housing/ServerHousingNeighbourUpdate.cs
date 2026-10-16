@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ServerHousingNeighbourUpdate, Direction.ServerToClient)]
-public sealed partial class ServerHousingNeighbourUpdate
+[WireMessage(GameMessageOpcode.Server0519, Direction.ServerToClient)]
+public sealed partial class Server0519
 {
-    public Neighbour Neighbour { get; set; }
-    [UInt(3)] public NeighborResult Result { get; set; }
+    public Server0507Part0 Unknown0 { get; set; }
+    [UInt(3)] public byte Unknown1 { get; set; }
 }

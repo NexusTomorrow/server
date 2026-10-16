@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerRealmEncrypted, Direction.ServerToClient)]
-public sealed partial class ServerRealmEncrypted
+[WireMessage(GameMessageOpcode.Server03DC, Direction.ServerToClient)]
+public sealed partial class Server03DC
 {
-    [Blob(32, LengthIncludesSelf = true)] public byte[] Data { get; set; } = [];
+    [Blob(32, LengthIncludesSelf = true)] public byte[] Unknown0 { get; set; } = [];
 }

@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.GalacticArchive;
 
-// Sent when following GalacticArchiveLink or interacting with creatures that have archiveArticleIdInteractUnlock
-[WireMessage(GameMessageOpcode.ClientGalacticArchiveUnlock, Direction.ClientToServer)]
-public sealed partial class ClientGalacticArchiveUnlock
+[WireMessage(GameMessageOpcode.Client0103, Direction.ClientToServer)]
+public sealed partial class Client0103
 {
-    [UInt(14)] public uint ArchiveArticleId { get; private set; }
+    [UInt(14)] public uint Unknown0 { get; private set; }
 }

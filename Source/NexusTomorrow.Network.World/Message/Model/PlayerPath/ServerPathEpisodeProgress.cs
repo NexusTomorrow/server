@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[WireMessage(GameMessageOpcode.ServerPathEpisodeProgress, Direction.ServerToClient)]
-public sealed partial class ServerPathEpisodeProgress
+[WireMessage(GameMessageOpcode.Server06B5, Direction.ServerToClient)]
+public sealed partial class Server06B5
 {
-    [UInt(14)] public ushort EpisodeId { get; set; }
-    [Array(CountBits = 16)] public List<MissionProgress> Missions { get; set; } = [];
+    [UInt(14)] public ushort Unknown0 { get; set; }
+    [Array(CountBits = 16)] public List<Server06B5Part0> Unknown1 { get; set; } = [];
 }

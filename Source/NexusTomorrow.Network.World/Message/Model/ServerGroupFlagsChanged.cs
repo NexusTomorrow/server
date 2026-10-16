@@ -4,12 +4,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerGroupFlagsChanged, Direction.ServerToClient)]
-public sealed partial class ServerGroupFlagsChanged
+[WireMessage(GameMessageOpcode.Server0410, Direction.ServerToClient)]
+public sealed partial class Server0410
 {
-    [UInt(64)] public ulong GroupId { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
 
-    [UInt(32)] public uint Unk0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 
-    [UInt(32)] public GroupFlags Flags { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }

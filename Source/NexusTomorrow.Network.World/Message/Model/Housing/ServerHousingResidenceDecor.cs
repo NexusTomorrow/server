@@ -6,31 +6,29 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-// This message is not for roofs, entryways, or doors. Client's handler for this message
-// ignores decor items of these types.
-[WireMessage(GameMessageOpcode.ServerHousingResidenceDecor, Direction.ServerToClient)]
-public sealed partial class ServerHousingResidenceDecor
+[WireMessage(GameMessageOpcode.Server04DE, Direction.ServerToClient)]
+public sealed partial class Server04DE
 {
     [WireStruct]
-    public sealed partial class Decor
+    public sealed partial class Server04DEPart0
     {
-        public Identity ResidenceIdentity { get; set; }
-        [UInt(64)] public ulong DecorId { get; set; }
-        [UInt(32)] public DecorType DecorType { get; set; }
-        [UInt(32)] public uint MannequinDecorId { get; set; } // Separate guid for each piece of mannequin items
-        [UInt(32)] public uint Flags { get; set; } // Used as an override for housingWallpaperInfo.flags
-        [UInt(32)] public uint HookIndex { get; set; }
-        [UInt(32)] public uint PlotIndex { get; set; } = int.MaxValue;
-        [Float32] public float Scale { get; set; }
-        [Float32] public Vector3 Position { get; set; } = new();
-        [Float32] public Quaternion Rotation { get; set; } = new();
-        [UInt(32)] public uint HousingDecorInfoId { get; set; }
-        [UInt(32)] public uint ActivePropUnitId { get; set; } // Prop unit the decor is attached to
-        [UInt(64)] public ulong ParentDecorId { get; set; }
-        [UInt(14)] public ushort ColourShift { get; set; }
+        public Client00B5Part0 Unknown0 { get; set; }
+        [UInt(64)] public ulong Unknown1 { get; set; }
+        [UInt(32)] public uint Unknown2 { get; set; }
+        [UInt(32)] public uint Unknown3 { get; set; }
+        [UInt(32)] public uint Unknown4 { get; set; }
+        [UInt(32)] public uint Unknown5 { get; set; }
+        [UInt(32)] public uint Unknown6 { get; set; }
+        [Float32] public float Unknown7 { get; set; }
+        [Float32] public Vector3 Unknown8 { get; set; } = new();
+        [Float32] public Quaternion Unknown9 { get; set; } = new();
+        [UInt(32)] public uint Unknown10 { get; set; }
+        [UInt(32)] public uint Unknown11 { get; set; }
+        [UInt(64)] public ulong Unknown12 { get; set; }
+        [UInt(14)] public ushort Unknown13 { get; set; }
     }
-    [UInt(32), Count] public uint DecorDataCount { get; set; }
+    [UInt(32), Count] public uint Unknown0 { get; set; }
 
-    [UInt(32)] public uint MessagesRemaining { get; set; } // decor data must be broken into chunks of 100 decor items per message, until this reaches 0 the client will not try to display the zone
-    [Array(CountFrom = nameof(DecorDataCount))] public List<Decor> DecorData { get; set; } = []; // maximum 100 per message
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [Array(CountFrom = nameof(Unknown0))] public List<Server04DEPart0> Unknown2 { get; set; } = [];
 }

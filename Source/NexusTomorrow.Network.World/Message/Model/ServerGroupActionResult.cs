@@ -5,10 +5,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerGroupActionResult, Direction.ServerToClient)]
-public sealed partial class ServerGroupActionResult
+[WireMessage(GameMessageOpcode.Server0443, Direction.ServerToClient)]
+public sealed partial class Server0443
 {
-    [UInt(64)] public ulong GroupId { get; set; }
-    public Identity Identity { get; set; }
-    [UInt(6)] public GroupActionResult Result { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    public Client00B5Part0 Unknown1 { get; set; }
+    [UInt(6)] public byte Unknown2 { get; set; }
 }

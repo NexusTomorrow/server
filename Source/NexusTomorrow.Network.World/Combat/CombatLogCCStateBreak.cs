@@ -5,11 +5,10 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
-[UnionCase(CombatLogType.CCStateBreak)]
-public sealed partial class CombatLogCCStateBreak : ICombatLog
+[UnionCase(2)]
+public sealed partial class Server0247Union0Arm02 : IServer0247Union0
 {
-    [NotOnWire] public CombatLogType Type => CombatLogType.CCStateBreak;
 
-    [UInt(32)] public uint CasterId { get; set; }
-    [UInt(5)] public CCState State { get; set; } // 5u
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(5)] public byte Unknown1 { get; set; }
 }

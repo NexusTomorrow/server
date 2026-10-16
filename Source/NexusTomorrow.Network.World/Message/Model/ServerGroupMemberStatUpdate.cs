@@ -4,34 +4,34 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerGroupMemberStatUpdate, Direction.ServerToClient)]
-public sealed partial class ServerGroupMemberStatUpdate
+[WireMessage(GameMessageOpcode.Server0466, Direction.ServerToClient)]
+public sealed partial class Server0466
 {
-    [UInt(64)] public ulong GroupId { get; set; }
-    public Identity TargetPlayer { get; set; } = new();
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    public Client00B5Part0 Unknown1 { get; set; } = new();
 
-    [UInt(7)] public byte Level { get; set; }
-    [UInt(7)] public byte EffectiveLevel { get; set; }
+    [UInt(7)] public byte Unknown2 { get; set; }
+    [UInt(7)] public byte Unknown3 { get; set; }
 
-    [UInt(17)] public uint Unk1 { get; set; }
-    [UInt(16)] public ushort GroupMemberId { get; set; }
+    [UInt(17)] public uint Unknown4 { get; set; }
+    [UInt(16)] public ushort Unknown5 { get; set; }
 
-    [FixedArray(5)] public GroupCharacter.UnknownStruct0[] SomeStatList = [new(), new(), new(), new(), new()];
+    [FixedArray(5)] public Server0405Part1.Server0405Part2[] Unknown6 = [new(), new(), new(), new(), new()];
 
-    [PackedFloat] public float Health { get; set; }
-    [PackedFloat] public float HealthMax { get; set; }
-    [PackedFloat] public float Shield { get; set; }
-    [PackedFloat] public float ShieldMax { get; set; }
-    [PackedFloat] public float InterruptArmor { get; set; }
-    [PackedFloat] public float InterruptArmorMax { get; set; }
-    [PackedFloat] public float Absorption { get; set; }
-    [PackedFloat] public float AbsorptionMax { get; set; }
-    [PackedFloat] public float Mana { get; set; }
-    [PackedFloat] public float ManaMax { get; set; }
-    [PackedFloat] public float HealingAbsorb { get; set; }
-    [PackedFloat] public float HealingAbsorbMax { get; set; }
+    [PackedFloat] public float Unknown7 { get; set; }
+    [PackedFloat] public float Unknown8 { get; set; }
+    [PackedFloat] public float Unknown9 { get; set; }
+    [PackedFloat] public float Unknown10 { get; set; }
+    [PackedFloat] public float Unknown11 { get; set; }
+    [PackedFloat] public float Unknown12 { get; set; }
+    [PackedFloat] public float Unknown13 { get; set; }
+    [PackedFloat] public float Unknown14 { get; set; }
+    [PackedFloat] public float Unknown15 { get; set; }
+    [PackedFloat] public float Unknown16 { get; set; }
+    [PackedFloat] public float Unknown17 { get; set; }
+    [PackedFloat] public float Unknown18 { get; set; }
 
-    [UInt(32)] public uint PhaseFlags1 { get; set; }
-    [UInt(32)] public uint PhaseFlags2 { get; set; }
-    [UInt(3)] public Game.Static.PlayerPath.Path Path { get; set; }
+    [UInt(32)] public uint Unknown19 { get; set; }
+    [UInt(32)] public uint Unknown20 { get; set; }
+    [UInt(3)] public byte Unknown21 { get; set; }
 }

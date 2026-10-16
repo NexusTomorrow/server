@@ -4,11 +4,10 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Chat.Model;
 
 [WireStruct]
-[UnionCase(ChatFormatType.NavPoint)]
-public sealed partial class ChatFormatNavPoint : IChatFormatModel
+[UnionCase(10)]
+public sealed partial class Client01C3Union0Arm0A : IClient01C3Union0
 {
-    [NotOnWire] public ChatFormatType Type => ChatFormatType.NavPoint;
-    [UInt(14)] public ushort MapZoneId { get; set; }
-    [Float32] public float X { get; set; }
-    [Float32] public float Y { get; set; }
+    [UInt(14)] public ushort Unknown0 { get; set; }
+    [Float32] public float Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
 }

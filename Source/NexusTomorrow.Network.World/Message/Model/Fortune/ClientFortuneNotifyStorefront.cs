@@ -3,9 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Fortune;
 
-// Sent to the storefront server when the player has opened the Fortunes screen
-// Sent at the same time as ClientFortunesNotifyGame
-[WireMessage(GameMessageOpcode.ClientFortuneNotifyStorefront, Direction.ClientToServer)]
-public sealed partial class ClientFortuneNotifyStorefront
+[WireMessage(GameMessageOpcode.Client03D3, Direction.ClientToServer)]
+public sealed partial class Client03D3
 {
 }

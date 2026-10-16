@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[WireMessage(GameMessageOpcode.ServerCinematicTransitionPosition, Direction.ServerToClient)]
-public sealed partial class ServerCinematicTransitionPosition
+[WireMessage(GameMessageOpcode.Server0212, Direction.ServerToClient)]
+public sealed partial class Server0212
 {
-    [UInt(32)] public uint Delay { get; set; }
-    public Position Position { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    public Client0096Part0 Unknown1 { get; set; }
 }

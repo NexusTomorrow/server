@@ -4,8 +4,8 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireStruct]
-public sealed partial class WarPartyBossToken
+public sealed partial class Server0951Part0
 {
-    [UInt(18)] public uint TokenItem2Id { get; set; }
-    [UInt(32)] public uint Count { get; set; }
+    [UInt(18)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

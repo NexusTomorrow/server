@@ -3,10 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-// Sent when the lua function CharacterScreenLib::GetRealmTransferDestinations is called
-// Response from ServerTransferDestinationRealmList
-[WireMessage(GameMessageOpcode.ClientGetRealmTransferDestinations, Direction.ClientToServer)]
-public sealed partial class ClientGetRealmTransferDestinations
+[WireMessage(GameMessageOpcode.Client03EE, Direction.ClientToServer)]
+public sealed partial class Client03EE
 {
     [UInt(1)] public bool Unknown0 { get; private set; }
 }

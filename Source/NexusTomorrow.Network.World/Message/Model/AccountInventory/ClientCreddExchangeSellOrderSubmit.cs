@@ -4,10 +4,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.AccountInventory;
 
-[WireMessage(GameMessageOpcode.ClientCreddExchangeSellOrderSubmit, Direction.ClientToServer)]
-public sealed partial class ClientCreddExchangeSellOrderSubmit
+[WireMessage(GameMessageOpcode.Client026B, Direction.ClientToServer)]
+public sealed partial class Client026B
 {
-    public Identity Unused { get; private set; } = new();
-    [UInt(64)] public ulong Price { get; private set; }
-    [UInt(1)] public bool Immediate { get; private set; } // exchange order = 0, purchase now = 1
+    public Client00B5Part0 Unknown0 { get; private set; } = new();
+    [UInt(64)] public ulong Unknown1 { get; private set; }
+    [UInt(1)] public bool Unknown2 { get; private set; }
 }

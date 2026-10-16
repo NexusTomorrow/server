@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
-[WireMessage(GameMessageOpcode.ServerChatResult, Direction.ServerToClient)]
-public sealed partial class ServerChatResult
+[WireMessage(GameMessageOpcode.Server01D3, Direction.ServerToClient)]
+public sealed partial class Server01D3
 {
-    public Channel Channel { get; set; }
-    [UInt(5)] public ChatResult ChatResult { get; set; }
-    [UInt(16)] public ushort ChatMessageId { get; set; } // removes the message from the chat log with this id
+    public Server01B5Part0 Unknown0 { get; set; }
+    [UInt(5)] public byte Unknown1 { get; set; }
+    [UInt(16)] public ushort Unknown2 { get; set; }
 }

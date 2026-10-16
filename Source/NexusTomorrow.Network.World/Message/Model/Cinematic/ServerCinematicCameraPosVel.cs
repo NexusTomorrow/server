@@ -5,12 +5,12 @@ using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[WireMessage(GameMessageOpcode.ServerCinematicCameraPosVel, Direction.ServerToClient)]
-public sealed partial class ServerCinematicCameraPosVel
+[WireMessage(GameMessageOpcode.Server0214, Direction.ServerToClient)]
+public sealed partial class Server0214
 {
-    [UInt(32)] public uint Delay { get; set; }
-    public Position Position { get; set; }
-    [Float32] public Vector3 Velocity { get; set; }
-    [UInt(1)] public bool Target { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    public Client0096Part0 Unknown1 { get; set; }
+    [Float32] public Vector3 Unknown2 { get; set; }
+    [UInt(1)] public bool Unknown3 { get; set; }
 }
 

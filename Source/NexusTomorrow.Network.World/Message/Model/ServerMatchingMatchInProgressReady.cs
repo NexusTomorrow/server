@@ -3,13 +3,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerMatchingMatchInProgressReady, Direction.ServerToClient)]
+[WireMessage(GameMessageOpcode.Server05C4, Direction.ServerToClient)]
 
-// If player is in a match, fires MatchingGamePendingUpdate event for ally count update
-// If player is not in a match, fires MatchingGameReady event for a match that is not started
-public sealed partial class ServerMatchingMatchInProgressReady
+public sealed partial class Server05C4
 {
-    [UInt(5)] public Game.Static.Matching.MatchType MatchType { get; set; }
-    [UInt(32)] public uint PendingAllies { get; set; }
-    [UInt(32)] public uint CurrentAllies { get; set; }
+    [UInt(5)] public byte Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }

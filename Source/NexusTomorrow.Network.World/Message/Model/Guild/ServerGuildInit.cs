@@ -3,12 +3,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ServerGuildInit, Direction.ServerToClient)]
-public sealed partial class ServerGuildInit
+[WireMessage(GameMessageOpcode.Server0497, Direction.ServerToClient)]
+public sealed partial class Server0497
 {
-    [UInt(32), Count] public uint GuildsCount { get; set; }
-    [UInt(32)] public uint ShowNameplateIndex { get; set; } // Of the guilds in the Guilds, this is the list index of the guild the player will display on their nameplate
-    [Array(CountFrom = nameof(GuildsCount))] public List<GuildData> Guilds { get; set; } = [];
-    [Array(CountFrom = nameof(GuildsCount))] public List<GuildMember> Self { get; set; } = [];
-    [Array(CountFrom = nameof(GuildsCount))] public List<GuildWithdrawlInfo> BankWithdrawlInfo { get; set; } = [];
+    [UInt(32), Count] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [Array(CountFrom = nameof(Unknown0))] public List<Server0493Part0> Unknown2 { get; set; } = [];
+    [Array(CountFrom = nameof(Unknown0))] public List<Server0493Part5> Unknown3 { get; set; } = [];
+    [Array(CountFrom = nameof(Unknown0))] public List<Server0493Part6> Unknown4 { get; set; } = [];
 }

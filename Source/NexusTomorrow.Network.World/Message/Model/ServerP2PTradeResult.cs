@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerP2PTradeResult, Direction.ServerToClient)]
-public sealed partial class ServerP2PTradeResult
+[WireMessage(GameMessageOpcode.Server0196, Direction.ServerToClient)]
+public sealed partial class Server0196
 {
     public enum P2PTradeResult
     {
@@ -29,6 +29,6 @@ public sealed partial class ServerP2PTradeResult
         InviteFailedNoTrading = 18
     }
 
-    [UInt(5)] public P2PTradeResult Result { get; set; }
-    [UInt(1)] public bool Cancelled { get; set; }
+    [UInt(5)] public byte Unknown0 { get; set; }
+    [UInt(1)] public bool Unknown1 { get; set; }
 }

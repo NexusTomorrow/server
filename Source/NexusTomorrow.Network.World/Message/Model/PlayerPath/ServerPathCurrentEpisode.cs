@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[WireMessage(GameMessageOpcode.ServerPathSetCurrentEpisode, Direction.ServerToClient)]
-public sealed partial class ServerPathSetCurrentEpisode
+[WireMessage(GameMessageOpcode.Server06BF, Direction.ServerToClient)]
+public sealed partial class Server06BF
 {
-    [UInt(15)] public ushort Unused { get; set; } // shows values in sniffs but client does not use
-    [UInt(14)] public ushort PathEpisodeId { get; set; }
+    [UInt(15)] public ushort Unknown0 { get; set; }
+    [UInt(14)] public ushort Unknown1 { get; set; }
 }

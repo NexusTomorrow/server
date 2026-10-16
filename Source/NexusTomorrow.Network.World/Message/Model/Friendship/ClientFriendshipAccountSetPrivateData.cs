@@ -3,10 +3,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ClientFriendshipAccountSetPrivateData, Direction.ClientToServer)]
-public sealed partial class ClientFriendshipAccountSetPrivateData
+[WireMessage(GameMessageOpcode.Client039D, Direction.ClientToServer)]
+public sealed partial class Client039D
 {
-    [UInt(64)] public ulong AccountFriendId { get; private set; }
-    [UInt(32)] public uint Unused { get; private set; } // Always 2
-    [WideString] public string PrivateDataText { get; private set; }
+    [UInt(64)] public ulong Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
+    [WideString] public string Unknown2 { get; private set; }
 }

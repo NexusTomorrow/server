@@ -4,13 +4,13 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ClientGuildBankTransaction, Direction.ClientToServer)]
-public sealed partial class ClientGuildBankTransaction
+[WireMessage(GameMessageOpcode.Client0471, Direction.ClientToServer)]
+public sealed partial class Client0471
 {
-    public Identity GuildIdentity { get; private set; } = new Identity();
-    [UInt(64)] public ulong SourceItemGuid { get; private set; }
-    [UInt(64)] public ulong DestinationItemGuid { get; private set; } // Sent if bag slot already contains an item, otherwise 0
-    public ItemLocation Source { get; private set; } = new ItemLocation();
-    public ItemLocation Destination { get; private set; } = new ItemLocation();
-    [UInt(32)] public uint Count { get; private set; } // Value of 0 transfers entire stack
+    public Client00B5Part0 Unknown0 { get; private set; } = new Client00B5Part0();
+    [UInt(64)] public ulong Unknown1 { get; private set; }
+    [UInt(64)] public ulong Unknown2 { get; private set; }
+    public Server0111Part2 Unknown3 { get; private set; } = new Server0111Part2();
+    public Server0111Part2 Unknown4 { get; private set; } = new Server0111Part2();
+    [UInt(32)] public uint Unknown5 { get; private set; }
 }

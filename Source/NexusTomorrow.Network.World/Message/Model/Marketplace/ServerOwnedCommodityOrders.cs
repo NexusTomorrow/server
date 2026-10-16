@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
-// Fires in response to MarketplaceLib.RequestOwnedCommodityOrders()
-[WireMessage(GameMessageOpcode.ServerOwnedCommodityOrders, Direction.ServerToClient)]
-public sealed partial class ServerOwnedCommodityOrders
+[WireMessage(GameMessageOpcode.Server064C, Direction.ServerToClient)]
+public sealed partial class Server064C
 {
-    [Array(CountBits = 32)] public List<CommodityOrder> Orders { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server024APart0> Unknown0 { get; set; } = [];
 }

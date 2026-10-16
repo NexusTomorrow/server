@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientMatchingStopLookingForReplacements, Direction.ClientToServer)]
-public sealed partial class ClientMatchingStopLookingForReplacements
+[WireMessage(GameMessageOpcode.Client0602, Direction.ClientToServer)]
+public sealed partial class Client0602
 {
 }

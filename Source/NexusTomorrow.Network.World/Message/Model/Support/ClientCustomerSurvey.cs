@@ -5,10 +5,10 @@ using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Support;
 
-[WireMessage(GameMessageOpcode.ClientCustomerSurveySubmit, Direction.ClientToServer)]
-public sealed partial class ClientCustomerSurveySubmit
+[WireMessage(GameMessageOpcode.Client033F, Direction.ClientToServer)]
+public sealed partial class Client033F
 {
-    [UInt(14)] public SurveyType CustomerSurveyId { get; private set; }
-    [Union(nameof(CustomerSurveyId))] public ISurvey Survey { get; private set; }
-    [WideString] public string Comment { get; private set; }
+    [UInt(14)] public ushort Unknown0 { get; private set; }
+    [Union(nameof(Unknown0))] public IClient033FUnion0 Unknown1 { get; private set; }
+    [WideString] public string Unknown2 { get; private set; }
 }

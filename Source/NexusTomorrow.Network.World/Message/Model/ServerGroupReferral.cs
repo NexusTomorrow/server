@@ -4,12 +4,12 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerGroupReferral, Direction.ServerToClient)]
-public sealed partial class ServerGroupReferral
+[WireMessage(GameMessageOpcode.Server044F, Direction.ServerToClient)]
+public sealed partial class Server044F
 {
-    [UInt(64)] public ulong GroupId { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
 
-    public Identity InviteeIdentity { get; set; }
+    public Client00B5Part0 Unknown1 { get; set; }
 
-    [WideString] public string InviteeName { get; set; }
+    [WideString] public string Unknown2 { get; set; }
 }

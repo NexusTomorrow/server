@@ -3,11 +3,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.ICComm;
 
-[WireMessage(GameMessageOpcode.ClientICCommMessage, Direction.ClientToServer)]
-public sealed partial class ClientICCommMessage
+[WireMessage(GameMessageOpcode.Client054B, Direction.ClientToServer)]
+public sealed partial class Client054B
 {
-    [UInt(64)] public ulong IccommId { get; private set; }
-    [UInt(32)] public uint MessageId { get; private set; }
-    [NarrowString] public string Message { get; private set; }
-    [WideString] public string RecipientName { get; private set; } // only sent for private messages
+    [UInt(64)] public ulong Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
+    [NarrowString] public string Unknown2 { get; private set; }
+    [WideString] public string Unknown3 { get; private set; }
 }

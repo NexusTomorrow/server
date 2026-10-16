@@ -4,11 +4,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerMatchingMatchPvpFinished, Direction.ServerToClient)]
-public sealed partial class ServerMatchingMatchPvpFinished
+[WireMessage(GameMessageOpcode.Server05E9, Direction.ServerToClient)]
+public sealed partial class Server05E9
 {
-    [UInt(2)] public MatchWinner Winner { get; set; }
-    [UInt(3)] public MatchEndReason Reason { get; set; }
-    [UInt(32)] public uint RatingChangeTeam1 { get; set; }
-    [UInt(32)] public uint RatingChangeTeam2 { get; set; }
+    [UInt(2)] public byte Unknown0 { get; set; }
+    [UInt(3)] public byte Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
 }

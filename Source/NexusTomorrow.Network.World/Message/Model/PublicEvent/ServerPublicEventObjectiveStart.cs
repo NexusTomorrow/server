@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
-// Only used to trigger a UI event. Not seen in sniffs but perfectly usable
-[WireMessage(GameMessageOpcode.ServerPublicEventObjectiveStart, Direction.ServerToClient)]
-public sealed partial class ServerPublicEventObjectiveStart
+[WireMessage(GameMessageOpcode.Server06F9, Direction.ServerToClient)]
+public sealed partial class Server06F9
 {
-    [UInt(15)] public uint ObjectiveId { get; set; }
+    [UInt(15)] public uint Unknown0 { get; set; }
 }

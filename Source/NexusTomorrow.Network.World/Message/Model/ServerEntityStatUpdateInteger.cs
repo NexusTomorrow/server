@@ -5,20 +5,16 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-/// <summary>
-/// Sent to set an integer stat. The layout matches <see cref="ServerEntityStatUpdateFloat"/> except that the value is an integer,
-/// which <see cref="IntegerStat"/> carries.
-/// </summary>
-[WireMessage(GameMessageOpcode.ServerEntityStatUpdateInteger, Direction.ServerToClient)]
-public sealed partial class ServerEntityStatUpdateInteger
+[WireMessage(GameMessageOpcode.Server0938, Direction.ServerToClient)]
+public sealed partial class Server0938
 {
     [WireStruct]
-    public sealed partial class IntegerStatValue
+    public sealed partial class Server0938Part0
     {
-        [UInt(5)] public Stat Stat { get; set; }
-        [UInt(32)] public uint Value { get; set; }
+        [UInt(5)] public byte Unknown0 { get; set; }
+        [UInt(32)] public uint Unknown1 { get; set; }
     }
 
-    [UInt(32)] public uint UnitId { get; set; }
-    public IntegerStatValue IntegerStat { get; set; } = new();
+    [UInt(32)] public uint Unknown0 { get; set; }
+    public Server0938Part0 Unknown1 { get; set; } = new();
 }

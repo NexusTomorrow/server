@@ -3,10 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientRapidTransport, Direction.ClientToServer)]
-public sealed partial class ClientRapidTransport
+[WireMessage(GameMessageOpcode.Client0141, Direction.ClientToServer)]
+public sealed partial class Client0141
 {
-    [UInt(14)] public ushort TaxiNode { get; private set; }
-    // not sure about the name - some increment
-    [UInt(32)] public uint Time { get; private set; }
+    [UInt(14)] public ushort Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
 }

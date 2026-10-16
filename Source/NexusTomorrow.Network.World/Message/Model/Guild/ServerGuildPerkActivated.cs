@@ -4,10 +4,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ServerGuildPerkActivated, Direction.ServerToClient)]
-public sealed partial class ServerGuildPerkActivated
+[WireMessage(GameMessageOpcode.Server04B6, Direction.ServerToClient)]
+public sealed partial class Server04B6
 {
-    public Identity GuildIdentity { get; set; }
-    [UInt(14)] public ushort GuildPerkId { get; set; }
-    [Float32] public float DaysAgoActivated { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [UInt(14)] public ushort Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
 }

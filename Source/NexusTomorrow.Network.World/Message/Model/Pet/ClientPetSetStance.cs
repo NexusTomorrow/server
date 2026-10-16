@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pet;
 
-[WireMessage(GameMessageOpcode.ClientPetSetStance, Direction.ClientToServer)]
-public sealed partial class ClientPetSetStance
+[WireMessage(GameMessageOpcode.Client068E, Direction.ClientToServer)]
+public sealed partial class Client068E
 {
-    [UInt(32)] public uint PetUnitId { get; private set; } //The id number for the pet whose stance is being set. Setting this to 0 will set the stance for all of the player's pets.
-    [UInt(5)] public PetStance Stance { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
+    [UInt(5)] public byte Unknown1 { get; private set; }
 }

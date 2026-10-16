@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
-[WireMessage(GameMessageOpcode.ClientMailTakeAllFromSelection, Direction.ClientToServer)]
-public sealed partial class ClientMailTakeAllFromSelection
+[WireMessage(GameMessageOpcode.Client0125, Direction.ClientToServer)]
+public sealed partial class Client0125
 {
-    [Array(CountBits = 32), UInt(64)] public List<ulong> MailList { get; } = [];
-    [UInt(32)] public uint MailboxUnitId { get; private set; }
+    [Array(CountBits = 32), UInt(64)] public List<ulong> Unknown0 { get; } = [];
+    [UInt(32)] public uint Unknown1 { get; private set; }
 }

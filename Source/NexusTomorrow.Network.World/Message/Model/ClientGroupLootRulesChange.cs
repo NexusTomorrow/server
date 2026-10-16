@@ -4,16 +4,16 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientGroupLootRulesChange, Direction.ClientToServer)]
-public sealed partial class ClientGroupLootRulesChange
+[WireMessage(GameMessageOpcode.Client042E, Direction.ClientToServer)]
+public sealed partial class Client042E
 {
-    [UInt(64)] public ulong GroupId { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
 
-    [UInt(3)] public LootRule LootRulesUnderThreshold { get; set; }
+    [UInt(3)] public byte Unknown1 { get; set; }
 
-    [UInt(3)] public LootRule LootRulesThresholdAndOver { get; set; }
+    [UInt(3)] public byte Unknown2 { get; set; }
 
-    [UInt(4)] public LootThreshold Threshold { get; set; }
+    [UInt(4)] public byte Unknown3 { get; set; }
 
-    [UInt(2)] public HarvestLootRule HarvestingRule { get; set; }
+    [UInt(2)] public byte Unknown4 { get; set; }
 }

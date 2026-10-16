@@ -5,10 +5,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ServerGuildBankTabInventory, Direction.ServerToClient)]
-public sealed partial class ServerGuildBankTabInventory
+[WireMessage(GameMessageOpcode.Server047A, Direction.ServerToClient)]
+public sealed partial class Server047A
 {
-    public Identity GuildIdentity { get; set; }
-    [UInt(9)] public InventoryLocation BankTabIndex { get; set; } // Guild bank tab indexes are 100-109, WarParty bank tabs 200-209
-    [Array(CountBits = 32)] public List<InventoryItem> InventoryItems { get; set; } = [];
+    public Client00B5Part0 Unknown0 { get; set; }
+    [UInt(9)] public ushort Unknown1 { get; set; }
+    [Array(CountBits = 32)] public List<Server0111Part0> Unknown2 { get; set; } = [];
 }

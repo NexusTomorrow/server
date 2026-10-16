@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Support;
 
-// From the /suggest command
-[WireMessage(GameMessageOpcode.ClientSuggest, Direction.ClientToServer)]
-public sealed partial class ClientSuggest
+[WireMessage(GameMessageOpcode.Client0833, Direction.ClientToServer)]
+public sealed partial class Client0833
 {
-    [WideString] public string SuggestionText { get; private set; }
+    [WideString] public string Unknown0 { get; private set; }
 }

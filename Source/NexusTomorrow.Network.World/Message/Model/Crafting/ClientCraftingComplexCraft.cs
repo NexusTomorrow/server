@@ -4,14 +4,14 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
-[WireMessage(GameMessageOpcode.ClientCraftingComplexCraft, Direction.ClientToServer)]
-public sealed partial class ClientCraftingComplexCraft
+[WireMessage(GameMessageOpcode.Client084F, Direction.ClientToServer)]
+public sealed partial class Client084F
 {
-    [UInt(32)] public uint ClientSpellcastUniqueId { get; private set; }
-    [UInt(32)] public uint CraftingStationUnitId { get; private set; }
-    [UInt(32)] public uint TradeskillSchematic2Id { get; private set; }
-    public CraftStats CraftStats { get; private set; } = new CraftStats();
-    [UInt(18)] public uint PowerCoreItem2Id { get; private set; }
-    [UInt(32)] public uint ApSpSplitDelta { get; private set; }
-    [Array(CountBits = 3), UInt(32)] public int[] ChargeCounts { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
+    [UInt(32)] public uint Unknown2 { get; private set; }
+    public Client084FPart0 Unknown3 { get; private set; } = new Client084FPart0();
+    [UInt(18)] public uint Unknown4 { get; private set; }
+    [UInt(32)] public uint Unknown5 { get; private set; }
+    [Array(CountBits = 3), UInt(32)] public uint[] Unknown6 { get; private set; }
 }

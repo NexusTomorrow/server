@@ -5,18 +5,15 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-// After a client initialises a spell cast, the server confirms the cast with this message.
-// Not used when spell casts are initiated by other sources.
-
-[WireMessage(GameMessageOpcode.ServerSpellConfirmCast, Direction.ServerToClient)]
-public sealed partial class ServerSpellConfirmCast
+[WireMessage(GameMessageOpcode.Server07FD, Direction.ServerToClient)]
+public sealed partial class Server07FD
 {
-    [UInt(32)] public uint ClientSpellCastUniqueId { get; set; }
-    [UInt(32)] public uint CastingId { get; set; }
-    [UInt(32)] public uint CasterId { get; set; }
-    public Position Position { get; set; } = new Position();
-    [Float32] public float Yaw { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    public Client0096Part0 Unknown3 { get; set; } = new Client0096Part0();
+    [Float32] public float Unknown4 { get; set; }
 
-    [Array(CountBits = 8)] public List<InitialPosition> InitialPositionData { get; set; } = [];
-    [Array(CountBits = 8)] public List<TelegraphPosition> TelegraphPositionData { get; set; } = [];
+    [Array(CountBits = 8)] public List<Server0262Part12> Unknown5 { get; set; } = [];
+    [Array(CountBits = 8)] public List<Server0262Part13> Unknown6 { get; set; } = [];
 }

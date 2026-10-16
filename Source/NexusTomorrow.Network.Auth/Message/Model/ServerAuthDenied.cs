@@ -4,11 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.Auth.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerAuthDenied, Direction.ServerToClient)]
-public sealed partial class ServerAuthDenied
+[WireMessage(GameMessageOpcode.Server063D, Direction.ServerToClient)]
+public sealed partial class Server063D
 {
-    [UInt(32)] public NpLoginResult LoginResult { get; set; }
-    // if LoginResult > 27 client uses this value in some way for an error code
-    [UInt(32)] public uint ErrorValue { get; set; } // Value to insert into replacement token in the localized string from the LoginResult
-    [Float32] public float SuspendedDays { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
 }

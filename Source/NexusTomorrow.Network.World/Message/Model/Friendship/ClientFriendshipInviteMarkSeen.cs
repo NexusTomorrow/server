@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ClientFriendshipInviteMarkSeen, Direction.ClientToServer)]
-public sealed partial class ClientFriendshipInviteMarkSeen
+[WireMessage(GameMessageOpcode.Client03BD, Direction.ClientToServer)]
+public sealed partial class Client03BD
 {
-    [Array(CountBits = 8), UInt(64)] public List<ulong> FriendInviteIds { get; private set; } = [];// Array of InviteIds
+    [Array(CountBits = 8), UInt(64)] public List<ulong> Unknown0 { get; private set; } = [];
 }

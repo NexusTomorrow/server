@@ -3,11 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-// Switches interaction to the specified unit.
-// If this differs from the clients current InteractionUnitId,
-// changes the active InteractionType to none.
-[WireMessage(GameMessageOpcode.ServerInteractionChange, Direction.ServerToClient)]
-public sealed partial class ServerInteractionChange
+[WireMessage(GameMessageOpcode.Server0237, Direction.ServerToClient)]
+public sealed partial class Server0237
 {
-    [UInt(32)] public uint InteractionUnitId { get; set; } = 0;
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

@@ -3,9 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-// Called from RequestCamp, ExitGame, Camp, CancelExit lua functions
-[WireMessage(GameMessageOpcode.ClientLogoutRequest, Direction.ClientToServer)]
-public sealed partial class ClientLogoutRequest
+[WireMessage(GameMessageOpcode.Client00BF, Direction.ClientToServer)]
+public sealed partial class Client00BF
 {
-    [UInt(1)] public bool Initiated { get; private set; }
+    [UInt(1)] public bool Unknown0 { get; private set; }
 }

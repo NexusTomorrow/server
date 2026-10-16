@@ -4,11 +4,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ServerSpellInterrupted2, Direction.ServerToClient)]
-public sealed partial class ServerSpellInterrupted2
+[WireMessage(GameMessageOpcode.Server07FA, Direction.ServerToClient)]
+public sealed partial class Server07FA
 {
-    [UInt(32)] public uint CastingId { get; set; }
-    [UInt(9)] public CastResult Spell4CastResultId { get; set; }
-    [UInt(32)] public uint CasterUnitId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(9)] public ushort Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }
 

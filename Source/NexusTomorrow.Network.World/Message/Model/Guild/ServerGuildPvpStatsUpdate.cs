@@ -4,12 +4,12 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ServerGuildPvpStatsUpdate, Direction.ServerToClient)]
-public sealed partial class ServerGuildPvpStatsUpdate
+[WireMessage(GameMessageOpcode.Server04C1, Direction.ServerToClient)]
+public sealed partial class Server04C1
 {
-    public Identity GuildIdentity { get; set; }
-    [UInt(32)] public uint Wins { get; set; }
-    [UInt(32)] public uint Losses { get; set; }
-    [UInt(32)] public uint Draws { get; set; }
-    [UInt(32)] public uint Rating { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
 }

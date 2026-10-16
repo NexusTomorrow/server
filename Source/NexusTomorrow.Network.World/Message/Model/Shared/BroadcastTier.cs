@@ -2,7 +2,7 @@
 
 public enum BroadcastTier
 {
-    High = 0, // Notification Windows & Chat Message
-    Medium = 1, // Notification Message centre screen & Chat Message
-    Low = 2  // Chat Message
+    High = 0,
+    Medium = 1,
+    Low = 2
 }

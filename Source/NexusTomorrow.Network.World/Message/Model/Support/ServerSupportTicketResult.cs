@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Support;
 
-[WireMessage(GameMessageOpcode.ServerSupportTicketResult, Direction.ServerToClient)]
-public sealed partial class ServerSupportTicketResult
+[WireMessage(GameMessageOpcode.Server0972, Direction.ServerToClient)]
+public sealed partial class Server0972
 {
-    [UInt(1)] public bool Success { get; set; }
+    [UInt(1)] public bool Unknown0 { get; set; }
 }

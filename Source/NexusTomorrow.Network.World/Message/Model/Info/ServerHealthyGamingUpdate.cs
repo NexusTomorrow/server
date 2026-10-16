@@ -4,13 +4,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Info;
 
-// Only works when client is launched with gmode = China
-[WireMessage(GameMessageOpcode.ServerHealthyGamingUpdate, Direction.ServerToClient)]
-public sealed partial class ServerHealthyGamingUpdate
+[WireMessage(GameMessageOpcode.Server04DA, Direction.ServerToClient)]
+public sealed partial class Server04DA
 {
-    [UInt(1)] public bool Enabled { get; set; }
-    [UInt(2)] public HealthyGamingStatus Status { get; set; }
-    [UInt(64)] public ulong GamingStartTime { get; set; } // Win32 FILETIME
-    [UInt(32)] public uint AccumulatedOnlineTime { get; set; } // in hours
-    [UInt(32)] public uint Unknown { get; set; }
+    [UInt(1)] public bool Unknown0 { get; set; }
+    [UInt(2)] public byte Unknown1 { get; set; }
+    [UInt(64)] public ulong Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
 }

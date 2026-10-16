@@ -4,10 +4,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ServerGuildEventLog, Direction.ServerToClient)]
-public sealed partial class ServerGuildEventLog
+[WireMessage(GameMessageOpcode.Server0489, Direction.ServerToClient)]
+public sealed partial class Server0489
 {
-    public Identity GuildIdentity { get; set; }
-    [UInt(1)] public bool IsBankLog { get; set; } // true = is bank log information, false = regular guild log information
-    [Array(CountBits = 32)] public List<GuildEventLog> LogEntry { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [UInt(1)] public bool Unknown1 { get; set; }
+    [Array(CountBits = 32)] public List<Server0487Part0> Unknown2 { get; set; }
 }

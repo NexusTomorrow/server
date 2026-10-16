@@ -3,10 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pvp;
 
-// Only need to send to the participants.
-[WireMessage(GameMessageOpcode.ServerDuelStart, Direction.ServerToClient)]
-public sealed partial class ServerDuelStart
+[WireMessage(GameMessageOpcode.Server0895, Direction.ServerToClient)]
+public sealed partial class Server0895
 {
-    [UInt(32)] public uint ChallengerUnitId { get; set; }
-    [UInt(32)] public uint OpponentUnitId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

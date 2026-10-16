@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Reputation;
 
-[WireMessage(GameMessageOpcode.ServerReputationUpdate, Direction.ServerToClient)]
-public sealed partial class ServerReputationUpdate
+[WireMessage(GameMessageOpcode.Server01A5, Direction.ServerToClient)]
+public sealed partial class Server01A5
 {
-    [UInt(14)] public Faction FactionId { get; set; }
-    [Float32] public float Value { get; set; }
+    [UInt(14)] public ushort Unknown0 { get; set; }
+    [Float32] public float Unknown1 { get; set; }
 }

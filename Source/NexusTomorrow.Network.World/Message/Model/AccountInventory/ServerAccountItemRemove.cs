@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
-[WireMessage(GameMessageOpcode.ServerAccountItemRemove, Direction.ServerToClient)]
-public sealed partial class ServerAccountItemRemove
+[WireMessage(GameMessageOpcode.Server097C, Direction.ServerToClient)]
+public sealed partial class Server097C
 {
-    [UInt(64)] public ulong UserInventoryId { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
 }

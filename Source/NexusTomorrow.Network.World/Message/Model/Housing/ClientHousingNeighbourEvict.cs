@@ -4,10 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-// Sent either the player's identity or the player's name, never both
-[WireMessage(GameMessageOpcode.ClientHousingNeighbourEvict, Direction.ClientToServer)]
-public sealed partial class ClientHousingNeighbourEvict
+[WireMessage(GameMessageOpcode.Client0515, Direction.ClientToServer)]
+public sealed partial class Client0515
 {
-    public Identity PlayerIdentity { get; private set; } = new();
-    [WideString] public string PlayerName { get; private set; }
+    public Client00B5Part0 Unknown0 { get; private set; } = new();
+    [WideString] public string Unknown1 { get; private set; }
 }

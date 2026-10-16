@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-[WireMessage(GameMessageOpcode.ServerCharacterDeleteResult, Direction.ServerToClient)]
-public sealed partial class ServerCharacterDeleteResult
+[WireMessage(GameMessageOpcode.Server00E6, Direction.ServerToClient)]
+public sealed partial class Server00E6
 {
-    [UInt(6)] public CharacterModifyResult Result { get; set; }
-    [UInt(32)] public uint Data { get; set; } // used to select type of guild to show in error when result = DeleteFailed_GuildMaster
+    [UInt(6)] public byte Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

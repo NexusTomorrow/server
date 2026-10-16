@@ -5,19 +5,19 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Hazard;
 
 [WireStruct]
-public sealed partial class Hazard
+public sealed partial class Message010APart0
 {
-    [UInt(14)] public ushort HazardId { get; set; }
-    [UInt(3)] public HazardType Type { get; set; }
-    [Float32] public float MeterValue { get; set; }
-    [Float32] public float MaxValue { get; set; }
-    [UInt(32)] public uint CurrentThreshold { get; set; }
-    [UInt(18)] public uint ProcSpell4Id { get; set; }
-    [UInt(32)] public uint HazardUnitId { get; set; }
-    [UInt(32)] public uint PulseTimeLeft { get; set; }
-    [UInt(1)] public bool UnitBased { get; set; }
-    [UInt(1)] public bool StartsFull { get; set; }
-    [UInt(1)] public bool Enabled { get; set; }
-    [UInt(1)] public bool Suspended { get; set; }
-    [UInt(1)] public bool DoNotRefill { get; set; }
+    [UInt(14)] public ushort Unknown0 { get; set; }
+    [UInt(3)] public byte Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
+    [Float32] public float Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
+    [UInt(18)] public uint Unknown5 { get; set; }
+    [UInt(32)] public uint Unknown6 { get; set; }
+    [UInt(32)] public uint Unknown7 { get; set; }
+    [UInt(1)] public bool Unknown8 { get; set; }
+    [UInt(1)] public bool Unknown9 { get; set; }
+    [UInt(1)] public bool Unknown10 { get; set; }
+    [UInt(1)] public bool Unknown11 { get; set; }
+    [UInt(1)] public bool Unknown12 { get; set; }
 }

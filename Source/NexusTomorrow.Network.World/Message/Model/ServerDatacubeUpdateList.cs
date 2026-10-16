@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerDatacubeUpdateList, Direction.ServerToClient)]
-public sealed partial class ServerDatacubeUpdateList
+[WireMessage(GameMessageOpcode.Server00E0, Direction.ServerToClient)]
+public sealed partial class Server00E0
 {
-    [Array(CountBits = 32)] public List<Datacube> DatacubeData { get; set; } = [];
-    [Array(CountBits = 32)] public List<Datacube> DatacubeVolumeData { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server00E0Part0> Unknown0 { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server00E0Part0> Unknown1 { get; set; } = [];
 }

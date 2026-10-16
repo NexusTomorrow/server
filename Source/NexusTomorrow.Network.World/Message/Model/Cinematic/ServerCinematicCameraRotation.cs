@@ -3,10 +3,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[WireMessage(GameMessageOpcode.ServerCinematicCameraRotation, Direction.ServerToClient)]
-public sealed partial class ServerCinematicCameraRotation
+[WireMessage(GameMessageOpcode.Server0221, Direction.ServerToClient)]
+public sealed partial class Server0221
 {
-    [UInt(32)] public uint Delay { get; set; }
-    [Float32] public float Yaw { get; set; } // in radians, multiple rotations are normalized to [0, 2pi]
-    [Float32] public float Pitch { get; set; } // in radians, limited to [-pi/2, pi/2]
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [Float32] public float Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
 }

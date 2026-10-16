@@ -7,23 +7,23 @@ using Path = NexusTomorrow.Game.Static.PlayerPath.Path;
 
 namespace NexusTomorrow.Network.World.Message.Model.Who;
 
-[WireMessage(GameMessageOpcode.ServerWhoResponse, Direction.ServerToClient)]
-public sealed partial class ServerWhoResponse
+[WireMessage(GameMessageOpcode.Server095A, Direction.ServerToClient)]
+public sealed partial class Server095A
 {
     [WireStruct]
-    public sealed partial class WhoPlayer
+    public sealed partial class Server095APart0
     {
-        [WideString] public string Name { get; set; }
-        [WideString] public string Realm { get; set; }
-        [UInt(32)] public uint Level { get; set; }
-        [UInt(5)] public Race Race { get; set; }
-        [UInt(5)] public Class Class { get; set; }
-        [UInt(2)] public Sex Sex { get; set; }
-        [UInt(14)] public Faction Faction { get; set; }
-        [UInt(3)] public Path Path { get; set; }
-        [UInt(15)] public uint Zone { get; set; }
+        [WideString] public string Unknown0 { get; set; }
+        [WideString] public string Unknown1 { get; set; }
+        [UInt(32)] public uint Unknown2 { get; set; }
+        [UInt(5)] public byte Unknown3 { get; set; }
+        [UInt(5)] public byte Unknown4 { get; set; }
+        [UInt(2)] public byte Unknown5 { get; set; }
+        [UInt(14)] public ushort Unknown6 { get; set; }
+        [UInt(3)] public byte Unknown7 { get; set; }
+        [UInt(15)] public uint Unknown8 { get; set; }
     }
 
-    [Array(CountBits = 32)] public List<WhoPlayer> Players { get; set; }
-    [UInt(2)] public WhoResult Result { get; set; }
+    [Array(CountBits = 32)] public List<Server095APart0> Unknown0 { get; set; }
+    [UInt(2)] public byte Unknown1 { get; set; }
 }

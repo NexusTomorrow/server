@@ -5,11 +5,11 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 [WireStruct]
-public sealed partial class AccountInventoryItem
+public sealed partial class Server096APart0
 {
-    [UInt(64)] public ulong UserInventoryId { get; set; }
-    [UInt(32)] public uint AccountItemId { get; set; }
-    [UInt(5)] public byte Unused1 { get; set; } // sometimes set to 6, value not used by client
-    [UInt(1)] public bool Unused2 { get; set; }
-    public Identity Owner { get; set; } = new(); // some account items are bound to a specific character
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(5)] public byte Unknown2 { get; set; }
+    [UInt(1)] public bool Unknown3 { get; set; }
+    public Client00B5Part0 Unknown4 { get; set; } = new();
 }

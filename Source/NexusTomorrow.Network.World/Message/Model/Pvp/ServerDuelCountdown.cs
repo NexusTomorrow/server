@@ -3,10 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pvp;
 
-// Starts the UI countdown. Only need to send to the participants.
-[WireMessage(GameMessageOpcode.ServerDuelCountdown, Direction.ServerToClient)]
-public sealed partial class ServerDuelCountdown
+[WireMessage(GameMessageOpcode.Server0893, Direction.ServerToClient)]
+public sealed partial class Server0893
 {
-    [UInt(32)] public uint ChallengerUnitId { get; set; }
-    [UInt(32)] public uint OpponentUnitId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

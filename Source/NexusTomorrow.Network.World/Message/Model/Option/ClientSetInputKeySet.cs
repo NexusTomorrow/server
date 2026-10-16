@@ -4,8 +4,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Option;
 
-[WireMessage(GameMessageOpcode.ClientSetInputKeySet, Direction.ClientToServer)]
-public sealed partial class ClientSetInputKeySet
+[WireMessage(GameMessageOpcode.Client0571, Direction.ClientToServer)]
+public sealed partial class Client0571
 {
-    [UInt(32)] public InputSets InputKeySetEnum { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
 }

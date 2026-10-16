@@ -5,10 +5,10 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
-public sealed partial class CombatLogCastData
+public sealed partial class Server0247Part0
 {
-    [UInt(32)] public uint CasterId { get; set; }
-    [UInt(32)] public uint TargetId { get; set; }
-    [UInt(18)] public uint SpellId { get; set; } // 18u
-    [UInt(4)] public CombatResult CombatResult { get; set; } // 4u
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(18)] public uint Unknown2 { get; set; }
+    [UInt(4)] public byte Unknown3 { get; set; }
 }

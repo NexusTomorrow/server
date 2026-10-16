@@ -4,12 +4,9 @@ using NexusTomorrow.Network.World.Entity.Command;
 
 namespace NexusTomorrow.Network.World.Entity;
 
-/// <summary>
-/// One element of an entity command list: the 5-bit command, then that command's payload.
-/// </summary>
 [WireStruct]
-public sealed partial class NetworkEntityCommand : INetworkEntityCommand
+public sealed partial class Server0262Part5
 {
-    [UInt(5)] public EntityCommand Command { get; set; }
-    [Union(nameof(Command))] public IEntityCommandModel Model { get; set; } = new SetTimeCommand();
+    [UInt(5)] public byte Unknown0 { get; set; }
+    [Union(nameof(Unknown0))] public IServer0262Union2 Unknown1 { get; set; } = new Server0262Union2Arm00();
 }

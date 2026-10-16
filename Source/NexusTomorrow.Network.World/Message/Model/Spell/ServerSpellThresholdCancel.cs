@@ -3,11 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-// Similar to ServerSpellThresholdClear but specifically for PressHold and RapidTap cast method spells.
-// Explicitly does not affect ChargeRelease spells
-[WireMessage(GameMessageOpcode.ServerSpellThresholdCancel, Direction.ServerToClient)]
-public sealed partial class ServerSpellThresholdCancel
+[WireMessage(GameMessageOpcode.Server0815, Direction.ServerToClient)]
+public sealed partial class Server0815
 {
-    [UInt(18)] public uint SpellId { get; set; }
+    [UInt(18)] public uint Unknown0 { get; set; }
 }
 

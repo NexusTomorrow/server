@@ -5,18 +5,17 @@ using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
-[EntityCommand(EntityCommand.SetPositionSpline)]
 [WireStruct]
-[UnionCase(EntityCommand.SetPositionSpline)]
-public sealed partial class SetPositionSplineCommand : IEntityCommandModel
+[UnionCase(5)]
+public sealed partial class Server0262Union2Arm05 : IServer0262Union2
 {
-    [UInt(32)] public uint SplineId { get; set; }
-    [Float32] public float Speed { get; set; }
-    [Float32] public float Position { get; set; }
-    [PackedFloat] public Vector3 FormationData { get; set; }
-    [UInt(4)] public SplineMode Mode { get; set; }
-    [UInt(32)] public uint Offset { get; set; }
-    [UInt(1)] public bool Blend { get; set; }
-    [UInt(1)] public bool IsContinuing { get; set; }
-    [UInt(1)] public bool AdjustSpeedToLength { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [Float32] public float Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
+    [PackedFloat] public Vector3 Unknown3 { get; set; }
+    [UInt(4)] public byte Unknown4 { get; set; }
+    [UInt(32)] public uint Unknown5 { get; set; }
+    [UInt(1)] public bool Unknown6 { get; set; }
+    [UInt(1)] public bool Unknown7 { get; set; }
+    [UInt(1)] public bool Unknown8 { get; set; }
 }

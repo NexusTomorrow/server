@@ -3,10 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-// Can also be used to send the player's updated public note
-[WireMessage(GameMessageOpcode.ServerFriendshipAccountPublicNote, Direction.ServerToClient)]
-public sealed partial class ServerFriendshipAccountPublicNote
+[WireMessage(GameMessageOpcode.Server03AD, Direction.ServerToClient)]
+public sealed partial class Server03AD
 {
-    [UInt(32)] public uint AccountId { get; set; }
-    [WideString] public string PublicNote { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [WideString] public string Unknown1 { get; set; }
 }

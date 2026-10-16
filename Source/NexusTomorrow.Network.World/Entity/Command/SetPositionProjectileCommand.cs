@@ -4,15 +4,14 @@ using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
-[EntityCommand(EntityCommand.SetPositionProjectile)]
 [WireStruct]
-[UnionCase(EntityCommand.SetPositionProjectile)]
-public sealed partial class SetPositionProjectileCommand : IEntityCommandModel
+[UnionCase(7)]
+public sealed partial class Server0262Union2Arm07 : IServer0262Union2
 {
-    [Float32] public Vector3 Position { get; set; }
-    [Float32] public Vector3 Rotation { get; set; }
-    [UInt(32)] public uint FlightTime { get; set; }
-    [Float32] public float Gravity { get; set; }
-    [UInt(32)] public uint Offset { get; set; }
-    [UInt(1)] public bool Blend { get; set; }
+    [Float32] public Vector3 Unknown0 { get; set; }
+    [Float32] public Vector3 Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [Float32] public float Unknown3 { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
+    [UInt(1)] public bool Unknown5 { get; set; }
 }

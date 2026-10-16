@@ -3,16 +3,16 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ServerSpellRemove, Direction.ServerToClient)]
-public sealed partial class ServerSpellRemove
+[WireMessage(GameMessageOpcode.Server07FB, Direction.ServerToClient)]
+public sealed partial class Server07FB
 {
     [WireStruct]
-    public sealed partial class TargetSpellDodgeResult
+    public sealed partial class Server07FBPart0
     {
-        [UInt(32)] public uint TargetUnitId { get; set; }
-        [UInt(4)] public byte SpellDodged { get; set; } = 0;
-        [UInt(32)] public uint AdditionalSoundDelay { get; set; } = 0;
+        [UInt(32)] public uint Unknown0 { get; set; }
+        [UInt(4)] public byte Unknown1 { get; set; }
+        [UInt(32)] public uint Unknown2 { get; set; }
     }
-    [UInt(32)] public uint CastingId { get; set; }
-    [Array(CountBits = 32)] public List<TargetSpellDodgeResult> TargetDodgeResults { get; set; } = [];
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [Array(CountBits = 32)] public List<Server07FBPart0> Unknown1 { get; set; } = [];
 }

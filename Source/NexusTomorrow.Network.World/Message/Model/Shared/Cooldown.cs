@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class Cooldown
+public sealed partial class Server0804Part0
 {
-    [UInt(3)] public byte Type { get; set; }
-    [UInt(18)] public uint SpellId { get; set; }
-    [UInt(32)] public uint TypeId { get; set; }
-    [UInt(32)] public uint TimeRemaining { get; set; }
+    [UInt(3)] public byte Unknown0 { get; set; }
+    [UInt(18)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
 }

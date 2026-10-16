@@ -6,19 +6,19 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Loot;
 
 [WireStruct]
-public sealed partial class LootItem
+public sealed partial class Server07F2Part0
 {
-    [UInt(32)] public uint LootUnitId { get; set; }
-    [UInt(32)] public LootItemType Type { get; set; }
-    [UInt(32)] public uint ItemId { get; set; }
-    [UInt(32)] public uint Amount { get; set; }
-    [UInt(1)] public bool CanLoot { get; set; }
-    [UInt(1)] public bool RequiresRoll { get; set; }
-    [UInt(1)] public bool OnlyMasterLootable { get; set; }
-    [UInt(1)] public bool Explosion { get; set; }
-    [UInt(32)] public uint RollTime { get; set; }
-    [UInt(64)] public ulong RandomCircuitData { get; set; }
-    [UInt(32)] public uint RandomGlyphData { get; set; }
-    [UInt(32)] public uint ItemQuality2Id { get; set; }
-    [Array(CountBits = 32)] public List<Identity> MasterList { get; set; } = [];
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
+    [UInt(1)] public bool Unknown4 { get; set; }
+    [UInt(1)] public bool Unknown5 { get; set; }
+    [UInt(1)] public bool Unknown6 { get; set; }
+    [UInt(1)] public bool Unknown7 { get; set; }
+    [UInt(32)] public uint Unknown8 { get; set; }
+    [UInt(64)] public ulong Unknown9 { get; set; }
+    [UInt(32)] public uint Unknown10 { get; set; }
+    [UInt(32)] public uint Unknown11 { get; set; }
+    [Array(CountBits = 32)] public List<Client00B5Part0> Unknown12 { get; set; } = [];
 }

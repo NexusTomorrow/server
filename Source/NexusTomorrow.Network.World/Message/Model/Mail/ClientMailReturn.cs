@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
-[WireMessage(GameMessageOpcode.ClientMailReturn, Direction.ClientToServer)]
-public sealed partial class ClientMailReturn
+[WireMessage(GameMessageOpcode.Client0124, Direction.ClientToServer)]
+public sealed partial class Client0124
 {
-    [UInt(64)] public ulong MailId { get; private set; }
+    [UInt(64)] public ulong Unknown0 { get; private set; }
 }

@@ -3,16 +3,14 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-// Response to ClientGetRealmTransferDestinations (0x3EE)
-// Triggers TransferDestinationRealmList lua event.
-[WireMessage(GameMessageOpcode.ServerTransferDestinationRealmList, Direction.ServerToClient)]
-public sealed partial class ServerTransferDestinationRealmList
+[WireMessage(GameMessageOpcode.Message0862, Direction.ServerToClient)]
+public sealed partial class Message0862
 {
     [WireStruct]
-    public sealed partial class RealmTransferInfo : RealmInfo
+    public sealed partial class Message0862Part0 : Message0761Part0
     {
-        [UInt(1)] public bool IsFree { get; set; }
+        [UInt(1)] public bool Unknown14 { get; set; }
     }
 
-    [Array(CountBits = 32)] public List<RealmTransferInfo> Realms { get; set; } = [];
+    [Array(CountBits = 32)] public List<Message0862Part0> Unknown0 { get; set; } = [];
 }

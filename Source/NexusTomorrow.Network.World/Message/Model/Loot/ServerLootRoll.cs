@@ -5,11 +5,11 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Loot;
 
-[WireMessage(GameMessageOpcode.ServerLootRoll, Direction.ServerToClient)]
-public sealed partial class ServerLootRoll
+[WireMessage(GameMessageOpcode.Server08A2, Direction.ServerToClient)]
+public sealed partial class Server08A2
 {
-    [UInt(32)] public uint LootUnitId { get; set; }
-    public Identity Roller { get; set; } = new Identity();
-    [UInt(18)] public uint ItemId { get; set; } // Can be Item2Id, LootSpellId, VirtualItemId, AccountItemId
-    [UInt(32)] public LootRollAction Action { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    public Client00B5Part0 Unknown1 { get; set; } = new Client00B5Part0();
+    [UInt(18)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
 }

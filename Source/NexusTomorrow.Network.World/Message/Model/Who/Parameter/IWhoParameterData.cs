@@ -3,6 +3,6 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Who.Parameter;
 
-public interface IWhoParameterData : IWireStruct
+public interface IClient0959Union0 : IWireStruct
 {
 }

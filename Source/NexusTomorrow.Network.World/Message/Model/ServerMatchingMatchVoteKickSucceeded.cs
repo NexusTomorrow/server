@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerMatchingMatchVoteKickSucceeded, Direction.ServerToClient)]
-public sealed partial class ServerMatchingMatchVoteKickSucceeded
+[WireMessage(GameMessageOpcode.Server061A, Direction.ServerToClient)]
+public sealed partial class Server061A
 {
 }

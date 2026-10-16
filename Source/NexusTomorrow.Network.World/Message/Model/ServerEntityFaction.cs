@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerEntityFaction, Direction.ServerToClient)]
-public sealed partial class ServerEntityFaction
+[WireMessage(GameMessageOpcode.Server0934, Direction.ServerToClient)]
+public sealed partial class Server0934
 {
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(14)] public Faction Faction { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(14)] public ushort Unknown1 { get; set; }
 }

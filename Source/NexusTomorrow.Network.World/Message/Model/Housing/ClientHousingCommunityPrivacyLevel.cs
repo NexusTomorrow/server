@@ -5,9 +5,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ClientHousingCommunityPrivacyLevel, Direction.ClientToServer)]
-public sealed partial class ClientHousingCommunityPrivacyLevel
+[WireMessage(GameMessageOpcode.Client0538, Direction.ClientToServer)]
+public sealed partial class Client0538
 {
-    public Identity GuildIdentity { get; private set; } = new();
-    [UInt(1)] public CommunityPrivacyLevel PrivacyLevel { get; private set; }
+    public Client00B5Part0 Unknown0 { get; private set; } = new();
+    [UInt(1)] public byte Unknown1 { get; private set; }
 }

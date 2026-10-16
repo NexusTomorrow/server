@@ -5,11 +5,11 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.ServerHousingBuildState, Direction.ServerToClient)]
-public sealed partial class ServerHousingBuildState
+[WireMessage(GameMessageOpcode.Server053B, Direction.ServerToClient)]
+public sealed partial class Server053B
 {
-    public Identity ResidenceIdentity { get; set; }
-    [UInt(32)] public uint HousingPlotIndex { get; set; }
-    [UInt(32)] public uint BuildStage { get; set; } // changes the model sequence for the prop, see tbl housingBuild.modelSequenceId
-    [UInt(3)] public BuildState State { get; set; }
+    public Client00B5Part0 Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [UInt(3)] public byte Unknown3 { get; set; }
 }

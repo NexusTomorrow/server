@@ -3,13 +3,13 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[WireMessage(GameMessageOpcode.ServerCinematicCameraSpline, Direction.ServerToClient)]
-public sealed partial class ServerCinematicCameraSpline
+[WireMessage(GameMessageOpcode.Server0215, Direction.ServerToClient)]
+public sealed partial class Server0215
 {
-    [UInt(32)] public uint Delay { get; set; }
-    [UInt(32)] public uint SplineId { get; set; }
-    [UInt(32)] public uint SplineMode { get; set; }
-    [Float32] public float Speed { get; set; }
-    [UInt(1)] public bool Target { get; set; }
-    [UInt(1)] public bool UseRotation { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
+    [Float32] public float Unknown3 { get; set; }
+    [UInt(1)] public bool Unknown4 { get; set; }
+    [UInt(1)] public bool Unknown5 { get; set; }
 }

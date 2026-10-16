@@ -3,12 +3,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
-[WireMessage(GameMessageOpcode.ClientHelloRealm, Direction.ClientToServer)]
-public sealed partial class ClientHelloRealm
+[WireMessage(GameMessageOpcode.Client058F, Direction.ClientToServer)]
+public sealed partial class Client058F
 {
-    [UInt(32)] public uint AccountId { get; private set; }
-    [FixedArray(16), UInt(8)] public byte[] SessionKey { get; private set; }
-    [UInt(64)] public ulong Unused { get; private set; }
-    [WideString] public string AccountString { get; private set; }
-    [UInt(32)] public uint Always3 { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
+    [FixedArray(16), UInt(8)] public byte[] Unknown1 { get; private set; }
+    [UInt(64)] public ulong Unknown2 { get; private set; }
+    [WideString] public string Unknown3 { get; private set; }
+    [UInt(32)] public uint Unknown4 { get; private set; }
 }

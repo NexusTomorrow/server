@@ -4,13 +4,12 @@ using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
-[EntityCommand(EntityCommand.SetModeKeys)]
 [WireStruct]
-[UnionCase(EntityCommand.SetModeKeys)]
-public sealed partial class SetModeKeysCommand : IEntityCommandModel
+[UnionCase(28)]
+public sealed partial class Server0262Union2Arm1C : IServer0262Union2
 {
-    [UInt(8), Count] public byte TimesCount { get; set; }
-    [Array(CountFrom = nameof(TimesCount)), UInt(32)] public List<uint> Times { get; set; } = [];
-    [Array(CountFrom = nameof(TimesCount)), UInt(32)] public List<ModeType> Modes { get; set; } = [];
-    [UInt(32)] public uint Offset { get; set; }
+    [UInt(8), Count] public byte Unknown0 { get; set; }
+    [Array(CountFrom = nameof(Unknown0)), UInt(32)] public List<uint> Unknown1 { get; set; } = [];
+    [Array(CountFrom = nameof(Unknown0)), UInt(32)] public List<uint> Unknown2 { get; set; } = [];
+    [UInt(32)] public uint Unknown3 { get; set; }
 }

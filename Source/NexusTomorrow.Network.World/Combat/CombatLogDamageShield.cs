@@ -4,8 +4,7 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Combat;
 
 [WireStruct]
-[UnionCase(CombatLogType.DamageShields)]
-public sealed partial class CombatLogDamageShield : CombatLogDamage
+[UnionCase(4)]
+public sealed partial class Server0247Union0Arm04 : Server0247Union0Arm03
 {
-    [NotOnWire] public override CombatLogType Type => CombatLogType.DamageShields;
 }

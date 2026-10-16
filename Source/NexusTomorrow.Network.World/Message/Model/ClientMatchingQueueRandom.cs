@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientMatchingQueueRandom, Direction.ClientToServer)]
-public sealed partial class ClientMatchingQueueRandom
+[WireMessage(GameMessageOpcode.Client05F8, Direction.ClientToServer)]
+public sealed partial class Client05F8
 {
-    [UInt(5)] public Game.Static.Matching.MatchType MatchType { get; private set; }
-    [UInt(32)] public MatchingQueueFlags Flags { get; private set; }
-    [UInt(32)] public Role Roles { get; private set; }
+    [UInt(5)] public byte Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
+    [UInt(32)] public uint Unknown2 { get; private set; }
 }

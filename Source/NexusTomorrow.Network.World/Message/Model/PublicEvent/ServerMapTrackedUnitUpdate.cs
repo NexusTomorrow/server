@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
-[WireMessage(GameMessageOpcode.ServerMapTrackedUnitUpdate, Direction.ServerToClient)]
-public sealed partial class ServerMapTrackedUnitUpdate
+[WireMessage(GameMessageOpcode.Server0849, Direction.ServerToClient)]
+public sealed partial class Server0849
 {
-    [UInt(32)] public uint TrackedUnitId { get; set; }
-    [Float32] public Vector3 Position { get; set; }
-    [UInt(15)] public uint PublicEventObjectiveId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [Float32] public Vector3 Unknown1 { get; set; }
+    [UInt(15)] public uint Unknown2 { get; set; }
 }

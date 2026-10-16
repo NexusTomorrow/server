@@ -4,14 +4,14 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [WireStruct]
-public partial class Neighbourhood
+public partial class Server0501Part0
 {
-    [UInt(64)] public ulong NeighbourhoodId { get; set; }
-    [UInt(14)] public ushort HousingNeighbourhoodInfoId { get; set; }
-    [UInt(14)] public ushort ParentRealmId { get; set; }
-    [UInt(64)] public ulong GuildIdOwner { get; set; }
-    [WideString] public string Name { get; set; }
-    [UInt(32)] public uint Population { get; set; }
-    [UInt(32)] public uint MaxPopulation { get; set; }
-    [UInt(32)] public uint Cost { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    [UInt(14)] public ushort Unknown1 { get; set; }
+    [UInt(14)] public ushort Unknown2 { get; set; }
+    [UInt(64)] public ulong Unknown3 { get; set; }
+    [WideString] public string Unknown4 { get; set; }
+    [UInt(32)] public uint Unknown5 { get; set; }
+    [UInt(32)] public uint Unknown6 { get; set; }
+    [UInt(32)] public uint Unknown7 { get; set; }
 }

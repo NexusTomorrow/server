@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
-[WireMessage(GameMessageOpcode.ServerMailUnavailable, Direction.ServerToClient)]
-public sealed partial class ServerMailUnavailable
+[WireMessage(GameMessageOpcode.Server05A7, Direction.ServerToClient)]
+public sealed partial class Server05A7
 {
-    [UInt(64)] public ulong MailId { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
 }

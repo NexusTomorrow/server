@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ClientFriendshipSetAutoResponseMessage, Direction.ClientToServer)]
-public sealed partial class ClientFriendshipSetAutoResponseMessage
+[WireMessage(GameMessageOpcode.Client03B7, Direction.ClientToServer)]
+public sealed partial class Client03B7
 {
-    [WideString] public string AwayMessage { get; private set; }
-    [WideString] public string BusyMessage { get; private set; }
+    [WideString] public string Unknown0 { get; private set; }
+    [WideString] public string Unknown1 { get; private set; }
 }

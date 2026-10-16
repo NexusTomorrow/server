@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ServerSpellBuffRemoveSingle, Direction.ServerToClient)]
-public sealed partial class ServerSpellBuffRemoveSingle
+[WireMessage(GameMessageOpcode.Server0813, Direction.ServerToClient)]
+public sealed partial class Server0813
 {
-    [UInt(32)] public uint ServerUniqueId { get; set; }
-    [UInt(32)] public uint TargetUnitId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
 }

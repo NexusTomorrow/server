@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ServerSpellFinish, Direction.ServerToClient)]
+[WireMessage(GameMessageOpcode.Server07FE, Direction.ServerToClient)]
 
-public sealed partial class ServerSpellFinish
+public sealed partial class Server07FE
 {
-    [UInt(32)] public uint ServerUniqueId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

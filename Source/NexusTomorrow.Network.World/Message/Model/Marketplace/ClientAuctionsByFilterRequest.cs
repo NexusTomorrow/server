@@ -6,20 +6,17 @@ using NexusTomorrow.Network.World.Message.Model.Marketplace.Filter;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
-[WireMessage(GameMessageOpcode.ClientAuctionsByFilterRequest, Direction.ClientToServer)]
-public sealed partial class ClientAuctionsByFilterRequest
+[WireMessage(GameMessageOpcode.Client07DC, Direction.ClientToServer)]
+public sealed partial class Client07DC
 {
-    // Only one of the four fields below will be filled out depedning on the search type
-    // Family, Category, Type, or by item(s)
-    [UInt(14)] public uint Item2FamilyId { get; private set; }
-    [UInt(14)] public uint Item2CategoryId { get; private set; }
-    [UInt(14)] public uint Item2TypeId { get; private set; }
-    [Array(CountBits = 32), UInt(32)] public List<uint> Item2Ids { get; private set; } = [];
+    [UInt(14)] public uint Unknown0 { get; private set; }
+    [UInt(14)] public uint Unknown1 { get; private set; }
+    [UInt(14)] public uint Unknown2 { get; private set; }
+    [Array(CountBits = 32), UInt(32)] public List<uint> Unknown3 { get; private set; } = [];
 
-    // Each filter keeps its 3-bit type, which selects the arm in Filter.
-    [Array(CountBits = 32)] public List<AuctionFilter> Filters { get; private set; } = [];
-    [UInt(32)] public uint ReverseSort { get; private set; } // is a flag array but only lowest bit is used
-    [UInt(3)] public AuctionSort AuctionSort { get; private set; }
-    [UInt(8)] public Property SortPropertyId { get; private set; } // required if AuctionSort is Property
-    [UInt(32)] public uint Page { get; private set; }
+    [Array(CountBits = 32)] public List<Client07DCPart0> Unknown4 { get; private set; } = [];
+    [UInt(32)] public uint Unknown5 { get; private set; }
+    [UInt(3)] public byte Unknown6 { get; private set; }
+    [UInt(8)] public byte Unknown7 { get; private set; }
+    [UInt(32)] public uint Unknown8 { get; private set; }
 }

@@ -3,10 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-//Fires when the unit that is being tracked in a Tracking mission reaches its destination before the player.
-
-[WireMessage(GameMessageOpcode.ServerPathExplorerPowerMapWaiting, Direction.ServerToClient)]
-public sealed partial class ServerPathExplorerPowerMapWaiting
+[WireMessage(GameMessageOpcode.Server00FA, Direction.ServerToClient)]
+public sealed partial class Server00FA
 {
-    [UInt(14)] public ushort PathMissionId { get; set; }
+    [UInt(14)] public ushort Unknown0 { get; set; }
 }

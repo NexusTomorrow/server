@@ -2,8 +2,8 @@
 
 namespace NexusTomorrow.Network.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientEncrypted, Direction.ClientToServer)]
-public sealed partial class ClientEncrypted
+[WireMessage(GameMessageOpcode.Client0244, Direction.ClientToServer)]
+public sealed partial class Client0244
 {
-    [Blob(32, LengthIncludesSelf = true)] public byte[] Data { get; private set; } = [];
+    [Blob(32, LengthIncludesSelf = true)] public byte[] Unknown0 { get; private set; } = [];
 }

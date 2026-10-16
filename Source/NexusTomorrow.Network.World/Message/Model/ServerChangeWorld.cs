@@ -4,13 +4,11 @@ using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-// If sent while on the CharacterSelect screen, loads into the Game screen
-// If sent while Game screen is already active, reinitializes player data managers.
-[WireMessage(GameMessageOpcode.ServerChangeWorld, Direction.ServerToClient)]
-public sealed partial class ServerChangeWorld
+[WireMessage(GameMessageOpcode.Server00AD, Direction.ServerToClient)]
+public sealed partial class Server00AD
 {
-    [UInt(15)] public ushort WorldId { get; set; }
-    public Position Position { get; set; }
-    [Float32] public float Yaw { get; set; }
-    [Float32] public float Pitch { get; set; }
+    [UInt(15)] public ushort Unknown0 { get; set; }
+    public Client0096Part0 Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
+    [Float32] public float Unknown3 { get; set; }
 }

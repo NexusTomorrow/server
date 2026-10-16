@@ -4,11 +4,10 @@ using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
-[EntityCommand(EntityCommand.SetVelocity)]
 [WireStruct]
-[UnionCase(EntityCommand.SetVelocity)]
-public sealed partial class SetVelocityCommand : IEntityCommandModel
+[UnionCase(8)]
+public sealed partial class Server0262Union2Arm08 : IServer0262Union2
 {
-    [PackedFloat] public Vector3 Velocity { get; set; }
-    [UInt(1)] public bool Blend { get; set; }
+    [PackedFloat] public Vector3 Unknown0 { get; set; }
+    [UInt(1)] public bool Unknown1 { get; set; }
 }

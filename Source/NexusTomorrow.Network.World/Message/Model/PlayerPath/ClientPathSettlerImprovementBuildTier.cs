@@ -3,9 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[WireMessage(GameMessageOpcode.ClientPathSettlerImprovementBuildTier, Direction.ClientToServer)]
-public sealed partial class ClientPathSettlerImprovementBuildTier
+[WireMessage(GameMessageOpcode.Client0670, Direction.ClientToServer)]
+public sealed partial class Client0670
 {
-    [UInt(14)] public uint PathSettlerImprovementGroupId { get; private set; }
-    [UInt(32)] public uint BuildTier { get; private set; } // Is zero-based, so 0 = 1st tier, 1 = 2nd tier, etc.
+    [UInt(14)] public uint Unknown0 { get; private set; }
+    [UInt(32)] public uint Unknown1 { get; private set; }
 }

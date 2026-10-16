@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Fortune;
 
-[WireMessage(GameMessageOpcode.ClientFortuneStart, Direction.ClientToServer)]
-public sealed partial class ClientFortuneStart
+[WireMessage(GameMessageOpcode.Client03D4, Direction.ClientToServer)]
+public sealed partial class Client03D4
 {
 }

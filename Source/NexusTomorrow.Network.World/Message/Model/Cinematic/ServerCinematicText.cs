@@ -3,10 +3,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[WireMessage(GameMessageOpcode.ServerCinematicText, Direction.ServerToClient)]
-public sealed partial class ServerCinematicText
+[WireMessage(GameMessageOpcode.Server022A, Direction.ServerToClient)]
+public sealed partial class Server022A
 {
-    [UInt(32)] public uint Delay { get; set; }
-    [UInt(21)] public uint LocalizedTextId { get; set; }
-    [UInt(1)] public bool Unused { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(21)] public uint Unknown1 { get; set; }
+    [UInt(1)] public bool Unknown2 { get; set; }
 }

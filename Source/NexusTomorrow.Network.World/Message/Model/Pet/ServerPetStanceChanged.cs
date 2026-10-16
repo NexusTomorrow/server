@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pet;
 
-[WireMessage(GameMessageOpcode.ServerPetStanceChanged, Direction.ServerToClient)]
-public sealed partial class ServerPetStanceChanged
+[WireMessage(GameMessageOpcode.Server068F, Direction.ServerToClient)]
+public sealed partial class Server068F
 {
-    [UInt(32)] public uint PetUnitId { get; set; } // 0 means all engineer pets
-    [UInt(5)] public PetStance Stance { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(5)] public byte Unknown1 { get; set; }
 }

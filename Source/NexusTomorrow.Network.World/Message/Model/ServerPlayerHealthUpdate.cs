@@ -4,13 +4,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-/// <summary>
-/// This is sent to the Player being updated. Forces a refresh on the health bar of that user. UnitId always matches player ID of the client.
-/// </summary>
-[WireMessage(GameMessageOpcode.ServerPlayerHealthUpdate, Direction.ServerToClient)]
-public sealed partial class ServerPlayerHealthUpdate
+[WireMessage(GameMessageOpcode.Server092F, Direction.ServerToClient)]
+public sealed partial class Server092F
 {
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(32)] public uint Health { get; set; }
-    [UInt(18)] public UpdateHealthMask Mask { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(18)] public uint Unknown2 { get; set; }
 }

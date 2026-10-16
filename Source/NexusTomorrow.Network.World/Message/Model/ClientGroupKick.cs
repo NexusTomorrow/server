@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientGroupKick, Direction.ClientToServer)]
-public sealed partial class ClientGroupKick
+[WireMessage(GameMessageOpcode.Client0428, Direction.ClientToServer)]
+public sealed partial class Client0428
 {
-    [UInt(64)] public ulong GroupId { get; set; }
-    public Identity TargetedPlayer { get; set; } = new();
+    [UInt(64)] public ulong Unknown0 { get; set; }
+    public Client00B5Part0 Unknown1 { get; set; } = new();
 }

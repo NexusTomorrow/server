@@ -4,9 +4,8 @@ using NexusTomorrow.Network.Codec;
 namespace NexusTomorrow.Network.World.Chat.Model;
 
 [WireStruct]
-[UnionCase(ChatFormatType.Roleplay)]
-public sealed partial class ChatFormatRoleplay : IChatFormatModel
+[UnionCase(2)]
+public sealed partial class Client01C3Union0Arm02 : IClient01C3Union0
 {
-    [NotOnWire] public ChatFormatType Type => ChatFormatType.Roleplay;
-    [UInt(1)] public bool Unknown { get; set; }
+    [UInt(1)] public bool Unknown0 { get; set; }
 }

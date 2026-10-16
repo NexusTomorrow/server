@@ -4,48 +4,48 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ServerVendorItemsUpdated, Direction.ServerToClient)]
-public sealed partial class ServerVendorItemsUpdated
+[WireMessage(GameMessageOpcode.Server090B, Direction.ServerToClient)]
+public sealed partial class Server090B
 {
     [WireStruct]
-    public sealed partial class Category
+    public sealed partial class Server090BPart0
     {
-        [UInt(32)] public uint Index { get; set; }
-        [UInt(32)] public uint LocalisedTextId { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
+        [UInt(32)] public uint Unknown1 { get; set; }
     }
 
     [WireStruct]
-    public sealed partial class Item
+    public sealed partial class Server090BPart1
     {
         [WireStruct]
-        public sealed partial class ItemExtraCost
+        public sealed partial class Server090BPart2
         {
-            [UInt(3)] public ItemExtraCostType ExtraCostType { get; set; }
-            [UInt(32)] public uint Quantity { get; set; }
-            [UInt(32)] public uint ItemOrCurrencyId { get; set; }
+            [UInt(3)] public byte Unknown0 { get; set; }
+            [UInt(32)] public uint Unknown1 { get; set; }
+            [UInt(32)] public uint Unknown2 { get; set; }
         }
 
-        [UInt(32)] public uint Index { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
         [UInt(4)] public byte Unknown1 { get; set; }
-        [UInt(32)] public uint ItemId { get; set; }
+        [UInt(32)] public uint Unknown2 { get; set; }
         [UInt(32)] public uint Unknown3 { get; set; }
         [UInt(32)] public uint Unknown4 { get; set; }
         [UInt(17)] public uint Unknown5 { get; set; }
         [UInt(32)] public uint Unknown6 { get; set; }
-        [UInt(32)] public uint CategoryIndex { get; set; }
+        [UInt(32)] public uint Unknown7 { get; set; }
         [UInt(32)] public uint Unknown8 { get; set; }
         [UInt(64)] public ulong Unknown9 { get; set; }
-        [UInt(32)] public uint UnknownA { get; set; }
-        public ItemExtraCost ExtraCost1 { get; set; }
-        public ItemExtraCost ExtraCost2 { get; set; }
+        [UInt(32)] public uint Unknown10 { get; set; }
+        public Server090BPart2 Unknown11 { get; set; }
+        public Server090BPart2 Unknown12 { get; set; }
     }
 
-    [UInt(32)] public uint Guid { get; set; }
-    [Array(CountBits = 32)] public List<Category> Categories { get; } = [];
-    [Array(CountBits = 32)] public List<Item> Items { get; } = [];
-    [Float32] public float SellPriceMultiplier { get; set; }
-    [Float32] public float BuyPriceMultiplier { get; set; }
-    [UInt(1)] public bool Unknown2 { get; set; }
-    [UInt(1)] public bool Unknown3 { get; set; }
-    [UInt(1)] public bool Unknown4 { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [Array(CountBits = 32)] public List<Server090BPart0> Unknown1 { get; } = [];
+    [Array(CountBits = 32)] public List<Server090BPart1> Unknown2 { get; } = [];
+    [Float32] public float Unknown3 { get; set; }
+    [Float32] public float Unknown4 { get; set; }
+    [UInt(1)] public bool Unknown5 { get; set; }
+    [UInt(1)] public bool Unknown6 { get; set; }
+    [UInt(1)] public bool Unknown7 { get; set; }
 }

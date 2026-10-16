@@ -4,16 +4,16 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
-[WireMessage(GameMessageOpcode.ServerFriendshipAccountCharacterZoneChanged, Direction.ServerToClient)]
-public sealed partial class ServerFriendshipAccountCharacterZoneChanged
+[WireMessage(GameMessageOpcode.Server03A4, Direction.ServerToClient)]
+public sealed partial class Server03A4
 {
     [WireStruct]
-    public sealed partial class FriendCharacterZoneInfo
+    public sealed partial class Server03A4Part0
     {
-        [UInt(64)] public ulong AccountFriendId { get; set; }
-        public Identity CharacterInNewZone { get; set; }
-        [UInt(15)] public uint WorldZoneId { get; set; }
+        [UInt(64)] public ulong Unknown0 { get; set; }
+        public Client00B5Part0 Unknown1 { get; set; }
+        [UInt(15)] public uint Unknown2 { get; set; }
     }
 
-    [Array(CountBits = 16)] public List<FriendCharacterZoneInfo> ZoneInfos { get; set; }
+    [Array(CountBits = 16)] public List<Server03A4Part0> Unknown0 { get; set; }
 }

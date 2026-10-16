@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pvp;
 
-[WireMessage(GameMessageOpcode.ServerUnitPvpStateChange, Direction.ServerToClient)]
-public sealed partial class ServerUnitPvpStateChange
+[WireMessage(GameMessageOpcode.Server08BD, Direction.ServerToClient)]
+public sealed partial class Server08BD
 {
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(3)] public PvpState State { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(3)] public byte Unknown1 { get; set; }
 }

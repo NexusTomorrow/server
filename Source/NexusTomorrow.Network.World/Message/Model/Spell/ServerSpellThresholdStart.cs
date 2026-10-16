@@ -3,11 +3,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ServerSpellThresholdStart, Direction.ServerToClient)]
-public sealed partial class ServerSpellThresholdStart
+[WireMessage(GameMessageOpcode.Server0816, Direction.ServerToClient)]
+public sealed partial class Server0816
 {
-    [UInt(18)] public uint Spell4Id { get; set; }
-    [UInt(18)] public uint RootSpell4Id { get; set; }
-    [UInt(18)] public uint ParentSpell4Id { get; set; } = 0;
-    [UInt(32)] public uint ServerUniqueId { get; set; }
+    [UInt(18)] public uint Unknown0 { get; set; }
+    [UInt(18)] public uint Unknown1 { get; set; }
+    [UInt(18)] public uint Unknown2 { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
 }

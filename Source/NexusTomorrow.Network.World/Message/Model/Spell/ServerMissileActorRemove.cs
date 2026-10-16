@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ServerMissileActorRemove, Direction.ServerToClient)]
-public sealed partial class ServerMissileActorRemove
+[WireMessage(GameMessageOpcode.Server077D, Direction.ServerToClient)]
+public sealed partial class Server077D
 {
-    [UInt(32)] public uint MissileActorId { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

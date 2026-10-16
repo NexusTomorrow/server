@@ -3,10 +3,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
-[WireMessage(GameMessageOpcode.ServerPathSoldierSoldierBuildInvoke, Direction.ServerToClient)]
-public sealed partial class ServerPathSoldierSoldierBuildInvoke
+[WireMessage(GameMessageOpcode.Server0676, Direction.ServerToClient)]
+public sealed partial class Server0676
 {
-    [UInt(32)] public uint UnitId { get; set; }
-    [UInt(14)] public ushort PathSoldierEventId { get; set; }
-    [Array(CountBits = 32), UInt(32)] public List<uint> TowerDefenseIds { get; set; } = [];
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(14)] public ushort Unknown1 { get; set; }
+    [Array(CountBits = 32), UInt(32)] public List<uint> Unknown2 { get; set; } = [];
 }

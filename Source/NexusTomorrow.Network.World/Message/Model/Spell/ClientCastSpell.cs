@@ -3,11 +3,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
-[WireMessage(GameMessageOpcode.ClientCastSpell, Direction.ClientToServer)]
-public sealed partial class ClientCastSpell
+[WireMessage(GameMessageOpcode.Client009A, Direction.ClientToServer)]
+public sealed partial class Client009A
 {
-    [UInt(32)] public uint ClientSpellCastUniqueId { get; private set; } // first value of 0x7FD response, probably global increment
-    [UInt(16)] public ushort BagIndex { get; private set; }
-    [UInt(32)] public uint TargetUnitId { get; private set; }
-    [UInt(1)] public bool ButtonPressed { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
+    [UInt(16)] public ushort Unknown1 { get; private set; }
+    [UInt(32)] public uint Unknown2 { get; private set; }
+    [UInt(1)] public bool Unknown3 { get; private set; }
 }

@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
-[WireMessage(GameMessageOpcode.ServerCinematicStoryPanelDialogHide, Direction.ServerToClient)]
-public sealed partial class ServerCinematicStoryPanelDialogHide
+[WireMessage(GameMessageOpcode.Server0229, Direction.ServerToClient)]
+public sealed partial class Server0229
 {
-    [UInt(32)] public uint Delay { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
 }

@@ -3,9 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ServerGuildResult2, Direction.ServerToClient)]
-public sealed partial class ServerGuildResult2 : ServerGuildResult
+[WireMessage(GameMessageOpcode.Server04CA, Direction.ServerToClient)]
+public sealed partial class Server04CA : Server04C9
 {
-    // Client treats opcode the same as ServerGuildResult so just use that message
-    // Added here not because it is useful but to document its duplication of function
 }

@@ -3,20 +3,17 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.ServerRecruitmentGuildsUpdate, Direction.ServerToClient)]
-public sealed partial class ServerRecruitmentGuildsUpdate
+[WireMessage(GameMessageOpcode.Server076B, Direction.ServerToClient)]
+public sealed partial class Server076B
 {
-    /// <summary>
-    /// The fields of a <see cref="RecruitmentGuildInfo"/> this message carries: all but its recruiters.
-    /// </summary>
     [WireStruct]
-    public sealed partial class RecruitmentGuild
+    public sealed partial class Server076BPart0
     {
-        [UInt(64)] public ulong GuildId { get; set; }
-        [WideString] public string GuildName { get; set; } = "";
-        [WideString] public string GuildMasterName { get; set; } = "";
-        public GuildStats Stats { get; set; } = new();
+        [UInt(64)] public ulong Unknown0 { get; set; }
+        [WideString] public string Unknown1 { get; set; } = "";
+        [WideString] public string Unknown2 { get; set; } = "";
+        public Server0767Part1 Unknown3 { get; set; } = new();
     }
 
-    [Array(CountBits = 32)] public List<RecruitmentGuild> Guilds { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server076BPart0> Unknown0 { get; set; } = [];
 }

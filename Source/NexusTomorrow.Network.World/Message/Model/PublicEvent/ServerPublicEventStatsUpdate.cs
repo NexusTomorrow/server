@@ -4,10 +4,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.PublicEvent;
 
-[WireMessage(GameMessageOpcode.ServerPublicEventStatsUpdate, Direction.ServerToClient)]
-public sealed partial class ServerPublicEventStatsUpdate
+[WireMessage(GameMessageOpcode.Server0130, Direction.ServerToClient)]
+public sealed partial class Server0130
 {
-    [UInt(14)] public uint PublicEventId { get; set; }
-    [Array(CountBits = 32)] public List<PublicEventTeamStats> TeamStats { get; set; } = [];
-    [Array(CountBits = 32)] public List<PublicEventParticipantStats> ParticipantStats { get; set; } = [];
+    [UInt(14)] public uint Unknown0 { get; set; }
+    [Array(CountBits = 32)] public List<Server00D6Part1> Unknown1 { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server00D6Part2> Unknown2 { get; set; } = [];
 }

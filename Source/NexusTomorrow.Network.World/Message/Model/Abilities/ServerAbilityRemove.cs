@@ -4,9 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 
-// Removes SpellbookItem from the AbilityBook
-[WireMessage(GameMessageOpcode.ServerAbilityRemove, Direction.ServerToClient)]
-public sealed partial class ServerAbilityRemove
+[WireMessage(GameMessageOpcode.Server014A, Direction.ServerToClient)]
+public sealed partial class Server014A
 {
-    public ItemLocation Location { get; set; } = new();
+    public Server0111Part2 Unknown0 { get; set; } = new();
 }

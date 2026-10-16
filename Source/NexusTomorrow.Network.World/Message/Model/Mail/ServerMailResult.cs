@@ -4,11 +4,10 @@ using NexusTomorrow.Network.World.Message.Static;
 
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
-[WireMessage(GameMessageOpcode.ServerMailResult, Direction.ServerToClient)]
-public sealed partial class ServerMailResult
+[WireMessage(GameMessageOpcode.Server05A2, Direction.ServerToClient)]
+public sealed partial class Server05A2
 {
-    // actions 2 and 3 invoke RefreshMail LUA event
-    [UInt(32)] public uint Action { get; set; } // TODO: Analyze sniffs for possible values
-    [UInt(64)] public ulong MailId { get; set; }
-    [UInt(8)] public GenericError Result { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(64)] public ulong Unknown1 { get; set; }
+    [UInt(8)] public byte Unknown2 { get; set; }
 }

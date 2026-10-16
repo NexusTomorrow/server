@@ -3,8 +3,8 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.ClientBuybackItemFromVendor, Direction.ClientToServer)]
-public sealed partial class ClientBuybackItemFromVendor
+[WireMessage(GameMessageOpcode.Client00BB, Direction.ClientToServer)]
+public sealed partial class Client00BB
 {
-    [UInt(32)] public uint UniqueId { get; private set; }
+    [UInt(32)] public uint Unknown0 { get; private set; }
 }
