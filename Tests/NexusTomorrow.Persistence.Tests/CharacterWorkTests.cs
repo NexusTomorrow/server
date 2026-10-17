@@ -35,8 +35,10 @@ public sealed class CharacterWorkTests
         var first = new TaskCompletionSource<WorkResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         var second = new TaskCompletionSource<WorkResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         queue.Enqueue(new CreateCharacterWork(Databases.NewCharacter(1001, 7, "Rebaser Head"), result => first.SetResult(result)));
-        queue.Enqueue(new CreateCharacterWork(Databases.NewCharacter(1002, 8, "REBASER HEAD"), result => second.SetResult(result)));
         Assert.Equal(WorkOutcome.Committed, (await first.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken)).Outcome);
+
+        // The second create goes in only after the first committed: the two share no key, so queued together they could commit in either order.
+        queue.Enqueue(new CreateCharacterWork(Databases.NewCharacter(1002, 8, "REBASER HEAD"), result => second.SetResult(result)));
         WorkResult refused = await second.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken);
         Assert.Equal(WorkOutcome.Refused, refused.Outcome);
         Assert.Equal(RealmContext.LiveNameIndex, refused.Constraint);

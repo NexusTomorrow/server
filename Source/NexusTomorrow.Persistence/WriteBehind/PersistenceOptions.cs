@@ -11,12 +11,13 @@ public sealed class PersistenceOptions
     public const string Section = "Persistence";
 
     /// <summary>
-    /// The Npgsql connection string. Required; validated at bind.
+    /// The Npgsql connection string. Required: the queue does not check it, so whatever binds this section validates it.
     /// </summary>
     public required string ConnectionString { get; set; }
 
     /// <summary>
-    /// Queue workers applying work at once.
+    /// Queue workers applying work at once. At least 1: the queue starts none for a lower value, so whatever binds this section
+    /// validates it.
     /// </summary>
     public int SaveWorkers { get; set; } = 4;
 
