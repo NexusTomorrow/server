@@ -113,8 +113,9 @@ public sealed class LoginConnectionTests : IAsyncLifetime
         await Client.ExpectAsync<LoginDenied>();
     }
 
+    // 0x03EF has no row in the pregame table, so it is dropped before its body is read.
     [Fact]
-    public async Task AnUnverifiedMessageIsDroppedAndTheLoginStillWorks()
+    public async Task AMessageWithNoRowIsDroppedAndTheLoginStillWorks()
     {
         await Client.ExpectAsync<ServerHello>();
         await Client.SendUncheckedAsync(0x03EF, new CharacterListRequest());

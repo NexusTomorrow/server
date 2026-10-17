@@ -1,5 +1,6 @@
 ﻿using System.Collections.Frozen;
 using NexusTomorrow.Gateway.Catalog;
+using NexusTomorrow.Network.World.Message.Model;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Transport;
 
@@ -37,10 +38,18 @@ public sealed class InboundDecoderTests
     [Fact]
     public void AMessageBelowFieldsIsDroppedNotMalformed()
     {
-        byte[] body = ClientFrames.EnvelopeBody(0x038C, new UnverifiedStandIn(), s_cipher);
-        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher);
+        // 0x0356 is a declared client message with no rung. The table gives it a row, so the catalog's refusal drops it, not a
+        // missing row.
+        FrozenDictionary<ushort, OpcodeRow> table = new OpcodeRow[]
+        {
+            new(0x0356, MessageOwner.Realm, MessagePriority.Normal, 1, OverLimitAction.Drop),
+        }.ToFrozenDictionary(row => row.Opcode);
+        byte[] body = ClientFrames.EnvelopeBody(0x0356, new Client0356(), s_cipher);
+        var decoder = new InboundDecoder(MessageCatalog.Default, table, new HashSet<ushort>());
+        Inbound inbound = decoder.Decode(ClientFrames.ClientEnvelope, body, s_cipher);
         Assert.Equal(InboundResult.Dropped, inbound.Result);
-        Assert.Equal(0x038C, inbound.Opcode);
+        Assert.Equal(0x0356, inbound.Opcode);
+        Assert.Equal(nameof(InboundRefusal.BelowFields), inbound.Reason);
     }
 
     [Fact]
@@ -91,17 +100,5 @@ public sealed class InboundDecoderTests
         copy[5] = (byte)(opcode >> 8);
         s_cipher.Encrypt(copy.AsSpan(4));
         return copy;
-    }
-
-    // Writes nothing: stands in for a message the catalog refuses before reading.
-    private sealed class UnverifiedStandIn : Network.Codec.IWireStruct
-    {
-        public void Read(ref Network.Codec.BitReader reader) => throw new NotSupportedException();
-
-        public void Write(ref Network.Codec.BitWriter writer)
-        {
-        }
-
-        public int MeasureBits() => 0;
     }
 }

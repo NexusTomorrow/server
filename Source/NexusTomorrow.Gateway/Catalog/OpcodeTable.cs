@@ -66,7 +66,8 @@ public sealed record OpcodeRow(ushort Opcode, MessageOwner Owner, MessagePriorit
 public static class OpcodeTable
 {
     /// <summary>
-    /// The pregame rows: login, world greeting and character select. Pregame messages carry no routing tag.
+    /// The pregame rows: login, world greeting and character select, each a message the client sends untagged. A message the client
+    /// sends under a tag arrives as <c>0x038C</c>, which has no row here, so it is dropped.
     /// </summary>
     public static FrozenDictionary<ushort, OpcodeRow> Pregame { get; } = new OpcodeRow[]
     {

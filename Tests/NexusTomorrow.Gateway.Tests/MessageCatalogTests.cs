@@ -33,8 +33,8 @@ public sealed class MessageCatalogTests
     [Fact]
     public void AnUnverifiedMessageIsRefusedAsBelowFields()
     {
-        // 0x038C is a declared client message and has no rung.
-        Assert.Null(MessageCatalog.Default.CreateInbound(0x038C, out InboundRefusal refusal));
+        // 0x0356 is a declared client message and has no rung.
+        Assert.Null(MessageCatalog.Default.CreateInbound(0x0356, out InboundRefusal refusal));
         Assert.Equal(InboundRefusal.BelowFields, refusal);
     }
 

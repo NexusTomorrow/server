@@ -156,8 +156,10 @@ public sealed class PregameScenarios
         Assert.Empty((await session.RequestListAsync()).Characters);
     }
 
+    // 0x038C, the tagged message the client sends at character select, has no row in the pregame table, so it is dropped before its
+    // body is read.
     [Fact]
-    public async Task AnUnverifiedMessageIsDroppedAndTheSessionContinues()
+    public async Task AMessageWithNoRowIsDroppedAndTheSessionContinues()
     {
         await using Scenario scenario = await Scenario.StartAsync();
         await using HeadlessClient client = scenario.Server.NewClient();
