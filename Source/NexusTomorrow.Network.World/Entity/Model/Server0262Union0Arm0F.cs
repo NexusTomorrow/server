@@ -2,6 +2,9 @@
 
 namespace NexusTomorrow.Network.World.Entity.Model;
 
+/// <summary>
+/// The data of a unit of type 15.
+/// </summary>
 [WireStruct]
 [UnionCase(15)]
 public sealed partial class Server0262Union0Arm0F : IServer0262Union0
