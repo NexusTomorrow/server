@@ -14,11 +14,11 @@ namespace NexusTomorrow.Network.World.Message.Model;
 /// <remarks>
 /// The client ignores a create for an id it already has, and that unit keeps what it had. It refuses a unit whose type
 /// (<see cref="Unknown1"/>) is 21, 26 or 28, a unit with a command it cannot apply, a type-20 unit whose
-/// <see cref="Server0262Union0Arm14.Unknown0"/> or <see cref="Server0262Union0Arm14.Unknown1"/> is 0, and a unit of type 20 or 23 whose
-/// <see cref="Server0262Union0Arm14.Unknown3"/> or <see cref="Server0262Union0Arm17.Unknown3"/> is above 17. The player's unit comes from
-/// this message before <see cref="PlayerUnit"/> names it, and can be named only when <see cref="Unknown12"/> is an id in the client's
-/// Faction2 table. If <see cref="MovementControl"/> named the id before the unit existed, the client takes control of the unit as it
-/// creates it.
+/// <see cref="Server0262Union0Arm14.Unknown0"/> or <see cref="Server0262Union0Arm14.Unknown1"/> is 0 or whose
+/// <see cref="Server0262Union0Arm14.Unknown3"/> is above 17, and a type-23 unit whose <see cref="Server0262Union0Arm17.Unknown3"/> is
+/// above 17. The player's unit comes from this message before <see cref="PlayerUnit"/> names it, and can be named only when
+/// <see cref="Unknown12"/> is an id in the client's Faction2 table. If <see cref="MovementControl"/> named the id before the unit existed,
+/// the client takes control of the unit as it creates it.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0262, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]
