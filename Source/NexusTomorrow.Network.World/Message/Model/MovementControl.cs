@@ -27,7 +27,7 @@ public sealed partial class MovementControl
     [UInt(1)] public bool RebuildMovement { get; set; }
 
     /// <summary>
-    /// The unit to move. If it is not the unit the client moves, the client switches to it, or waits for that unit's entity create.
+    /// The unit to move. If it is not the unit the client moves, the client switches to it, or waits for that unit's <see cref="UnitCreate"/>.
     /// </summary>
     [UInt(32)] public uint UnitId { get; set; }
 }
