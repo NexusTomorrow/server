@@ -5,7 +5,7 @@ namespace NexusTomorrow.Transport;
 /// <summary>
 /// The cipher the client applies to every enveloped message. A key gives a 128-byte table and an 8-byte seed; each message is
 /// enciphered on its own from that seed, starting at a table block chosen by the message's length, so one instance serves both
-/// directions of a connection and holds no state between messages.
+/// directions of a connection and holds no state between messages. Based on the work by Drake Fish (https://bitbucket.org/drakefish/nxsemu).
 /// </summary>
 public sealed class PacketCipher
 {
