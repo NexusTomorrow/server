@@ -50,6 +50,19 @@ public sealed class GatewayOptions
     public TimeSpan PreAuthTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
     /// <summary>
+    /// How many messages one connection may have queued for its client. A client that stops reading fills the queue, and the
+    /// connection is disconnected rather than the sender made to wait.
+    /// </summary>
+    [Range(16, 1 << 20)]
+    public int OutboundQueueCapacity { get; set; } = 4096;
+
+    /// <summary>
+    /// How long a disconnecting connection may keep trying to deliver what is queued before it is closed regardless, so a client that
+    /// has stopped reading cannot hold the connection open.
+    /// </summary>
+    public TimeSpan DisconnectGrace { get; set; } = TimeSpan.FromSeconds(5);
+
+    /// <summary>
     /// Login attempts (STS login starts and login requests) one address may make per minute.
     /// </summary>
     [Range(1, 1000)]

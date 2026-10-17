@@ -57,6 +57,13 @@ public sealed class InboundDecoder
     }
 
     /// <summary>
+    /// The row of the table this decoder admits <paramref name="opcode"/> by. Call it only for an opcode a decode returned as a
+    /// message, which the table admitted.
+    /// </summary>
+    /// <exception cref="KeyNotFoundException">The table has no row for <paramref name="opcode"/>.</exception>
+    public OpcodeRow RowFor(ushort opcode) => _table[opcode];
+
+    /// <summary>
     /// Decode one frame's body. The body is decrypted in place.
     /// </summary>
     public Inbound Decode(ushort frameOpcode, Span<byte> body, PacketCipher cipher)

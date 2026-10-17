@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Frozen;
+using System.Net;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
@@ -18,12 +19,13 @@ public sealed class ClientConnectionTests : IAsyncLifetime
 
     private readonly PipePair _pipes = new();
     private readonly CancellationTokenSource _stop = new();
-    private readonly RecordingConnection _connection;
+    private readonly FakeTimeProvider _time = new();
+    private RecordingConnection _connection;
     private Task _run = Task.CompletedTask;
 
     public ClientConnectionTests()
     {
-        _connection = new RecordingConnection(new FakeTimeProvider());
+        _connection = new RecordingConnection(_time, Small(4096), OpcodeTable.Pregame);
         Client = new GameTestClient(_pipes.Client);
     }
 
@@ -118,10 +120,125 @@ public sealed class ClientConnectionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task APeerThatPingsAndNeverReadsIsDisconnectedOnceTheQueueIsFull()
+    {
+        Use(Small(16));
+        Start();
+        await Eventually.TrueAsync(() => _connection.Started);
+
+        await Client.SendRawAsync(Pings(PingsThatFillThePipe));
+
+        await EndedAfterTheGraceAsync();
+        Assert.Equal(1, _connection.Closed);
+    }
+
+    [Fact]
+    public async Task ADisconnectEndsAConnectionWhoseWriterIsBlockedOnceTheGraceHasPassed()
+    {
+        Use(Small(100_000));
+        var sentinel = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _connection.OnMessage = _ =>
+        {
+            sentinel.TrySetResult();
+            return true;
+        };
+        Start();
+        await Eventually.TrueAsync(() => _connection.Started);
+
+        // The sentinel is handled after every ping before it was answered, so the answers outnumber what the pipe holds and the
+        // writer is blocked by the time it arrives.
+        await Client.SendRawAsync([.. Pings(PingsThatFillThePipe), .. Client.Envelope(0x07E0, new CharacterListRequest())]);
+        await sentinel.Task.WaitAsync(s_wait, TestContext.Current.CancellationToken);
+
+        _connection.Disconnect("kicked");
+
+        await EndedAfterTheGraceAsync();
+        Assert.Equal(1, _connection.Closed);
+    }
+
+    [Fact]
+    public async Task AQueueThatNeverEmptiesStillFlushes()
+    {
+        Use(Small(1 << 20));
+        Start();
+        await Eventually.TrueAsync(() => _connection.Started);
+        int finished = 0;
+        var message = new LoginAccepted();
+        var producer = Task.Run(
+            () =>
+            {
+                for (int i = 0; i < 1_000_000; i++)
+                    _connection.Send(message);
+                Volatile.Write(ref finished, 1);
+            },
+            TestContext.Current.CancellationToken);
+
+        await Client.ExpectAsync<LoginAccepted>();
+
+        Assert.Equal(0, Volatile.Read(ref finished));
+        await producer.WaitAsync(s_wait, TestContext.Current.CancellationToken);
+    }
+
+    [Fact]
+    public async Task TheConnectionRateGatesByTheTableItsDecoderWasBuiltWith()
+    {
+        FrozenDictionary<ushort, OpcodeRow> strict = new OpcodeRow[]
+        {
+            new(0x07E0, MessageOwner.Realm, MessagePriority.Normal, 1, OverLimitAction.Disconnect),
+        }.ToFrozenDictionary(row => row.Opcode);
+        Use(Small(4096), strict);
+        int handled = 0;
+        _connection.OnMessage = _ =>
+        {
+            Interlocked.Increment(ref handled);
+            return true;
+        };
+        Start();
+
+        await Client.SendAsync(new CharacterListRequest());
+        await Client.SendAsync(new CharacterListRequest());
+
+        await _run.WaitAsync(s_wait, TestContext.Current.CancellationToken);
+        Assert.Equal(1, handled);
+        Assert.Equal(1, _connection.Closed);
+    }
+
+    [Fact]
     public void SendingAMessageBelowFieldsThrows()
     {
         Assert.Throws<InvalidOperationException>(() => _connection.Send(new UnverifiedForTest()));
     }
+
+    // Each ping is answered with a 7-byte frame, so this many answers exceed the 64 KiB a pipe holds before its writer waits.
+    private const int PingsThatFillThePipe = 12_000;
+
+    private static GatewayOptions Small(int capacity) => new()
+    {
+        UnknownAccountSecret = "",
+        PreAuthTimeout = TimeSpan.FromHours(1),
+        OutboundQueueCapacity = capacity,
+        DisconnectGrace = TimeSpan.FromSeconds(5),
+    };
+
+    private static byte[] Pings(int count)
+    {
+        byte[] bytes = new byte[count * 7];
+        for (int i = 0; i < count; i++)
+            bytes[i * 7] = 7;
+        return bytes;
+    }
+
+    private void Use(GatewayOptions options, FrozenDictionary<ushort, OpcodeRow>? table = null) =>
+        _connection = new RecordingConnection(_time, options, table ?? OpcodeTable.Pregame);
+
+    // The grace runs on the fake clock, so the clock is advanced until the run completes; the pre-auth timeout is far longer.
+    private async Task EndedAfterTheGraceAsync() =>
+        await Eventually.TrueAsync(
+            () =>
+            {
+                _time.Advance(TimeSpan.FromSeconds(1));
+                return _run.IsCompleted;
+            });
 
     private void Start() =>
         _run = _connection.RunAsync(_pipes.Server, new IPEndPoint(IPAddress.Loopback, 50001), _stop.Token);
@@ -134,9 +251,9 @@ public sealed class ClientConnectionTests : IAsyncLifetime
         private int _closed;
         private int _started;
 
-        public RecordingConnection(TimeProvider time)
-            : base(0x0076, MessageCatalog.Default, new InboundDecoder(MessageCatalog.Default, OpcodeTable.Pregame, new HashSet<ushort>()),
-                Options.Create(new GatewayOptions { UnknownAccountSecret = "" }), time, new GatewayMetrics(), NullLogger.Instance)
+        public RecordingConnection(TimeProvider time, GatewayOptions options, FrozenDictionary<ushort, OpcodeRow> table)
+            : base(0x0076, MessageCatalog.Default, new InboundDecoder(MessageCatalog.Default, table, new HashSet<ushort>()),
+                Options.Create(options), time, new GatewayMetrics(), NullLogger.Instance)
         {
         }
 

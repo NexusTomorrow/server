@@ -17,6 +17,9 @@ namespace NexusTomorrow.Gateway.Connections;
 /// </summary>
 public abstract class ClientConnection : IClientSession
 {
+    // Items written between flushes, so a queue that never empties still reaches the client.
+    private const int FlushBatch = 64;
+
     private static long s_nextId;
 
     private readonly ushort _envelopeOpcode;
@@ -26,7 +29,8 @@ public abstract class ClientConnection : IClientSession
     private readonly GatewayMetrics _metrics;
     private readonly ILogger _logger;
     private readonly RateGate _rates;
-    private readonly Channel<Outbound> _outbound = Channel.CreateUnbounded<Outbound>(new UnboundedChannelOptions { SingleReader = true });
+    private readonly Channel<Outbound> _outbound;
+    private readonly TaskCompletionSource _disconnected = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private PacketCipher _receiveCipher = new(PacketCipher.BuildKey);
     private CancellationTokenSource? _preAuth;
     private CancellationToken _lifetime;
@@ -45,6 +49,7 @@ public abstract class ClientConnection : IClientSession
         _logger = logger;
         Time = time;
         _rates = new RateGate(time);
+        _outbound = Channel.CreateBounded<Outbound>(new BoundedChannelOptions(_options.OutboundQueueCapacity) { SingleReader = true, FullMode = BoundedChannelFullMode.Wait });
     }
 
     /// <inheritdoc/>
@@ -70,14 +75,19 @@ public abstract class ClientConnection : IClientSession
         where T : class, IWireMessage
     {
         EnsureSendable<T>();
-        _outbound.Writer.TryWrite(Outbound.Enveloped(T.Opcode, message));
+        Enqueue(Outbound.Enveloped(T.Opcode, message));
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// End the connection after the messages already queued, logging <paramref name="reason"/>. A client that has stopped reading
+    /// cannot hold the connection open: after <see cref="GatewayOptions.DisconnectGrace"/> both loops are cancelled and the transport
+    /// is closed.
+    /// </summary>
     public void Disconnect(string reason)
     {
         Interlocked.CompareExchange(ref _disconnectReason, reason, null);
         _outbound.Writer.TryComplete();
+        _disconnected.TrySetResult();
     }
 
     /// <summary>
@@ -89,10 +99,13 @@ public abstract class ClientConnection : IClientSession
         RemoteAddress = remote.Address;
         using var preAuth = new CancellationTokenSource(_options.PreAuthTimeout, Time);
         using var writerDone = new CancellationTokenSource();
-        using var lifetime = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, preAuth.Token, writerDone.Token);
+        using var forced = new CancellationTokenSource();
+        using var finished = new CancellationTokenSource();
+        using var lifetime = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, preAuth.Token, writerDone.Token, forced.Token);
         _preAuth = preAuth;
         _lifetime = lifetime.Token;
         Task writer = WriteAsync(transport.Output, writerDone, lifetime.Token);
+        Task watchdog = ForceAfterGraceAsync(forced, finished.Token);
         try
         {
             OnStart();
@@ -108,8 +121,18 @@ public abstract class ClientConnection : IClientSession
         finally
         {
             _outbound.Writer.TryComplete();
-            await writer;
-            await transport.Input.CompleteAsync();
+            await finished.CancelAsync();
+            try
+            {
+                await writer;
+                await watchdog;
+                await transport.Input.CompleteAsync();
+            }
+            catch (Exception exception)
+            {
+                GatewayLog.ConnectionFailed(_logger, Id, exception);
+            }
+
             GatewayLog.ConnectionEnded(_logger, Id, _disconnectReason ?? (preAuth.IsCancellationRequested ? "no login before the timeout" : "closed"));
             OnClosed();
         }
@@ -141,7 +164,7 @@ public abstract class ClientConnection : IClientSession
         where T : class, IWireMessage
     {
         EnsureSendable<T>();
-        _outbound.Writer.TryWrite(Outbound.Bare(T.Opcode, message));
+        Enqueue(Outbound.Bare(T.Opcode, message));
     }
 
     /// <summary>
@@ -152,13 +175,33 @@ public abstract class ClientConnection : IClientSession
     protected void SwitchKey(PacketCipher cipher)
     {
         _receiveCipher = cipher;
-        _outbound.Writer.TryWrite(Outbound.Key(cipher));
+        Enqueue(Outbound.Key(cipher));
     }
 
     /// <summary>
     /// The login is complete: lift the pre-auth timeout.
     /// </summary>
     protected void MarkAuthenticated() => _preAuth?.CancelAfter(Timeout.InfiniteTimeSpan);
+
+    // A full queue means the client is not reading; the sender is never made to wait, so the connection ends instead.
+    private void Enqueue(in Outbound item)
+    {
+        if (!_outbound.Writer.TryWrite(item))
+            Disconnect("the outbound queue is full");
+    }
+
+    private async Task ForceAfterGraceAsync(CancellationTokenSource forced, CancellationToken finished)
+    {
+        try
+        {
+            await _disconnected.Task.WaitAsync(finished);
+            await Task.Delay(_options.DisconnectGrace, Time, finished);
+            await forced.CancelAsync();
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
 
     private void EnsureSendable<T>()
     {
@@ -211,7 +254,7 @@ public abstract class ClientConnection : IClientSession
                     return false;
                 }
 
-                _outbound.Writer.TryWrite(Outbound.Ping(body[0]));
+                Enqueue(Outbound.Ping(body[0]));
                 return true;
             case TransportOpcodes.PingAnswer or TransportOpcodes.Ignored:
                 return true;
@@ -241,7 +284,7 @@ public abstract class ClientConnection : IClientSession
                 return false;
         }
 
-        OpcodeRow row = OpcodeTable.Pregame[inbound.Opcode];
+        OpcodeRow row = _decoder.RowFor(inbound.Opcode);
         if (!_rates.TryPass(row))
         {
             if (row.OverLimit == OverLimitAction.Disconnect)
@@ -266,6 +309,7 @@ public abstract class ClientConnection : IClientSession
         {
             while (await reader.WaitToReadAsync(cancellationToken))
             {
+                int batched = 0;
                 while (reader.TryRead(out Outbound item))
                 {
                     // Message is set by the Bare and Enveloped factories and Cipher by Key, the only ways to build those kinds.
@@ -284,11 +328,17 @@ public abstract class ClientConnection : IClientSession
                             FrameWriter.WritePing(output, TransportOpcodes.PingAnswer, item.PingIndex);
                             break;
                     }
+
+                    if (++batched == FlushBatch)
+                    {
+                        batched = 0;
+                        if ((await output.FlushAsync(cancellationToken)).IsCompleted)
+                            return;
+                    }
                 }
 
-                FlushResult flushed = await output.FlushAsync(cancellationToken);
-                if (flushed.IsCompleted)
-                    break;
+                if ((await output.FlushAsync(cancellationToken)).IsCompleted)
+                    return;
             }
         }
         catch (OperationCanceledException)
