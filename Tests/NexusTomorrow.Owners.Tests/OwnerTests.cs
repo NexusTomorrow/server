@@ -5,6 +5,8 @@ namespace NexusTomorrow.Owners.Tests;
 
 public sealed class OwnerTests
 {
+    private static readonly TimeSpan s_bound = TimeSpan.FromSeconds(30);
+
     [Fact]
     public async Task HandlesMessagesInPostOrderOnOneThread()
     {
@@ -53,6 +55,42 @@ public sealed class OwnerTests
         Assert.False(owner.Post(1));
     }
 
+    [Fact]
+    public async Task AThrowingOnFaultDoesNotStopTheOwner()
+    {
+        var owner = new Recorder { FaultThrows = true };
+        owner.Start();
+        owner.Post(Recorder.Throws);
+        owner.Post(7);
+        await owner.StopAsync().WaitAsync(s_bound, TestContext.Current.CancellationToken);
+
+        Assert.Equal([Recorder.Throws], owner.Faulted);
+        Assert.Contains(7, owner.Values);
+        Assert.Equal(2, owner.Handled);
+    }
+
+    [Fact]
+    public async Task StopBeforeStartCompletes()
+    {
+        var owner = new Recorder();
+        await owner.StopAsync().WaitAsync(s_bound, TestContext.Current.CancellationToken);
+        Assert.False(owner.Post(1));
+    }
+
+    [Fact]
+    public async Task StartingTwiceThrowsAndKeepsOneThread()
+    {
+        var owner = new Recorder();
+        owner.Start();
+        Assert.Throws<InvalidOperationException>(owner.Start);
+        for (int i = 0; i < 100; i++)
+            owner.Post(i);
+        await owner.StopAsync().WaitAsync(s_bound, TestContext.Current.CancellationToken);
+
+        Assert.Single(owner.Threads.Distinct());
+        Assert.Equal(100, owner.Values.Count);
+    }
+
     private sealed class Recorder : Owner<object>
     {
         public const int Throws = -1;
@@ -63,6 +101,8 @@ public sealed class OwnerTests
         }
 
         public TimeSpan Delay { get; init; }
+
+        public bool FaultThrows { get; init; }
 
         public ConcurrentQueue<int> ValuesQueue { get; } = new();
 
@@ -85,6 +125,11 @@ public sealed class OwnerTests
                 throw new InvalidOperationException("thrown on purpose");
         }
 
-        protected override void OnFault(object message, Exception exception) => Faulted.Add((int)message);
+        protected override void OnFault(object message, Exception exception)
+        {
+            Faulted.Add((int)message);
+            if (FaultThrows)
+                throw new InvalidOperationException("OnFault thrown on purpose");
+        }
     }
 }
