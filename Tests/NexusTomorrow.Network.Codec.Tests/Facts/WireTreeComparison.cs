@@ -4,8 +4,11 @@ using System.Globalization;
 namespace NexusTomorrow.Network.Codec.Tests.Facts;
 
 /// <summary>
-/// Compares a declared layout tree with the client's node by node, and names each disagreement by its path: <c>[4]</c> is node 4 of a
-/// sequence, <c>.element</c> enters an array's element and <c>.arm 0x02</c> a union's arm for selector 2.
+/// Compares a declared layout tree with the client's, and names each disagreement by its path: <c>[4]</c> is node 4 of a sequence,
+/// <c>.element</c> enters an array's element and <c>.arm 0x02</c> a union's arm for selector 2. Two trees agree when they put the same bits on
+/// every path: their strings, arrays, unions, blobs, counts and selectors sit at the same places with the same widths, and between them their
+/// other fields take the same bits, where one field of one side may stand for a run of fields of the other (16 against 8 8). Node numbers,
+/// in paths and in problems, are the declaration's.
 /// </summary>
 internal static class WireTreeComparison
 {
@@ -28,12 +31,25 @@ internal static class WireTreeComparison
         return [0, 1, 2, 3, 0xFF, 0x100, 1UL << (width - 1), top];
     }
 
+    // Walks both sequences side by side: i is the declaration's node and j the client's, both at the same bit on every path. Two fields of one
+    // width, or two nodes of one other kind, pair one to one; two fields of different widths open a split (SameBits). A pair that cannot be
+    // aligned is reported at the declaration's node and ends the sequence, since nothing after it is known to sit at the same bit.
     private static void CompareSequence(string label, string path, ImmutableArray<WireNode> declared, ImmutableArray<WireNode> client, List<string> problems)
     {
-        for (int i = 0; i < Math.Min(declared.Length, client.Length); i++)
+        HashSet<int> declaredReferenced = Referenced(declared);
+        HashSet<int> clientReferenced = Referenced(client);
+
+        // The declaration's node each client node pairs with one to one, and -1 for a client node inside a split. A count or a selector never
+        // splits, so every client node a later array or union names has its pair.
+        int[] declaredIndexOf = new int[client.Length];
+        Array.Fill(declaredIndexOf, -1);
+
+        int i = 0;
+        int j = 0;
+        while (i < declared.Length && j < client.Length)
         {
             WireNode mine = declared[i];
-            WireNode theirs = client[i];
+            WireNode theirs = client[j];
             string here = path + "[" + i.ToString(CultureInfo.InvariantCulture) + "]";
             if (mine.Kind == WireNodeKind.Recursive || theirs.Kind == WireNodeKind.Recursive)
             {
@@ -41,28 +57,41 @@ internal static class WireTreeComparison
                 return;
             }
 
-            if (mine.Kind != theirs.Kind || (mine.Kind == WireNodeKind.Field && mine.Bits != theirs.Bits))
+            if (mine.Kind == WireNodeKind.Field && theirs.Kind == WireNodeKind.Field && mine.Bits != theirs.Bits)
+            {
+                if (!SameBits(declared, i, declaredReferenced, client, j, clientReferenced, out int declaredEnd, out int clientEnd))
+                {
+                    problems.Add($"{label} {here}: the client has {Describe(theirs)}, the declaration {Describe(mine)}");
+                    return;
+                }
+
+                i = declaredEnd;
+                j = clientEnd;
+                continue;
+            }
+
+            if (mine.Kind != theirs.Kind)
             {
                 problems.Add($"{label} {here}: the client has {Describe(theirs)}, the declaration {Describe(mine)}");
                 return;
             }
 
+            declaredIndexOf[j] = i;
             switch (mine.Kind)
             {
                 case WireNodeKind.Array:
-                    if (mine.Reference != theirs.Reference)
+                    if (mine.Reference != declaredIndexOf[theirs.Reference])
                     {
-                        problems.Add($"{label} {here}: the client counts it with node {theirs.Reference}, the declaration with node {mine.Reference}");
+                        problems.Add($"{label} {here}: the client counts it with node {declaredIndexOf[theirs.Reference]}, the declaration with node {mine.Reference}");
                         return;
                     }
 
-                    if (!OneFieldAgainstRun(mine.Element, theirs.Element) && !OneFieldAgainstRun(theirs.Element, mine.Element))
-                        CompareSequence(label, here + ".element", mine.Element, theirs.Element, problems);
+                    CompareSequence(label, here + ".element", mine.Element, theirs.Element, problems);
                     break;
                 case WireNodeKind.Union:
-                    if (mine.Reference != theirs.Reference)
+                    if (mine.Reference != declaredIndexOf[theirs.Reference])
                     {
-                        problems.Add($"{label} {here}: the client selects it with node {theirs.Reference}, the declaration with node {mine.Reference}");
+                        problems.Add($"{label} {here}: the client selects it with node {declaredIndexOf[theirs.Reference]}, the declaration with node {mine.Reference}");
                         return;
                     }
 
@@ -75,10 +104,68 @@ internal static class WireTreeComparison
                         problems.Add($"{label} {here}: the client's blob length is {theirs.Bits} bits, the declaration's {mine.Bits}");
                     break;
             }
+
+            i++;
+            j++;
         }
 
-        if (declared.Length != client.Length)
-            problems.Add($"{(path.Length == 0 ? label : label + " " + path)}: the client's sequence has {client.Length} nodes, the declaration's {declared.Length}");
+        // With as many nodes used on each side, the node counts say which side goes on and by how much; once splits have used different numbers,
+        // they do not, and the problem names the side that goes on.
+        if (i < declared.Length || j < client.Length)
+        {
+            string where = path.Length == 0 ? label : label + " " + path;
+            if (i == j)
+                problems.Add($"{where}: the client's sequence has {client.Length} nodes, the declaration's {declared.Length}");
+            else if (j < client.Length)
+                problems.Add($"{where}: the client's sequence goes on for {client.Length - j} nodes after the declaration's ends");
+            else
+                problems.Add($"{where}: the declaration's sequence goes on for {declared.Length - i} nodes after the client's ends");
+        }
+    }
+
+    // Two fields of different widths at the same bit open a split: each side takes in its next field while its total is the smaller, until the
+    // totals meet, and declaredEnd and clientEnd are the nodes after each run. The split fails when a run would take in a node that is not a
+    // field or a field some later array or union names, since those must pair one to one; when a sequence ends first; and when both runs hold
+    // more than one field, since then a field of each side holds part of a field of the other (8 16 against 16 8) and the bits mean other things
+    // on each side though the totals meet. One field against a run is the same bits split another way, which only reading the fields can settle.
+    private static bool SameBits(
+        ImmutableArray<WireNode> declared, int i, HashSet<int> declaredReferenced, ImmutableArray<WireNode> client, int j, HashSet<int> clientReferenced,
+        out int declaredEnd, out int clientEnd)
+    {
+        declaredEnd = i;
+        clientEnd = j;
+        int declaredBits = 0;
+        int clientBits = 0;
+        do
+        {
+            if (declaredBits <= clientBits)
+            {
+                if (!Splittable(declared, declaredEnd, declaredReferenced))
+                    return false;
+                declaredBits += declared[declaredEnd++].Bits;
+            }
+            else
+            {
+                if (!Splittable(client, clientEnd, clientReferenced))
+                    return false;
+                clientBits += client[clientEnd++].Bits;
+            }
+        }
+        while (declaredBits != clientBits);
+
+        return declaredEnd - i == 1 || clientEnd - j == 1;
+    }
+
+    private static bool Splittable(ImmutableArray<WireNode> nodes, int index, HashSet<int> referenced)
+    {
+        return index < nodes.Length && nodes[index].Kind == WireNodeKind.Field && !referenced.Contains(index);
+    }
+
+    // The nodes a later array counts with or a later union selects with; a count or a selector comes before what it governs
+    // (WireTree.ParseReference), so every reference names an earlier node.
+    private static HashSet<int> Referenced(ImmutableArray<WireNode> nodes)
+    {
+        return [.. nodes.Where(node => node.Kind is WireNodeKind.Array or WireNodeKind.Union).Select(node => node.Reference)];
     }
 
     private static void CompareArms(string label, string here, WireNode mine, WireNode theirs, int selectorBits, List<string> problems)
@@ -223,15 +310,6 @@ internal static class WireTreeComparison
 
             shared = back;
         }
-    }
-
-    // An element of one field takes the same bits as any run of fields with the same total, such as 48 against 16 16 16. Only a run of one
-    // width is matched, as a choice of scope: a run of mixed widths with the same total is the same bits too, and is compared field by field.
-    // One field alone does not say how it splits, so Normalize cannot rewrite either side to the other, and the pair is judged here.
-    private static bool OneFieldAgainstRun(ImmutableArray<WireNode> one, ImmutableArray<WireNode> run)
-    {
-        return one is [{ Kind: WireNodeKind.Field } field] && run.Length > 1
-            && run.All(node => node.Kind == WireNodeKind.Field && node.Bits == run[0].Bits) && run.Sum(node => node.Bits) == field.Bits;
     }
 
     private static string Describe(WireNode node)
