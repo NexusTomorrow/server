@@ -196,17 +196,276 @@ public sealed class RealmOwnerTests : IAsyncLifetime
         Assert.Equal(reason, _session.Single<CharacterSelectFailed>().Reason);
     }
 
+    [Fact]
+    public async Task CreatesInFlightCountAgainstTheCap()
+    {
+        await ListAsync(Summary(5, "Aaaa Bbbb"));
+        _owner.Post(new CreateCharacter(Account, _session, Create("Cccc Dddd")));
+        _owner.Post(new CreateCharacter(Account, _session, Create("Eeee Ffff")));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterCreateResult>().Any());
+        Assert.Equal(CreateResults.AccountFull, _session.Single<CharacterCreateResult>().Result);
+        Assert.Single(_db.Queued.OfType<CreateCharacterWork>());
+    }
+
+    [Fact]
+    public async Task CreatesInFlightCountAgainstTheCapAcrossSessions()
+    {
+        var other = new FakeClientSession();
+        await ListAsync(Summary(5, "Aaaa Bbbb"));
+        _owner.Post(new CreateCharacter(Account, _session, Create("Cccc Dddd")));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<CreateCharacterWork>().Any());
+
+        // The new session's load cannot see the uncommitted create.
+        await ListAsync(other, Account, Summary(5, "Aaaa Bbbb"));
+        _owner.Post(new CreateCharacter(Account, other, Create("Eeee Ffff")));
+        await Eventually.TrueAsync(() => other.Sent.OfType<CharacterCreateResult>().Any());
+        Assert.Equal(CreateResults.AccountFull, other.Single<CharacterCreateResult>().Result);
+        Assert.Single(_db.Queued.OfType<CreateCharacterWork>());
+    }
+
+    [Theory]
+    [InlineData(true, null, true)]
+    [InlineData(false, RealmContext.LiveNameIndex, false)]
+    [InlineData(false, "other_constraint", false)]
+    public async Task APendingCreateReleasesItsPlaceOnEveryOutcome(bool committed, string? constraint, bool accountFull)
+    {
+        await ListAsync(Summary(5, "Aaaa Bbbb"));
+        _owner.Post(new CreateCharacter(Account, _session, Create("Cccc Dddd")));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<CreateCharacterWork>().Any());
+        _db.Take<CreateCharacterWork>().Complete(committed ? WorkResult.Committed : WorkResult.RefusedBy(constraint));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterCreateResult>().Any());
+
+        _owner.Post(new CreateCharacter(Account, _session, Create("Eeee Ffff")));
+        if (accountFull)
+        {
+            await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterCreateResult>().Count() == 2);
+            Assert.Equal(CreateResults.AccountFull, _session.Sent.OfType<CharacterCreateResult>().Last().Result);
+        }
+        else
+        {
+            await Eventually.TrueAsync(() => _db.Queued.OfType<CreateCharacterWork>().Any());
+        }
+    }
+
+    [Fact]
+    public async Task ACreateRefusedByAnotherConstraintAnswersTheGeneralFailure()
+    {
+        await ListAsync();
+        _owner.Post(new CreateCharacter(Account, _session, Create("Rebaser Head")));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<CreateCharacterWork>().Any());
+        _db.Take<CreateCharacterWork>().Complete(WorkResult.RefusedBy("other_constraint"));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterCreateResult>().Any());
+        Assert.Equal(CreateResults.General, _session.Single<CharacterCreateResult>().Result);
+    }
+
+    [Fact]
+    public async Task APathPastTheLastAnswersTheGeneralFailure()
+    {
+        await ListAsync();
+        CharacterCreate request = Create("Rebaser Head");
+        request.Path = 4;
+        _owner.Post(new CreateCharacter(Account, _session, request));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterCreateResult>().Any());
+        Assert.Equal(CreateResults.General, _session.Single<CharacterCreateResult>().Result);
+        Assert.Empty(_db.Queued.OfType<CreateCharacterWork>());
+    }
+
+    [Fact]
+    public async Task ADeleteThatDoesNotCommitAnswersTheGeneralFailureAndKeepsTheCharacter()
+    {
+        await ListAsync(Summary(5, "Rebaser Head"));
+        _owner.Post(new DeleteCharacter(Account, _session, 5));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<DeleteCharacterWork>().Any());
+        _db.Take<DeleteCharacterWork>().Complete(WorkResult.RefusedBy("other_constraint"));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterDeleteResult>().Any());
+        Assert.Equal(DeleteResults.General, _session.Single<CharacterDeleteResult>().Result);
+
+        _owner.Post(new ListCharacters(Account, _session));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterList>().Count() == 2);
+        Assert.Single(_session.Sent.OfType<CharacterList>().Last().Characters);
+    }
+
+    [Fact]
+    public async Task ARenameOfACharacterNotListedAnswersResult14()
+    {
+        await ListAsync();
+        _owner.Post(new RenameCharacter(Account, _session, 99, "Other Name"));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterRenameResult>().Any());
+        Assert.Equal(RenameResults.InternalError, _session.Single<CharacterRenameResult>().Result);
+    }
+
+    [Fact]
+    public async Task ARenameToANameOutsideTheRulesAnswersResult15()
+    {
+        await ListAsync(Summary(5, "Rebaser Head") with { RequiresRename = true });
+        _owner.Post(new RenameCharacter(Account, _session, 5, "Otherx"));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterRenameResult>().Any());
+        Assert.Equal(RenameResults.NameNotAllowed, _session.Single<CharacterRenameResult>().Result);
+        Assert.Empty(_db.Queued.OfType<RenameCharacterWork>());
+    }
+
+    [Fact]
+    public async Task ARenameToANameInTheListAnswersResult16()
+    {
+        await ListAsync(Summary(5, "Rebaser Head") with { RequiresRename = true }, Summary(6, "Cccc Dddd"));
+        _owner.Post(new RenameCharacter(Account, _session, 5, "cccc DDDD"));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterRenameResult>().Any());
+        Assert.Equal(RenameResults.NameTaken, _session.Single<CharacterRenameResult>().Result);
+        Assert.Empty(_db.Queued.OfType<RenameCharacterWork>());
+    }
+
+    [Theory]
+    [InlineData(RealmContext.LiveNameIndex, 16)]
+    [InlineData("other_constraint", 14)]
+    public async Task ARenameTheDatabaseRefusesAnswersItsResult(string constraint, int expected)
+    {
+        await ListAsync(Summary(5, "Rebaser Head") with { RequiresRename = true });
+        _owner.Post(new RenameCharacter(Account, _session, 5, "Other Name"));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<RenameCharacterWork>().Any());
+        _db.Take<RenameCharacterWork>().Complete(WorkResult.RefusedBy(constraint));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterRenameResult>().Any());
+        Assert.Equal(expected, _session.Single<CharacterRenameResult>().Result);
+
+        _owner.Post(new ListCharacters(Account, _session));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterList>().Count() == 2);
+        CharacterList.Character kept = Assert.Single(_session.Sent.OfType<CharacterList>().Last().Characters);
+        Assert.Equal("Rebaser Head", kept.Name);
+        Assert.True(kept.RequiresRename);
+    }
+
+    [Fact]
+    public async Task ASecondRenameWhileOneIsInFlightAnswersResult17()
+    {
+        await ListAsync(Summary(5, "Rebaser Head") with { RequiresRename = true });
+        _owner.Post(new RenameCharacter(Account, _session, 5, "Other Name"));
+        _owner.Post(new RenameCharacter(Account, _session, 5, "Third Name"));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterRenameResult>().Any());
+        Assert.Equal(RenameResults.NoRenameAvailable, _session.Single<CharacterRenameResult>().Result);
+        Assert.Single(_db.Queued.OfType<RenameCharacterWork>());
+    }
+
+    [Fact]
+    public async Task AClosedSessionDropsItsCharacters()
+    {
+        await ListAsync(Summary(5, "Rebaser Head"));
+        _owner.Post(new RealmSessionClosed(Account, _session));
+        _owner.Post(new ListCharacters(Account, _session));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharactersWork>().Any());
+    }
+
+    [Fact]
+    public async Task AnotherSessionsCloseKeepsTheCharacters()
+    {
+        await ListAsync(Summary(5, "Rebaser Head"));
+        _owner.Post(new RealmSessionClosed(Account, new FakeClientSession()));
+        _owner.Post(new ListCharacters(Account, _session));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterList>().Count() == 2);
+        Assert.Empty(_db.Queued.OfType<LoadCharactersWork>());
+    }
+
+    [Fact]
+    public async Task ASecondSessionReloadsAndTheFirstLosesItsState()
+    {
+        var other = new FakeClientSession();
+        await ListAsync(Summary(5, "Rebaser Head"));
+        await ListAsync(other, Account, Summary(6, "Cccc Dddd"));
+        Assert.Equal("Cccc Dddd", Assert.Single(other.Single<CharacterList>().Characters).Name);
+
+        _owner.Post(new CreateCharacter(Account, _session, Create("Eeee Ffff")));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterCreateResult>().Any());
+        Assert.Equal(CreateResults.General, _session.Single<CharacterCreateResult>().Result);
+    }
+
+    [Fact]
+    public async Task AnEmptyAllocatorAsksForOneBlockAndOnlyOne()
+    {
+        var db = new FakeWriteBehind();
+        RealmOwner owner = StartOwner(db, null);
+        try
+        {
+            await ListOnAsync(owner, db, _session, Account);
+            owner.Post(new ListCharacters(Account, _session));
+            await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterList>().Count() == 2);
+            Assert.Single(db.Queued.OfType<TakeIdBlockWork>());
+
+            TakeIdBlockWork taken = db.Take<TakeIdBlockWork>();
+            taken.Block = new IdBlock(7001, 1000);
+            taken.Complete(WorkResult.Committed);
+            owner.Post(new CreateCharacter(Account, _session, Create("Rebaser Head")));
+            await Eventually.TrueAsync(() => db.Queued.OfType<CreateCharacterWork>().Any());
+            db.Take<CreateCharacterWork>().Complete(WorkResult.Committed);
+            await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterCreateResult>().Any());
+            Assert.Equal(7001UL, _session.Single<CharacterCreateResult>().CharacterId);
+            Assert.Empty(db.Queued.OfType<TakeIdBlockWork>());
+        }
+        finally
+        {
+            await owner.StopAsync().WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        }
+    }
+
+    [Fact]
+    public async Task TheRefillIsAskedForBelowHalfABlockAndOnlyOnce()
+    {
+        var db = new FakeWriteBehind();
+        RealmOwner owner = StartOwner(db, 501);
+        try
+        {
+            await ListOnAsync(owner, db, _session, Account);
+
+            // 501 held, 500 after this create: not yet below the mark of 500.
+            owner.Post(new CreateCharacter(Account, _session, Create("Aaaa Bbbb")));
+            await Eventually.TrueAsync(() => db.Queued.OfType<CreateCharacterWork>().Any());
+            await SyncAsync(owner, _session);
+            Assert.Empty(db.Queued.OfType<TakeIdBlockWork>());
+
+            owner.Post(new CreateCharacter(Account, _session, Create("Cccc Dddd")));
+            await Eventually.TrueAsync(() => db.Queued.OfType<TakeIdBlockWork>().Any());
+
+            owner.Post(new CreateCharacter(Account, _session, Create("Eeee Ffff")));
+            await Eventually.TrueAsync(() => db.Queued.OfType<CreateCharacterWork>().Count() == 3);
+            await SyncAsync(owner, _session);
+            Assert.Single(db.Queued.OfType<TakeIdBlockWork>());
+        }
+        finally
+        {
+            await owner.StopAsync().WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        }
+    }
+
+    private RealmOwner StartOwner(FakeWriteBehind db, int? ids)
+    {
+        var owner = new RealmOwner(db, s_catalog, _time, Options.Create(new RealmOptions()), NullLogger<RealmOwner>.Instance);
+        if (ids is int count)
+            owner.Post(new IdBlockTaken(new IdBlock(5001, count)));
+        owner.Start();
+        return owner;
+    }
+
+    // A cached list answer is sent only after every earlier message has been handled.
+    private static async Task SyncAsync(RealmOwner owner, FakeClientSession session)
+    {
+        int before = session.Sent.OfType<CharacterList>().Count();
+        owner.Post(new ListCharacters(Account, session));
+        await Eventually.TrueAsync(() => session.Sent.OfType<CharacterList>().Count() == before + 1);
+    }
+
     private Task ListAsync(params CharacterSummary[] characters) => ListAsync(_session, Account, characters);
 
-    private async Task ListAsync(FakeClientSession session, long accountId, params CharacterSummary[] characters)
+    private Task ListAsync(FakeClientSession session, long accountId, params CharacterSummary[] characters) =>
+        ListOnAsync(_owner, _db, session, accountId, characters);
+
+    private static async Task ListOnAsync(
+        RealmOwner owner, FakeWriteBehind db, FakeClientSession session, long accountId, params CharacterSummary[] characters)
     {
-        _owner.Post(new ListCharacters(accountId, session));
-        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharactersWork>().Any(w => w.Keys[0] == PersistKey.Account(accountId)));
-        LoadCharactersWork load = _db.Queued.OfType<LoadCharactersWork>().First(w => w.Keys[0] == PersistKey.Account(accountId));
-        _db.Remove(load);
+        int before = session.Sent.OfType<CharacterList>().Count();
+        owner.Post(new ListCharacters(accountId, session));
+        await Eventually.TrueAsync(() => db.Queued.OfType<LoadCharactersWork>().Any(w => w.Keys[0] == PersistKey.Account(accountId)));
+        LoadCharactersWork load = db.Queued.OfType<LoadCharactersWork>().First(w => w.Keys[0] == PersistKey.Account(accountId));
+        db.Remove(load);
         load.Characters = [.. characters];
         load.Complete(WorkResult.Committed);
-        await Eventually.TrueAsync(() => session.Sent.OfType<CharacterList>().Any());
+        await Eventually.TrueAsync(() => session.Sent.OfType<CharacterList>().Count() > before);
     }
 
     private static CharacterSummary Summary(ulong id, string name) =>

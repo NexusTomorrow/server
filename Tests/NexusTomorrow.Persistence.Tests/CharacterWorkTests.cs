@@ -100,6 +100,35 @@ public sealed class CharacterWorkTests
     }
 
     [Fact]
+    public async Task ASecondRenameOfTheSameMarkChangesNothing()
+    {
+        await using PostgresTestDatabase database = await Databases.CreateAsync();
+        await using WriteBehindQueue queue = Databases.Queue(database);
+        var created = new TaskCompletionSource<WorkResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        queue.Enqueue(new CreateCharacterWork(Databases.NewCharacter(1001, 7, "Rebaser Head"), result => created.SetResult(result)));
+        Assert.Equal(WorkOutcome.Committed, (await created.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken)).Outcome);
+
+        await using (RealmContext context = database.Contexts.CreateRealm())
+        {
+            await context.Characters.Where(c => c.Id == 1001).ExecuteUpdateAsync(
+                set => set.SetProperty(c => c.RequiresRename, true), TestContext.Current.CancellationToken);
+        }
+
+        // Both renames share the character's key, so they run in this order; the mark is gone after the first.
+        var first = new TaskCompletionSource<WorkResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var second = new TaskCompletionSource<WorkResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        queue.Enqueue(new RenameCharacterWork(7, 1001, "First Name", result => first.SetResult(result)));
+        queue.Enqueue(new RenameCharacterWork(7, 1001, "Second Name", result => second.SetResult(result)));
+        await first.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken);
+        await second.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken);
+
+        var loaded = new TaskCompletionSource<ImmutableArray<CharacterSummary>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        queue.Enqueue(new LoadCharactersWork(7, characters => loaded.SetResult(characters)));
+        CharacterSummary character = Assert.Single(await loaded.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken));
+        Assert.Equal("First Name", character.Name);
+    }
+
+    [Fact]
     public async Task AnIdBlockIsTheNextThousand()
     {
         await using PostgresTestDatabase database = await Databases.CreateAsync();

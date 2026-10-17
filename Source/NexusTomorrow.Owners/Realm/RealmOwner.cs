@@ -24,6 +24,14 @@ public sealed class RealmOwner : Owner<RealmMessage>
     private readonly Dictionary<long, AccountCharacters> _accounts = [];
     private readonly HashSet<string> _pendingNames = new(StringComparer.OrdinalIgnoreCase);
 
+    // Creates enqueued and not yet completed, by account: the cap counts them with the listed characters, whichever session asked,
+    // because a session's load cannot see a create that has not committed. Released in Created on every outcome.
+    private readonly Dictionary<long, int> _pendingCreates = [];
+
+    // Characters with a rename enqueued and not yet completed: the mark is cleared only on commit, so a second request in the
+    // meantime would otherwise pass the RequiresRename check. Released in Renamed on every outcome.
+    private readonly HashSet<ulong> _renaming = [];
+
     /// <summary>
     /// Create the realm owner.
     /// </summary>
@@ -153,7 +161,7 @@ public sealed class RealmOwner : Owner<RealmMessage>
             return;
         }
 
-        if (characters.Count >= _options.MaxCharactersPerAccount)
+        if (characters.Count + _pendingCreates.GetValueOrDefault(create.AccountId) >= _options.MaxCharactersPerAccount)
         {
             RefuseCreate(session, CreateResults.AccountFull);
             return;
@@ -179,11 +187,17 @@ public sealed class RealmOwner : Owner<RealmMessage>
         _pendingNames.Add(request.Name);
         long accountId = create.AccountId;
         _persistence.Enqueue(new CreateCharacterWork(character, result => Post(new CharacterCreated(accountId, session, character, result))));
+        _pendingCreates[accountId] = _pendingCreates.GetValueOrDefault(accountId) + 1;
     }
 
     private void Created(CharacterCreated created)
     {
         _pendingNames.Remove(created.Character.Name);
+        if (_pendingCreates.GetValueOrDefault(created.AccountId) <= 1)
+            _pendingCreates.Remove(created.AccountId);
+        else
+            _pendingCreates[created.AccountId]--;
+
         if (created.Result.Outcome == WorkOutcome.Committed)
         {
             if (_accounts.TryGetValue(created.AccountId, out AccountCharacters? state) && state.Session == created.Session)
@@ -235,7 +249,7 @@ public sealed class RealmOwner : Owner<RealmMessage>
             return;
         }
 
-        if (!target.RequiresRename)
+        if (!target.RequiresRename || _renaming.Contains(target.Id))
         {
             RefuseRename(session, RenameResults.NoRenameAvailable);
             return;
@@ -259,11 +273,13 @@ public sealed class RealmOwner : Owner<RealmMessage>
         string name = rename.NewName;
         _persistence.Enqueue(new RenameCharacterWork(
             accountId, characterId, name, result => Post(new CharacterRenamed(accountId, session, characterId, name, result))));
+        _renaming.Add(characterId);
     }
 
     private void Renamed(CharacterRenamed renamed)
     {
         _pendingNames.Remove(renamed.Name);
+        _renaming.Remove(renamed.CharacterId);
         if (renamed.Result.Outcome != WorkOutcome.Committed)
         {
             RefuseRename(renamed.Session, renamed.Result.Constraint == RealmContext.LiveNameIndex ? RenameResults.NameTaken : RenameResults.InternalError);

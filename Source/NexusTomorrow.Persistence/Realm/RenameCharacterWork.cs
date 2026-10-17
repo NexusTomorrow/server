@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Persistence.Realm;
 
 /// <summary>
-/// Renames one live character of an account and clears its rename mark. A taken name ends as <see cref="WorkOutcome.Refused"/> by
+/// Renames one live, marked character of an account and clears its rename mark; an unmarked character is left as it is. A taken name ends as <see cref="WorkOutcome.Refused"/> by
 /// <see cref="RealmContext.LiveNameIndex"/>.
 /// </summary>
 public sealed class RenameCharacterWork : PersistenceWork
@@ -29,9 +29,10 @@ public sealed class RenameCharacterWork : PersistenceWork
     /// <inheritdoc/>
     public override async Task ApplyAsync(PersistenceContexts contexts, CancellationToken cancellationToken)
     {
+        // Only a marked character renames, so a repeat of a rename that already landed changes no row.
         await using RealmContext context = contexts.CreateRealm();
         await context.Characters
-            .Where(c => c.Id == _characterId && c.AccountId == _accountId && c.DeletedAt == null)
+            .Where(c => c.Id == _characterId && c.AccountId == _accountId && c.DeletedAt == null && c.RequiresRename)
             .ExecuteUpdateAsync(set => set.SetProperty(c => c.Name, _name).SetProperty(c => c.RequiresRename, false), cancellationToken);
     }
 
