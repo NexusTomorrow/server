@@ -15,6 +15,18 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust # only until the prepare step switches host logins to scram
+        ports:
+          - "5432:5432"
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      NEXUSTOMORROW_TEST_PG: "Host=localhost;Port=5432;Username=nt_test;Database=postgres"
+      NEXUSTOMORROW_TEST_PG_REQUIRED: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -69,6 +81,23 @@ jobs:
       # dotnet format loads source generators from the build's output, so it runs after the build.
       - name: Format
         run: dotnet format Source/NexusTomorrow.slnx --verify-no-changes --no-restore
+
+      - name: Prepare PostgreSQL
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: |
+          set -euo pipefail
+          PW=$(openssl rand -hex 32); echo "::add-mask::$PW"
+          psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -v pw="$PW" <<'SQL'
+          CREATE ROLE nt_test LOGIN CREATEDB NOSUPERUSER NOCREATEROLE PASSWORD :'pw';
+          SQL
+          umask 077; printf 'localhost:5432:*:nt_test:%s\n' "$PW" > ~/.pgpass; chmod 600 ~/.pgpass
+          docker exec "$PG_CONTAINER" sh -c 'sed -i -E "/^host/ s/trust\$/scram-sha-256/" "$PGDATA/pg_hba.conf"'
+          docker exec -u postgres "$PG_CONTAINER" psql -U postgres -tAc 'SELECT pg_reload_conf()'
+          psql "host=localhost port=5432 dbname=postgres user=nt_test" -w -tAc 'SELECT current_user'
+          if PGPASSFILE=/dev/null psql "host=localhost port=5432 dbname=postgres user=nt_test" -w -tAc 'SELECT 1' >/dev/null 2>&1; then
+            echo "::error::logged in without the pgpass file"; exit 1
+          fi
 
       - name: Test
         env:

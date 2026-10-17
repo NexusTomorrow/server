@@ -43,6 +43,7 @@ output, and without them every generated member looks missing.
 - Every behaviour change comes with a test. Tests use xUnit v3 on Microsoft Testing Platform and
   live under `Tests/`, in a project named after the one it tests
   (`NexusTomorrow.Cryptography.Tests`).
+- Tests that touch the database need a PostgreSQL 18 server named by `NEXUSTOMORROW_TEST_PG`; without it they skip, and CI provides one.
 - Name a test for the behaviour it checks, such as `SessionKeyIsAlwaysSixtyFourBytes`.
 - CI runs only when a maintainer dispatches the `Tests` workflow, so your pull request shows no
   checks until a maintainer runs them for it. Before it builds, it checks your commit messages and

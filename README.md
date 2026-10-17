@@ -32,6 +32,7 @@ A server for the WildStar client, build 16042, written in C# on .NET 10.
 | `NexusTomorrow.Transport` | Frames, envelopes and the packet cipher, on the hot-path rules |
 | `NexusTomorrow.Gateway` | The connection edge: the message catalog, the opcode table and the inbound decoder that admit a client message |
 | `NexusTomorrow.Owners` | The owner base: one thread over one queue per owner, and the watchdog that reports one that stops draining |
+| `NexusTomorrow.Persistence` | One EF Core context per PostgreSQL schema (`account`, `realm`, `ops`) and their migrations |
 | `NexusTomorrow.MapGenerator` | Tool: extracts tables from your client and generates map files |
 | `NexusTomorrow.ClientConnector` | Tool: starts your client pointed at a server |
 
@@ -57,6 +58,8 @@ dotnet test --solution Source/NexusTomorrow.slnx
 Tests use xUnit v3 on Microsoft Testing Platform. CI runs the same suite on GitHub-hosted runners
 through the `Tests` workflow, which runs only when a maintainer dispatches it. Pushes and pull
 requests don't trigger it, so a pull request shows no checks until a maintainer runs them.
+
+The database tests need a PostgreSQL 18 server: set `NEXUSTOMORROW_TEST_PG` to a connection string for a login that can create databases, and each test makes and drops its own. Without it those tests skip; set `NEXUSTOMORROW_TEST_PG_REQUIRED=1` to make a missing server a failure instead. CI starts the server for you.
 
 ## Tools
 
