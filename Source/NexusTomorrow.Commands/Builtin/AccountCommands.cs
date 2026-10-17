@@ -32,13 +32,16 @@ public static class AccountCommands
             Name = "account create",
             Description = "Create an account that can log in.",
             Permission = PermissionKeys.AccountCreate,
-            Parameters = [new("email", "the login name"), new("password", "the password", Secret: true)],
+            Parameters =
+            [
+                new("email", "the login name", IsValid: IsEmail, Invalid: "That is not an email address."),
+                new("password", "the password", Secret: true),
+            ],
             ExecuteAsync = async (invocation, cancellationToken) =>
             {
+                // The dispatcher has checked the email, so a password typed in its place is refused unrecorded.
                 string email = invocation.Arguments[0];
                 string password = invocation.Arguments[1];
-                if (!IsEmail(email))
-                    return new CommandReply(CommandOutcome.Refused, "That is not an email address.");
                 if (password.Length is 0 or > MaxPasswordLength)
                     return new CommandReply(CommandOutcome.Refused, $"A password is 1 to {MaxPasswordLength} characters.");
 

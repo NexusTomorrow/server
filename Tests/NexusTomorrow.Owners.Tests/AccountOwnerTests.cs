@@ -84,6 +84,49 @@ public sealed class AccountOwnerTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ATimedSuspensionAddedToAnIndefiniteOneInTheDatabaseDoesNotShortenIt()
+    {
+        await StoreSuspensionAsync(s_alice.Email, _time.GetUtcNow().AddHours(1));
+        _time.Advance(TimeSpan.FromHours(2));
+
+        Guid token = await IssueAsync(s_alice with { SuspendedIndefinitely = true });
+        Assert.IsType<LoginRefused>(await RedeemAsync(token, "alice@example.com"));
+    }
+
+    [Fact]
+    public async Task AShorterTimedSuspensionDoesNotReplaceALongerOne()
+    {
+        await StoreSuspensionAsync(s_alice.Email, _time.GetUtcNow().AddHours(5));
+        await StoreSuspensionAsync(s_alice.Email, _time.GetUtcNow().AddHours(1));
+        _time.Advance(TimeSpan.FromHours(2));
+        Assert.IsType<LoginRefused>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
+
+        _time.Advance(TimeSpan.FromHours(4));
+        Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
+    }
+
+    [Fact]
+    public async Task AnIndefiniteSuspensionReplacesATimedOne()
+    {
+        await StoreSuspensionAsync(s_alice.Email, _time.GetUtcNow().AddHours(1));
+        await StoreSuspensionAsync(s_alice.Email, until: null);
+        _time.Advance(TimeSpan.FromHours(2));
+        Assert.IsType<LoginRefused>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
+    }
+
+    [Fact]
+    public async Task ALiftEndsEverySuspensionCombinedSoFarAndALaterOneStartsFresh()
+    {
+        await StoreSuspensionAsync(s_alice.Email, until: null);
+        await LiftAsync(s_alice.Email);
+        Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice with { SuspendedIndefinitely = true }), "alice@example.com"));
+
+        await StoreSuspensionAsync(s_alice.Email, _time.GetUtcNow().AddHours(1));
+        _time.Advance(TimeSpan.FromHours(2));
+        Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice with { SuspendedIndefinitely = true }), "alice@example.com"));
+    }
+
+    [Fact]
     public async Task ATimedSuspensionEndsWhenItsTimeComes()
     {
         await StoreSuspensionAsync(s_alice.Email, _time.GetUtcNow().AddHours(1));

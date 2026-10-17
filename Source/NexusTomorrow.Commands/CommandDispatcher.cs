@@ -51,6 +51,7 @@ public sealed class CommandDispatcher
     /// </summary>
     public async Task<CommandReply> DispatchAsync(CommandActor actor, string line, CancellationToken cancellationToken)
     {
+        actor = Scrubbed(actor);
         if (!CommandLine.TrySplit(line, out List<string> tokens))
             return new CommandReply(CommandOutcome.Refused, "Unbalanced quotes.");
         if (tokens.Count == 0)
@@ -62,13 +63,18 @@ public sealed class CommandDispatcher
         if (command is null)
             return new CommandReply(CommandOutcome.Refused, "Unknown command; try help.");
 
-        List<string> raw = tokens.GetRange(nameTokens, tokens.Count - nameTokens);
-        if (!TryBind(command, raw, out List<string> arguments))
-            return Audited(actor, command, arguments, new CommandReply(CommandOutcome.Refused, $"Usage: {Usage(command)}"));
+        // Permission and the console rule come before the arguments, so an actor who may not run the command learns nothing of its shape.
+        bool fits = TryBind(command, tokens.GetRange(nameTokens, tokens.Count - nameTokens), out List<string> arguments);
         if (command.Permission is { } permission && !actor.Holds(permission))
             return Denied(actor, command, arguments, $"You do not hold {permission}.");
         if (command.ConsoleOnly && actor.FrontEnd == FrontEnd.InGame)
             return Denied(actor, command, arguments, "That command is console only.");
+        if (StorableText.IsUnstorable(line))
+            return Audited(actor, command, arguments, new CommandReply(CommandOutcome.Refused, "The line holds a control character or a broken character pair."));
+        if (!fits)
+            return Audited(actor, command, arguments, new CommandReply(CommandOutcome.Refused, $"Usage: {Usage(command)}"));
+        if (FirstInvalid(command, arguments) is { } invalid)
+            return Audited(actor, command, arguments, new CommandReply(CommandOutcome.Refused, invalid.Invalid ?? $"The {invalid.Name} is not valid."));
 
         CommandReply reply;
         try
@@ -83,6 +89,29 @@ public sealed class CommandDispatcher
 
         return Audited(actor, command, arguments, reply);
     }
+
+    // An actor's name and address go into the audit row and, for a suspension, into account.suspension.created_by.
+    private static CommandActor Scrubbed(CommandActor actor)
+    {
+        string name = Clip(StorableText.Scrub(actor.Name), ActorWidth);
+        string? address = actor.RemoteAddress is null ? null : Clip(StorableText.Scrub(actor.RemoteAddress), RemoteAddressWidth);
+        return name == actor.Name && address == actor.RemoteAddress ? actor : actor with { Name = name, RemoteAddress = address };
+    }
+
+    private static CommandParameter? FirstInvalid(CommandDefinition command, List<string> arguments)
+    {
+        for (int i = 0; i < arguments.Count && i < command.Parameters.Length; i++)
+        {
+            if (command.Parameters[i].IsValid is { } isValid && !isValid(arguments[i]))
+                return command.Parameters[i];
+        }
+
+        return null;
+    }
+
+    // The audit records a value only when it is not secret, can be stored, and passes its parameter's validator.
+    private static bool Recordable(CommandParameter parameter, string value) =>
+        !parameter.Secret && !StorableText.IsUnstorable(value) && (parameter.IsValid?.Invoke(value) ?? true);
 
     private static string Usage(CommandDefinition command)
     {
@@ -150,13 +179,13 @@ public sealed class CommandDispatcher
 
     private CommandReply Audited(CommandActor actor, CommandDefinition command, List<string> arguments, CommandReply reply)
     {
-        // Only the non-secret arguments a parameter names are recorded, by position.
+        // Only the arguments a parameter names, by position, that Recordable accepts.
         var details = new List<string>();
         string? target = null;
         for (int i = 0; i < arguments.Count && i < command.Parameters.Length; i++)
         {
             CommandParameter parameter = command.Parameters[i];
-            if (parameter.Secret)
+            if (!Recordable(parameter, arguments[i]))
                 continue;
             if (i == 0)
                 target = arguments[i];

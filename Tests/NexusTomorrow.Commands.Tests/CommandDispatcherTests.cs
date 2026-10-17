@@ -175,6 +175,71 @@ public sealed class CommandDispatcherTests
     }
 
     [Fact]
+    public async Task AnActorWithoutThePermissionIsDeniedBeforeItsArgumentsAreChecked()
+    {
+        CommandReply reply = await Dispatcher().DispatchAsync(s_player, "test secret alice", CancellationToken.None);
+        Assert.Equal(CommandOutcome.Denied, reply.Outcome);
+        Assert.DoesNotContain("<name>", reply.Text, StringComparison.Ordinal);
+        Assert.DoesNotContain("Usage", reply.Text, StringComparison.Ordinal);
+        Assert.Equal("Denied", _db.Take<AuditWork>().Row.Outcome);
+    }
+
+    [Fact]
+    public async Task AConsoleOnlyCommandIsDeniedBeforeItsArgumentsAreChecked()
+    {
+        CommandReply reply = await Dispatcher().DispatchAsync(s_gameMaster, "test console surplus", CancellationToken.None);
+        Assert.Equal(CommandOutcome.Denied, reply.Outcome);
+        Assert.Equal("Denied", _db.Take<AuditWork>().Row.Outcome);
+    }
+
+    // Built in code: a lone surrogate does not survive being a theory's data.
+    private static readonly string[] s_unstorable = ["\0", "\n", "\ud800", "\udc00"];
+
+    [Fact]
+    public async Task AControlCharacterOrLoneSurrogateIsDeniedWithoutReachingTheAudit()
+    {
+        foreach (string bad in s_unstorable)
+        {
+            CommandReply reply = await Dispatcher().DispatchAsync(s_player, $"test secret al{bad}ice pw", CancellationToken.None);
+            Assert.Equal(CommandOutcome.Denied, reply.Outcome);
+            AuditRow audit = _db.Take<AuditWork>().Row;
+            Assert.Null(audit.Target);
+            Assert.Null(audit.Details);
+        }
+    }
+
+    [Fact]
+    public async Task AControlCharacterOrLoneSurrogateInAPermittedLineIsRefusedAndNeverRuns()
+    {
+        foreach (string bad in s_unstorable)
+        {
+            CommandReply reply = await Dispatcher().DispatchAsync(s_console, $"test secret al{bad}ice pw", CancellationToken.None);
+            Assert.Equal(CommandOutcome.Refused, reply.Outcome);
+            Assert.Empty(_ran);
+            AuditRow audit = _db.Take<AuditWork>().Row;
+            Assert.Equal("Refused", audit.Outcome);
+            Assert.Null(audit.Target);
+        }
+    }
+
+    [Fact]
+    public async Task AValidSurrogatePairIsKept()
+    {
+        await Dispatcher().DispatchAsync(s_console, "test secret al😀ice pw", CancellationToken.None);
+        Assert.Equal("al😀ice", _db.Take<AuditWork>().Row.Target);
+    }
+
+    [Fact]
+    public async Task AControlCharacterInTheActorNameOrAddressIsScrubbedFromTheAudit()
+    {
+        var actor = new CommandActor("ba\0d\ud800name", FrontEnd.InGame, new HashSet<string>(), "192.0.2.\u00007");
+        await Dispatcher().DispatchAsync(actor, "test secret alice pw", CancellationToken.None);
+        AuditRow audit = _db.Take<AuditWork>().Row;
+        Assert.Equal("ba?d?name", audit.Actor);
+        Assert.Equal("192.0.2.?7", audit.RemoteAddress);
+    }
+
+    [Fact]
     public async Task AnOverlongArgumentIsClippedToTheAuditColumnsSoTheRowCanBeWritten()
     {
         await Dispatcher().DispatchAsync(s_console, $"test secret {new string('a', 3000)} pw", CancellationToken.None);

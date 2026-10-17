@@ -54,6 +54,7 @@ public sealed record LiftSuspension(string Email, TaskCompletionSource<AdminResu
 internal sealed record AccountCreated(WorkResult Result, TaskCompletionSource<AdminResult> Reply) : AccountMessage;
 
 internal sealed record SuspensionStored(long? AccountId, DateTimeOffset? Until, bool Lifted, TaskCompletionSource<AdminResult> Reply) : AccountMessage;
+
 /// <summary>
 /// The answer to <see cref="RedeemGameToken"/>.
 /// </summary>

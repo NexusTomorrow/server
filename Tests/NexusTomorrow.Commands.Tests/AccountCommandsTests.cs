@@ -15,6 +15,7 @@ public sealed class AccountCommandsTests : IAsyncLifetime
     private static readonly TimeSpan s_bound = TimeSpan.FromSeconds(10);
     private static readonly CommandActor s_console = new("console", FrontEnd.Cli, new HashSet<string> { PermissionKeys.All }, null);
     private static readonly CommandActor s_gameMaster = new("gm", FrontEnd.InGame, new HashSet<string> { PermissionKeys.All }, "192.0.2.2");
+    private static readonly CommandActor s_player = new("player", FrontEnd.InGame, new HashSet<string>(), "192.0.2.1");
     private static readonly AccountCredentials s_alice = new(7, "alice@example.com", [1], [2], null, false);
 
     private readonly FakeTimeProvider _time = new(new DateTimeOffset(2026, 10, 16, 12, 0, 0, TimeSpan.Zero));
@@ -112,6 +113,35 @@ public sealed class AccountCommandsTests : IAsyncLifetime
 
         Assert.DoesNotContain(replies, reply => reply.Text.Contains(Password, StringComparison.Ordinal));
         Assert.DoesNotContain(_ownerLog.Lines.Concat(_dispatcherLog.Lines), line => line.Contains(Password, StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task APasswordInTheEmailSlotNeverReachesTheAudit(bool asConsole)
+    {
+        CommandActor actor = asConsole ? s_console : s_player;
+        await _dispatcher.DispatchAsync(actor, "account create hunter2 a@b.c", CancellationToken.None);
+        AuditRow audit = Assert.Single(_db.Queued.OfType<AuditWork>()).Row;
+        string everything = $"{audit.Actor}|{audit.Action}|{audit.Target}|{audit.Details}|{audit.RemoteAddress}|{audit.Outcome}";
+        Assert.DoesNotContain("hunter2", everything, StringComparison.Ordinal);
+        Assert.Equal(asConsole ? "Refused" : "Denied", audit.Outcome);
+    }
+
+    [Fact]
+    public async Task ALineWithAControlCharacterInTheEmailQueuesNothing()
+    {
+        CommandReply reply = await _dispatcher.DispatchAsync(s_console, "account create a\0@b.c pw", CancellationToken.None).WaitAsync(s_bound, TestContext.Current.CancellationToken);
+        Assert.Equal(CommandOutcome.Refused, reply.Outcome);
+        Assert.Empty(_db.Queued.OfType<CreateAccountWork>());
+    }
+
+    [Fact]
+    public async Task ALineWithAControlCharacterInTheReasonQueuesNothing()
+    {
+        CommandReply reply = await _dispatcher.DispatchAsync(s_console, "account suspend alice@example.com forever bad\0reason", CancellationToken.None).WaitAsync(s_bound, TestContext.Current.CancellationToken);
+        Assert.Equal(CommandOutcome.Refused, reply.Outcome);
+        Assert.Empty(_db.Queued.OfType<SuspendAccountWork>());
     }
 
     [Fact]

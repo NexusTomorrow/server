@@ -24,7 +24,7 @@ public sealed class AccountOwner : Owner<AccountMessage>
     private readonly Dictionary<Guid, PendingToken> _tokens = [];
     private readonly Dictionary<UInt128, PendingSession> _sessionKeys = [];
     private readonly Dictionary<long, IClientSession> _online = [];
-    private readonly Dictionary<long, (DateTimeOffset? Until, bool Indefinite)> _suspensions = [];
+    private readonly Dictionary<long, SuspensionOverride> _suspensions = [];
     private int _onlineCount;
 
     /// <summary>
@@ -177,7 +177,7 @@ public sealed class AccountOwner : Owner<AccountMessage>
             return;
         }
 
-        _suspensions[accountId] = stored.Lifted ? (null, false) : (stored.Until, stored.Until is null);
+        _suspensions[accountId] = stored.Lifted ? new SuspensionOverride(null, false, true) : Combine(accountId, stored.Until);
         if (IsSuspended(accountId, null) && _online.Remove(accountId, out IClientSession? online))
         {
             online.Send(new Kicked { Reason = 0 });
@@ -188,12 +188,24 @@ public sealed class AccountOwner : Owner<AccountMessage>
         stored.Reply.TrySetResult(new AdminResult(true, stored.Lifted ? "suspension lifted" : "suspended"));
     }
 
+    // A stored suspension adds to what is in force: the later end wins and an indefinite one wins over any end. Only a lift replaces the
+    // credentials' view, because credentials issued before the lift still carry the suspension it ended.
+    private SuspensionOverride Combine(long accountId, DateTimeOffset? until)
+    {
+        _suspensions.TryGetValue(accountId, out SuspensionOverride? previous);
+        bool indefinite = until is null || previous?.Indefinite == true;
+        DateTimeOffset? end = indefinite ? null : previous?.Until is { } earlier && earlier > until ? earlier : until;
+        return new SuspensionOverride(end, indefinite, previous?.ReplacesCredentials ?? false);
+    }
+
     private bool IsSuspended(long accountId, AccountCredentials? credentials)
     {
-        (DateTimeOffset? until, bool indefinite) = _suspensions.TryGetValue(accountId, out (DateTimeOffset? Until, bool Indefinite) changed)
-            ? changed
-            : (credentials?.SuspendedUntil, credentials?.SuspendedIndefinitely ?? false);
-        return indefinite || until > _time.GetUtcNow();
+        DateTimeOffset now = _time.GetUtcNow();
+        bool fromCredentials = credentials is not null && (credentials.SuspendedIndefinitely || credentials.SuspendedUntil > now);
+        if (!_suspensions.TryGetValue(accountId, out SuspensionOverride? stored))
+            return fromCredentials;
+
+        return stored.Indefinite || stored.Until > now || (!stored.ReplacesCredentials && fromCredentials);
     }
 
     private void Expire()
@@ -211,6 +223,8 @@ public sealed class AccountOwner : Owner<AccountMessage>
                 _sessionKeys.Remove(key);
         }
     }
+
+    private sealed record SuspensionOverride(DateTimeOffset? Until, bool Indefinite, bool ReplacesCredentials);
 
     private sealed record PendingToken(AccountCredentials Account, DateTimeOffset ExpiresAt);
 
