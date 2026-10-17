@@ -1,8 +1,8 @@
 ﻿namespace NexusTomorrow.Network.Codec.Tests.Facts;
 
 /// <summary>
-/// Compares a declared layout with the client's facts for its opcode, and lists every disagreement: node by node against the client's tree
-/// (<see cref="WireTreeComparison"/>), or by empty path for a side the facts give no tree.
+/// Compares a declared layout with the client's facts for its opcode, and lists every disagreement: against the client's tree, the same bits
+/// on every path (<see cref="WireTreeComparison"/>), or by empty path for a side the facts give no tree.
 /// </summary>
 internal static class WireFactsComparison
 {
@@ -16,7 +16,10 @@ internal static class WireFactsComparison
         ["blob"] = WirePartShape.Blob,
     };
 
-    public static List<string> Compare(WireLayout layout, WireFactsRow? row)
+    /// <summary>
+    /// Every disagreement; each split the tree comparison accepts is added to <paramref name="splits"/> when one is given.
+    /// </summary>
+    public static List<string> Compare(WireLayout layout, WireFactsRow? row, List<WireSplit>? splits = null)
     {
         string opcode = $"0x{layout.Opcode:X4}";
         var problems = new List<string>();
@@ -27,13 +30,13 @@ internal static class WireFactsComparison
         }
 
         if ((layout.Direction & Direction.ClientToServer) != 0)
-            CompareSide(layout, row.ClientToServer, readerView: false, $"{opcode} client to server", problems);
+            CompareSide(layout, row.ClientToServer, readerView: false, $"{opcode} client to server", problems, splits);
         if ((layout.Direction & Direction.ServerToClient) != 0)
-            CompareSide(layout, row.ServerToClient, readerView: true, $"{opcode} server to client", problems);
+            CompareSide(layout, row.ServerToClient, readerView: true, $"{opcode} server to client", problems, splits);
         return problems;
     }
 
-    private static void CompareSide(WireLayout layout, WireFactsSide? side, bool readerView, string label, List<string> problems)
+    private static void CompareSide(WireLayout layout, WireFactsSide? side, bool readerView, string label, List<string> problems, List<WireSplit>? splits)
     {
         if (side is null)
         {
@@ -46,7 +49,7 @@ internal static class WireFactsComparison
 
         if (side.Tree is not null)
         {
-            problems.AddRange(WireTreeComparison.Compare(label, layout.Tree, WireTree.Parse(side.Tree)));
+            problems.AddRange(WireTreeComparison.Compare(label, layout.Tree, WireTree.Parse(side.Tree), splits));
             return;
         }
 

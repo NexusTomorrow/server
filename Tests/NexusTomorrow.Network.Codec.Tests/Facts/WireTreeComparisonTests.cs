@@ -22,7 +22,7 @@ public sealed class WireTreeComparisonTests
     [Fact]
     public void AShorterSequenceIsReported()
     {
-        Assert.Equal(["0xFFFF client to server: the client's sequence has 3 nodes, the declaration's 2"], Compare("8 16", "8 16 4"));
+        Assert.Equal(["0xFFFF client to server: the client's sequence goes on for 1 nodes after the declaration's ends"], Compare("8 16", "8 16 4"));
     }
 
     [Fact]
@@ -98,10 +98,10 @@ public sealed class WireTreeComparisonTests
     {
         Assert.Equal(
             [
-                "0xFFFF client to server [2].arm 0x00: the client's sequence has 0 nodes, the declaration's 1",
-                "0xFFFF client to server [2].arm 0x01: the client's sequence has 0 nodes, the declaration's 1",
-                "0xFFFF client to server [2].arm 0x02: the client's sequence has 1 nodes, the declaration's 2",
-                "0xFFFF client to server: the client's sequence has 4 nodes, the declaration's 3",
+                "0xFFFF client to server [2].arm 0x00: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server [2].arm 0x01: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server [2].arm 0x02: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server: the client's sequence goes on for 1 nodes after the declaration's ends",
             ],
             Compare("5 2 {1:0=(32),1=(32),2=(32 31)}", "5 2 {1:0=(),1=(),2=(32)} 32"));
     }
@@ -111,9 +111,9 @@ public sealed class WireTreeComparisonTests
     {
         Assert.Equal(
             [
-                "0xFFFF client to server [2].arm 0x00: the client's sequence has 0 nodes, the declaration's 1",
-                "0xFFFF client to server [2].arm 0x02: the client's sequence has 1 nodes, the declaration's 2",
-                "0xFFFF client to server: the client's sequence has 4 nodes, the declaration's 3",
+                "0xFFFF client to server [2].arm 0x00: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server [2].arm 0x02: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server: the client's sequence goes on for 1 nodes after the declaration's ends",
             ],
             Compare("5 2 {1:0=(32),1=(),2=(32 32)}", "5 2 {1:0=(),1=(),2=(32)} 32"));
     }
@@ -135,9 +135,9 @@ public sealed class WireTreeComparisonTests
     {
         Assert.Equal(
             [
-                "0xFFFF client to server [1].arm 0x00: the client's sequence has 1 nodes, the declaration's 2",
-                "0xFFFF client to server [1].arm 0x01: the client's sequence has 1 nodes, the declaration's 2",
-                "0xFFFF client to server: the client's sequence has 3 nodes, the declaration's 2",
+                "0xFFFF client to server [1].arm 0x00: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server [1].arm 0x01: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server: the client's sequence goes on for 1 nodes after the declaration's ends",
             ],
             Compare("4 {0:0=(8 n),1=(16 w)}", "4 {0:0=(8),1=(16)} n"));
     }
@@ -175,12 +175,129 @@ public sealed class WireTreeComparisonTests
     [Fact]
     public void ARunOfOneWidthWithAnotherTotalIsReported()
     {
-        Assert.Equal(["0xFFFF client to server [1].element[0]: the client has 48, the declaration 16"], Compare("5 [0:16 16 16 16]", "5 [0:48]"));
+        Assert.Equal(["0xFFFF client to server [1].element: the declaration's sequence goes on for 1 nodes after the client's ends"], Compare("5 [0:16 16 16 16]", "5 [0:48]"));
     }
 
     [Fact]
-    public void ARunOfMixedWidthsIsComparedFieldByField()
+    public void ARunOfMixedWidthsInAnElementEqualsOneFieldOfTheirTotal()
     {
-        Assert.Equal(["0xFFFF client to server [1].element[0]: the client has 48, the declaration 16"], Compare("5 [0:16 32]", "5 [0:48]"));
+        Assert.Empty(Compare("5 [0:16 32]", "5 [0:48]"));
+    }
+
+    [Fact]
+    public void TwoEightsAtTheTopLevelEqualOneSixteen()
+    {
+        Assert.Empty(Compare("4 8 8 2", "4 16 2"));
+        Assert.Empty(Compare("4 16 2", "4 8 8 2"));
+    }
+
+    [Fact]
+    public void ARunOfMixedWidthsEqualsOneFieldOfTheirTotal()
+    {
+        Assert.Empty(Compare("3 16 8 32 1", "3 56 1"));
+    }
+
+    [Fact]
+    public void TwoTwentyFoursEqualOneFortyEight()
+    {
+        Assert.Empty(Compare("24 24 w", "48 w"));
+        Assert.Empty(Compare("48 w", "24 24 w"));
+    }
+
+    [Fact]
+    public void ASplitAmongOtherFieldsOfAnElementAgrees()
+    {
+        Assert.Empty(Compare("5 [0:8 16 16 16 2]", "5 [0:8 48 2]"));
+        Assert.Empty(Compare("5 [0:8 48 2]", "5 [0:8 16 32 2]"));
+    }
+
+    [Fact]
+    public void AnElementCountedByOneBitSplitsLikeAnyOther()
+    {
+        Assert.Empty(Compare("1 [0:48]", "1 [0:16 16 16]"));
+    }
+
+    [Fact]
+    public void AHoistedReadSplitsAfterTheUnion()
+    {
+        Assert.Empty(Compare("4 {0:0=(8 32),1=(16 32)}", "4 {0:0=(8),1=(16)} 16 16"));
+    }
+
+    [Fact]
+    public void CountsAndSelectorsMapThroughTheAlignment()
+    {
+        Assert.Empty(Compare("16 4 [1:8] 3 {3:0=(),1=(8)}", "8 8 4 [2:8] 3 {4:0=(),1=(8)}"));
+    }
+
+    [Fact]
+    public void ACountOrSelectorTheAlignmentMapsToAnotherNodeIsReported()
+    {
+        Assert.Equal(["0xFFFF client to server [3]: the client counts it with node 2, the declaration with node 1"], Compare("16 4 4 [1:8]", "8 8 4 4 [3:8]"));
+        Assert.Equal(["0xFFFF client to server [3]: the client selects it with node 2, the declaration with node 1"], Compare("16 3 3 {1:0=(),1=(8)}", "8 8 3 3 {3:0=(),1=(8)}"));
+    }
+
+    [Theory]
+    [InlineData("16 4 4 [2:8]", "8 8 4 4 [2:8]", "0xFFFF client to server [3]: the client counts it with node 1, the declaration with node 2")]
+    [InlineData("16 3 3 {2:0=(),1=(8)}", "8 8 3 3 {2:0=(),1=(8)}", "0xFFFF client to server [3]: the client selects it with node 1, the declaration with node 2")]
+    public void ACountOrSelectorWithTheSameRawIndexButAnotherAlignedNodeIsReported(string declared, string client, string problem)
+    {
+        Assert.Equal([problem], Compare(declared, client));
+    }
+
+    [Fact]
+    public void TheComparisonReturnsTheSplitsItAccepts()
+    {
+        var splits = new List<WireSplit>();
+
+        Assert.Empty(WireTreeComparison.Compare("0xFFFF client to server", WireTree.Parse("4 8 6 32 3 [4:8 8]"), WireTree.Parse("4 14 8 8 8 8 3 [6:16]"), splits));
+        Assert.Equal(
+            ["0xFFFF client to server [1]: 8 6 against 14", "0xFFFF client to server [3]: 32 against 8 8 8 8", "0xFFFF client to server [5].element[0]: 8 8 against 16"],
+            splits.Select(split => $"{split.Key}: {string.Join(' ', split.Declared)} against {string.Join(' ', split.Client)}"));
+    }
+
+    [Fact]
+    public void ARunOneSixtyFourBitSlotShortOrLongIsReported()
+    {
+        string client = "32 1 32 32 " + string.Join(' ', Enumerable.Repeat("8", 24));
+
+        Assert.Empty(Compare("32 1 32 32 64 64 64", client));
+        Assert.Equal(["0xFFFF client to server: the client's sequence goes on for 8 nodes after the declaration's ends"], Compare("32 1 32 32 64 64", client));
+        Assert.Equal(["0xFFFF client to server: the declaration's sequence goes on for 1 nodes after the client's ends"], Compare("32 1 32 32 64 64 64 64", client));
+    }
+
+    [Fact]
+    public void ATotalThatNeverMeetsIsReported()
+    {
+        Assert.Equal(["0xFFFF client to server [1]: the client has 24, the declaration 8"], Compare("5 8 8", "5 24"));
+        Assert.Equal(["0xFFFF client to server [1]: the client has 8, the declaration 24"], Compare("5 24", "5 8 8"));
+    }
+
+    [Theory]
+    [InlineData("4 4 [1:8]", "8 4 [1:8]", "0xFFFF client to server [0]: the client has 8, the declaration 4")]
+    [InlineData("8 4 [1:8]", "4 4 [1:8]", "0xFFFF client to server [0]: the client has 4, the declaration 8")]
+    [InlineData("4 4 [1:8]", "8 [0:8]", "0xFFFF client to server [0]: the client has 8, the declaration 4")]
+    [InlineData("2 2 {1:0=(),1=(8)}", "4 {0:0=(),1=(8)}", "0xFFFF client to server [0]: the client has 4, the declaration 2")]
+    public void ASplitNeverTakesInAFieldALaterNodeCountsOrSelectsWith(string declared, string client, string problem)
+    {
+        Assert.Equal([problem], Compare(declared, client));
+    }
+
+    [Theory]
+    [InlineData("3 8 w 8", "3 16 w", "0xFFFF client to server [1]: the client has 16, the declaration 8")]
+    [InlineData("3 16 w", "3 8 w 8", "0xFFFF client to server [1]: the client has 8, the declaration 16")]
+    [InlineData("3 8 [0:4] 8", "3 16 [0:4]", "0xFFFF client to server [1]: the client has 16, the declaration 8")]
+    [InlineData("3 8 {0:0=(),1=(4)} 8", "3 16 {0:0=(),1=(4)}", "0xFFFF client to server [1]: the client has 16, the declaration 8")]
+    [InlineData("3 8 b8 8", "3 16 b8", "0xFFFF client to server [1]: the client has 16, the declaration 8")]
+    public void ASplitNeverCrossesAStringAnArrayAUnionOrABlob(string declared, string client, string problem)
+    {
+        Assert.Equal([problem], Compare(declared, client));
+    }
+
+    [Theory]
+    [InlineData("4 8 16", "4 16 8")]
+    [InlineData("4 8 24", "4 16 16")]
+    public void FieldsWhoseBoundariesCrossAreReportedThoughTheTotalsMeet(string declared, string client)
+    {
+        Assert.Equal(["0xFFFF client to server [1]: the client has 16, the declaration 8"], Compare(declared, client));
     }
 }
