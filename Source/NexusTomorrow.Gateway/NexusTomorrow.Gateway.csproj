@@ -21,6 +21,8 @@
     <ProjectReference Include="..\NexusTomorrow.Network.World\NexusTomorrow.Network.World.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Network.Sts\NexusTomorrow.Network.Sts.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Cryptography\NexusTomorrow.Cryptography.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Owners\NexusTomorrow.Owners.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Persistence\NexusTomorrow.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

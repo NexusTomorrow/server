@@ -6,10 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Cryptography\NexusTomorrow.Cryptography.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Owners\NexusTomorrow.Owners.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Persistence\NexusTomorrow.Persistence.csproj" />
   </ItemGroup>

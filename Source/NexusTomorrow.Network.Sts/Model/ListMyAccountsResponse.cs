@@ -16,15 +16,15 @@ public class ListMyAccountsResponse : IWritable
         writer.WriteStartElement("GameAccount");
 
         writer.WriteStartElement("Alias");
-        writer.WriteString("lol");
+        writer.WriteString(Alias);
         writer.WriteEndElement();
 
         writer.WriteStartElement("Created");
-        writer.WriteString("");
+        writer.WriteString(Created);
         writer.WriteEndElement();
 
         writer.WriteStartElement("GameAccountId");
-        writer.WriteString("");
+        writer.WriteString(GameAccountId);
         writer.WriteEndElement();
 
         writer.WriteEndElement();
