@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.World.Message.Model;
 /// </summary>
 /// <remarks>
 /// The client sends it while it moves a unit: <see cref="MovementControl"/> starts it and <see cref="MovementControlEnd"/> stops it. The
-/// first one after <see cref="MovementControl"/> carries only a time and a position whose flag is clear. After that the client sends from
+/// first one after the client takes a unit over carries only a time and a position whose flag is clear. After that the client sends from
 /// its movement timer, whose period is <see cref="WorldSettings.MovementInterval"/>, and also at once at some moments, such as just before
 /// <c>0x00FB</c>. Each batch opens with a time: the client's clock when it gathered the batch, plus two periods of
 /// <see cref="WorldSettings.MovementInterval"/>.

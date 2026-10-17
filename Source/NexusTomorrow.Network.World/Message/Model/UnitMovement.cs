@@ -32,8 +32,9 @@ public sealed partial class UnitMovement
     [UInt(1)] public bool Unknown2 { get; set; }
 
     /// <summary>
-    /// A mark the client stores on the unit, the same one <see cref="MovementControlEnd"/> sets: while the player's own unit carries it, a
-    /// <see cref="MovementControl"/> for that unit makes the client send a <see cref="ZoneChange"/> at once.
+    /// A mark the client stores on the unit, the same one <see cref="MovementControlEnd"/> sets and taking the unit over clears: while the
+    /// unit the client moves, or last moved, carries it, a <see cref="MovementControl"/> for the player's own unit makes the client send a
+    /// <see cref="ZoneChange"/> at once.
     /// </summary>
     [UInt(1)] public bool Unknown3 { get; set; }
 
