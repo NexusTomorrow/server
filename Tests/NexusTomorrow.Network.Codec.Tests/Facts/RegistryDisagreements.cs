@@ -54,9 +54,6 @@ internal static class RegistryDisagreements
         ["0x0252 server to client [0]"] = new(FieldsDiffer, "the client has 8, the declaration 32"), // Server0252
         ["0x0255 client to server [4]"] = new(FieldsDiffer, "the client has 8, the declaration 32"), // Client0255
         ["0x025E server to client [2]"] = new(FieldsDiffer, "the client has 8, the declaration 64"), // Server025E
-        ["0x0262 server to client [2].arm 0x09[2]"] = new(TreeDiffers, "the client has 3, the declaration 32"), // Server0262
-        ["0x0262 server to client [2].arm 0x22[0]"] = new(TreeDiffers, "the client has 18, the declaration 15"), // Server0262
-        ["0x0262 server to client [2].arm 0x23[0]"] = new(TreeDiffers, "the client has 18, the declaration 15"), // Server0262
         ["0x0262 server to client [5].element"] = new(TreeDiffers, "the client's sequence has 4 nodes, the declaration's 3"), // Server0262
         ["0x0262 server to client [5].element[2].arm 0x00"] = new(TreeDiffers, "the client's sequence has 0 nodes, the declaration's 1"), // Server0262
         ["0x0262 server to client [5].element[2].arm 0x01"] = new(TreeDiffers, "the client's sequence has 0 nodes, the declaration's 1"), // Server0262
