@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Owners.Account;
+using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Account;
 using NexusTomorrow.Testing;
 
@@ -13,11 +14,12 @@ public sealed class AccountOwnerTests : IAsyncLifetime
     private static readonly AccountCredentials s_alice = new(7, "alice@example.com", [1], [2], SuspendedUntil: null, SuspendedIndefinitely: false);
 
     private readonly FakeTimeProvider _time = new(new DateTimeOffset(2026, 10, 16, 12, 0, 0, TimeSpan.Zero));
+    private readonly FakeWriteBehind _db = new();
     private readonly AccountOwner _owner;
 
     public AccountOwnerTests()
     {
-        _owner = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance);
+        _owner = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, _db);
         _owner.Start();
     }
 
@@ -70,15 +72,86 @@ public sealed class AccountOwnerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task ASuspensionChangedWhileRunningOverridesTheCredentials()
+    public async Task ASuspensionStoredWhileRunningOverridesTheCredentialsUntilLifted()
     {
-        _owner.Post(new SuspensionChanged(7, Until: null, Indefinite: true));
+        await StoreSuspensionAsync(s_alice.Email, until: null);
         Guid token = await IssueAsync(s_alice);
         Assert.IsType<LoginRefused>(await RedeemAsync(token, "alice@example.com"));
 
-        _owner.Post(new SuspensionChanged(7, Until: null, Indefinite: false));
+        await LiftAsync(s_alice.Email);
         token = await IssueAsync(s_alice with { SuspendedIndefinitely = true });
         Assert.IsType<LoginGranted>(await RedeemAsync(token, "alice@example.com"));
+    }
+
+    [Fact]
+    public async Task ATimedSuspensionEndsWhenItsTimeComes()
+    {
+        await StoreSuspensionAsync(s_alice.Email, _time.GetUtcNow().AddHours(1));
+        Assert.IsType<LoginRefused>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
+
+        _time.Advance(TimeSpan.FromHours(2));
+        Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
+    }
+
+    [Fact]
+    public async Task ASuspensionLandingBetweenTheTokenStepAndTheWorldStepRefusesTheSessionKey()
+    {
+        LoginGranted grant = Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
+        await StoreSuspensionAsync(s_alice.Email, until: null);
+
+        var session = new FakeClientSession();
+        Assert.IsType<WorldRefused>(await GreetAsync(grant.SessionKey, grant.Echo, "alice@example.com", session));
+        Assert.Equal(0, _owner.OnlineCount);
+    }
+
+    [Fact]
+    public async Task ASuspensionKicksTheWorldSessionOfTheAccount()
+    {
+        var session = new FakeClientSession();
+        LoginGranted grant = Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
+        await GreetAsync(grant.SessionKey, grant.Echo, "alice@example.com", session);
+
+        await StoreSuspensionAsync(s_alice.Email, until: null);
+
+        Assert.Equal(0, session.Single<Kicked>().Reason);
+        Assert.NotNull(session.DisconnectReason);
+        Assert.Equal(0, _owner.OnlineCount);
+    }
+
+    [Fact]
+    public async Task ASuspensionOfAnUnknownEmailChangesNothing()
+    {
+        var reply = new TaskCompletionSource<AdminResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        Assert.True(_owner.Post(new SuspendAccount("nobody@example.com", Until: null, "test", "test", reply)));
+        await WaitForAsync<SuspendAccountWork>();
+        _db.Take<SuspendAccountWork>().Complete(WorkResult.Committed);
+
+        AdminResult result = await reply.Task.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        Assert.False(result.Succeeded);
+        Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
+    }
+
+    [Fact]
+    public async Task ACreatedAccountIsReportedOnlyOnceItIsCommitted()
+    {
+        var reply = new TaskCompletionSource<AdminResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        Assert.True(_owner.Post(new CreateAccount("bob@example.com", [1], [2], reply)));
+        await WaitForAsync<CreateAccountWork>();
+        Assert.False(reply.Task.IsCompleted);
+
+        _db.Take<CreateAccountWork>().Complete(WorkResult.Committed);
+        Assert.True((await reply.Task.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken)).Succeeded);
+    }
+
+    [Fact]
+    public async Task ATakenEmailIsReportedAsRefused()
+    {
+        var reply = new TaskCompletionSource<AdminResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        Assert.True(_owner.Post(new CreateAccount("bob@example.com", [1], [2], reply)));
+        await WaitForAsync<CreateAccountWork>();
+
+        _db.Take<CreateAccountWork>().Complete(WorkResult.RefusedBy("ix_account_email"));
+        Assert.False((await reply.Task.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken)).Succeeded);
     }
 
     [Fact]
@@ -144,6 +217,31 @@ public sealed class AccountOwnerTests : IAsyncLifetime
         await IssueAsync(s_alice);
         Assert.Equal(0, _owner.OnlineCount);
     }
+
+    private async Task StoreSuspensionAsync(string email, DateTimeOffset? until)
+    {
+        var reply = new TaskCompletionSource<AdminResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        Assert.True(_owner.Post(new SuspendAccount(email, until, "test", "test", reply)));
+        await WaitForAsync<SuspendAccountWork>();
+        SuspendAccountWork work = _db.Take<SuspendAccountWork>();
+        work.AccountId = s_alice.Id;
+        work.Complete(WorkResult.Committed);
+        Assert.True((await reply.Task.WaitAsync(TimeSpan.FromSeconds(10))).Succeeded);
+    }
+
+    private async Task LiftAsync(string email)
+    {
+        var reply = new TaskCompletionSource<AdminResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        Assert.True(_owner.Post(new LiftSuspension(email, reply)));
+        await WaitForAsync<LiftSuspensionWork>();
+        LiftSuspensionWork work = _db.Take<LiftSuspensionWork>();
+        work.AccountId = s_alice.Id;
+        work.Complete(WorkResult.Committed);
+        Assert.True((await reply.Task.WaitAsync(TimeSpan.FromSeconds(10))).Succeeded);
+    }
+
+    private Task WaitForAsync<T>()
+        where T : PersistenceWork => Eventually.TrueAsync(() => _db.Queued.OfType<T>().Any());
 
     private async Task<Guid> IssueAsync(AccountCredentials account)
     {

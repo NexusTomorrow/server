@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Persistence.Account;
+﻿using NexusTomorrow.Persistence;
+using NexusTomorrow.Persistence.Account;
 
 namespace NexusTomorrow.Owners.Account;
 
@@ -33,11 +34,26 @@ public sealed record RedeemSessionKey(
 public sealed record WorldSessionClosed(long AccountId, IClientSession Session) : AccountMessage;
 
 /// <summary>
-/// An operator changed an account's suspension while the server runs. A null <paramref name="Until"/> with
-/// <paramref name="Indefinite"/> false lifts it.
+/// An operator asked to create an account. The caller has already made the salt and the verifier; answered once the account is
+/// committed or refused.
 /// </summary>
-public sealed record SuspensionChanged(long AccountId, DateTimeOffset? Until, bool Indefinite) : AccountMessage;
+public sealed record CreateAccount(string Email, byte[] Salt, byte[] Verifier, TaskCompletionSource<AdminResult> Reply) : AccountMessage;
 
+/// <summary>
+/// An operator asked to suspend the account with an email until <paramref name="Until"/>, or until lifted when it is null. Answered
+/// once the suspension is committed.
+/// </summary>
+public sealed record SuspendAccount(string Email, DateTimeOffset? Until, string Reason, string By, TaskCompletionSource<AdminResult> Reply)
+    : AccountMessage;
+
+/// <summary>
+/// An operator asked to end every suspension in force for the account with an email. Answered once the lift is committed.
+/// </summary>
+public sealed record LiftSuspension(string Email, TaskCompletionSource<AdminResult> Reply) : AccountMessage;
+
+internal sealed record AccountCreated(WorkResult Result, TaskCompletionSource<AdminResult> Reply) : AccountMessage;
+
+internal sealed record SuspensionStored(long? AccountId, DateTimeOffset? Until, bool Lifted, TaskCompletionSource<AdminResult> Reply) : AccountMessage;
 /// <summary>
 /// The answer to <see cref="RedeemGameToken"/>.
 /// </summary>

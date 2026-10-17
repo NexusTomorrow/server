@@ -4,6 +4,7 @@
     <Project Path="NexusTomorrow.MapGenerator/NexusTomorrow.MapGenerator.csproj" />
   </Folder>
   <Folder Name="/Server/">
+    <Project Path="NexusTomorrow.Commands/NexusTomorrow.Commands.csproj" />
     <Project Path="NexusTomorrow.Cryptography/NexusTomorrow.Cryptography.csproj" />
     <Project Path="NexusTomorrow.Game.Static/NexusTomorrow.Game.Static.csproj" />
     <Project Path="NexusTomorrow.GameTable/NexusTomorrow.GameTable.csproj" />
@@ -22,6 +23,7 @@
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="../Tests/NexusTomorrow.ClientConnector.Tests/NexusTomorrow.ClientConnector.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Commands.Tests/NexusTomorrow.Commands.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Cryptography.Tests/NexusTomorrow.Cryptography.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.GameTable.Tests/NexusTomorrow.GameTable.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Gateway.Tests/NexusTomorrow.Gateway.Tests.csproj" />

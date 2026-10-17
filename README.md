@@ -33,6 +33,7 @@ A server for the WildStar client, build 16042, written in C# on .NET 10.
 | `NexusTomorrow.Gateway` | The connection edge: the message catalog, the opcode table and the inbound decoder that admit a client message |
 | `NexusTomorrow.Owners` | The owner base: one thread over one queue per owner, and the watchdog that reports one that stops draining |
 | `NexusTomorrow.Persistence` | One EF Core context per PostgreSQL schema (`account`, `realm`, `ops`) and their migrations |
+| `NexusTomorrow.Commands` | The admin command layer: typed commands with one permission key each, the dispatcher that checks and audits them, and the account and server commands |
 | `NexusTomorrow.MapGenerator` | Tool: extracts tables from your client and generates map files |
 | `NexusTomorrow.ClientConnector` | Tool: starts your client pointed at a server |
 

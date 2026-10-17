@@ -31,7 +31,7 @@ public sealed class StsConnectionTests : IAsyncLifetime
 
     public StsConnectionTests()
     {
-        _accounts = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance);
+        _accounts = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind());
         _directory.Add("alice@example.com", "correct horse");
     }
 

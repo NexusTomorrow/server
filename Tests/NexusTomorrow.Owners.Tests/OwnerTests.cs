@@ -47,6 +47,21 @@ public sealed class OwnerTests
     }
 
     [Fact]
+    public async Task TheQueueLengthCountsMessagesPostedAndNotYetRead()
+    {
+        var owner = new Recorder();
+        for (int i = 0; i < 3; i++)
+            Assert.True(owner.Post(i));
+        Assert.Equal(3, owner.QueueLength);
+
+        owner.Start();
+        await owner.StopAsync().WaitAsync(s_bound, TestContext.Current.CancellationToken);
+        Assert.Equal(0, owner.QueueLength);
+        Assert.False(owner.Post(4));
+        Assert.Equal(0, owner.QueueLength);
+    }
+
+    [Fact]
     public async Task APostAfterStopIsRefused()
     {
         var owner = new Recorder();

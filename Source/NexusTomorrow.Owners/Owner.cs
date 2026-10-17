@@ -17,6 +17,9 @@ public abstract class Owner<TMessage> : IOwner
     private long _handled;
     private int _claimed;
 
+    // A single-reader channel cannot report its length (CanCount is false), so the owner counts what is posted and not yet read.
+    private int _queued;
+
     /// <summary>
     /// Create an owner named <paramref name="name"/>.
     /// </summary>
@@ -30,7 +33,7 @@ public abstract class Owner<TMessage> : IOwner
     public string Name { get; }
 
     /// <inheritdoc/>
-    public int QueueLength => _queue.Reader.Count;
+    public int QueueLength => Volatile.Read(ref _queued);
 
     /// <inheritdoc/>
     public long Handled => Interlocked.Read(ref _handled);
@@ -51,7 +54,16 @@ public abstract class Owner<TMessage> : IOwner
     /// <summary>
     /// Queue <paramref name="message"/>; false once the owner is stopping.
     /// </summary>
-    public bool Post(TMessage message) => _queue.Writer.TryWrite(message);
+    public bool Post(TMessage message)
+    {
+        // Counted before the write, so the reader's decrement can never run first.
+        Interlocked.Increment(ref _queued);
+        if (_queue.Writer.TryWrite(message))
+            return true;
+
+        Interlocked.Decrement(ref _queued);
+        return false;
+    }
 
     /// <summary>
     /// Refuse new messages, handle the queued ones, and complete when the thread ends. An owner that was never started completes at
@@ -89,6 +101,7 @@ public abstract class Owner<TMessage> : IOwner
             {
                 while (reader.TryRead(out TMessage? message))
                 {
+                    Interlocked.Decrement(ref _queued);
                     try
                     {
                         Handle(message);

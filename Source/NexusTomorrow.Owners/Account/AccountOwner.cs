@@ -3,19 +3,22 @@ using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Account;
 
 namespace NexusTomorrow.Owners.Account;
 
 /// <summary>
 /// The account side (decisions.md D9 2b): game tokens and session keys, each redeemable once within the token lifetime; the world
-/// session of each account, where a second login replaces the first; and suspensions changed while the server runs, which override
-/// what the credentials said at login.
+/// session of each account, where a second login replaces the first; and the admin changes to accounts. Every suspension change goes
+/// through this owner, which keeps the state that overrides what the credentials said at login, so a refusal here never disagrees
+/// with the database once the change has committed.
 /// </summary>
 public sealed class AccountOwner : Owner<AccountMessage>
 {
     private const int SessionKeyBytes = 16;
 
+    private readonly IWriteBehind _persistence;
     private readonly TimeProvider _time;
     private readonly TimeSpan _lifetime;
     private readonly Dictionary<Guid, PendingToken> _tokens = [];
@@ -27,9 +30,10 @@ public sealed class AccountOwner : Owner<AccountMessage>
     /// <summary>
     /// Create the account owner.
     /// </summary>
-    public AccountOwner(TimeProvider time, IOptions<AccountOptions> options, ILogger<AccountOwner> logger)
+    public AccountOwner(TimeProvider time, IOptions<AccountOptions> options, ILogger<AccountOwner> logger, IWriteBehind persistence)
         : base("account", logger)
     {
+        _persistence = persistence;
         _time = time;
         _lifetime = options.Value.TokenLifetime;
     }
@@ -61,15 +65,26 @@ public sealed class AccountOwner : Owner<AccountMessage>
                     _online.Remove(closed.AccountId);
                 Volatile.Write(ref _onlineCount, _online.Count);
                 break;
-            case SuspensionChanged changed:
-                _suspensions[changed.AccountId] = (changed.Until, changed.Indefinite);
-                if (IsSuspended(changed.AccountId, null) && _online.Remove(changed.AccountId, out IClientSession? online))
-                {
-                    online.Send(new Kicked { Reason = 0 });
-                    online.Disconnect("the account was suspended");
-                    Volatile.Write(ref _onlineCount, _online.Count);
-                }
-
+            case CreateAccount create:
+                _persistence.Enqueue(new CreateAccountWork(
+                    create.Email, create.Salt, create.Verifier, _time.GetUtcNow(), result => Complete(new AccountCreated(result, create.Reply), create.Reply)));
+                break;
+            case AccountCreated created:
+                created.Reply.TrySetResult(created.Result.Outcome == WorkOutcome.Committed
+                    ? new AdminResult(true, "created")
+                    : new AdminResult(false, "an account with that email exists"));
+                break;
+            case SuspendAccount suspend:
+                _persistence.Enqueue(new SuspendAccountWork(
+                    suspend.Email, _time.GetUtcNow(), suspend.Until, suspend.Reason, suspend.By,
+                    id => Complete(new SuspensionStored(id, suspend.Until, Lifted: false, suspend.Reply), suspend.Reply)));
+                break;
+            case LiftSuspension lift:
+                _persistence.Enqueue(new LiftSuspensionWork(
+                    lift.Email, _time.GetUtcNow(), id => Complete(new SuspensionStored(id, Until: null, Lifted: true, lift.Reply), lift.Reply)));
+                break;
+            case SuspensionStored stored:
+                Stored(stored);
                 break;
         }
     }
@@ -89,7 +104,20 @@ public sealed class AccountOwner : Owner<AccountMessage>
                 greet.Reply.TrySetResult(new WorldRefused("the account owner failed"));
                 break;
         }
+
+        if (AdminReplyOf(message) is { } adminReply)
+            adminReply.TrySetResult(new AdminResult(false, "the account owner failed"));
     }
+
+    private static TaskCompletionSource<AdminResult>? AdminReplyOf(AccountMessage message) => message switch
+    {
+        CreateAccount m => m.Reply,
+        SuspendAccount m => m.Reply,
+        LiftSuspension m => m.Reply,
+        AccountCreated m => m.Reply,
+        SuspensionStored m => m.Reply,
+        _ => null,
+    };
 
     private static UInt128 KeyOf(byte[] sessionKey) => BinaryPrimitives.ReadUInt128LittleEndian(sessionKey);
 
@@ -117,6 +145,10 @@ public sealed class AccountOwner : Owner<AccountMessage>
         if (pending.Echo != greet.Echo || !string.Equals(pending.Email, greet.AccountName, StringComparison.OrdinalIgnoreCase))
             return new WorldRefused("a session key presented with the wrong echo or account name");
 
+        // A suspension stored after the key was issued still applies: the key outlives the token step by up to the token lifetime.
+        if (IsSuspended(pending.AccountId, null))
+            return new WorldRefused("the account is suspended");
+
         if (_online.TryGetValue(pending.AccountId, out IClientSession? previous) && previous != greet.Session)
         {
             // Kicked.Reason 0 has no message of its own; the client shows its general one (Server036A's declaration).
@@ -127,6 +159,33 @@ public sealed class AccountOwner : Owner<AccountMessage>
         _online[pending.AccountId] = greet.Session;
         Volatile.Write(ref _onlineCount, _online.Count);
         return new WorldGranted(pending.AccountId);
+    }
+
+    // Runs on a persistence worker: hands the work's outcome back to the owner. A stopped owner takes no more messages, so the
+    // operator is told instead of left waiting.
+    private void Complete(AccountMessage message, TaskCompletionSource<AdminResult> reply)
+    {
+        if (!Post(message))
+            reply.TrySetResult(new AdminResult(false, "the server is stopping"));
+    }
+
+    private void Stored(SuspensionStored stored)
+    {
+        if (stored.AccountId is not { } accountId)
+        {
+            stored.Reply.TrySetResult(new AdminResult(false, "no account has that email"));
+            return;
+        }
+
+        _suspensions[accountId] = stored.Lifted ? (null, false) : (stored.Until, stored.Until is null);
+        if (IsSuspended(accountId, null) && _online.Remove(accountId, out IClientSession? online))
+        {
+            online.Send(new Kicked { Reason = 0 });
+            online.Disconnect("the account was suspended");
+            Volatile.Write(ref _onlineCount, _online.Count);
+        }
+
+        stored.Reply.TrySetResult(new AdminResult(true, stored.Lifted ? "suspension lifted" : "suspended"));
     }
 
     private bool IsSuspended(long accountId, AccountCredentials? credentials)
