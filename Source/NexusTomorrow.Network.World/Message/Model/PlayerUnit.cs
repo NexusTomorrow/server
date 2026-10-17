@@ -8,16 +8,17 @@ namespace NexusTomorrow.Network.World.Message.Model;
 /// </summary>
 /// <remarks>
 /// Taken after <see cref="Pregame.EnterWorld"/>. The client refuses it while it already has a player, when no unit has the id (the player's
-/// entity create, <c>0x0262</c>, comes first), and when that unit has no faction. The client needs it to finish entering the world; until
-/// it arrives the client ignores <see cref="MovementControl"/> and <see cref="PlayerPath.PathState"/>, and refuses the player's own state
-/// (<c>0x025E</c>).
+/// <see cref="UnitCreate"/> comes first), and when that unit has no base faction. It takes the unit as the player and as the unit it
+/// moves before it checks the base faction, and a refusal for the faction undoes neither, so the client keeps that player and goes on
+/// refusing <see cref="PlayerUnit"/> while it has it. The client needs it to finish entering the world; until it arrives the client ignores
+/// <see cref="MovementControl"/> and <see cref="PlayerPath.PathState"/>, and refuses the player's own state (<see cref="PlayerState"/>).
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server019B, Direction.ServerToClient)]
 [Verified(Rung.Fields)]
 public sealed partial class PlayerUnit
 {
     /// <summary>
-    /// The player's unit, by the id its entity create gave it.
+    /// The player's unit, by the id its <see cref="UnitCreate"/> gave it.
     /// </summary>
     [UInt(32)] public uint UnitId { get; set; }
 

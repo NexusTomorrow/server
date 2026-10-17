@@ -3,8 +3,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
+/// <summary>
+/// Tells the server the player has dashed.
+/// </summary>
 [WireMessage(GameMessageOpcode.Client00DE, Direction.ClientToServer)]
-public sealed partial class Client00DE
+[Verified(Rung.Purpose)]
+public sealed partial class Dash
 {
     [UInt(3)] public byte Unknown0 { get; set; }
 }
