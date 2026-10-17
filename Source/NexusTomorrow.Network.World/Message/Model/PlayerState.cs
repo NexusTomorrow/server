@@ -95,7 +95,7 @@ public sealed partial class PlayerState
     [UInt(3)] public byte Unknown7 { get; set; }
 
     /// <summary>
-    /// A signed amount the client adds to a point total it works out from the player's level.
+    /// A signed amount the client adds to a total it works out from the player's level.
     /// </summary>
     [SInt(16)] public short Unknown8 { get; set; }
 
