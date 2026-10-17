@@ -166,8 +166,11 @@ public sealed class PregameScenarios
         Assert.Empty((await session.RequestListAsync()).Characters);
     }
 
+    // Once a create is queued, it is committed by the time the harness has stopped. The harness drains the owner queues before it stops
+    // the host, so this does not show that the host's own stop waits for saves: that order is pinned by
+    // HostTests.StoppingWaitsForEveryQueuedSaveAndReportsTheBacklogUntilItCommits in NexusTomorrow.Server.Tests.
     [Fact]
-    public async Task ACreateQueuedAtShutdownIsCommittedBeforeTheHostStops()
+    public async Task ACreatedCharacterIsCommittedOnceTheHarnessHasStopped()
     {
         await using PostgresTestDatabase database = await Scenario.DatabaseAsync();
         await using HarnessServer server = await HarnessServer.StartAsync(database);
