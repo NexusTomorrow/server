@@ -198,8 +198,9 @@ internal static class WireTreeComparison
         return width > 0 && first.Concat(second).All(node => node.Kind == WireNodeKind.Field && node.Bits == width);
     }
 
-    // How many nodes at the end of every arm are the same field or string in each. Those refer to no other node, so they read the same bits
-    // after the union as at the end of each arm.
+    // How many nodes at the end of every arm are the same field or string in each. Those refer to no other node, and no node refers to them,
+    // since a count or a selector comes before what it governs (WireTree.ParseReference), so they read the same bits after the union as at
+    // the end of each arm.
     private static int SharedTail(ImmutableArray<WireArm> arms)
     {
         if (arms.IsEmpty)
@@ -224,8 +225,9 @@ internal static class WireTreeComparison
         }
     }
 
-    // An element of one field takes the same bits as a run of fields of one width with the same total, such as 48 against 16 16 16. One
-    // field alone does not say how it splits, so Normalize cannot rewrite either side to the other, and the pair is judged here.
+    // An element of one field takes the same bits as any run of fields with the same total, such as 48 against 16 16 16. Only a run of one
+    // width is matched, as a choice of scope: a run of mixed widths with the same total is the same bits too, and is compared field by field.
+    // One field alone does not say how it splits, so Normalize cannot rewrite either side to the other, and the pair is judged here.
     private static bool OneFieldAgainstRun(ImmutableArray<WireNode> one, ImmutableArray<WireNode> run)
     {
         return one is [{ Kind: WireNodeKind.Field } field] && run.Length > 1

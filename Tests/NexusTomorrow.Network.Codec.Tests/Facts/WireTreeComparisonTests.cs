@@ -131,6 +131,24 @@ public sealed class WireTreeComparisonTests
     }
 
     [Fact]
+    public void ArmsEndingInStringsOfTwoKindsShareNoTail()
+    {
+        Assert.Equal(
+            [
+                "0xFFFF client to server [1].arm 0x00: the client's sequence has 1 nodes, the declaration's 2",
+                "0xFFFF client to server [1].arm 0x01: the client's sequence has 1 nodes, the declaration's 2",
+                "0xFFFF client to server: the client's sequence has 3 nodes, the declaration's 2",
+            ],
+            Compare("4 {0:0=(8 n),1=(16 w)}", "4 {0:0=(8),1=(16)} n"));
+    }
+
+    [Fact]
+    public void AnArrayAtTheEndOfEveryArmStaysInItsArm()
+    {
+        Assert.Equal(["0xFFFF client to server [1].arm 0x01[1].element[0]: the client has 8, the declaration 16"], Compare("4 {0:0=(3 [0:8]),1=(3 [0:16])}", "4 {0:0=(3 [0:8]),1=(3 [0:8])}"));
+    }
+
+    [Fact]
     public void AOneFieldElementEqualsARunOfOneWidthWithTheSameTotal()
     {
         Assert.Empty(Compare("10 [0:32] [0:16 16 16] 2 32 1", "10 [0:32] [0:48] 2 32 1"));
@@ -149,9 +167,15 @@ public sealed class WireTreeComparisonTests
     }
 
     [Fact]
-    public void ARunOneBitShortOfTheFieldIsReported()
+    public void ARunOfMixedWidthsOneBitShortIsReported()
     {
         Assert.Equal(["0xFFFF client to server [1].element[0]: the client has 48, the declaration 16"], Compare("5 [0:16 16 15]", "5 [0:48]"));
+    }
+
+    [Fact]
+    public void ARunOfOneWidthWithAnotherTotalIsReported()
+    {
+        Assert.Equal(["0xFFFF client to server [1].element[0]: the client has 48, the declaration 16"], Compare("5 [0:16 16 16 16]", "5 [0:48]"));
     }
 
     [Fact]
