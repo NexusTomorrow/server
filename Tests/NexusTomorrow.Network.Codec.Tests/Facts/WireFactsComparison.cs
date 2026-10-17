@@ -1,8 +1,8 @@
 ﻿namespace NexusTomorrow.Network.Codec.Tests.Facts;
 
 /// <summary>
-/// Compares a declared layout with the client's facts for its opcode, and lists every disagreement: node by node against the client's tree
-/// (<see cref="WireTreeComparison"/>), or by empty path for a side the facts give no tree.
+/// Compares a declared layout with the client's facts for its opcode, and lists every disagreement: against the client's tree, the same bits
+/// on every path (<see cref="WireTreeComparison"/>), or by empty path for a side the facts give no tree.
 /// </summary>
 internal static class WireFactsComparison
 {

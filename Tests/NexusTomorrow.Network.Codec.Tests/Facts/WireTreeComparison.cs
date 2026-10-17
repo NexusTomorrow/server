@@ -109,18 +109,13 @@ internal static class WireTreeComparison
             j++;
         }
 
-        // With as many nodes used on each side, the node counts say which side goes on and by how much; once splits have used different numbers,
-        // they do not, and the problem names the side that goes on.
-        if (i < declared.Length || j < client.Length)
-        {
-            string where = path.Length == 0 ? label : label + " " + path;
-            if (i == j)
-                problems.Add($"{where}: the client's sequence has {client.Length} nodes, the declaration's {declared.Length}");
-            else if (j < client.Length)
-                problems.Add($"{where}: the client's sequence goes on for {client.Length - j} nodes after the declaration's ends");
-            else
-                problems.Add($"{where}: the declaration's sequence goes on for {declared.Length - i} nodes after the client's ends");
-        }
+        // The walk stops when either side ends, so at most one side has nodes left: the problem names that side and counts them, since a split
+        // that used more nodes on one side makes the two sequences' lengths say nothing about which goes on.
+        string where = path.Length == 0 ? label : label + " " + path;
+        if (j < client.Length)
+            problems.Add($"{where}: the client's sequence goes on for {client.Length - j} nodes after the declaration's ends");
+        else if (i < declared.Length)
+            problems.Add($"{where}: the declaration's sequence goes on for {declared.Length - i} nodes after the client's ends");
     }
 
     // Two fields of different widths at the same bit open a split: each side takes in its next field while its total is the smaller, until the

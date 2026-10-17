@@ -89,7 +89,7 @@ public sealed class WireFactsComparisonTests
     }
 
     [Fact]
-    public void ASideWithATreeIsComparedNodeByNode()
+    public void ASideWithATreeIsComparedForTheSameBitsOnEveryPath()
     {
         WireFactsRow row = new(0x0198, "c2s", new WireFactsSide("computed", 13, [8, 5], [], "8 5 [1:16 32]"), null);
         WireLayout layout = new(0x0198, Direction.ClientToServer, false, isComplete: true, [8, 5], [], "8 5 [1:16 16]");

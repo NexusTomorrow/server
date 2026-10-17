@@ -22,7 +22,7 @@ public sealed class WireTreeComparisonTests
     [Fact]
     public void AShorterSequenceIsReported()
     {
-        Assert.Equal(["0xFFFF client to server: the client's sequence has 3 nodes, the declaration's 2"], Compare("8 16", "8 16 4"));
+        Assert.Equal(["0xFFFF client to server: the client's sequence goes on for 1 nodes after the declaration's ends"], Compare("8 16", "8 16 4"));
     }
 
     [Fact]
@@ -98,10 +98,10 @@ public sealed class WireTreeComparisonTests
     {
         Assert.Equal(
             [
-                "0xFFFF client to server [2].arm 0x00: the client's sequence has 0 nodes, the declaration's 1",
-                "0xFFFF client to server [2].arm 0x01: the client's sequence has 0 nodes, the declaration's 1",
-                "0xFFFF client to server [2].arm 0x02: the client's sequence has 1 nodes, the declaration's 2",
-                "0xFFFF client to server: the client's sequence has 4 nodes, the declaration's 3",
+                "0xFFFF client to server [2].arm 0x00: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server [2].arm 0x01: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server [2].arm 0x02: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server: the client's sequence goes on for 1 nodes after the declaration's ends",
             ],
             Compare("5 2 {1:0=(32),1=(32),2=(32 31)}", "5 2 {1:0=(),1=(),2=(32)} 32"));
     }
@@ -111,9 +111,9 @@ public sealed class WireTreeComparisonTests
     {
         Assert.Equal(
             [
-                "0xFFFF client to server [2].arm 0x00: the client's sequence has 0 nodes, the declaration's 1",
-                "0xFFFF client to server [2].arm 0x02: the client's sequence has 1 nodes, the declaration's 2",
-                "0xFFFF client to server: the client's sequence has 4 nodes, the declaration's 3",
+                "0xFFFF client to server [2].arm 0x00: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server [2].arm 0x02: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server: the client's sequence goes on for 1 nodes after the declaration's ends",
             ],
             Compare("5 2 {1:0=(32),1=(),2=(32 32)}", "5 2 {1:0=(),1=(),2=(32)} 32"));
     }
@@ -135,9 +135,9 @@ public sealed class WireTreeComparisonTests
     {
         Assert.Equal(
             [
-                "0xFFFF client to server [1].arm 0x00: the client's sequence has 1 nodes, the declaration's 2",
-                "0xFFFF client to server [1].arm 0x01: the client's sequence has 1 nodes, the declaration's 2",
-                "0xFFFF client to server: the client's sequence has 3 nodes, the declaration's 2",
+                "0xFFFF client to server [1].arm 0x00: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server [1].arm 0x01: the declaration's sequence goes on for 1 nodes after the client's ends",
+                "0xFFFF client to server: the client's sequence goes on for 1 nodes after the declaration's ends",
             ],
             Compare("4 {0:0=(8 n),1=(16 w)}", "4 {0:0=(8),1=(16)} n"));
     }
@@ -234,6 +234,14 @@ public sealed class WireTreeComparisonTests
     {
         Assert.Equal(["0xFFFF client to server [3]: the client counts it with node 2, the declaration with node 1"], Compare("16 4 4 [1:8]", "8 8 4 4 [3:8]"));
         Assert.Equal(["0xFFFF client to server [3]: the client selects it with node 2, the declaration with node 1"], Compare("16 3 3 {1:0=(),1=(8)}", "8 8 3 3 {3:0=(),1=(8)}"));
+    }
+
+    [Theory]
+    [InlineData("16 4 4 [2:8]", "8 8 4 4 [2:8]", "0xFFFF client to server [3]: the client counts it with node 1, the declaration with node 2")]
+    [InlineData("16 3 3 {2:0=(),1=(8)}", "8 8 3 3 {2:0=(),1=(8)}", "0xFFFF client to server [3]: the client selects it with node 1, the declaration with node 2")]
+    public void ACountOrSelectorWithTheSameRawIndexButAnotherAlignedNodeIsReported(string declared, string client, string problem)
+    {
+        Assert.Equal([problem], Compare(declared, client));
     }
 
     [Fact]
