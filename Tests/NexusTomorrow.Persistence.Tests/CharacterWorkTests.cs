@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Persistence.Realm;
@@ -42,6 +43,60 @@ public sealed class CharacterWorkTests
         WorkResult refused = await second.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken);
         Assert.Equal(WorkOutcome.Refused, refused.Outcome);
         Assert.Equal(RealmContext.LiveNameIndex, refused.Constraint);
+    }
+
+    [Fact]
+    public async Task ADeletedCharacterNoLongerLoads()
+    {
+        await using PostgresTestDatabase database = await Databases.CreateAsync();
+        await using WriteBehindQueue queue = Databases.Queue(database);
+        var created = new TaskCompletionSource<WorkResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        queue.Enqueue(new CreateCharacterWork(Databases.NewCharacter(1001, 7, "Rebaser Head"), result => created.SetResult(result)));
+        Assert.Equal(WorkOutcome.Committed, (await created.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken)).Outcome);
+
+        var deleted = new TaskCompletionSource<WorkResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        queue.Enqueue(new DeleteCharacterWork(7, 1001, DateTimeOffset.UnixEpoch, result => deleted.SetResult(result)));
+        Assert.Equal(WorkOutcome.Committed, (await deleted.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken)).Outcome);
+
+        var loaded = new TaskCompletionSource<ImmutableArray<CharacterSummary>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        queue.Enqueue(new LoadCharactersWork(7, characters => loaded.SetResult(characters)));
+        Assert.Empty(await loaded.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
+    public async Task ARenameToATakenNameIsRefused()
+    {
+        await using PostgresTestDatabase database = await Databases.CreateAsync();
+        await using WriteBehindQueue queue = Databases.Queue(database);
+        foreach ((ulong id, string name) in new[] { (1001UL, "Rebaser Head"), (1002UL, "Other Name") })
+        {
+            var created = new TaskCompletionSource<WorkResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+            queue.Enqueue(new CreateCharacterWork(Databases.NewCharacter(id, 7, name), result => created.SetResult(result)));
+            Assert.Equal(WorkOutcome.Committed, (await created.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken)).Outcome);
+        }
+
+        await using (RealmContext context = database.Contexts.CreateRealm())
+        {
+            await context.Characters.Where(c => c.Id == 1002).ExecuteUpdateAsync(
+                set => set.SetProperty(c => c.RequiresRename, true), TestContext.Current.CancellationToken);
+        }
+
+        // Each rename goes in only after the one before it finished, so the order is fixed.
+        var taken = new TaskCompletionSource<WorkResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        queue.Enqueue(new RenameCharacterWork(7, 1002, "REBASER HEAD", result => taken.SetResult(result)));
+        WorkResult refused = await taken.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken);
+        Assert.Equal(WorkOutcome.Refused, refused.Outcome);
+        Assert.Equal(RealmContext.LiveNameIndex, refused.Constraint);
+
+        var free = new TaskCompletionSource<WorkResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        queue.Enqueue(new RenameCharacterWork(7, 1002, "Free Name", result => free.SetResult(result)));
+        Assert.Equal(WorkOutcome.Committed, (await free.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken)).Outcome);
+
+        var loaded = new TaskCompletionSource<ImmutableArray<CharacterSummary>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        queue.Enqueue(new LoadCharactersWork(7, characters => loaded.SetResult(characters)));
+        CharacterSummary renamed = (await loaded.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken)).Single(c => c.Id == 1002);
+        Assert.Equal("Free Name", renamed.Name);
+        Assert.False(renamed.RequiresRename);
     }
 
     [Fact]

@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NexusTomorrow.GameTable\NexusTomorrow.GameTable.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Network.Codec\NexusTomorrow.Network.Codec.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Network\NexusTomorrow.Network.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Network.Auth\NexusTomorrow.Network.Auth.csproj" />
