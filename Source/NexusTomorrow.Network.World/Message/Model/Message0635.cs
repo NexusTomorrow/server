@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model;
 
-[WireMessage(GameMessageOpcode.Message0635, Direction.Both)]
+[WireMessage(GameMessageOpcode.Message0635, Direction.ClientToServer)]
 public sealed partial class Message0635
 {
     [UInt(32)] public uint Unknown0 { get; set; }
