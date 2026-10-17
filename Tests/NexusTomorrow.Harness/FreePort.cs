@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace NexusTomorrow.Server.Tests;
+namespace NexusTomorrow.Harness;
 
-internal static class FreePort
+public static class FreePort
 {
     private static readonly Lock s_gate = new();
     private static readonly HashSet<int> s_taken = [];

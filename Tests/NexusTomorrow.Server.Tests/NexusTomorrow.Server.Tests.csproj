@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Source\NexusTomorrow.Server\NexusTomorrow.Server.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Harness\NexusTomorrow.Harness.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Testing\NexusTomorrow.Testing.csproj" />
   </ItemGroup>
 

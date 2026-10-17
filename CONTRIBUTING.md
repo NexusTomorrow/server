@@ -44,6 +44,9 @@ output, and without them every generated member looks missing.
   live under `Tests/`, in a project named after the one it tests
   (`NexusTomorrow.Cryptography.Tests`).
 - Tests that touch the database need a PostgreSQL 18 server named by `NEXUSTOMORROW_TEST_PG`; without it they skip, and CI provides one.
+- The scenarios in `NexusTomorrow.Harness.Tests` run the whole server in the test process on free
+  loopback ports and drive it with headless clients over real sockets, so they need the same
+  PostgreSQL server. `dotnet test --solution Source/NexusTomorrow.slnx` runs them with the rest.
 - Name a test for the behaviour it checks, such as `SessionKeyIsAlwaysSixtyFourBytes`.
 - CI runs only when a maintainer dispatches the `Tests` workflow, so your pull request shows no
   checks until a maintainer runs them for it. Before it builds, it checks your commit messages and

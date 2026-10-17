@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Time.Testing;
+using NexusTomorrow.Harness;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Testing;
