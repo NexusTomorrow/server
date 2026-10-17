@@ -56,7 +56,8 @@ internal static class WireTreeComparison
                         return;
                     }
 
-                    CompareSequence(label, here + ".element", mine.Element, theirs.Element, problems);
+                    if (!OneFieldAgainstRun(mine.Element, theirs.Element) && !OneFieldAgainstRun(theirs.Element, mine.Element))
+                        CompareSequence(label, here + ".element", mine.Element, theirs.Element, problems);
                     break;
                 case WireNodeKind.Union:
                     if (mine.Reference != theirs.Reference)
@@ -133,7 +134,8 @@ internal static class WireTreeComparison
     /// <summary>
     /// Rewrite the forms the wire cannot tell apart into one form, on both sides alike: an array counted by a 1-bit field becomes the union
     /// {0=(), 1=(element)}; consecutive arrays sharing one count whose elements are all fields of one width become one array of their
-    /// elements together. Each sequence's references are renumbered when nodes merge.
+    /// elements together; the fields and strings every arm of a union ends with alike leave the arms and follow the union. Each sequence's
+    /// references are renumbered when nodes merge or leave a union.
     /// </summary>
     private static ImmutableArray<WireNode> Normalize(ImmutableArray<WireNode> nodes)
     {
@@ -151,7 +153,16 @@ internal static class WireTreeComparison
             }
 
             newIndex[i] = merged.Count;
-            merged.Add(node);
+            int shared = node.Kind == WireNodeKind.Union ? SharedTail(node.Arms) : 0;
+            if (shared == 0)
+            {
+                merged.Add(node);
+            }
+            else
+            {
+                merged.Add(WireNode.Union(node.Reference, [.. node.Arms.Select(arm => new WireArm(arm.Selector, arm.Nodes[..^shared]))]));
+                merged.AddRange(node.Arms[0].Nodes[^shared..]);
+            }
         }
 
         ImmutableArray<WireNode>.Builder result = ImmutableArray.CreateBuilder<WireNode>(merged.Count);
@@ -185,6 +196,42 @@ internal static class WireTreeComparison
     {
         int width = first.IsEmpty ? 0 : first[0].Bits;
         return width > 0 && first.Concat(second).All(node => node.Kind == WireNodeKind.Field && node.Bits == width);
+    }
+
+    // How many nodes at the end of every arm are the same field or string in each. Those refer to no other node, and no node refers to them,
+    // since a count or a selector comes before what it governs (WireTree.ParseReference), so they read the same bits after the union as at
+    // the end of each arm.
+    private static int SharedTail(ImmutableArray<WireArm> arms)
+    {
+        if (arms.IsEmpty)
+            return 0;
+
+        int shared = 0;
+        while (true)
+        {
+            int back = shared + 1;
+            ImmutableArray<WireNode> first = arms[0].Nodes;
+            if (first.Length < back || first[^back].Kind is not (WireNodeKind.Field or WireNodeKind.WideString or WireNodeKind.NarrowString or WireNodeKind.TerminatedWideString))
+                return shared;
+
+            WireNode last = first[^back];
+            foreach (WireArm arm in arms)
+            {
+                if (arm.Nodes.Length < back || arm.Nodes[^back].Kind != last.Kind || arm.Nodes[^back].Bits != last.Bits)
+                    return shared;
+            }
+
+            shared = back;
+        }
+    }
+
+    // An element of one field takes the same bits as any run of fields with the same total, such as 48 against 16 16 16. Only a run of one
+    // width is matched, as a choice of scope: a run of mixed widths with the same total is the same bits too, and is compared field by field.
+    // One field alone does not say how it splits, so Normalize cannot rewrite either side to the other, and the pair is judged here.
+    private static bool OneFieldAgainstRun(ImmutableArray<WireNode> one, ImmutableArray<WireNode> run)
+    {
+        return one is [{ Kind: WireNodeKind.Field } field] && run.Length > 1
+            && run.All(node => node.Kind == WireNodeKind.Field && node.Bits == run[0].Bits) && run.Sum(node => node.Bits) == field.Bits;
     }
 
     private static string Describe(WireNode node)
