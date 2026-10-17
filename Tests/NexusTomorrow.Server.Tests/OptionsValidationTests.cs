@@ -84,6 +84,7 @@ public sealed class OptionsValidationTests
         else
             throw new ArgumentOutOfRangeException(nameof(options));
     }
+
     private static WebApplication Build(Dictionary<string, string?> overrides)
     {
         Dictionary<string, string?> settings = new()

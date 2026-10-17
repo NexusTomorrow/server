@@ -74,6 +74,8 @@ internal sealed class PersistenceOptionsValidator : IValidateOptions<Persistence
             failures.Add($"{PersistenceOptions.Section}:{nameof(PersistenceOptions.ConnectionString)} is required.");
         if (options.SaveWorkers < 1)
             failures.Add($"{PersistenceOptions.Section}:{nameof(PersistenceOptions.SaveWorkers)} must be at least 1.");
+        if (options.FirstIdBlockTimeout <= TimeSpan.Zero)
+            failures.Add($"{PersistenceOptions.Section}:{nameof(PersistenceOptions.FirstIdBlockTimeout)} must be positive.");
 
         return failures.Count == 0 ? ValidateOptionsResult.Success : ValidateOptionsResult.Fail(failures);
     }

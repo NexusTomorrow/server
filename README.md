@@ -101,6 +101,7 @@ command line. The ones you are most likely to change:
 | `Gateway:UnknownAccountSecret` | none | Base64 of at least 32 bytes. Required. |
 | `Gateway:Sts`, `Gateway:Login`, `Gateway:World` | `127.0.0.1`, ports 6600, 23115, 24000 | Each listener's `BindAddress` and `Port`. The three ports must differ. |
 | `Gateway:WorldPublicAddress` | `127.0.0.1` | The IPv4 address the login server gives the client for the world listener. |
+| `Persistence:FirstIdBlockTimeout` | 30 s | How long start waits to take the first character id block. If the database cannot give one in time, start fails with an error instead of waiting. |
 | `Gateway:ConnectionsPerAddress` | 8 | Connections one address may hold on each listener. Further ones are closed at once. |
 | `Realm:Id`, `Realm:Name` | 1, `NexusTomorrow` | The realm's id (at most 16383) and the name players see. |
 | `Content:ClientDataPath` | none | The folder holding `tbl`. |

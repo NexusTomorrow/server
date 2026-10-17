@@ -115,6 +115,22 @@ public sealed class WriteBehindQueue : IWriteBehind, IAsyncDisposable
         _stop.Dispose();
     }
 
+    /// <summary>
+    /// Stop the workers at once, dropping the work queued and running, and mark the queue disposed so a later <see cref="DisposeAsync"/>
+    /// returns at once. For a start that failed before any save was queued; a stop that must keep its saves uses
+    /// <see cref="DisposeAsync"/>.
+    /// </summary>
+    public async Task AbandonAsync()
+    {
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+            return;
+
+        _ready.Writer.TryComplete();
+        await _stop.CancelAsync();
+        await Task.WhenAll(_workers);
+        _stop.Dispose();
+    }
+
     // Under _gate: dispatch when the entry heads every one of its keys' queues.
     private void TryDispatch(Entry entry)
     {
@@ -173,8 +189,9 @@ public sealed class WriteBehindQueue : IWriteBehind, IAsyncDisposable
                 Finish(entry);
             }
         }
-        catch (OperationCanceledException) when (_stop.IsCancellationRequested)
+        catch (Exception) when (_stop.IsCancellationRequested)
         {
+            // Abandoned: the work in flight was cancelled, and the driver may report that as any exception.
         }
     }
 

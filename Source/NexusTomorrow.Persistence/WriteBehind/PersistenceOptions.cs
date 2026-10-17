@@ -30,4 +30,10 @@ public sealed class PersistenceOptions
     /// The longest wait between retries.
     /// </summary>
     public TimeSpan MaxRetryDelay { get; set; } = TimeSpan.FromSeconds(30);
+
+    /// <summary>
+    /// How long the host's start waits for the first character id block before it fails. Positive: whatever binds this section
+    /// validates it.
+    /// </summary>
+    public TimeSpan FirstIdBlockTimeout { get; set; } = TimeSpan.FromSeconds(30);
 }

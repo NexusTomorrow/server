@@ -8,6 +8,7 @@ using Microsoft.Extensions.Time.Testing;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Testing;
+using Npgsql;
 
 namespace NexusTomorrow.Server.Tests;
 
@@ -136,6 +137,57 @@ public sealed class HostTests
         gated.Release();
         await stopping.WaitAsync(s_bound, TestContext.Current.CancellationToken);
         Assert.Equal(0, queue.Backlog);
+    }
+
+    [Fact]
+    public async Task AStartThatCannotTakeTheFirstIdBlockFailsWithItsCauseAndTheHostDisposesWithoutHanging()
+    {
+        await using PostgresTestDatabase database = await Databases.CreateAsync();
+        await using (var connection = new NpgsqlConnection(database.ConnectionString))
+        {
+            // With the sequence gone the block-take work fails on every attempt, so it retries and never commits.
+            await connection.OpenAsync(TestContext.Current.CancellationToken);
+            await using var drop = new NpgsqlCommand("DROP SEQUENCE realm.character_id_seq CASCADE", connection);
+            await drop.ExecuteNonQueryAsync(TestContext.Current.CancellationToken);
+        }
+
+        var time = new FakeTimeProvider();
+        Dictionary<string, string?> settings = Settings(database.ConnectionString, Convert.ToBase64String(new byte[32]));
+        WebApplication app = ServerHost.Build([], builder =>
+        {
+            builder.Configuration.AddInMemoryCollection(settings);
+            builder.Services.AddSingleton<TimeProvider>(time);
+        });
+        Task starting = app.StartAsync(TestContext.Current.CancellationToken);
+        using var bound = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        bound.CancelAfter(s_bound);
+
+        // A step before the start waits on the clock is lost, so the clock moves a whole timeout at a time until the start gives up.
+        while (!starting.IsCompleted)
+        {
+            time.Advance(TimeSpan.FromSeconds(30));
+            await Task.Delay(10, bound.Token);
+        }
+
+        InvalidOperationException failure = await Assert.ThrowsAsync<InvalidOperationException>(() => starting);
+        Assert.Contains("first character id block", failure.Message, StringComparison.Ordinal);
+        await app.DisposeAsync().AsTask().WaitAsync(s_bound, TestContext.Current.CancellationToken);
+    }
+
+    [Theory]
+    [InlineData("Account:TokenLifetime", "not-a-time")]
+    [InlineData("Cli:Enabled", "maybe")]
+    public async Task ABadValueInAnyOptionsSectionFailsTheStartNamingItBeforeTheDatabaseIsTouched(string key, string value)
+    {
+        Dictionary<string, string?> settings = Settings("Host=unused", Convert.ToBase64String(new byte[32]));
+        settings[key] = value;
+        await using WebApplication app = ServerHost.Build([], builder => builder.Configuration.AddInMemoryCollection(settings));
+
+        // The database named by the connection string does not exist: a start that got as far as the migration check would fail
+        // with a connection error instead of naming the key.
+        Exception failure = await Assert.ThrowsAnyAsync<Exception>(() => app.StartAsync(TestContext.Current.CancellationToken));
+
+        Assert.Contains(key, failure.Message, StringComparison.Ordinal);
     }
 
     // Connects and reports whether the server greeted the connection; a connection the server refuses is closed with no bytes sent.
