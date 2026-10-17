@@ -245,6 +245,17 @@ public sealed class WireTreeComparisonTests
     }
 
     [Fact]
+    public void TheComparisonReturnsTheSplitsItAccepts()
+    {
+        var splits = new List<WireSplit>();
+
+        Assert.Empty(WireTreeComparison.Compare("0xFFFF client to server", WireTree.Parse("4 8 6 32 3 [4:8 8]"), WireTree.Parse("4 14 8 8 8 8 3 [6:16]"), splits));
+        Assert.Equal(
+            ["0xFFFF client to server [1]: 8 6 against 14", "0xFFFF client to server [3]: 32 against 8 8 8 8", "0xFFFF client to server [5].element[0]: 8 8 against 16"],
+            splits.Select(split => $"{split.Key}: {string.Join(' ', split.Declared)} against {string.Join(' ', split.Client)}"));
+    }
+
+    [Fact]
     public void ARunOneSixtyFourBitSlotShortOrLongIsReported()
     {
         string client = "32 1 32 32 " + string.Join(' ', Enumerable.Repeat("8", 24));

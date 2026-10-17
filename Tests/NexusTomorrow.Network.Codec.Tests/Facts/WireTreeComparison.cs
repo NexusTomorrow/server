@@ -12,10 +12,13 @@ namespace NexusTomorrow.Network.Codec.Tests.Facts;
 /// </summary>
 internal static class WireTreeComparison
 {
-    public static List<string> Compare(string label, ImmutableArray<WireNode> declared, ImmutableArray<WireNode> client)
+    /// <summary>
+    /// The disagreements between the two trees; each split the comparison accepts is added to <paramref name="splits"/> when one is given.
+    /// </summary>
+    public static List<string> Compare(string label, ImmutableArray<WireNode> declared, ImmutableArray<WireNode> client, List<WireSplit>? splits = null)
     {
         var problems = new List<string>();
-        CompareSequence(label, "", Normalize(declared), Normalize(client), problems);
+        CompareSequence(label, "", Normalize(declared), Normalize(client), problems, splits);
         return problems;
     }
 
@@ -34,7 +37,8 @@ internal static class WireTreeComparison
     // Walks both sequences side by side: i is the declaration's node and j the client's, both at the same bit on every path. Two fields of one
     // width, or two nodes of one other kind, pair one to one; two fields of different widths open a split (SameBits). A pair that cannot be
     // aligned is reported at the declaration's node and ends the sequence, since nothing after it is known to sit at the same bit.
-    private static void CompareSequence(string label, string path, ImmutableArray<WireNode> declared, ImmutableArray<WireNode> client, List<string> problems)
+    private static void CompareSequence(
+        string label, string path, ImmutableArray<WireNode> declared, ImmutableArray<WireNode> client, List<string> problems, List<WireSplit>? splits)
     {
         HashSet<int> declaredReferenced = Referenced(declared);
         HashSet<int> clientReferenced = Referenced(client);
@@ -65,6 +69,7 @@ internal static class WireTreeComparison
                     return;
                 }
 
+                splits?.Add(new WireSplit($"{label} {here}", [.. declared[i..declaredEnd].Select(node => node.Bits)], [.. client[j..clientEnd].Select(node => node.Bits)]));
                 i = declaredEnd;
                 j = clientEnd;
                 continue;
@@ -86,7 +91,7 @@ internal static class WireTreeComparison
                         return;
                     }
 
-                    CompareSequence(label, here + ".element", mine.Element, theirs.Element, problems);
+                    CompareSequence(label, here + ".element", mine.Element, theirs.Element, problems, splits);
                     break;
                 case WireNodeKind.Union:
                     if (mine.Reference != declaredIndexOf[theirs.Reference])
@@ -95,7 +100,7 @@ internal static class WireTreeComparison
                         return;
                     }
 
-                    CompareArms(label, here, mine, theirs, declared[mine.Reference].Bits, problems);
+                    CompareArms(label, here, mine, theirs, declared[mine.Reference].Bits, problems, splits);
                     break;
 
                 // The client facts do not give whether a blob starts on a byte boundary, so only its length's width is compared.
@@ -163,7 +168,7 @@ internal static class WireTreeComparison
         return [.. nodes.Where(node => node.Kind is WireNodeKind.Array or WireNodeKind.Union).Select(node => node.Reference)];
     }
 
-    private static void CompareArms(string label, string here, WireNode mine, WireNode theirs, int selectorBits, List<string> problems)
+    private static void CompareArms(string label, string here, WireNode mine, WireNode theirs, int selectorBits, List<string> problems, List<WireSplit>? splits)
     {
         var declaredArms = mine.Arms.ToDictionary(arm => arm.Selector);
         var clientArms = theirs.Arms.ToDictionary(arm => arm.Selector);
@@ -206,7 +211,7 @@ internal static class WireTreeComparison
             }
             else
             {
-                CompareSequence(label, $"{here}.arm 0x{value:X2}", declaredArm!.Nodes, clientArm!.Nodes, problems);
+                CompareSequence(label, $"{here}.arm 0x{value:X2}", declaredArm!.Nodes, clientArm!.Nodes, problems, splits);
             }
         }
 
@@ -322,3 +327,9 @@ internal static class WireTreeComparison
         };
     }
 }
+
+/// <summary>
+/// A split the tree comparison accepted, keyed by the label and path of the declaration's node it starts at: the widths each side takes for
+/// the same bits. One side always holds a single field, so the side with more than one width is the side that splits.
+/// </summary>
+internal sealed record WireSplit(string Key, ImmutableArray<int> Declared, ImmutableArray<int> Client);
