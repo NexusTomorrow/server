@@ -120,11 +120,14 @@ public abstract class ClientConnection : IClientSession
         }
         finally
         {
-            _outbound.Writer.TryComplete();
-            await finished.CancelAsync();
+            // However the read loop ended, the writer gets the grace to deliver what is queued; a peer that is not reading cannot hold
+            // RunAsync past it.
+            string reason = _disconnectReason ?? (preAuth.IsCancellationRequested ? "no login before the timeout" : "closed");
+            Disconnect(reason);
             try
             {
                 await writer;
+                await finished.CancelAsync();
                 await watchdog;
                 await transport.Input.CompleteAsync();
             }
@@ -133,7 +136,7 @@ public abstract class ClientConnection : IClientSession
                 GatewayLog.ConnectionFailed(_logger, Id, exception);
             }
 
-            GatewayLog.ConnectionEnded(_logger, Id, _disconnectReason ?? (preAuth.IsCancellationRequested ? "no login before the timeout" : "closed"));
+            GatewayLog.ConnectionEnded(_logger, Id, _disconnectReason ?? reason);
             OnClosed();
         }
     }

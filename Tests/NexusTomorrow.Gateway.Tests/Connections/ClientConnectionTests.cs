@@ -1,4 +1,5 @@
 ﻿using System.Collections.Frozen;
+using System.IO.Pipelines;
 using System.Net;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -157,28 +158,48 @@ public sealed class ClientConnectionTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task AQueueThatNeverEmptiesStillFlushes()
+    public async Task AReadLoopThatEndsOnAMalformedFrameStillClosesAStalledConnectionAfterTheGrace()
     {
-        Use(Small(1 << 20));
+        Use(Small(100_000));
         Start();
         await Eventually.TrueAsync(() => _connection.Started);
-        int finished = 0;
-        var message = new LoginAccepted();
-        var producer = Task.Run(
-            () =>
-            {
-                for (int i = 0; i < 1_000_000; i++)
-                    _connection.Send(message);
-                Volatile.Write(ref finished, 1);
-            },
-            TestContext.Current.CancellationToken);
 
-        await Client.ExpectAsync<LoginAccepted>();
+        // The pings fill the pipe so the writer blocks, then a frame over the cap ends the read loop first.
+        await Client.SendRawAsync([.. Pings(PingsThatFillThePipe), 0x00, 0x00, 0x10, 0x00, 0x44, 0x02]);
 
-        Assert.Equal(0, Volatile.Read(ref finished));
-        await producer.WaitAsync(s_wait, TestContext.Current.CancellationToken);
+        await EndedAfterTheGraceAsync();
+        Assert.Equal(1, _connection.Closed);
     }
 
+    [Fact]
+    public async Task AReadLoopThatEndsOnACleanCloseStillClosesAStalledConnectionAfterTheGrace()
+    {
+        Use(Small(100_000));
+        Start();
+        await Eventually.TrueAsync(() => _connection.Started);
+
+        await Client.SendRawAsync(Pings(PingsThatFillThePipe));
+        await _pipes.Client.Output.CompleteAsync();
+
+        await EndedAfterTheGraceAsync();
+        Assert.Equal(1, _connection.Closed);
+    }
+
+    [Fact]
+    public async Task TheWriterFlushesEveryBatchAndOnceMoreWhenTheQueueDrains()
+    {
+        Use(Small(4096));
+        var message = new LoginAccepted();
+        for (int i = 0; i < 200; i++)
+            _connection.Send(message);
+        var output = new CountingWriter(_pipes.Server.Output);
+
+        Start(new Transport(_pipes.Server.Input, output));
+
+        // 200 queued items flush after the 64th, 128th and 192nd, then once when the queue is empty.
+        await Eventually.TrueAsync(() => output.Flushes >= 4);
+        Assert.Equal(4, output.Flushes);
+    }
     [Fact]
     public async Task TheConnectionRateGatesByTheTableItsDecoderWasBuiltWith()
     {
@@ -240,8 +261,42 @@ public sealed class ClientConnectionTests : IAsyncLifetime
                 return _run.IsCompleted;
             });
 
-    private void Start() =>
-        _run = _connection.RunAsync(_pipes.Server, new IPEndPoint(IPAddress.Loopback, 50001), _stop.Token);
+    private void Start() => Start(_pipes.Server);
+
+    private void Start(IDuplexPipe transport) =>
+        _run = _connection.RunAsync(transport, new IPEndPoint(IPAddress.Loopback, 50001), _stop.Token);
+
+    private sealed record Transport(PipeReader Input, PipeWriter Output) : IDuplexPipe;
+
+    // Counts the flushes the connection's writer makes.
+    private sealed class CountingWriter : PipeWriter
+    {
+        private readonly PipeWriter _inner;
+        private int _flushes;
+
+        public CountingWriter(PipeWriter inner)
+        {
+            _inner = inner;
+        }
+
+        public int Flushes => Volatile.Read(ref _flushes);
+
+        public override void Advance(int bytes) => _inner.Advance(bytes);
+
+        public override Memory<byte> GetMemory(int sizeHint = 0) => _inner.GetMemory(sizeHint);
+
+        public override Span<byte> GetSpan(int sizeHint = 0) => _inner.GetSpan(sizeHint);
+
+        public override void CancelPendingFlush() => _inner.CancelPendingFlush();
+
+        public override void Complete(Exception? exception = null) => _inner.Complete(exception);
+
+        public override ValueTask<FlushResult> FlushAsync(CancellationToken cancellationToken = default)
+        {
+            Interlocked.Increment(ref _flushes);
+            return _inner.FlushAsync(cancellationToken);
+        }
+    }
 
     // A delegate, because IWireMessage declares static abstract members and so cannot be a type argument of Func.
     private delegate bool MessageHandler(IWireMessage message);

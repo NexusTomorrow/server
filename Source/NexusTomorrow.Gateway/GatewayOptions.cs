@@ -58,8 +58,9 @@ public sealed class GatewayOptions
 
     /// <summary>
     /// How long a disconnecting connection may keep trying to deliver what is queued before it is closed regardless, so a client that
-    /// has stopped reading cannot hold the connection open.
+    /// has stopped reading cannot hold the connection open. Zero closes at once; at most a minute.
     /// </summary>
+    [Range(typeof(TimeSpan), "00:00:00", "00:01:00")]
     public TimeSpan DisconnectGrace { get; set; } = TimeSpan.FromSeconds(5);
 
     /// <summary>
