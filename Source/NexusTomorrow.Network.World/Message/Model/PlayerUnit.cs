@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model;
 /// <see cref="UnitCreate"/> comes first), and when that unit has no base faction. It takes the unit as the player and as the unit it
 /// moves before it checks the base faction, and a refusal for the faction undoes neither, so the client keeps that player and goes on
 /// refusing <see cref="PlayerUnit"/> while it has it. The client needs it to finish entering the world; until it arrives the client ignores
-/// <see cref="MovementControl"/> and <see cref="PlayerPath.PathState"/>, and refuses the player's own state (<c>0x025E</c>).
+/// <see cref="MovementControl"/> and <see cref="PlayerPath.PathState"/>, and refuses the player's own state (<see cref="PlayerState"/>).
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server019B, Direction.ServerToClient)]
 [Verified(Rung.Fields)]
