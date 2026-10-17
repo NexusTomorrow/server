@@ -16,5 +16,5 @@ public sealed partial class CharacterDelete
     /// <summary>
     /// The character, as listed in the character list (0x0117).
     /// </summary>
-    [UInt(64)] public ulong CharacterId { get; private set; }
+    [UInt(64)] public ulong CharacterId { get; set; }
 }

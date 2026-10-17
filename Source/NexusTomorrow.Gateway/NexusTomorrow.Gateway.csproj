@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="NexusTomorrow.Gateway.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NexusTomorrow.Transport\NexusTomorrow.Transport.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Network\NexusTomorrow.Network.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Network.Auth\NexusTomorrow.Network.Auth.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Network.World\NexusTomorrow.Network.World.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Network.Sts\NexusTomorrow.Network.Sts.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Cryptography\NexusTomorrow.Cryptography.csproj" />
+  </ItemGroup>
+
+</Project>

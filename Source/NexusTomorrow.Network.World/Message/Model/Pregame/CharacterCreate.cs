@@ -17,17 +17,17 @@ public sealed partial class CharacterCreate
     /// <summary>
     /// The character creation option, as an id in the CharacterCreation table.
     /// </summary>
-    [UInt(32)] public uint CreationId { get; private set; }
+    [UInt(32)] public uint CreationId { get; set; }
 
     /// <summary>
     /// The new character's name.
     /// </summary>
-    [WideString] public string Name { get; private set; } = "";
+    [WideString] public string Name { get; set; } = "";
 
     /// <summary>
     /// The character's path: 0 Soldier, 1 Settler, 2 Scientist, 3 Explorer.
     /// </summary>
-    [UInt(3)] public byte Path { get; private set; }
+    [UInt(3)] public byte Path { get; set; }
 
     /// <summary>
     /// How many look entries follow.
