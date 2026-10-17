@@ -15,6 +15,7 @@
     <Project Path="NexusTomorrow.Network.Sts/NexusTomorrow.Network.Sts.csproj" />
     <Project Path="NexusTomorrow.Network.World/NexusTomorrow.Network.World.csproj" />
     <Project Path="NexusTomorrow.Network/NexusTomorrow.Network.csproj" />
+    <Project Path="NexusTomorrow.Owners/NexusTomorrow.Owners.csproj" />
     <Project Path="NexusTomorrow.Shared/NexusTomorrow.Shared.csproj" />
     <Project Path="NexusTomorrow.Transport/NexusTomorrow.Transport.csproj" />
   </Folder>
@@ -25,7 +26,9 @@
     <Project Path="../Tests/NexusTomorrow.Gateway.Tests/NexusTomorrow.Gateway.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Codec.Generator.Tests/NexusTomorrow.Network.Codec.Generator.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Codec.Tests/NexusTomorrow.Network.Codec.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Owners.Tests/NexusTomorrow.Owners.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.ProtocolReference.Tests/NexusTomorrow.ProtocolReference.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Testing/NexusTomorrow.Testing.csproj" />
     <Project Path="../Tests/NexusTomorrow.Transport.Tests/NexusTomorrow.Transport.Tests.csproj" />
   </Folder>
   <Folder Name="/Tools/">

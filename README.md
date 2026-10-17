@@ -31,6 +31,7 @@ A server for the WildStar client, build 16042, written in C# on .NET 10.
 | `NexusTomorrow.Shared` | Shared helpers: factories, configuration binding, the update timer |
 | `NexusTomorrow.Transport` | Frames, envelopes and the packet cipher, on the hot-path rules |
 | `NexusTomorrow.Gateway` | The connection edge: the message catalog, the opcode table and the inbound decoder that admit a client message |
+| `NexusTomorrow.Owners` | The owner base: one thread over one queue per owner, and the watchdog that reports one that stops draining |
 | `NexusTomorrow.MapGenerator` | Tool: extracts tables from your client and generates map files |
 | `NexusTomorrow.ClientConnector` | Tool: starts your client pointed at a server |
 
