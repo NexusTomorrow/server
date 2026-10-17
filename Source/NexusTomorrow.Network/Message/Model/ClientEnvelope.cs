@@ -6,7 +6,7 @@ namespace NexusTomorrow.Network.Message.Model;
 /// A client message encrypted for the connection it is sent on. The client sends every message inside one.
 /// </summary>
 /// <remarks>
-/// In the world, the message inside is <c>Client038C</c> (0x038C), which carries the game message.
+/// In the world, the message inside is <c>TaggedMessage</c> (0x038C), which carries the game message.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client0244, Direction.ClientToServer)]
 [Verified(Rung.Fields)]
