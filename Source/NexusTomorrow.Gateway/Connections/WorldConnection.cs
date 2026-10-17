@@ -24,6 +24,7 @@ public sealed class WorldConnection : ClientConnection
     private readonly RealmOwner _realm;
     private readonly RealmOptions _realmOptions;
     private readonly ILogger _logger;
+    private readonly SessionKeyRedeemer _redeem;
     private long? _accountId;
     private bool _greeted;
 
@@ -40,13 +41,34 @@ public sealed class WorldConnection : ClientConnection
         TimeProvider time,
         GatewayMetrics metrics,
         ILogger<WorldConnection> logger)
+        : this(catalog, decoder, accounts, realm, gateway, realmOptions, time, metrics, logger, null)
+    {
+    }
+
+    // The redeemer is the seam that lets a test hold or fault the account owner's decision; production passes null and redeems
+    // through the account owner.
+    internal WorldConnection(
+        MessageCatalog catalog,
+        InboundDecoder decoder,
+        AccountOwner accounts,
+        RealmOwner realm,
+        IOptions<GatewayOptions> gateway,
+        IOptions<RealmOptions> realmOptions,
+        TimeProvider time,
+        GatewayMetrics metrics,
+        ILogger<WorldConnection> logger,
+        SessionKeyRedeemer? redeemer)
         : base(WorldEnvelope, catalog, decoder, gateway, time, metrics, logger)
     {
         _accounts = accounts;
         _realm = realm;
         _realmOptions = realmOptions.Value;
         _logger = logger;
+        _redeem = redeemer ?? RedeemThroughOwner;
     }
+
+    // Starts the redemption and returns its answer, or null when the account owner no longer takes messages.
+    internal delegate Task<WorldDecision>? SessionKeyRedeemer(WorldConnection connection, WorldHello hello, byte[] sessionKey);
 
     /// <inheritdoc/>
     protected override void OnStart() =>
@@ -98,20 +120,20 @@ public sealed class WorldConnection : ClientConnection
         // The client switched to this key right after sending the greeting; the next frame is already under it.
         SwitchKey(new PacketCipher(PacketCipher.SessionKey(sessionKey)));
 
-        var reply = new TaskCompletionSource<WorldDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
-        if (!_accounts.Post(new RedeemSessionKey(sessionKey, hello.Echo, hello.AccountName, this, reply)))
+        Task<WorldDecision>? reply = _redeem(this, hello, sessionKey);
+        if (reply is null)
             return End("the server is stopping");
 
         WorldDecision decision;
         try
         {
-            decision = await reply.Task.WaitAsync(Lifetime);
+            decision = await reply.WaitAsync(Lifetime);
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException) when (Lifetime.IsCancellationRequested)
         {
             // The connection ended while the account owner was deciding. A grant that lands afterwards put this session online, and
             // nothing else will take it off.
-            _ = reply.Task.ContinueWith(
+            _ = reply.ContinueWith(
                 done =>
                 {
                     if (done.Result is WorldGranted granted)
@@ -139,6 +161,12 @@ public sealed class WorldConnection : ClientConnection
             default:
                 return End("an unrecognized decision from the account owner");
         }
+    }
+
+    private Task<WorldDecision>? RedeemThroughOwner(WorldConnection connection, WorldHello hello, byte[] sessionKey)
+    {
+        var reply = new TaskCompletionSource<WorldDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
+        return _accounts.Post(new RedeemSessionKey(sessionKey, hello.Echo, hello.AccountName, connection, reply)) ? reply.Task : null;
     }
 
     private void CloseSession(long accountId)
