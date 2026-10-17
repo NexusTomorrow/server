@@ -33,7 +33,7 @@ public sealed partial class WorldSettings
 
     /// <summary>
     /// The period, in milliseconds, of the client's movement timer, from which the client sends the movement of the unit it moves
-    /// (<c>0x0637</c>). The client clamps it to 25 to 1,000.
+    /// (<see cref="ClientMovement"/>). The client clamps it to 25 to 1,000.
     /// </summary>
     [UInt(32)] public uint MovementInterval { get; set; }
 }

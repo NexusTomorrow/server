@@ -16,7 +16,7 @@ public sealed partial class WorldReady
 {
     /// <summary>
     /// A zone id the client takes from the unit it moves: its zone lookups use it with the world and the player's position, and it reports
-    /// changes of it in <c>0x063A</c>.
+    /// changes of it in <see cref="ZoneChange"/>.
     /// </summary>
     [UInt(15)] public ushort ZoneId { get; private set; }
 }
