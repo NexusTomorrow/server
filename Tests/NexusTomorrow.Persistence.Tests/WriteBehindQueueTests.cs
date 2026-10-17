@@ -241,7 +241,7 @@ public sealed class WriteBehindQueueTests
         }
     }
 
-    // A fake clock that also records the timers the queue creates: the delay each was created with, and how many have fired.
+    // A fake clock that also records the timers the queue creates: the delay each was created with, and how many have fired. A timer counts as created once it is armed.
     private sealed class RecordingTimeProvider : FakeTimeProvider
     {
         private readonly Lock _gate = new();
@@ -265,11 +265,11 @@ public sealed class WriteBehindQueueTests
                 return _delays[timer];
         }
 
+        // A timer is counted only after the base provider has armed it with its due time, so a test that sees the count may advance
+        // the clock knowing the timer will fire.
         public override ITimer CreateTimer(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
         {
-            lock (_gate)
-                _delays.Add(dueTime);
-            return base.CreateTimer(
+            ITimer timer = base.CreateTimer(
                 timerState =>
                 {
                     Interlocked.Increment(ref _fired);
@@ -278,6 +278,9 @@ public sealed class WriteBehindQueueTests
                 state,
                 dueTime,
                 period);
+            lock (_gate)
+                _delays.Add(dueTime);
+            return timer;
         }
     }
 
