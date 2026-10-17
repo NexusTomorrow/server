@@ -15,7 +15,7 @@ namespace NexusTomorrow.Network.World.Message.Model;
 public sealed partial class TaggedMessage
 {
     /// <summary>
-    /// The tag: 0x03, 0x0B or 0x13. A given message always travels under the same one.
+    /// The tag: 0x03, 0x0B or 0x13. A message of a given opcode always travels under the same tag.
     /// </summary>
     [UInt(5)] public byte Tag { get; private set; }
 

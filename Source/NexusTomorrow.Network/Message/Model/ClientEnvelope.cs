@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.Message.Model;
 /// The message inside is either a <c>TaggedMessage</c> (0x038C), which carries another message under a tag, or a message on its own
 /// with no tag. The client sends tagged messages before the world as well as in it. Those it sends on their own include
 /// <c>LoginRequest</c> (0x0592), <c>WorldHello</c> (0x058F), <c>CharacterListRequest</c> (0x07E0), <c>CharacterSelect</c> (0x07DD),
-/// <c>CharacterDelete</c> (0x0352), <c>PregameKeepAlive</c> (0x0241) and <see cref="NestedMessage"/>.
+/// <c>CharacterDelete</c> (0x0352), <c>PregameKeepAlive</c> (0x0241) and <see cref="NestedMessage"/> (0x025C).
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client0244, Direction.ClientToServer)]
 [Verified(Rung.Fields)]
