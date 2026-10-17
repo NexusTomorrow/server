@@ -23,4 +23,7 @@ internal static partial class GatewayLog
 
     [LoggerMessage(EventId = 4006, Level = LogLevel.Debug, Message = "Connection {ConnectionId} dropped message 0x{Opcode:X4}: {Reason}")]
     public static partial void MessageDropped(ILogger logger, long connectionId, ushort opcode, string reason);
+
+    [LoggerMessage(EventId = 4007, Level = LogLevel.Debug, Message = "Connection from {Remote} refused on the {Listener} listener: the address holds its limit")]
+    public static partial void ConnectionRefused(ILogger logger, string listener, IPEndPoint remote);
 }

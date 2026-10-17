@@ -355,6 +355,14 @@ public sealed class WriteBehindQueueTests
         }
     }
 
+    [Fact]
+    public async Task DisposingTheQueueTwiceIsHarmless()
+    {
+        var queue = new WriteBehindQueue(s_unused, new FakeTimeProvider(), Options.Create(new PersistenceOptions { ConnectionString = "Host=unused" }), NullLogger<WriteBehindQueue>.Instance);
+        queue.Start();
+        await Within(queue.DisposeAsync().AsTask());
+        await Within(queue.DisposeAsync().AsTask());
+    }
     private sealed class GatedWork : PersistenceWork
     {
         private readonly RunLog _log;

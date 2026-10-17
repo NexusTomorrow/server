@@ -27,6 +27,7 @@ public sealed class WriteBehindQueue : IWriteBehind, IAsyncDisposable
     private TaskCompletionSource? _drained;
     private int _backlog;
     private int _available = 1;
+    private int _disposed;
 
     /// <summary>
     /// Create a queue applying work with <paramref name="contexts"/>.
@@ -100,10 +101,13 @@ public sealed class WriteBehindQueue : IWriteBehind, IAsyncDisposable
     }
 
     /// <summary>
-    /// Drain, then stop the workers.
+    /// Drain, then stop the workers. A second call returns at once.
     /// </summary>
     public async ValueTask DisposeAsync()
     {
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+            return;
+
         await DrainAsync(CancellationToken.None);
         _ready.Writer.TryComplete();
         await _stop.CancelAsync();

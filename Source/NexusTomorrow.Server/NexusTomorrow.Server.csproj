@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="NexusTomorrow.Server.Tests" />
+    <InternalsVisibleTo Include="NexusTomorrow.Harness" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NexusTomorrow.Gateway\NexusTomorrow.Gateway.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Owners\NexusTomorrow.Owners.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Persistence\NexusTomorrow.Persistence.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Commands\NexusTomorrow.Commands.csproj" />
+  </ItemGroup>
+
+</Project>
