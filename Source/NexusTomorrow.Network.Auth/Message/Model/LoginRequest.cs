@@ -30,42 +30,42 @@ public sealed partial class LoginRequest
             /// <summary>
             /// The processor's manufacturer.
             /// </summary>
-            [WideString] public string Manufacturer { get; private set; } = "";
+            [WideString] public string Manufacturer { get; set; } = "";
 
             /// <summary>
             /// The processor's name.
             /// </summary>
-            [WideString] public string Name { get; private set; } = "";
+            [WideString] public string Name { get; set; } = "";
 
             /// <summary>
             /// The processor's description.
             /// </summary>
-            [WideString] public string Description { get; private set; } = "";
+            [WideString] public string Description { get; set; } = "";
 
             /// <summary>
             /// The processor's family code.
             /// </summary>
-            [UInt(32)] public uint Family { get; private set; }
+            [UInt(32)] public uint Family { get; set; }
 
             /// <summary>
             /// The processor's level.
             /// </summary>
-            [UInt(32)] public uint Level { get; private set; }
+            [UInt(32)] public uint Level { get; set; }
 
             /// <summary>
             /// The processor's revision; 0 when Windows gives none.
             /// </summary>
-            [UInt(32)] public uint Revision { get; private set; }
+            [UInt(32)] public uint Revision { get; set; }
 
             /// <summary>
             /// The processor's maximum clock speed, in MHz.
             /// </summary>
-            [UInt(32)] public uint ClockMhz { get; private set; }
+            [UInt(32)] public uint ClockMhz { get; set; }
 
             /// <summary>
             /// The processor's core count; its logical processor count when Windows reports no cores.
             /// </summary>
-            [UInt(32)] public uint Cores { get; private set; }
+            [UInt(32)] public uint Cores { get; set; }
         }
 
         /// <summary>
@@ -77,32 +77,32 @@ public sealed partial class LoginRequest
             /// <summary>
             /// The adapter's description.
             /// </summary>
-            [WideString] public string Description { get; private set; } = "";
+            [WideString] public string Description { get; set; } = "";
 
             /// <summary>
             /// The adapter's vendor id.
             /// </summary>
-            [UInt(32)] public uint VendorId { get; private set; }
+            [UInt(32)] public uint VendorId { get; set; }
 
             /// <summary>
             /// The adapter's device id.
             /// </summary>
-            [UInt(32)] public uint DeviceId { get; private set; }
+            [UInt(32)] public uint DeviceId { get; set; }
 
             /// <summary>
             /// The adapter's subsystem id.
             /// </summary>
-            [UInt(32)] public uint SubsystemId { get; private set; }
+            [UInt(32)] public uint SubsystemId { get; set; }
 
             /// <summary>
             /// The adapter's revision.
             /// </summary>
-            [UInt(32)] public uint Revision { get; private set; }
+            [UInt(32)] public uint Revision { get; set; }
 
             /// <summary>
             /// The adapter's memory, in MiB. Windows' own figure stops at 4095.
             /// </summary>
-            [UInt(32)] public uint MemoryMb { get; private set; }
+            [UInt(32)] public uint MemoryMb { get; set; }
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ public sealed partial class LoginRequest
         /// <summary>
         /// The machine's physical memory, in MiB, rounded up.
         /// </summary>
-        [UInt(32)] public uint MemoryMb { get; private set; }
+        [UInt(32)] public uint MemoryMb { get; set; }
 
         /// <summary>
         /// The default display adapter.
@@ -123,40 +123,40 @@ public sealed partial class LoginRequest
         /// <summary>
         /// The processor architecture: 0x10000 plus a code, 1 for x86, 2 for x64, 3 for IA-64, 4 for ARM and 0 for any other.
         /// </summary>
-        [UInt(32)] public uint Architecture { get; private set; }
+        [UInt(32)] public uint Architecture { get; set; }
 
         /// <summary>
         /// The Windows version, as (major &lt;&lt; 16) | minor.
         /// </summary>
-        [UInt(32)] public uint OsVersion { get; private set; }
+        [UInt(32)] public uint OsVersion { get; set; }
 
         /// <summary>
         /// The Windows service pack, as (major &lt;&lt; 16) | minor.
         /// </summary>
-        [UInt(32)] public uint OsServicePack { get; private set; }
+        [UInt(32)] public uint OsServicePack { get; set; }
 
         /// <summary>
         /// The Windows edition: the suite mask in bits 16 to 31, the product type in bits 8 to 15, and in bits 0 to 3 whether Windows is
         /// Server R2, Media Center, Starter and Tablet PC.
         /// </summary>
-        [UInt(32)] public uint OsEdition { get; private set; }
+        [UInt(32)] public uint OsEdition { get; set; }
     }
 
     /// <summary>
     /// The client's build, 16042.
     /// </summary>
-    [UInt(32)] public uint Build { get; private set; }
+    [UInt(32)] public uint Build { get; set; }
 
     /// <summary>
     /// A fingerprint of the client's install: a fixed seed folded, byte by byte, over the SHA-1 digests of the running executable and of its
     /// patch index file. The same install sends the same value on every login.
     /// </summary>
-    [UInt(64)] public ulong Fingerprint { get; private set; }
+    [UInt(64)] public ulong Fingerprint { get; set; }
 
     /// <summary>
     /// The account name the player logged in with, as typed. At most 251 characters.
     /// </summary>
-    [TerminatedWideString] public string AccountName { get; private set; } = "";
+    [TerminatedWideString] public string AccountName { get; set; } = "";
 
     /// <summary>
     /// The user id the STS returned when the login finished, parsed from its text form.
@@ -172,22 +172,22 @@ public sealed partial class LoginRequest
     /// The client's own IPv4 address on its STS connection, as its socket reports the local end, as a host-order integer: a.b.c.d is
     /// (a &lt;&lt; 24) | (b &lt;&lt; 16) | (c &lt;&lt; 8) | d.
     /// </summary>
-    [UInt(32)] public uint ClientAddress { get; private set; }
+    [UInt(32)] public uint ClientAddress { get; set; }
 
     /// <summary>
     /// The client's interface language, as an id in the client's Language table.
     /// </summary>
-    [UInt(32)] public uint LanguageId { get; private set; }
+    [UInt(32)] public uint LanguageId { get; set; }
 
     /// <summary>
     /// The client's game mode, set when it starts: 0 by default, and any value of 2 or more becomes 0.
     /// </summary>
-    [UInt(32)] public uint GameMode { get; private set; }
+    [UInt(32)] public uint GameMode { get; set; }
 
     /// <summary>
     /// The client gives this value no meaning. It always sends 0.
     /// </summary>
-    [UInt(32)] public uint Unknown8 { get; private set; }
+    [UInt(32)] public uint Unknown8 { get; set; }
 
     /// <summary>
     /// A description of the client's machine.
@@ -197,5 +197,5 @@ public sealed partial class LoginRequest
     /// <summary>
     /// The realm data center the client was started for, as an id in the client's RealmDataCenter table.
     /// </summary>
-    [UInt(32)] public uint RealmDataCenterId { get; private set; }
+    [UInt(32)] public uint RealmDataCenterId { get; set; }
 }

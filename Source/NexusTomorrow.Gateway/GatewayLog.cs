@@ -14,4 +14,13 @@ internal static partial class GatewayLog
 
     [LoggerMessage(EventId = 4003, Level = LogLevel.Error, Message = "An STS connection failed unexpectedly")]
     public static partial void StsFailed(ILogger logger, Exception exception);
+
+    [LoggerMessage(EventId = 4004, Level = LogLevel.Information, Message = "Connection {ConnectionId} ended: {Reason}")]
+    public static partial void ConnectionEnded(ILogger logger, long connectionId, string reason);
+
+    [LoggerMessage(EventId = 4005, Level = LogLevel.Error, Message = "Connection {ConnectionId} failed unexpectedly")]
+    public static partial void ConnectionFailed(ILogger logger, long connectionId, Exception exception);
+
+    [LoggerMessage(EventId = 4006, Level = LogLevel.Debug, Message = "Connection {ConnectionId} dropped message 0x{Opcode:X4}: {Reason}")]
+    public static partial void MessageDropped(ILogger logger, long connectionId, ushort opcode, string reason);
 }

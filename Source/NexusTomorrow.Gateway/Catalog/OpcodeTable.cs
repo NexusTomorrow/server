@@ -70,6 +70,7 @@ public static class OpcodeTable
     /// </summary>
     public static FrozenDictionary<ushort, OpcodeRow> Pregame { get; } = new OpcodeRow[]
     {
+        new(0x0592, MessageOwner.Account, MessagePriority.Normal, 1, OverLimitAction.Disconnect), // LoginRequest
         new(0x058F, MessageOwner.Account, MessagePriority.Normal, 1, OverLimitAction.Disconnect), // WorldHello
         new(0x07E0, MessageOwner.Realm, MessagePriority.Normal, 2, OverLimitAction.Drop), // CharacterListRequest
         new(0x025B, MessageOwner.Realm, MessagePriority.Normal, 1, OverLimitAction.Drop), // CharacterCreate

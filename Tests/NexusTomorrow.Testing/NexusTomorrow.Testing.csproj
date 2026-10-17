@@ -17,6 +17,10 @@
     <ProjectReference Include="..\..\Source\NexusTomorrow.Cryptography\NexusTomorrow.Cryptography.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Owners\NexusTomorrow.Owners.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Persistence\NexusTomorrow.Persistence.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Transport\NexusTomorrow.Transport.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network\NexusTomorrow.Network.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network.Auth\NexusTomorrow.Network.Auth.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network.World\NexusTomorrow.Network.World.csproj" />
   </ItemGroup>
 
 </Project>
