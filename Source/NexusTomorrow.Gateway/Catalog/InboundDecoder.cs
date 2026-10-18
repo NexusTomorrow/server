@@ -17,8 +17,8 @@ public enum InboundResult
     Message,
 
     /// <summary>
-    /// A well-formed message the server does not read: undeclared, below <c>Fields</c>, without a table row, or switched off. Counted
-    /// and dropped; the session continues.
+    /// A well-formed message the server does not read: without a table row, switched off, undeclared, or read below the rung its row
+    /// admits (<c>Fields</c>, or <c>Purpose</c> for a row that reads only verified members). Counted and dropped; the session continues.
     /// </summary>
     Dropped,
 
