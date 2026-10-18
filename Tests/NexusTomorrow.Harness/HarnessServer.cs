@@ -163,14 +163,14 @@ public sealed class HarnessServer : IAsyncDisposable
         }
         catch
         {
-            // The host is already stopped and disposed. A map whose tick throws never drains, so the drain or the stop times out; the
-            // exception that tick held is what surfaces then, with its own stack, in place of the timeout. With none held, the
-            // timeout surfaces as it was.
+            // The host's stop and dispose have run, each up to its 30 s bound. A map whose tick keeps throwing can stall the 10 s drain
+            // or the stop past its bound; a fault a tick held surfaces here, with its own stack, in place of whatever threw. With no
+            // fault held, what threw surfaces unchanged.
             Maps.ThrowIfFaulted();
             throw;
         }
 
-        // Nothing threw: a fault a tick held still fails the scenario that broke it.
+        // Nothing threw, so the host stopped and disposed within its bounds; a fault a tick held still fails the scenario that broke it.
         Maps.ThrowIfFaulted();
     }
 }
