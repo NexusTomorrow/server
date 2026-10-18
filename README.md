@@ -92,7 +92,10 @@ Entering the world comes next.
 
 `migrate` applies every schema's pending migrations and exits 0, or exits 1 with the error. The
 server refuses to start while any schema has a pending migration, so run `migrate` again after
-updating. To log every refused STS request and every game message a connection receives and sends (type names only), set `${env:Logging__LogLevel__NexusTomorrow.Gateway} = "Debug"` before step 5; the braces keep PowerShell from reading the dot as a property.
+updating. To log every refused STS request and every game message a connection decodes, drops
+or sends (type names only; transport pings are not logged), set
+`${env:Logging__LogLevel__NexusTomorrow.Gateway} = "Debug"` before step 5; the braces keep
+PowerShell from reading the dot as a property.
 
 Settings come from `appsettings.json`, then environment variables (`__` stands for `:`), then the
 command line. The ones you are most likely to change:
@@ -154,8 +157,8 @@ every plan starts from code that exists.
 | Step | Delivers | Status |
 |---|---|---|
 | 1. Repository | The carried-over libraries, renamed, with nullable reference types on, tests and CI | Done |
-| 2. Codec | Every client message declared once with its field widths; readers and writers generated from the declarations and checked against the client's own layouts | In progress |
-| 3. Core | The server process: account, realm and per-map owners, each single-threaded over its own state; timers; saves to PostgreSQL 18; the admin command layer; a test harness with headless clients | Planned |
+| 2. Codec | Every client message declared once with its field widths; readers and writers generated from the declarations and checked against the client's own layouts | Done; the audit of each message continues |
+| 3. Core | The server process: account, realm and per-map owners, each single-threaded over its own state; timers; saves to PostgreSQL 18; the admin command layer; a test harness with headless clients | In progress: the client logs in and creates a character; entering the world is next |
 | 4. Milestone one | Log in, create a character, enter the world, walk, see another player move, and `/say` | Planned |
 | 5. Console | A web admin console and a player portal for accounts | Planned |
 | 6. Systems | The content pipeline, then quests, achievements, economy and social; combat after | Planned |
