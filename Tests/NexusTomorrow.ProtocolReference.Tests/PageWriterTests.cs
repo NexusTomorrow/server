@@ -1,4 +1,6 @@
-﻿using NexusTomorrow.Network.Auth.Message.Model;
+﻿using System.Reflection;
+using NexusTomorrow.Network.Auth.Message.Model;
+using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.Message.Model;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.ProtocolReference.Tests.Message.Model.Sample;
@@ -118,5 +120,22 @@ public sealed class PageWriterTests
         Assert.Equal("Pregame", Areas.AreaOf(typeof(LoginRequest)));
         Assert.Equal("Pregame", Areas.AreaOf(typeof(ServerHello)));
         Assert.Equal("Sample", Areas.AreaOf(typeof(SampleRequest)));
+    }
+
+    [Fact]
+    public void ATypeOutsideEveryModelNamespaceHasNoArea()
+    {
+        Assert.Throws<InvalidOperationException>(() => Areas.AreaOf(typeof(PageWriterTests)));
+    }
+
+    [Fact]
+    public void NoWorldMessageSitsAtTheModelRoot()
+    {
+        string[] outsideAnArea = [.. typeof(global::NexusTomorrow.Network.World.WireMessages).Assembly.GetTypes()
+            .Where(type => type.GetCustomAttribute<WireMessageAttribute>() is not null)
+            .Where(type => !(type.Namespace ?? "").Contains(".Message.Model.", StringComparison.Ordinal))
+            .Select(type => type.FullName ?? type.Name)
+            .Order(StringComparer.Ordinal)];
+        Assert.Empty(outsideAnArea);
     }
 }
