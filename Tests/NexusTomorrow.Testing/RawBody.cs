@@ -2,8 +2,10 @@
 
 namespace NexusTomorrow.Testing;
 
-// A message body that writes its bytes as they are, for frames the declarations cannot express (a tagged message holding a lying
-// length, a wrapper inside a wrapper). A decoder never reads one.
+// Bytes written byte for byte, without the declaration under test. Every tagged frame GameTestClient.SendTaggedAsync,
+// GameTestClient.SendTaggedUncheckedAsync and ClientFrames.TaggedEnvelopeBody send travels in one, malformed ones included (a lying
+// length, a wrapper inside a wrapper, a body that does not read as its declaration). It is only written: a decoder reads the bytes
+// as the declaration their opcode names.
 public sealed class RawBody(byte[] bytes) : IWireStruct
 {
     public void Read(ref BitReader reader) => throw new NotSupportedException("A raw body is only written.");

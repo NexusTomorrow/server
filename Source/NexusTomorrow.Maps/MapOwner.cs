@@ -316,8 +316,9 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
             player.Session.Send(_logoutCountdown);
     }
 
-    // The hand-back queues the save and posts the return before WorldLogout goes out, so the client's next select finds the character
-    // at rest. The connection stays open: a client that chose to exit quits itself, and its closed connection no longer routes here.
+    // The hand-back queues the save when the location changed (HandBack's IsDirty check) and posts the return before WorldLogout goes
+    // out, so the client's next select finds the character at rest. The connection stays open: a client that chose to exit quits
+    // itself, and its closed connection no longer routes here.
     private void ConfirmLogout(Player player)
     {
         IWorldSession session = player.Session;
@@ -425,9 +426,10 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
         _stopped.TrySetResult();
     }
 
-    // The failure policy (spec section 1): log the message, disconnect its session, and keep ticking. For an arrival, its character
-    // goes back to the realm unless another session holds it, and the arrival session's own player for that character goes back if
-    // it holds one; for any other session message, the session's player goes back.
+    // The failure policy (spec section 1): log the message, disconnect its session, and keep ticking. One message posts at most one
+    // return. For an arrival: when no session holds its character, the character goes back to the realm as it arrived; when the
+    // arrival's own session holds it, that player goes back; when another session holds it, it stays. For any other session message,
+    // the session's player goes back.
     private void Fault(MapMessage message, Exception exception)
     {
         var sessionMessage = message as SessionMessage;

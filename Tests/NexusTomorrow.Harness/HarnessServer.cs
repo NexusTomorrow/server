@@ -163,9 +163,10 @@ public sealed class HarnessServer : IAsyncDisposable
         }
         catch
         {
-            // The host's stop and dispose have run, each up to its 30 s bound. A map whose tick keeps throwing can stall the 10 s drain
-            // or the stop past its bound; a fault a tick held surfaces here, with its own stack, in place of whatever threw. With no
-            // fault held, what threw surfaces unchanged.
+            // The host's stop and dispose have run, each up to its 30 s bound. A map whose tick keeps throwing can hold its queue past
+            // the drain's bound (10 s for each owner's and each map's queue in turn, not for the drain as a whole) or the stop past its
+            // own; a fault a tick held surfaces here, with its own stack, in place of whatever threw. With no fault held, what threw
+            // surfaces unchanged.
             Maps.ThrowIfFaulted();
             throw;
         }
