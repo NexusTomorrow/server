@@ -225,7 +225,7 @@ public sealed class StsConnection
     // Names the URIs the server knows and nothing else, so no client text reaches a log line.
     private static string KnownUri(string uri) =>
         uri is "/Sts/Ping" or "/Sts/Connect" or "/Auth/LoginStart" or "/Auth/KeyData" or "/Auth/LoginFinish"
-            or "/GameAccount/ListMyAccounts" or "/Auth/RequestGameToken"
+            or "/GameAccount/ListMyAccounts" or "/Auth/RequestGameToken" or "/Auth/PageVerifiedIps"
             ? uri
             : "(unknown)";
 
@@ -281,6 +281,9 @@ public sealed class StsConnection
                 return true;
             case "/Auth/RequestGameToken" when _state == State.Authenticated && _account is { } account:
                 return await RequestGameTokenAsync(request, output, account, preAuth, cancellationToken);
+            case "/Auth/PageVerifiedIps" when _state == State.Authenticated:
+                await ReplyAsync(request, output, 200, new PageVerifiedIpsResponse(), cancellationToken);
+                return true;
             default:
                 GatewayLog.StsRequestRefused(_logger, KnownUri(request.Uri), _state.ToString());
                 LogRefusedRequest(request);
