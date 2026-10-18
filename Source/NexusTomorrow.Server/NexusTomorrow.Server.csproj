@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NexusTomorrow.Gateway\NexusTomorrow.Gateway.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Maps\NexusTomorrow.Maps.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Owners\NexusTomorrow.Owners.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Persistence\NexusTomorrow.Persistence.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Commands\NexusTomorrow.Commands.csproj" />

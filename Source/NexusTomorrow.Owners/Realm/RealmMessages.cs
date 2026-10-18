@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Realm;
 
@@ -33,12 +34,12 @@ public sealed record RenameCharacter(long AccountId, IClientSession Session, ulo
 /// <summary>
 /// The client asked to enter the world as a character.
 /// </summary>
-public sealed record SelectCharacter(long AccountId, IClientSession Session, ulong CharacterId) : RealmMessage;
+public sealed record SelectCharacter(long AccountId, IWorldSession Session, ulong CharacterId) : RealmMessage;
 
 /// <summary>
 /// A world session ended; its account's cached characters go with it.
 /// </summary>
-public sealed record RealmSessionClosed(long AccountId, IClientSession Session) : RealmMessage;
+public sealed record RealmSessionClosed(long AccountId, IWorldSession Session) : RealmMessage;
 
 /// <summary>
 /// A map handed a character back, standing where it left the world, its save already queued when it changed.
@@ -57,3 +58,5 @@ internal sealed record CharacterCreated(long AccountId, IClientSession Session, 
 internal sealed record CharacterDeleted(long AccountId, IClientSession Session, ulong CharacterId, WorkResult Result) : RealmMessage;
 
 internal sealed record CharacterRenamed(long AccountId, IClientSession Session, ulong CharacterId, string Name, WorkResult Result) : RealmMessage;
+
+internal sealed record CharacterLoaded(long Ticket, ulong CharacterId, CharacterRecord? Character) : RealmMessage;

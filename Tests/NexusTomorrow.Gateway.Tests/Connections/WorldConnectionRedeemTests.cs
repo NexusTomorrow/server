@@ -33,7 +33,7 @@ public sealed class WorldConnectionRedeemTests : IAsyncLifetime
     public WorldConnectionRedeemTests()
     {
         _accounts = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind());
-        _realm = new RealmOwner(new FakeWriteBehind(), new FixedCreationCatalog([]), _time, Options.Create(new RealmOptions { Id = 3 }), NullLogger<RealmOwner>.Instance);
+        _realm = new RealmOwner(new FakeWriteBehind(), new FixedCreationCatalog([]), new FakeMapDirectory(), _time, Options.Create(new RealmOptions { Id = 3 }), NullLogger<RealmOwner>.Instance);
     }
 
     private GameTestClient Client { get; set; } = null!;

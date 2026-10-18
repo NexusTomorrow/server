@@ -6,6 +6,7 @@ using NexusTomorrow.Network.Message.Model;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
+using NexusTomorrow.Owners.World;
 using NexusTomorrow.Transport;
 
 namespace NexusTomorrow.Gateway.Connections;
@@ -14,7 +15,7 @@ namespace NexusTomorrow.Gateway.Connections;
 /// The world connection: greets inside the world envelope under the build key, redeems the session key through the account owner,
 /// switches both directions to the session cipher, and hands character-select messages to the realm owner.
 /// </summary>
-public sealed class WorldConnection : ClientConnection
+public sealed class WorldConnection : ClientConnection, IWorldSession
 {
     private const uint Build = 16042;
     private const uint ProtocolVersion = 0x097998A0;
@@ -25,8 +26,14 @@ public sealed class WorldConnection : ClientConnection
     private readonly RealmOptions _realmOptions;
     private readonly ILogger _logger;
     private readonly SessionKeyRedeemer _redeem;
+    private readonly Lock _route = new();
     private long? _accountId;
     private bool _greeted;
+
+    // Guarded by _route: the map the session is routed to, and whether the connection has ended. TryEnterMap refuses once it has, so
+    // a map is never kept past the one OnClosed took.
+    private IMapInbox? _map;
+    private bool _ended;
 
     /// <summary>
     /// Create the connection.
@@ -102,10 +109,45 @@ public sealed class WorldConnection : ClientConnection
     /// <inheritdoc/>
     protected override void OnClosed()
     {
+        // A map taken here hears of the end once: the connection holds no map afterwards, so LeaveMap and a later TryEnterMap change
+        // nothing.
+        IMapInbox? map;
+        lock (_route)
+        {
+            _ended = true;
+            map = _map;
+            _map = null;
+        }
+
+        map?.Post(new ClientLeft(this));
+
         // Both owners are told only when the account owner granted this session, which sets _accountId; a connection that ended before
         // the grant was read tells them from GreetAsync once the grant arrives.
         if (_accountId is long accountId)
             CloseSession(accountId);
+    }
+
+    /// <inheritdoc/>
+    public bool TryEnterMap(IMapInbox map)
+    {
+        lock (_route)
+        {
+            if (_ended)
+                return false;
+
+            _map = map;
+            return true;
+        }
+    }
+
+    /// <inheritdoc/>
+    public void LeaveMap(IMapInbox map)
+    {
+        lock (_route)
+        {
+            if (ReferenceEquals(_map, map))
+                _map = null;
+        }
     }
 
     private async ValueTask<bool> GreetAsync(IWireMessage message)

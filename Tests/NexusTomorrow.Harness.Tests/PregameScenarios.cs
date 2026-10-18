@@ -45,7 +45,8 @@ public sealed class PregameScenarios
         CharacterCreateResult created = await session.CreateAsync("Rebaser Head", creationId: 1, path: 2);
         Assert.Equal(CreateResults.Created, created.Result);
 
-        // The client selects the character it just made; Stage 1 has no world, so selection fails with the general reason.
+        // The client selects the character it just made; the harness holds no world data, so no map hosts its world and
+        // selection fails with the general reason.
         Assert.Equal(SelectReasons.General, (await session.SelectAsync(created.CharacterId)).Reason);
 
         CharacterList list = await session.RequestListAsync();

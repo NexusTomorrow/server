@@ -10,9 +10,13 @@ using NexusTomorrow.Gateway.Connections;
 using NexusTomorrow.Gateway.Kestrel;
 using NexusTomorrow.Gateway.Limits;
 using NexusTomorrow.Gateway.Sts;
+using NexusTomorrow.Maps;
+using NexusTomorrow.Maps.Scheduling;
+using NexusTomorrow.Maps.Worlds;
 using NexusTomorrow.Owners;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
+using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Account;
 
@@ -27,20 +31,29 @@ public static class CoreServices
     private static readonly TimeSpan s_ownerStallTime = TimeSpan.FromSeconds(10);
 
     /// <summary>
-    /// Register the core against <paramref name="configuration"/>. The clock and the creation catalog are registered only when the
-    /// caller has not, so a harness that registers its own first wins.
+    /// Register the core against <paramref name="configuration"/>. The clock, the creation catalog, the world catalog, the map
+    /// scheduler and the random source are registered only when the caller has not, so a harness that registers its own first wins.
     /// </summary>
     public static IServiceCollection AddNexusTomorrowCore(this IServiceCollection services, IConfiguration configuration)
     {
         AddOptions<GatewayOptions, GatewayOptionsValidator>(services, configuration, GatewayOptions.Section);
         AddOptions<PersistenceOptions, PersistenceOptionsValidator>(services, configuration, PersistenceOptions.Section);
         AddOptions<RealmOptions, RealmOptionsValidator>(services, configuration, RealmOptions.Section);
+        AddOptions<MapOptions>(services, configuration, MapOptions.Section);
         AddOptions<AccountOptions, AccountOptionsValidator>(services, configuration, AccountOptions.Section);
         AddOptions<ContentOptions>(services, configuration, ContentOptions.Section);
         AddOptions<CliOptions>(services, configuration, CliOptions.Section);
 
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<ICreationCatalog, TableCreationCatalog>();
+
+        // Random.Shared is safe from any thread; a harness registers its own seeded one first.
+        services.TryAddSingleton(Random.Shared);
+        services.TryAddSingleton<IWorldCatalog, TableWorldCatalog>();
+        services.AddSingleton<MapMetrics>();
+        services.TryAddSingleton<IMapScheduler, MapScheduler>();
+        services.AddSingleton<MapDirectory>();
+        services.AddSingleton<IMapDirectory>(provider => provider.GetRequiredService<MapDirectory>());
 
         services.AddSingleton(provider => PersistenceContexts.Create(provider.GetRequiredService<IOptions<PersistenceOptions>>().Value.ConnectionString));
         services.AddSingleton<WriteBehindQueue>();
