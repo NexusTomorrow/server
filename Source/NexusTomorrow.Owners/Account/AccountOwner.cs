@@ -48,7 +48,7 @@ public sealed class AccountOwner : Owner<AccountMessage>
     /// </summary>
     public int OnlineCount => Volatile.Read(ref _onlineCount);
 
-    // Game tokens issued and neither redeemed nor expired, read from any thread; written after every message.
+    // Game tokens held, read from any thread. Expired tokens stay counted until the next Issue, Redeem or session-key redeem sweeps them.
     internal int PendingGameTokens => Volatile.Read(ref _pendingGameTokens);
 
     /// <inheritdoc/>
@@ -57,13 +57,19 @@ public sealed class AccountOwner : Owner<AccountMessage>
         switch (message)
         {
             case IssueGameToken issue:
-                issue.Reply.TrySetResult(Issue(issue.Account));
+                Guid issued = Issue(issue.Account);
+                PublishPendingGameTokens();
+                issue.Reply.TrySetResult(issued);
                 break;
             case RedeemGameToken redeem:
-                redeem.Reply.TrySetResult(Redeem(redeem));
+                LoginDecision login = Redeem(redeem);
+                PublishPendingGameTokens();
+                redeem.Reply.TrySetResult(login);
                 break;
             case RedeemSessionKey greet:
-                greet.Reply.TrySetResult(Greet(greet));
+                WorldDecision world = Greet(greet);
+                PublishPendingGameTokens();
+                greet.Reply.TrySetResult(world);
                 break;
             case WorldSessionClosed closed:
                 if (_online.TryGetValue(closed.AccountId, out IClientSession? current) && current == closed.Session)
@@ -92,9 +98,10 @@ public sealed class AccountOwner : Owner<AccountMessage>
                 Stored(stored);
                 break;
         }
-
-        Volatile.Write(ref _pendingGameTokens, _tokens.Count);
     }
+
+    // Called before a reply that follows a change to _tokens completes, so a caller resumed by that reply reads the count it left.
+    private void PublishPendingGameTokens() => Volatile.Write(ref _pendingGameTokens, _tokens.Count);
 
     /// <inheritdoc/>
     protected override void OnFault(AccountMessage message, Exception exception)
