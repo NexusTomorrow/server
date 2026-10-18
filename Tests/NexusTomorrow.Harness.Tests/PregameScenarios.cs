@@ -25,6 +25,16 @@ public sealed class PregameScenarios
         Assert.Equal(1, session.FirstList.RealmId);
     }
 
+    // The account is made as alice@example.com; the login types the email in mixed case at every step.
+    [Fact]
+    public async Task AMixedCaseEmailLogsInToTheAccount()
+    {
+        await using Scenario scenario = await Scenario.StartAsync();
+        await using HeadlessClient client = scenario.Server.NewClient();
+        await using WorldSession session = await client.ScriptedLoginAsync("Alice@Example.com", Password);
+        Assert.Empty(session.FirstList.Characters);
+    }
+
     [Fact]
     public async Task ACreatedCharacterAppearsInTheNextList()
     {

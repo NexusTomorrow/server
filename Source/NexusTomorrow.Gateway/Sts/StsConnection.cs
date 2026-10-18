@@ -31,6 +31,10 @@ public sealed class StsConnection
     private const int MaxPublicValueBytes = 128;
     private const int MaxEvidenceBytes = 32;
 
+    // StsRequestReader leaves fewer than MaxHeaderBytes + MaxBodyBytes unread when it answers Incomplete, so a buffer twice that
+    // always has room for that many more bytes once the unread ones are moved to its start.
+    private const int ReceiveBufferBytes = 2 * (StsRequestReader.MaxHeaderBytes + StsRequestReader.MaxBodyBytes);
+
     private static readonly XmlReaderSettings s_xml = new()
     {
         DtdProcessing = DtdProcessing.Prohibit,
@@ -54,7 +58,6 @@ public sealed class StsConnection
     private Srp6Provider? _exchange;
     private Arc4Provider? _receive;
     private Arc4Provider? _send;
-    private byte[] _plain = [];
 
     /// <summary>
     /// Create the connection.
@@ -96,19 +99,35 @@ public sealed class StsConnection
         using var preAuth = new CancellationTokenSource(_options.PreAuthTimeout, _time);
         using var lifetime = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, preAuth.Token);
         string reason = "the client closed the connection";
+
+        // The client's bytes, each decrypted once: received[start..end] is not yet read as a request. Requests are read in place, and
+        // the unread bytes move to the start at most once per read from the transport, so the work per byte does not grow with how
+        // many requests arrive together.
+        byte[] received = ArrayPool<byte>.Shared.Rent(ReceiveBufferBytes);
+        int start = 0;
+        int end = 0;
         try
         {
             while (true)
             {
                 ReadResult result = await transport.Input.ReadAsync(lifetime.Token);
-                byte[] chunk = result.Buffer.ToArray();
-                transport.Input.AdvanceTo(result.Buffer.End);
-                _receive?.Apply(chunk);
-                _plain = [.. _plain, .. chunk];
+                if (start > 0)
+                {
+                    received.AsSpan(start, end - start).CopyTo(received);
+                    end -= start;
+                    start = 0;
+                }
+
+                ReadOnlySequence<byte> taken = result.Buffer.Slice(0, Math.Min(result.Buffer.Length, received.Length - end));
+                taken.CopyTo(received.AsSpan(end));
+                _receive?.Apply(received.AsSpan(end, (int)taken.Length));
+                end += (int)taken.Length;
+                bool tookAll = taken.Length == result.Buffer.Length;
+                transport.Input.AdvanceTo(taken.End);
 
                 while (true)
                 {
-                    var buffer = new ReadOnlySequence<byte>(_plain);
+                    var buffer = new ReadOnlySequence<byte>(received, start, end - start);
                     StsReadStatus status = StsRequestReader.TryRead(ref buffer, out StsRequest? request);
                     if (status == StsReadStatus.Incomplete)
                         break;
@@ -118,7 +137,7 @@ public sealed class StsConnection
                         return;
                     }
 
-                    _plain = buffer.ToArray();
+                    start = end - (int)buffer.Length;
                     bool keyWasOff = _receive is null;
                     if (!await HandleAsync(request!, transport.Output, remote, preAuth, lifetime.Token))
                     {
@@ -126,12 +145,13 @@ public sealed class StsConnection
                         return;
                     }
 
-                    // The client turns its key on right after sending KeyData, so whatever followed it in this read is ciphertext.
+                    // The client turns its key on right after sending KeyData, so whatever follows it in the buffer is ciphertext; bytes
+                    // taken from the transport later are decrypted as they are taken.
                     if (keyWasOff && _receive is not null)
-                        _receive.Apply(_plain);
+                        _receive.Apply(received.AsSpan(start, end - start));
                 }
 
-                if (result.IsCompleted)
+                if (result.IsCompleted && tookAll)
                     return;
             }
         }
@@ -151,6 +171,7 @@ public sealed class StsConnection
         }
         finally
         {
+            ArrayPool<byte>.Shared.Return(received, clearArray: true);
             GatewayLog.StsConnectionEnded(_logger, remote, reason);
             await transport.Output.CompleteAsync();
             await transport.Input.CompleteAsync();
@@ -280,8 +301,9 @@ public sealed class StsConnection
         }
 
         // An unknown account runs the same exchange on credentials derived from the server's secret, so it fails at the proof.
+        // The verifier is made from the folded email (AccountCommands.Create), so the identity the proof hashes is folded too.
         (byte[] salt, byte[] verifier) = account is null ? _unknown.For(loginName) : (account.Salt, account.Verifier);
-        var exchange = new Srp6Provider(loginName, salt, verifier);
+        var exchange = new Srp6Provider(loginName.ToLowerInvariant(), salt, verifier);
         byte[] serverPublic = exchange.GenerateServerCredentials();
         _exchange = exchange;
         _account = account;
@@ -354,8 +376,10 @@ public sealed class StsConnection
         }
 
         Guid token = await reply.Task.WaitAsync(cancellationToken);
-        await ReplyAsync(request, output, 200, new RequestGameTokenResponse { Token = token.ToString() }, cancellationToken);
+
+        // Lifted before the reply goes out, so a client that holds the token cannot meet the limit.
         preAuth.CancelAfter(Timeout.InfiniteTimeSpan);
+        await ReplyAsync(request, output, 200, new RequestGameTokenResponse { Token = token.ToString() }, cancellationToken);
         return true;
     }
 

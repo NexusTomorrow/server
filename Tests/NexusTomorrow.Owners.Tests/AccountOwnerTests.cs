@@ -44,6 +44,29 @@ public sealed class AccountOwnerTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ANewGameTokenSupersedesTheAccountsEarlierOne()
+    {
+        Guid first = await IssueAsync(s_alice);
+        Guid second = await IssueAsync(s_alice);
+        Assert.Equal(LoginResults.General, Assert.IsType<LoginRefused>(await RedeemAsync(first, "alice@example.com")).Result);
+        Assert.IsType<LoginGranted>(await RedeemAsync(second, "alice@example.com"));
+    }
+
+    [Fact]
+    public async Task TheOwnerHoldsOneGameTokenPerAccount()
+    {
+        var bob = new AccountCredentials(8, "bob@example.com", [1], [2], SuspendedUntil: null, SuspendedIndefinitely: false);
+        Guid bobs = await IssueAsync(bob);
+        for (int i = 0; i < 100; i++)
+            await IssueAsync(s_alice);
+        Assert.Equal(2, _owner.PendingGameTokens);
+
+        // Alice's tokens never superseded Bob's, and redeeming it frees his entry.
+        Assert.IsType<LoginGranted>(await RedeemAsync(bobs, "bob@example.com"));
+        Assert.Equal(1, _owner.PendingGameTokens);
+    }
+
+    [Fact]
     public async Task AGameTokenRedeemedUnderAnotherNameIsRefused()
     {
         Guid token = await IssueAsync(s_alice);

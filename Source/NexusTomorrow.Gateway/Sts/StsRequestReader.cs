@@ -40,7 +40,8 @@ public static class StsRequestReader
         if (head.Length + 4 > MaxHeaderBytes)
             return StsReadStatus.Malformed;
 
-        byte[] headBytes = head.ToArray();
+        // StsConnection reads from one array, so the head is read where it lies; a head split across segments is copied once.
+        ReadOnlySpan<byte> headBytes = head.IsSingleSegment ? head.FirstSpan : head.ToArray();
         if (!Ascii.IsValid(headBytes))
             return StsReadStatus.Malformed;
 

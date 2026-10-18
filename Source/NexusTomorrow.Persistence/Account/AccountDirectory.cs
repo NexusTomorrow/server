@@ -20,22 +20,34 @@ public sealed class AccountDirectory : IAccountDirectory
     }
 
     /// <inheritdoc/>
+    /// <remarks>
+    /// One query reads the account with the suspensions in force, so an email with no account costs the database the same work as one
+    /// with an account, and the time an answer takes does not tell which emails have accounts.
+    /// </remarks>
     public async Task<AccountCredentials?> FindAsync(string email, CancellationToken cancellationToken)
     {
         await using AccountContext context = _contexts.CreateAccount();
+        DateTimeOffset now = _time.GetUtcNow();
+
         // The email column's collation makes this comparison ignore case.
-        AccountRow? account = await context.Accounts.AsNoTracking().SingleOrDefaultAsync(a => a.Email == email, cancellationToken);
-        if (account is null)
+        Found? found = await context.Accounts
+            .AsNoTracking()
+            .Where(a => a.Email == email)
+            .Select(a => new Found(
+                a,
+                context.Suspensions
+                    .Where(s => s.AccountId == a.Id && s.StartsAt <= now && (s.EndsAt == null || s.EndsAt > now))
+                    .Select(s => s.EndsAt)
+                    .ToList()))
+            .SingleOrDefaultAsync(cancellationToken);
+        if (found is null)
             return null;
 
-        DateTimeOffset now = _time.GetUtcNow();
-        List<DateTimeOffset?> ends = await context.Suspensions
-            .AsNoTracking()
-            .Where(s => s.AccountId == account.Id && s.StartsAt <= now && (s.EndsAt == null || s.EndsAt > now))
-            .Select(s => s.EndsAt)
-            .ToListAsync(cancellationToken);
-        bool indefinite = ends.Contains(null);
-        DateTimeOffset? until = indefinite ? null : ends.Max();
+        AccountRow account = found.Account;
+        bool indefinite = found.SuspensionEnds.Contains(null);
+        DateTimeOffset? until = indefinite ? null : found.SuspensionEnds.Max();
         return new AccountCredentials(account.Id, account.Email, account.Salt, account.Verifier, until, indefinite);
     }
+
+    private sealed record Found(AccountRow Account, List<DateTimeOffset?> SuspensionEnds);
 }

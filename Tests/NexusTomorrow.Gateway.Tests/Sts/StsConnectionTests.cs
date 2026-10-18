@@ -1,4 +1,5 @@
-﻿using System.IO.Pipelines;
+﻿using System.Buffers;
+using System.IO.Pipelines;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -324,14 +325,71 @@ public sealed class StsConnectionTests : IAsyncLifetime
         Assert.True(await client.IsClosedAsync(s_wait));
     }
 
+    // The clock passes the limit inside the write of the token's reply, before the server's next line runs, so the limit must already
+    // be lifted when that reply is written.
     [Fact]
     public async Task TheTimeLimitIsLiftedOnceTheGameTokenIsIssued()
     {
-        var client = new StsTestClient(_pipes.Client);
-        await client.LoginAsync("alice@example.com", "correct horse");
-        _time.Advance(_options.Value.PreAuthTimeout + TimeSpan.FromSeconds(1));
+        var pipes = new PipePair();
+        var output = new ClockStepWriter(pipes.Server.Output, _time);
+        Serve(new Transport(pipes.Server.Input, output), 50040);
+        var client = new StsTestClient(pipes.Client);
+        (byte[] salt, byte[] b) = await LoginStartAsync(client, "alice@example.com");
+        var srp = new Srp6Client("alice@example.com", "correct horse");
+        (byte[] a, byte[] m1) = srp.Answer(salt, b);
+        await client.SendAsync("/Auth/KeyData", $"<Request>\n<KeyData>{StsTestClient.WriteTwo(a, m1)}</KeyData>\n</Request>\n");
+        Assert.Equal(200, (await client.ReceiveAsync()).Status);
+        client.KeyOn(srp.SessionKey);
+
+        output.StepOnNextFlush(_options.Value.PreAuthTimeout + TimeSpan.FromSeconds(1));
         await client.SendAsync("/Auth/RequestGameToken", "");
         Assert.Equal(200, (await client.ReceiveAsync()).Status);
+        await client.SendAsync("/GameAccount/ListMyAccounts", "");
+        Assert.Equal(200, (await client.ReceiveAsync()).Status);
+    }
+
+    [Fact]
+    public async Task AMixedCaseLoginNameProvesAgainstTheVerifierOfTheFoldedName()
+    {
+        (Guid? token, StsReply? error) = await new StsTestClient(_pipes.Client).LoginAsync("Alice@Example.COM", "correct horse");
+        Assert.Null(error);
+        Assert.NotNull(token);
+    }
+
+    [Fact]
+    public async Task RequestsInOneWriteAreAllHandledInWorkThatGrowsLinearlyWithTheirCount()
+    {
+        long fewer = await PingsThenLoginStartAsync(1000, 50030);
+        long more = await PingsThenLoginStartAsync(4000, 50031);
+
+        // Four times the requests: linear work allocates about four times as much, and copying the unread rest after each request
+        // about sixteen times.
+        Assert.True(more < 6 * fewer, $"{fewer} bytes allocated for 1000 pings, {more} for 4000.");
+    }
+
+    [Fact]
+    public async Task RequestsBehindKeyDataInOneLargeWriteAreEachDecryptedOnce()
+    {
+        var client = new StsTestClient(_pipes.Client);
+        (byte[] salt, byte[] b) = await LoginStartAsync(client, "alice@example.com");
+        var srp = new Srp6Client("alice@example.com", "correct horse");
+        (byte[] a, byte[] m1) = srp.Answer(salt, b);
+
+        // KeyData in clear, then pings and LoginFinish under the new key: more bytes than the server takes from the transport at once.
+        List<(string Uri, string Body, bool KeyOnAfter, byte[]? Key)> requests =
+        [
+            ("/Auth/KeyData", $"<Request>\n<KeyData>{StsTestClient.WriteTwo(a, m1)}</KeyData>\n</Request>\n", true, srp.SessionKey),
+        ];
+        for (int i = 0; i < 2000; i++)
+            requests.Add(("/Sts/Ping", "<Ping>\n</Ping>\n", false, null));
+        requests.Add(("/Auth/LoginFinish", "", false, null));
+        await client.SendTogetherAsync([.. requests]);
+
+        Assert.Equal(200, (await client.ReceiveAsync()).Status);
+        client.ReceiveKeyOn(srp.SessionKey);
+        StsReply finish = await client.ReceiveAsync();
+        Assert.Equal(200, finish.Status);
+        Assert.Contains("<UserName>", finish.Body, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -378,12 +436,15 @@ public sealed class StsConnectionTests : IAsyncLifetime
         }
     }
 
-    private void Serve(PipePair pipes, int port, LoginRateLimiter? limiter = null, ILogger<StsConnection>? logger = null)
-    {
-        var connection = new StsConnection(_directory, _persistence, _accounts, new UnknownAccountCredentials(_options),
-            limiter ?? new LoginRateLimiter(_time, _options), _options, _time, logger ?? NullLogger<StsConnection>.Instance);
-        _runs.Add(connection.RunAsync(pipes.Server, new IPEndPoint(IPAddress.Loopback, port), _stop.Token));
-    }
+    private void Serve(PipePair pipes, int port, LoginRateLimiter? limiter = null, ILogger<StsConnection>? logger = null) =>
+        Serve(pipes.Server, port, limiter, logger);
+
+    private void Serve(IDuplexPipe server, int port, LoginRateLimiter? limiter = null, ILogger<StsConnection>? logger = null) =>
+        _runs.Add(NewConnection(limiter, logger).RunAsync(server, new IPEndPoint(IPAddress.Loopback, port), _stop.Token));
+
+    private StsConnection NewConnection(LoginRateLimiter? limiter = null, ILogger<StsConnection>? logger = null) =>
+        new(_directory, _persistence, _accounts, new UnknownAccountCredentials(_options), limiter ?? new LoginRateLimiter(_time, _options),
+            _options, _time, logger ?? NullLogger<StsConnection>.Instance);
 
     private IDuplexPipe OpenSecond()
     {
@@ -402,12 +463,74 @@ public sealed class StsConnectionTests : IAsyncLifetime
         return StsTestClient.ReadTwo((await client.ReceiveAsync()).Xml().GetElementsByTagName("KeyData")[0]!.InnerText);
     }
 
+    // The pings, then Connect and LoginStart, all written before the run starts, so the server reads them without waiting. The run's
+    // allocations are counted on this thread, which holds only while the run completes without yielding; the test checks that.
+    private async Task<long> PingsThenLoginStartAsync(int pings, int port)
+    {
+        var requests = new StringBuilder();
+        for (int i = 0; i < pings; i++)
+            requests.Append(Request("/Sts/Ping", "<Ping>\n</Ping>\n"));
+        requests.Append(Request("/Sts/Connect", Connect));
+        requests.Append(Request("/Auth/LoginStart", "<Request>\n<LoginName>alice@example.com</LoginName>\n</Request>\n"));
+        var pipes = new PipePair();
+        pipes.Client.Output.Write(Encoding.ASCII.GetBytes(requests.ToString()));
+        await pipes.Client.Output.CompleteAsync();
+        StsConnection connection = NewConnection();
+
+        long before = GC.GetAllocatedBytesForCurrentThread();
+        Task run = connection.RunAsync(pipes.Server, new IPEndPoint(IPAddress.Loopback, port), _stop.Token);
+        long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.True(run.IsCompletedSuccessfully, "The run yielded, so its allocations were not all counted on this thread.");
+        Assert.Single((await new StsTestClient(pipes.Client).ReceiveAsync()).Xml().GetElementsByTagName("KeyData"));
+        return allocated;
+    }
+
+    private static string Request(string uri, string body) => $"POST {uri} STS/1.0\r\nl:{body.Length}\r\ns:1\r\n\r\n{body}";
+
     // Connect, LoginStart and a KeyData with the given password, leaving the server's answer to the proof unread.
     private static async Task ProveAsync(StsTestClient client, string name, string password)
     {
         (byte[] salt, byte[] b) = await LoginStartAsync(client, name);
         (byte[] a, byte[] m1) = new Srp6Client(name.ToLowerInvariant(), password).Answer(salt, b);
         await client.SendAsync("/Auth/KeyData", $"<Request>\n<KeyData>{StsTestClient.WriteTwo(a, m1)}</KeyData>\n</Request>\n");
+    }
+
+    private sealed record Transport(PipeReader Input, PipeWriter Output) : IDuplexPipe;
+
+    // Passes every write through. Once armed, it steps the clock inside the next flush, before the bytes reach the client: the step
+    // lands after the server has written a reply and before the server's next line runs.
+    private sealed class ClockStepWriter : PipeWriter
+    {
+        private readonly PipeWriter _inner;
+        private readonly FakeTimeProvider _time;
+        private long _stepTicks;
+
+        public ClockStepWriter(PipeWriter inner, FakeTimeProvider time)
+        {
+            _inner = inner;
+            _time = time;
+        }
+
+        public void StepOnNextFlush(TimeSpan step) => Interlocked.Exchange(ref _stepTicks, step.Ticks);
+
+        public override void Advance(int bytes) => _inner.Advance(bytes);
+
+        public override void CancelPendingFlush() => _inner.CancelPendingFlush();
+
+        public override void Complete(Exception? exception = null) => _inner.Complete(exception);
+
+        public override ValueTask<FlushResult> FlushAsync(CancellationToken cancellationToken = default)
+        {
+            long step = Interlocked.Exchange(ref _stepTicks, 0);
+            if (step > 0)
+                _time.Advance(TimeSpan.FromTicks(step));
+            return _inner.FlushAsync(cancellationToken);
+        }
+
+        public override Memory<byte> GetMemory(int sizeHint = 0) => _inner.GetMemory(sizeHint);
+
+        public override Span<byte> GetSpan(int sizeHint = 0) => _inner.GetSpan(sizeHint);
     }
 
     private sealed class Directory : IAccountDirectory

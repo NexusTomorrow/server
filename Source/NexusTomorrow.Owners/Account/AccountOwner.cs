@@ -9,10 +9,10 @@ using NexusTomorrow.Persistence.Account;
 namespace NexusTomorrow.Owners.Account;
 
 /// <summary>
-/// The account side (decisions.md D9 2b): game tokens and session keys, each redeemable once within the token lifetime; the world
-/// session of each account, where a second login replaces the first; and the admin changes to accounts. Every suspension change goes
-/// through this owner, which keeps the state that overrides what the credentials said at login, so a refusal here never disagrees
-/// with the database once the change has committed.
+/// The account side (decisions.md D9 2b): game tokens and session keys, each redeemable once within the token lifetime, with one live
+/// game token per account; the world session of each account, where a second login replaces the first; and the admin changes to
+/// accounts. Every suspension change goes through this owner, which keeps the state that overrides what the credentials said at
+/// login, so a refusal here never disagrees with the database once the change has committed.
 /// </summary>
 public sealed class AccountOwner : Owner<AccountMessage>
 {
@@ -22,10 +22,15 @@ public sealed class AccountOwner : Owner<AccountMessage>
     private readonly TimeProvider _time;
     private readonly TimeSpan _lifetime;
     private readonly Dictionary<Guid, PendingToken> _tokens = [];
+
+    // The token in _tokens of each account that has one. A new token supersedes the account's earlier one, so _tokens holds at most
+    // one entry per account however often a client asks, and every token in _tokens is its account's entry here.
+    private readonly Dictionary<long, Guid> _tokenOf = [];
     private readonly Dictionary<UInt128, PendingSession> _sessionKeys = [];
     private readonly Dictionary<long, IClientSession> _online = [];
     private readonly Dictionary<long, SuspensionOverride> _suspensions = [];
     private int _onlineCount;
+    private int _pendingGameTokens;
 
     /// <summary>
     /// Create the account owner.
@@ -43,16 +48,16 @@ public sealed class AccountOwner : Owner<AccountMessage>
     /// </summary>
     public int OnlineCount => Volatile.Read(ref _onlineCount);
 
+    // Game tokens issued and neither redeemed nor expired, read from any thread; written after every message.
+    internal int PendingGameTokens => Volatile.Read(ref _pendingGameTokens);
+
     /// <inheritdoc/>
     protected override void Handle(AccountMessage message)
     {
         switch (message)
         {
             case IssueGameToken issue:
-                Expire();
-                var token = Guid.NewGuid();
-                _tokens[token] = new PendingToken(issue.Account, _time.GetUtcNow() + _lifetime);
-                issue.Reply.TrySetResult(token);
+                issue.Reply.TrySetResult(Issue(issue.Account));
                 break;
             case RedeemGameToken redeem:
                 redeem.Reply.TrySetResult(Redeem(redeem));
@@ -87,6 +92,8 @@ public sealed class AccountOwner : Owner<AccountMessage>
                 Stored(stored);
                 break;
         }
+
+        Volatile.Write(ref _pendingGameTokens, _tokens.Count);
     }
 
     /// <inheritdoc/>
@@ -121,11 +128,25 @@ public sealed class AccountOwner : Owner<AccountMessage>
 
     private static UInt128 KeyOf(byte[] sessionKey) => BinaryPrimitives.ReadUInt128LittleEndian(sessionKey);
 
+    private Guid Issue(AccountCredentials account)
+    {
+        Expire();
+        if (_tokenOf.Remove(account.Id, out Guid earlier))
+            _tokens.Remove(earlier);
+
+        var token = Guid.NewGuid();
+        _tokens[token] = new PendingToken(account, _time.GetUtcNow() + _lifetime);
+        _tokenOf[account.Id] = token;
+        return token;
+    }
+
     private LoginDecision Redeem(RedeemGameToken redeem)
     {
         Expire();
         if (!_tokens.Remove(redeem.Token, out PendingToken? pending))
             return new LoginRefused(LoginResults.General);
+
+        _tokenOf.Remove(pending.Account.Id);
         if (!string.Equals(pending.Account.Email, redeem.AccountName, StringComparison.OrdinalIgnoreCase))
             return new LoginRefused(LoginResults.General);
         if (IsSuspended(pending.Account.Id, pending.Account))
@@ -214,7 +235,10 @@ public sealed class AccountOwner : Owner<AccountMessage>
         foreach ((Guid token, PendingToken pending) in _tokens)
         {
             if (pending.ExpiresAt <= now)
+            {
                 _tokens.Remove(token);
+                _tokenOf.Remove(pending.Account.Id);
+            }
         }
 
         foreach ((UInt128 key, PendingSession pending) in _sessionKeys)
