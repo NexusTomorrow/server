@@ -144,8 +144,10 @@ keep them out of this repository.
 Starts your client with a server's address on its command line. It changes nothing in the client.
 
 1. Build it and copy its output into your client's folder, beside `WildStar64.exe`.
-2. Run `NexusTomorrow.ClientConnector.exe`. The first time, it asks for the server's host name and
-   your language (`en` or `de`) and saves them to `config.json`.
+2. Run `NexusTomorrow.ClientConnector.exe`, from that folder or anywhere else (a shortcut works too):
+   it looks for the client and `config.json` beside itself, and stops with a message if no client is
+   there. The first time, it asks for the server's host name and your language (`en` or `de`) and
+   saves them to `config.json`.
 3. Every later run reads `config.json` and starts the client straight away. To change servers, edit
    or delete `config.json`.
 

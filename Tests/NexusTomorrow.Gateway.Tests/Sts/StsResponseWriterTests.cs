@@ -28,4 +28,11 @@ public sealed class StsResponseWriterTests
             "<Reply type=\"array\">\n<GameAccount>\n<Alias>alice</Alias>\n<Created>then</Created>\n<GameAccountId>7</GameAccountId>\n</GameAccount>\n</Reply>",
             xml);
     }
+
+    [Fact]
+    public void PageVerifiedIpsWritesAnEmptyItemsElementWithAnEndTag()
+    {
+        string xml = StsResponseWriter.Xml(new PageVerifiedIpsResponse());
+        Assert.Equal("<Reply>\n<Items></Items>\n</Reply>", xml);
+    }
 }

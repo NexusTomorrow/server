@@ -3,6 +3,7 @@ using System.IO.Pipelines;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Xml;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -131,6 +132,7 @@ public sealed class StsConnectionTests : IAsyncLifetime
     [InlineData("/Auth/LoginFinish")]
     [InlineData("/GameAccount/ListMyAccounts")]
     [InlineData("/Auth/RequestGameToken")]
+    [InlineData("/Auth/PageVerifiedIps")]
     [InlineData("/Sts/Nonsense")]
     public async Task AnyUriOutOfItsStateOrUnknownEndsTheConnectionWithoutAnAnswer(string uri)
     {
@@ -211,6 +213,21 @@ public sealed class StsConnectionTests : IAsyncLifetime
         StsReply list = await client.ReceiveAsync();
         Assert.Equal("alice@example.com", list.Xml().GetElementsByTagName("Alias")[0]!.InnerText);
         Assert.Equal("1", list.Xml().GetElementsByTagName("GameAccountId")[0]!.InnerText);
+    }
+
+    [Fact]
+    public async Task PageVerifiedIpsAnswersWithAnEmptyItemsListAndKeepsTheConnection()
+    {
+        var client = new StsTestClient(_pipes.Client);
+        await client.LoginAsync("alice@example.com", "correct horse");
+        await client.SendAsync("/Auth/PageVerifiedIps", "<Request>\n<PageIndex>1</PageIndex>\n</Request>\n");
+        StsReply page = await client.ReceiveAsync();
+        Assert.Equal(200, page.Status);
+        XmlElement items = Assert.IsType<XmlElement>(Assert.Single(page.Xml().GetElementsByTagName("Items")));
+        Assert.False(items.HasChildNodes);
+
+        await client.SendAsync("/GameAccount/ListMyAccounts", "");
+        Assert.Equal(200, (await client.ReceiveAsync()).Status);
     }
 
     [Fact]

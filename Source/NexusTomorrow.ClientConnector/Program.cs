@@ -12,7 +12,10 @@ internal static class Program
 {
     private const string JsonFile = "config.json";
 
-    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+    // In order of preference.
+    private static readonly string[] s_clientNames = ["WildStar64.exe", "WildStar32.exe"];
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern bool CreateProcess(
         string lpApplicationName,
         string lpCommandLine,
@@ -28,7 +31,16 @@ internal static class Program
 
     public static void Main()
     {
-        if (!File.Exists(JsonFile))
+        // The program sits in the client's folder, so the client and config.json are found there whatever folder it was started from.
+        string folder = AppContext.BaseDirectory;
+        string? client = FindClient(folder);
+        if (client is null)
+        {
+            Console.WriteLine($"Neither WildStar64.exe nor WildStar32.exe is in {folder}; copy this program into your client's folder.");
+            return;
+        }
+
+        if (!File.Exists(Path.Combine(folder, JsonFile)))
         {
             Console.Write("Type in your host name: ");
             string? hostName = Console.ReadLine();
@@ -42,20 +54,48 @@ internal static class Program
                 return;
             }
 
-            var clientConfig = new ClientConfiguration
+            SaveConfiguration(folder, new ClientConfiguration
             {
                 HostName = hostName,
                 Language = language
-            };
-
-            File.WriteAllText(JsonFile, JsonConvert.SerializeObject(clientConfig));
+            });
         }
 
+        LaunchClient(client, folder, LoadConfiguration(folder));
+    }
+
+    /// <summary>
+    /// The full path of the client in <paramref name="folder"/>: <c>WildStar64.exe</c>, else <c>WildStar32.exe</c>, else null.
+    /// </summary>
+    internal static string? FindClient(string folder)
+    {
+        foreach (string name in s_clientNames)
+        {
+            string path = Path.Combine(folder, name);
+            if (File.Exists(path))
+                return path;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Write <paramref name="config"/> to <c>config.json</c> in <paramref name="folder"/>.
+    /// </summary>
+    internal static void SaveConfiguration(string folder, ClientConfiguration config) =>
+        File.WriteAllText(Path.Combine(folder, JsonFile), JsonConvert.SerializeObject(config));
+
+    /// <summary>
+    /// Read <c>config.json</c> from <paramref name="folder"/>, through <see cref="ReadConfiguration"/>.
+    /// </summary>
+    internal static ClientConfiguration LoadConfiguration(string folder)
+    {
         IConfigurationRoot configuration = new ConfigurationBuilder()
-            .AddJsonFile(JsonFile, false)
+            .SetBasePath(folder)
+            .AddJsonFile(JsonFile, optional: false)
             .Build();
 
-        LaunchClient(ReadConfiguration(configuration));
+        return ReadConfiguration(configuration);
     }
 
     /// <summary>
@@ -74,17 +114,17 @@ internal static class Program
         return config;
     }
 
-    private static void LaunchClient(ClientConfiguration config)
+    // The command line starts with /auth and carries no program name: the client reads its first token as /auth.
+    private static void LaunchClient(string client, string folder, ClientConfiguration config)
     {
         var si = new STARTUPINFO();
         var pi = new PROCESS_INFORMATION();
 
-        string client = "WildStar64.exe";
-        if (!File.Exists(client))
-            client = "WildStar32.exe";
-
-        CreateProcess(client,
+        if (!CreateProcess(client,
             $"/auth {config.HostName} /authNc {config.HostName} /lang {config.Language} /patcher {config.HostName} /SettingsKey WildStar /realmDataCenterId 9",
-            IntPtr.Zero, IntPtr.Zero, false, 0, IntPtr.Zero, null, ref si, out pi);
+            IntPtr.Zero, IntPtr.Zero, false, 0, IntPtr.Zero, folder, ref si, out pi))
+        {
+            Console.WriteLine($"Could not start {client}: Windows error {Marshal.GetLastWin32Error()}.");
+        }
     }
 }
