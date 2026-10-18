@@ -33,6 +33,7 @@ A server for the WildStar client, build 16042, written in C# on .NET 10.
 | `NexusTomorrow.Transport` | Frames, envelopes and the packet cipher, on the hot-path rules |
 | `NexusTomorrow.Gateway` | The client listeners: STS, login and world connections, the message catalog and the opcode table |
 | `NexusTomorrow.Owners` | The account and realm owners: one thread each over a message queue |
+| `NexusTomorrow.Maps` | The map side: map owners, the map scheduler and the timer wheel, on the hot-path rules |
 | `NexusTomorrow.Persistence` | The PostgreSQL schemas, their migrations, and the write-behind queue |
 | `NexusTomorrow.Commands` | Admin commands with their permissions and audit |
 | `NexusTomorrow.Server` | The server: one process hosting all of the above |
