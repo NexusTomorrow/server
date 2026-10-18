@@ -44,8 +44,6 @@ internal static class RegistryVerification
         "0x00BC",
         "0x00BD",
         "0x00BE",
-        "0x00BF",
-        "0x00C0",
         "0x00C1",
         "0x00C2",
         "0x00C3",
