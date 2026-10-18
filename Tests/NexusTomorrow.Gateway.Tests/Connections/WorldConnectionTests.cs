@@ -238,6 +238,22 @@ public sealed class WorldConnectionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AnOversizedClientMovementEndsTheSessionBeforeItIsRead()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+
+        await Client.SendTaggedUncheckedAsync(0x03, 0x0637, new RawBody(new byte[2049]));
+
+        await _run.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        Assert.Contains(_log.Lines, line => line.Contains("a body over its row's size limit", StringComparison.Ordinal));
+        // Ending the session tells the map it left; no movement reached it.
+        Assert.DoesNotContain(map.Posted, posted => posted is ClientMoved);
+        Assert.IsType<ClientLeft>(Assert.Single(map.Posted));
+    }
+
+    [Fact]
     public async Task AWorldMessageWithNoMapIsDroppedAndTheSessionGoesOn()
     {
         await GreetAsync();

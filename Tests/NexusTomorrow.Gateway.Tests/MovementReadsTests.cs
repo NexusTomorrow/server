@@ -35,6 +35,13 @@ public sealed class MovementReadsTests
     }
 
     [Fact]
+    public void TheMovementsRowLimitsItsBodyTo2048Bytes()
+    {
+        Assert.Equal(2048, OpcodeTable.All[0x0637].MaxBodyBytes);
+        Assert.All(OpcodeTable.All.Values.Where(row => row.Opcode != 0x0637), row => Assert.Null(row.MaxBodyBytes));
+    }
+
+    [Fact]
     public void TheLastPositionAndFacingAreTaken()
     {
         ClientMovement message = Movement(Position(1, 2, 3), Facing(0.25f), Position(4, 5, 6));

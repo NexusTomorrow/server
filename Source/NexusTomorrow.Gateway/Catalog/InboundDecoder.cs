@@ -26,9 +26,10 @@ public enum InboundResult
 
     /// <summary>
     /// Bytes no client writes: a wrong envelope, a lying length, a wrapper nested past one level, a tagged message without an inner
-    /// opcode, a tag other than its row's, a body the declaration cannot read, or bits left after it. The session ends. The envelope
-    /// and a <c>0x025C</c> or <c>0x038C</c> wrapper are read before the admission; the inner message's body is read, and so can be
-    /// found malformed, only once the connection's <see cref="InboundAdmission"/> has admitted its row.
+    /// opcode, a tag other than its row's, a body over its row's size limit, a body the declaration cannot read, or bits left after it.
+    /// The session ends. The envelope and a <c>0x025C</c> or <c>0x038C</c> wrapper are read before the admission, and the body's length
+    /// is checked against the row's limit before it; the inner message's body is read, and so can be found unreadable, only once the
+    /// connection's <see cref="InboundAdmission"/> has admitted its row.
     /// </summary>
     Malformed,
 }
@@ -49,9 +50,10 @@ public delegate bool InboundAdmission(OpcodeRow row);
 /// <summary>
 /// Turns a client frame into a message, in this order: opens the <c>0x0244</c> envelope with the connection's cipher, opens a
 /// <c>0x025C</c> or <c>0x038C</c> wrapper inside it, resolves the inner opcode's row (in the opcode table, under the tag the row
-/// names, not switched off), asks the connection's <see cref="InboundAdmission"/>, and only for an admitted row creates the message,
-/// if the catalog lets the server read it, and reads its body. The inner message of a row the admission refuses never has its body
-/// read; only the envelope and wrapper around it are.
+/// names, not switched off), ends the session for a body over the row's <see cref="OpcodeRow.MaxBodyBytes"/>, asks the connection's
+/// <see cref="InboundAdmission"/>, and only for an admitted row creates the message, if the catalog lets the server read it, and reads
+/// its body. The inner message of a row the size limit or the admission refuses never has its body read; only the envelope and
+/// wrapper around it are.
 /// </summary>
 public sealed class InboundDecoder
 {
@@ -82,9 +84,10 @@ public sealed class InboundDecoder
     public OpcodeRow RowFor(ushort opcode) => _table[opcode];
 
     /// <summary>
-    /// Decode one frame's body, decrypted in place: the envelope and any wrapper, then the row, then <paramref name="admit"/>, then the
-    /// message. <paramref name="admit"/> is asked at most once, and only for a row the table holds under the frame's tag that is not
-    /// switched off; a row it refuses comes back <see cref="InboundResult.Dropped"/> with the inner message's body unread.
+    /// Decode one frame's body, decrypted in place: the envelope and any wrapper, then the row, then the row's size limit, then
+    /// <paramref name="admit"/>, then the message. <paramref name="admit"/> is asked at most once, and only for a row the table holds
+    /// under the frame's tag that is not switched off and whose size limit the body respects; a row it refuses comes back
+    /// <see cref="InboundResult.Dropped"/> with the inner message's body unread.
     /// </summary>
     public Inbound Decode(ushort frameOpcode, Span<byte> body, PacketCipher cipher, InboundAdmission admit)
     {
@@ -133,6 +136,8 @@ public sealed class InboundDecoder
             return new Inbound(InboundResult.Malformed, opcode, null, "a tag other than its row's");
         if (_disabled.Contains(opcode))
             return new Inbound(InboundResult.Dropped, opcode, null, "switched off");
+        if (row.MaxBodyBytes is int limit && inner.Length > limit)
+            return new Inbound(InboundResult.Malformed, opcode, null, "a body over its row's size limit");
         if (!admit(row))
             return new Inbound(InboundResult.Dropped, opcode, null, "refused by the connection");
 

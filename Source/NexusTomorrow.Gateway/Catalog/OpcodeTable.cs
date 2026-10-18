@@ -64,10 +64,12 @@ public enum OverLimitAction
 /// One client opcode the gateway admits: its owner, its priority, its rate limit per session and the action past it, and the tag the
 /// client sends it under inside <c>TaggedMessage</c>, or null for one sent untagged. The tag is checked as a value: a message under any
 /// other tag, or tagged when its row names none, ends the session. <paramref name="ReadsVerifiedMembers"/> is whether the message is
-/// admitted at <c>Purpose</c> because its handler reads only members marked verified.
+/// admitted at <c>Purpose</c> because its handler reads only members marked verified. <paramref name="MaxBodyBytes"/> is the largest body,
+/// in bytes, a message under the row may carry (the inner message's bytes after its opcode); null sets no limit of the row's own. A
+/// larger body ends the session before the body is read.
 /// </summary>
 public sealed record OpcodeRow(
-    ushort Opcode, MessageOwner Owner, MessagePriority Priority, int PerSecond, OverLimitAction OverLimit, byte? Tag = null, bool ReadsVerifiedMembers = false);
+    ushort Opcode, MessageOwner Owner, MessagePriority Priority, int PerSecond, OverLimitAction OverLimit, byte? Tag = null, bool ReadsVerifiedMembers = false, int? MaxBodyBytes = null);
 
 /// <summary>
 /// The rows of every client message the gateway admits. A message without a row is dropped and counted.
@@ -107,8 +109,9 @@ public static class OpcodeTable
         new(0x00C0, MessageOwner.Map, MessagePriority.Normal, 2, OverLimitAction.Drop, WorldTag), // LogoutConfirm
 
         // ClientMovement: admitted at Purpose since its handler reads only MovementReads.Members, each marked; up to every frame while
-        // dashing.
-        new(0x0637, MessageOwner.Map, MessagePriority.High, 60, OverLimitAction.Drop, WorldTag, ReadsVerifiedMembers: true),
+        // dashing. The real client's largest movement frame was 190 bytes across 627 messages (2026-10-18); 2048 leaves room for movement
+        // not yet measured (swimming, mounts, long falls).
+        new(0x0637, MessageOwner.Map, MessagePriority.High, 60, OverLimitAction.Drop, WorldTag, ReadsVerifiedMembers: true, MaxBodyBytes: 2048),
     }.ToFrozenDictionary(row => row.Opcode);
 
     /// <summary>

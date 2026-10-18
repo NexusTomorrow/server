@@ -291,7 +291,8 @@ public abstract class ClientConnection : IClientSession
                 return true;
         }
 
-        // The decoder asks Admit (the row's rate, then Admits) before it creates the message or reads its body.
+        // The decoder checks the row's size limit, then asks Admit (the row's rate, then Admits), before it creates the message or reads
+        // its body.
         Inbound inbound;
         _refused = false;
         try

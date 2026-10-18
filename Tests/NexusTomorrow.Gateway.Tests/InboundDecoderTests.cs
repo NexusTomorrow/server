@@ -175,6 +175,68 @@ public sealed class InboundDecoderTests
         Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll).Result);
     }
 
+    [Fact]
+    public void AMessageOverItsRowsSizeLimitIsMalformedBeforeItsBodyIsRead()
+    {
+        // 17 zero bytes read as a clock of 0, no commands and nine bytes left over: malformed if the body were read.
+        byte[] body = ClientFrames.TaggedEnvelopeBody(0x03, 0x0637, new RawBody(new byte[17]), s_cipher);
+        bool asked = false;
+
+        Inbound inbound = LimitedDecoder(16).Decode(ClientFrames.ClientEnvelope, body, s_cipher, _ =>
+        {
+            asked = true;
+            return true;
+        });
+
+        Assert.Equal(InboundResult.Malformed, inbound.Result);
+        Assert.Equal("a body over its row's size limit", inbound.Reason);
+        Assert.False(asked);
+    }
+
+    [Fact]
+    public void AMessageAtItsRowsSizeLimitIsRead()
+    {
+        // 8 bytes of clock and command count, then ten commands of 5 selector bits and 1 value bit: 60 bits, 8 bytes.
+        byte[] body = ClientFrames.TaggedEnvelopeBody(0x03, 0x0637, MovementOf(10), s_cipher);
+
+        Inbound inbound = LimitedDecoder(16).Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
+
+        Assert.Equal(InboundResult.Message, inbound.Result);
+        Assert.Equal(10, Assert.IsType<ClientMovement>(inbound.Message).Unknown1.Count);
+    }
+
+    [Fact]
+    public void ARowWithoutALimitReadsALargeBody()
+    {
+        // 8 bytes, then 3000 commands of 6 bits: 18,000 bits, 2250 bytes, 2258 in all.
+        byte[] body = ClientFrames.TaggedEnvelopeBody(0x03, 0x0637, MovementOf(3000), s_cipher);
+
+        Inbound inbound = LimitedDecoder(null).Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
+
+        Assert.Equal(InboundResult.Message, inbound.Result);
+        Assert.Equal(3000, Assert.IsType<ClientMovement>(inbound.Message).Unknown1.Count);
+    }
+
+    // A decoder whose only row is the movement's, under tag 0x03, with the given body limit.
+    private static InboundDecoder LimitedDecoder(int? maxBodyBytes)
+    {
+        FrozenDictionary<ushort, OpcodeRow> table = new OpcodeRow[]
+        {
+            new(0x0637, MessageOwner.Map, MessagePriority.High, 60, OverLimitAction.Drop, OpcodeTable.WorldTag, ReadsVerifiedMembers: true, MaxBodyBytes: maxBodyBytes),
+        }.ToFrozenDictionary(row => row.Opcode);
+        return new InboundDecoder(MessageCatalog.Default, table, new HashSet<ushort>());
+    }
+
+    // A movement of one-bit commands (command 10, a 5-bit selector and a 1-bit value).
+    private static ClientMovement MovementOf(int commands)
+    {
+        var movement = new ClientMovement { Unknown0 = 1000 };
+        for (int i = 0; i < commands; i++)
+            movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 10, Unknown1 = new Server0262Union2Arm0A { Unknown0 = true } });
+
+        return movement;
+    }
+
     // Decrypt an envelope body, replace its inner opcode, and encrypt it again.
     private static byte[] Rewrap(byte[] body, ushort opcode)
     {
