@@ -1,11 +1,15 @@
-﻿using NexusTomorrow.Maps.Scheduling;
+﻿using System.Runtime.ExceptionServices;
+using NexusTomorrow.Maps.Scheduling;
 
 namespace NexusTomorrow.Harness;
 
 // Maps tick on virtual time, one step at a time, on a background loop from Start until PauseAsync or on the caller's thread through
 // TickAsync; once paused, a map ticks only when the caller steps it, so a scenario is deterministic. A step adds StepMs to NowMs and
 // ticks, in registration order, every map whose deadline has come. Steps never overlap: each runs under one semaphore, and
-// UnregisterAsync takes the same one, so a map is never removed mid-step.
+// UnregisterAsync takes the same one, so a map is never removed mid-step. As in the real scheduler, a tick that throws keeps its
+// map in place and the step goes on to the next map; the first such exception is held (later ones in the same window are dropped)
+// and thrown, with its own stack, once by the next TickAsync, PauseAsync or ThrowIfFaulted, which then clears it. The background
+// loop never stops for a fault, so the host's stop can still tick its maps.
 public sealed class SteppedMapScheduler : IMapScheduler
 {
     public const int StepMs = 25;
@@ -16,6 +20,7 @@ public sealed class SteppedMapScheduler : IMapScheduler
     private long _nowMs;
     private CancellationTokenSource? _loopStop;
     private Task _loop = Task.CompletedTask;
+    private ExceptionDispatchInfo? _fault;
     private bool _disposed;
 
     // The virtual clock the maps tick on, in milliseconds; it moves only inside a step.
@@ -38,8 +43,27 @@ public sealed class SteppedMapScheduler : IMapScheduler
         }
     }
 
-    // Stop the background loop and wait for its current step to end.
+    // Stop the background loop and wait for its current step to end, then throw a fault a tick left.
     public async Task PauseAsync()
+    {
+        await StopLoopAsync();
+        ThrowIfFaulted();
+    }
+
+    // Throw, once, the first exception a tick has thrown since the last report; nothing when there is none.
+    public void ThrowIfFaulted()
+    {
+        ExceptionDispatchInfo? fault;
+        lock (_gate)
+        {
+            fault = _fault;
+            _fault = null;
+        }
+
+        fault?.Throw();
+    }
+
+    private async Task StopLoopAsync()
     {
         CancellationTokenSource? stop;
         Task loop;
@@ -79,6 +103,8 @@ public sealed class SteppedMapScheduler : IMapScheduler
             {
                 _step.Release();
             }
+
+            ThrowIfFaulted();
         }
     }
 
@@ -140,7 +166,7 @@ public sealed class SteppedMapScheduler : IMapScheduler
             _disposed = true;
         }
 
-        await PauseAsync();
+        await StopLoopAsync();
         _step.Dispose();
     }
 
@@ -183,7 +209,15 @@ public sealed class SteppedMapScheduler : IMapScheduler
                 continue;
 
             entry.DeadlineMs = now + entry.Map.TickMs;
-            entry.Map.Tick(now);
+            try
+            {
+                entry.Map.Tick(now);
+            }
+            catch (Exception exception)
+            {
+                lock (_gate)
+                    _fault ??= ExceptionDispatchInfo.Capture(exception);
+            }
         }
     }
 

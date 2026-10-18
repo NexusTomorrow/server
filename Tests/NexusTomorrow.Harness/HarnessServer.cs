@@ -158,5 +158,8 @@ public sealed class HarnessServer : IAsyncDisposable
                 await _app.DisposeAsync().AsTask().WaitAsync(s_stopBound);
             }
         }
+
+        // A map's own exception, not a timeout, is what fails the scenario that broke it.
+        Maps.ThrowIfFaulted();
     }
 }

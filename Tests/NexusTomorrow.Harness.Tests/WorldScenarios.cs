@@ -103,9 +103,13 @@ public sealed class WorldScenarios
         await using Scenario scenario = await Scenario.StartAsync();
         await using HeadlessClient client = scenario.Server.NewClient();
         await using WorldSession session = await client.ScriptedLoginAsync(Email, Password);
-        ulong id = (await session.CreateAsync(CharacterName, creationId: 3)).CharacterId;
+        CharacterCreateResult created = await session.CreateAsync(CharacterName, creationId: 3);
+        Assert.Equal(CreateResults.Created, created.Result);
 
-        Assert.Equal(SelectReasons.General, (await session.SelectAsync(id)).Reason);
+        // An unknown id is refused with the same reason, so the created character is what makes this the held world's refusal. No
+        // map was made for either world.
+        Assert.Equal(SelectReasons.General, (await session.SelectAsync(created.CharacterId)).Reason);
+        Assert.Empty(scenario.Server.Service<MapDirectory>().Maps);
     }
 
     [Fact]
