@@ -3,9 +3,9 @@
 A server for the WildStar client, build 16042, written in C# on .NET 10.
 
 > **Note:** NexusTomorrow is in early development. The server takes your client from the login
-> screen to character select and character creation (see [Running the server](#running-the-server)),
-> and entering the world comes next. The server core is being built in steps; see
-> [Roadmap](#roadmap).
+> screen into the world: you can create a character, enter the world and move around, alone (see
+> [Running the server](#running-the-server)). Other players, creatures and chat come next. The
+> server core is being built in steps; see [Roadmap](#roadmap).
 
 ## Goals
 
@@ -67,8 +67,8 @@ The database tests need a PostgreSQL 18 server: set `NEXUSTOMORROW_TEST_PG` to a
 
 ## Running the server
 
-The server takes your client from the login screen to character select and character creation.
-Entering the world comes next.
+The server takes your client from the login screen into the world, where your character stands
+alone. Seeing other players comes next.
 
 1. Install PostgreSQL 18 and create a database and a role that owns it.
 2. Set two environment variables (keep both out of any file in this repository):
@@ -83,19 +83,36 @@ Entering the world comes next.
 4. Point `Content:ClientDataPath` at the folder MapGenerator extracted your tables into (the one
    holding `tbl`), for example `$env:Content__ClientDataPath = "<output>"`. Without it, character
    creation offers nothing.
-5. Start it: `dotnet run --project Source/NexusTomorrow.Server`. Every listener binds to
+5. Give each faction a start location: the world it starts in, a zone and a point in that world,
+   taken from your own client's data. The server enters a character only into an open-world map
+   (the four classic starting zones are open world); a character whose world is held or an
+   instance cannot enter yet, and the server says so in its log at start-up. For example, for one
+   faction:
+
+   ```powershell
+   $env:Realm__StartLocations__0__FactionId = "<faction id>"
+   $env:Realm__StartLocations__0__WorldId = "<world id>"
+   $env:Realm__StartLocations__0__ZoneId = "<zone id>"
+   $env:Realm__StartLocations__0__X = "<x>"
+   $env:Realm__StartLocations__0__Y = "<y>"
+   $env:Realm__StartLocations__0__Z = "<z>"
+   ```
+6. Start it: `dotnet run --project Source/NexusTomorrow.Server`. Every listener binds to
    `127.0.0.1` unless configured otherwise.
-6. At the server's console, create an account: `account create <email> <password>`. A password
+7. At the server's console, create an account: `account create <email> <password>`. A password
    with spaces goes in double quotes, as in `account create alice@example.com "correct horse battery"`;
    the quotes are not part of it, so a password cannot hold a double quote. `help` lists the
    commands.
-7. Start your client with ClientConnector pointed at `127.0.0.1`, and log in with that account.
+8. Start your client with ClientConnector pointed at `127.0.0.1`, and log in with that account.
+
+Where you are when you log out or exit the game from the Escape menu, or close the client, is
+saved, and you enter there next time. Log Out returns you to character select; Exit Game quits.
 
 `migrate` applies every schema's pending migrations and exits 0, or exits 1 with the error. The
 server refuses to start while any schema has a pending migration, so run `migrate` again after
 updating. To log every refused STS request and every game message a connection decodes, drops
 or sends (type names only; transport pings are not logged), set
-`${env:Logging__LogLevel__NexusTomorrow.Gateway} = "Debug"` before step 5; the braces keep
+`${env:Logging__LogLevel__NexusTomorrow.Gateway} = "Debug"` before step 6; the braces keep
 PowerShell from reading the dot as a property.
 
 Settings come from `appsettings.json`, then environment variables (`__` stands for `:`), then the
@@ -109,7 +126,7 @@ command line. The ones you are most likely to change:
 | `Gateway:WorldPublicAddress` | `127.0.0.1` | The IPv4 address the login server gives the client for the world listener. |
 | `Persistence:FirstIdBlockTimeout` | 30 s | How long start waits to take the first character id block. If the database cannot give one in time, start fails with an error instead of waiting. |
 | `Gateway:ConnectionsPerAddress` | 8 | Connections one address may hold on each listener. Further ones are closed at once. |
-| `Realm:Id`, `Realm:Name` | 1, `NexusTomorrow` | The realm's id (at most 16383) and the name players see. |
+| `Realm:Id`, `Realm:Name` | 1, `NexusTomorrow` | The realm's id (1 to 16383) and the name players see. |
 | `Content:ClientDataPath` | none | The folder holding `tbl`. |
 | `Cli:Enabled` | `true` | Whether the console reads commands. It stays off when standard input is redirected. |
 

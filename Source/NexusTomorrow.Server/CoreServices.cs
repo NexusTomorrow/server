@@ -39,7 +39,7 @@ public static class CoreServices
         AddOptions<GatewayOptions, GatewayOptionsValidator>(services, configuration, GatewayOptions.Section);
         AddOptions<PersistenceOptions, PersistenceOptionsValidator>(services, configuration, PersistenceOptions.Section);
         AddOptions<RealmOptions, RealmOptionsValidator>(services, configuration, RealmOptions.Section);
-        AddOptions<MapOptions>(services, configuration, MapOptions.Section);
+        AddOptions<MapOptions, MapOptionsValidator>(services, configuration, MapOptions.Section);
         AddOptions<AccountOptions, AccountOptionsValidator>(services, configuration, AccountOptions.Section);
         AddOptions<ContentOptions>(services, configuration, ContentOptions.Section);
         AddOptions<CliOptions>(services, configuration, CliOptions.Section);
@@ -65,7 +65,7 @@ public static class CoreServices
         services.AddSingleton<IOwner>(provider => provider.GetRequiredService<AccountOwner>());
         services.AddSingleton<IOwner>(provider => provider.GetRequiredService<RealmOwner>());
         services.AddSingleton(provider => new OwnerWatchdog(
-            provider.GetServices<IOwner>(), provider.GetRequiredService<TimeProvider>(), s_ownerStallTime, provider.GetRequiredService<ILogger<OwnerWatchdog>>()));
+            WatchedOwners(provider), provider.GetRequiredService<TimeProvider>(), s_ownerStallTime, provider.GetRequiredService<ILogger<OwnerWatchdog>>()));
 
         services.AddSingleton(MessageCatalog.Default);
         services.AddSingleton(provider => new InboundDecoder(
@@ -101,6 +101,18 @@ public static class CoreServices
     {
         AddOptions<TOptions>(services, configuration, section);
         services.AddSingleton<IValidateOptions<TOptions>, TValidator>();
+    }
+
+    // Evaluated afresh on every watchdog check: the registered owners, then every map in MapDirectory.Maps at that moment, so a map
+    // made after start-up is watched while it exists.
+    private static IEnumerable<IOwner> WatchedOwners(IServiceProvider provider)
+    {
+        IEnumerable<IOwner> registered = provider.GetServices<IOwner>();
+        MapDirectory maps = provider.GetRequiredService<MapDirectory>();
+        foreach (IOwner owner in registered)
+            yield return owner;
+        foreach (MapOwner map in maps.Maps)
+            yield return map;
     }
 
     private static CommandDispatcher CreateDispatcher(IServiceProvider provider)

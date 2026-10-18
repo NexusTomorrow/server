@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Gateway;
+using NexusTomorrow.Maps;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Persistence;
@@ -48,8 +49,17 @@ public sealed class OptionsValidationTests
     [InlineData(typeof(GatewayOptions), "Gateway:ConnectionsPerAddress", "0", "ConnectionsPerAddress")]
     [InlineData(typeof(GatewayOptions), "Gateway:OutboundQueueCapacity", "1", "OutboundQueueCapacity")]
     [InlineData(typeof(GatewayOptions), "Gateway:DisconnectGrace", "00:05:00", "DisconnectGrace")]
-    [InlineData(typeof(RealmOptions), "Realm:Id", "16384", "between 0 and 16383")]
+    [InlineData(typeof(RealmOptions), "Realm:Id", "16384", "between 1 and 16383")]
+    [InlineData(typeof(RealmOptions), "Realm:Id", "0", "between 1 and 16383")]
     [InlineData(typeof(RealmOptions), "Realm:Name", "", "Realm:Name is required.")]
+    [InlineData(typeof(MapOptions), "Maps:TickMs", "30", "Maps:TickMs must be 25, 50, 125 or 250.")]
+    [InlineData(typeof(MapOptions), "Maps:ReplicationEveryTicks", "50", "Maps:ReplicationEveryTicks times Maps:TickMs must be 25 to 1000 ms.")]
+    [InlineData(typeof(MapOptions), "Maps:ReplicationEveryTicks", "0", "Maps:ReplicationEveryTicks times Maps:TickMs must be 25 to 1000 ms.")]
+    [InlineData(typeof(MapOptions), "Maps:PoolThreads", "0", "Maps:PoolThreads must be at least 1.")]
+    [InlineData(typeof(MapOptions), "Maps:DedicatedThreads", "-1", "Maps:DedicatedThreads must not be negative.")]
+    [InlineData(typeof(MapOptions), "Maps:SaveInterval", "00:00:00", "Maps:SaveInterval must be at least one second.")]
+    [InlineData(typeof(MapOptions), "Maps:NormalDrainFloor", "0", "Maps:NormalDrainFloor must be at least 1.")]
+    [InlineData(typeof(MapOptions), "Maps:NormalDrainBudget", "00:00:00", "Maps:NormalDrainBudget must be positive.")]
     public void AnInvalidSettingIsRefusedByName(Type options, string key, string value, string expected)
     {
         using WebApplication app = Build(new() { [key] = value });
@@ -90,6 +100,8 @@ public sealed class OptionsValidationTests
             _ = services.GetRequiredService<IOptions<PersistenceOptions>>().Value;
         else if (options == typeof(RealmOptions))
             _ = services.GetRequiredService<IOptions<RealmOptions>>().Value;
+        else if (options == typeof(MapOptions))
+            _ = services.GetRequiredService<IOptions<MapOptions>>().Value;
         else if (options == typeof(AccountOptions))
             _ = services.GetRequiredService<IOptions<AccountOptions>>().Value;
         else
