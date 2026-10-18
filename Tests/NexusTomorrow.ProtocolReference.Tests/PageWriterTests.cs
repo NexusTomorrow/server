@@ -145,8 +145,8 @@ public sealed class PageWriterTests
             "> [!NOTE]\n> Generated from the opcode table at bootstrap `abc1234` by `Tools/NexusTomorrow.ProtocolReference`. Don't edit it by hand: change the table and regenerate.",
             blocks[2]);
         Assert.Equal(
-            "| Opcode | Message | Owner | Priority | Rate per second | Past the limit |\n|---|---|---|---|---|---|\n"
-            + "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Realm | normal | 2 | drop |",
+            "| Opcode | Message | Owner | Tag | Priority | Rate per second | Past the limit |\n|---|---|---|---|---|---|---|\n"
+            + "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Realm | untagged | normal | 2 | drop |",
             blocks[3]);
         Assert.Contains("| The opcode table | `Source/NexusTomorrow.Gateway/Catalog/OpcodeTable.cs` |", blocks[5], StringComparison.Ordinal);
     }
@@ -157,7 +157,25 @@ public sealed class PageWriterTests
         OpcodeRow[] rows = [new(0xFF20, MessageOwner.Account, MessagePriority.High, 1, OverLimitAction.Disconnect)];
         string page = PageWriter.OpcodeTablePage(rows, [ReferenceMessage.Of(typeof(SampleRequest))], s_stamp);
 
-        Assert.Contains("| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Account | high | 1 | disconnect |", page, StringComparison.Ordinal);
+        Assert.Contains("| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Account | untagged | high | 1 | disconnect |", page, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void TheOpcodeTablePageShowsATaggedRowsTagAndMarksAnUntaggedRow()
+    {
+        OpcodeRow[] rows =
+        [
+            new(0xFF20, MessageOwner.Map, MessagePriority.Normal, 2, OverLimitAction.Drop, Tag: 0x03),
+            new(0x07E0, MessageOwner.Realm, MessagePriority.Normal, 2, OverLimitAction.Drop),
+        ];
+        ReferenceMessage[] messages = [ReferenceMessage.Of(typeof(SampleRequest)), ReferenceMessage.Of(typeof(CharacterListRequest))];
+        string[] blocks = PageWriter.OpcodeTablePage(rows, messages, s_stamp).Split("\n\n");
+
+        Assert.Equal(
+            "| Opcode | Message | Owner | Tag | Priority | Rate per second | Past the limit |\n|---|---|---|---|---|---|---|\n"
+            + "| `0x07E0` | [CharacterListRequest](Messages-Pregame#0x07e0-characterlistrequest) | Realm | untagged | normal | 2 | drop |\n"
+            + "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Map | `0x03` | normal | 2 | drop |",
+            blocks[3]);
     }
 
     [Fact]

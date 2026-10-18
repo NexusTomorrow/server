@@ -2,6 +2,7 @@
 using NexusTomorrow.Harness;
 using NexusTomorrow.Network.Auth.Message.Model;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Network.World.Message.Model.Store;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Persistence;
@@ -167,7 +168,7 @@ public sealed class PregameScenarios
         Assert.Empty((await session.RequestListAsync()).Characters);
     }
 
-    // 0x038C, the tagged message the client sends at character select, has no row in the pregame table, so it is dropped before its
+    // The storefront request at character select travels inside 0x038C under tag 0x13; it has no row, so it is dropped before its
     // body is read.
     [Fact]
     public async Task AMessageWithNoRowIsDroppedAndTheSessionContinues()
@@ -175,7 +176,7 @@ public sealed class PregameScenarios
         await using Scenario scenario = await Scenario.StartAsync();
         await using HeadlessClient client = scenario.Server.NewClient();
         await using WorldSession session = await client.ScriptedLoginAsync(Email, Password);
-        await session.Connection.SendUncheckedAsync(0x038C, new CharacterListRequest());
+        await session.Connection.SendTaggedAsync(0x13, new Client082D());
         Assert.Empty((await session.RequestListAsync()).Characters);
     }
 

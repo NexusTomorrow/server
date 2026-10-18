@@ -142,9 +142,9 @@ public abstract class ClientConnection : IClientSession
     }
 
     /// <summary>
-    /// Handle one decoded message; false ends the connection.
+    /// Handle one decoded message, admitted by <paramref name="row"/>; false ends the connection.
     /// </summary>
-    protected abstract ValueTask<bool> HandleAsync(IWireMessage message);
+    protected abstract ValueTask<bool> HandleAsync(IWireMessage message, OpcodeRow row);
 
     /// <summary>
     /// Called once when the connection starts, before anything is read.
@@ -168,6 +168,15 @@ public abstract class ClientConnection : IClientSession
     {
         EnsureSendable(message);
         Enqueue(Outbound.Bare(T.Opcode, message));
+    }
+
+    /// <summary>
+    /// Count and log a message the connection read but does not act on; the session goes on.
+    /// </summary>
+    protected void Drop(ushort opcode, string reason)
+    {
+        _metrics.Dropped(opcode, reason);
+        GatewayLog.MessageDropped(_logger, Id, opcode, reason);
     }
 
     /// <summary>
@@ -279,8 +288,7 @@ public abstract class ClientConnection : IClientSession
         switch (inbound.Result)
         {
             case InboundResult.Dropped:
-                _metrics.Dropped(inbound.Opcode, inbound.Reason);
-                GatewayLog.MessageDropped(_logger, Id, inbound.Opcode, inbound.Reason);
+                Drop(inbound.Opcode, inbound.Reason);
                 return true;
             case InboundResult.Malformed:
                 if (_logger.IsEnabled(LogLevel.Debug))
@@ -308,7 +316,7 @@ public abstract class ClientConnection : IClientSession
         if (_logger.IsEnabled(LogLevel.Debug))
             GatewayLog.MessageReceived(_logger, Id, inbound.Opcode, admitted.GetType().Name);
 
-        return await HandleAsync(admitted);
+        return await HandleAsync(admitted, row);
     }
 
     // Names the message type only: field values and payload bytes (RealmHandoff carries the session key) never reach a log line.

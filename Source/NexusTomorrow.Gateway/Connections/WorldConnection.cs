@@ -3,7 +3,9 @@ using Microsoft.Extensions.Options;
 using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message.Model;
+using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Owners.World;
@@ -13,7 +15,8 @@ namespace NexusTomorrow.Gateway.Connections;
 
 /// <summary>
 /// The world connection: greets inside the world envelope under the build key, redeems the session key through the account owner,
-/// switches both directions to the session cipher, and hands character-select messages to the realm owner.
+/// switches both directions to the session cipher, hands character-select messages to the realm owner, and routes in-world messages
+/// to the map holding the session's character.
 /// </summary>
 public sealed class WorldConnection : ClientConnection, IWorldSession
 {
@@ -82,10 +85,13 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
         Send(new ServerHello { Build = Build, RealmId = _realmOptions.Id, ProtocolVersion = ProtocolVersion });
 
     /// <inheritdoc/>
-    protected override async ValueTask<bool> HandleAsync(IWireMessage message)
+    protected override async ValueTask<bool> HandleAsync(IWireMessage message, OpcodeRow row)
     {
         if (_accountId is not long accountId)
             return _greeted ? End("a message while the greeting is checked") : await GreetAsync(message);
+
+        if (row.Owner == MessageOwner.Map)
+            return RouteToMap(message, row);
 
         switch (message)
         {
@@ -98,6 +104,12 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
             case CharacterRename rename:
                 return Post(new RenameCharacter(accountId, this, rename.CharacterId, rename.NewName));
             case CharacterSelect select:
+                if (InMap())
+                {
+                    Drop(row.Opcode, "a select while in the world");
+                    return true;
+                }
+
                 return Post(new SelectCharacter(accountId, this, select.CharacterId));
             case PregameKeepAlive:
                 return true;
@@ -203,6 +215,43 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
             default:
                 return End("an unrecognized decision from the account owner");
         }
+    }
+
+    private bool InMap()
+    {
+        lock (_route)
+            return _map is not null;
+    }
+
+    // The map is read under _route and posted to outside it: a post never runs under the lock, and a map that has stopped refuses it,
+    // which is not a drop.
+    private bool RouteToMap(IWireMessage message, OpcodeRow row)
+    {
+        IMapInbox? map;
+        lock (_route)
+            map = _map;
+
+        if (map is null)
+        {
+            Drop(row.Opcode, "a map message with no map");
+            return true;
+        }
+
+        MapMessage? routed = message switch
+        {
+            WorldReady ready => new ClientWorldReady(this, ready.ZoneId),
+            MovementControlReceipt receipt => new ClientControlReceipt(this, receipt.Ticket),
+            ZoneChange change => new ClientZoneChanged(this, change.ZoneId),
+            _ => null,
+        };
+        if (routed is null)
+        {
+            Drop(row.Opcode, "a map message with no handler");
+            return true;
+        }
+
+        _ = row.Priority == MessagePriority.High ? map.PostHigh(routed) : map.Post(routed);
+        return true;
     }
 
     private Task<WorldDecision>? RedeemThroughOwner(WorldConnection connection, WorldHello hello, byte[] sessionKey)

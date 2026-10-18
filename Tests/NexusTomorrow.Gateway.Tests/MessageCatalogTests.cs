@@ -105,9 +105,9 @@ public sealed class MessageCatalogTests
     }
 
     [Fact]
-    public void EveryPregameRowNamesAClientMessageReadToFields()
+    public void EveryRowNamesAClientMessageReadToFields()
     {
-        foreach (OpcodeRow row in OpcodeTable.Pregame.Values)
+        foreach (OpcodeRow row in OpcodeTable.All.Values)
         {
             IWireMessage? message = MessageCatalog.Default.CreateInbound(row.Opcode, out InboundRefusal refusal);
             Assert.True(message is not null, $"0x{row.Opcode:X4}: {refusal}");

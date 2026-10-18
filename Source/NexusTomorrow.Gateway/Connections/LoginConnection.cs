@@ -64,7 +64,7 @@ public sealed class LoginConnection : ClientConnection
     protected override void OnStart() => SendBare(new ServerHello { Build = Build, ProtocolVersion = ProtocolVersion });
 
     /// <inheritdoc/>
-    protected override async ValueTask<bool> HandleAsync(IWireMessage message)
+    protected override async ValueTask<bool> HandleAsync(IWireMessage message, OpcodeRow row)
     {
         if (message is not LoginRequest request || _answered)
         {

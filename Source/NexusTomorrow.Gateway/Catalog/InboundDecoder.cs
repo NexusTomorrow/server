@@ -1,5 +1,7 @@
-﻿using System.Collections.Frozen;
+﻿using System.Buffers.Binary;
+using System.Collections.Frozen;
 using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.World.Message.Model.Connection;
 using NexusTomorrow.Transport;
 
 namespace NexusTomorrow.Gateway.Catalog;
@@ -33,13 +35,15 @@ public enum InboundResult
 public readonly record struct Inbound(InboundResult Result, ushort Opcode, IWireMessage? Message, string Reason);
 
 /// <summary>
-/// Turns a client frame into a message: opens the <c>0x0244</c> envelope with the connection's cipher, opens a <c>0x025C</c> wrapper
-/// inside it, then reads the message if the catalog and the opcode table admit it.
+/// Turns a client frame into a message: opens the <c>0x0244</c> envelope with the connection's cipher, opens a <c>0x025C</c> or
+/// <c>0x038C</c> wrapper inside it, then reads the message if the opcode table admits it under the tag it came with and the catalog
+/// lets the server read it.
 /// </summary>
 public sealed class InboundDecoder
 {
     private const ushort ClientEnvelope = 0x0244;
     private const ushort Nested = 0x025C;
+    private const ushort Tagged = 0x038C;
 
     private readonly MessageCatalog _catalog;
     private readonly FrozenDictionary<ushort, OpcodeRow> _table;
@@ -73,17 +77,44 @@ public sealed class InboundDecoder
         if (!EnvelopeReader.TryOpen(body, cipher, out ushort opcode, out Span<byte> inner))
             return new Inbound(InboundResult.Malformed, frameOpcode, null, "the envelope's length is not its own");
 
+        byte? tag = null;
         if (opcode == Nested)
         {
             // The nested wrapper is itself a declared message: a 32-bit length counting itself, then one clear frame.
             if (!EnvelopeReader.TryOpen(inner, cipher: null, out opcode, out inner))
                 return new Inbound(InboundResult.Malformed, Nested, null, "the nested blob's length is not its own");
-            if (opcode is ClientEnvelope or Nested)
-                return new Inbound(InboundResult.Malformed, opcode, null, "an envelope nested past one level");
+        }
+        else if (opcode == Tagged)
+        {
+            // The tagged message is a declared message too: its payload is the inner opcode and body, and its tag must be the one the
+            // inner opcode's row names.
+            var tagged = new TaggedMessage();
+            try
+            {
+                var reader = new BitReader(inner);
+                tagged.Read(ref reader);
+                if (reader.BitsRemaining >= 8)
+                    return new Inbound(InboundResult.Malformed, Tagged, null, $"{reader.BitsRemaining} bits left after the tagged message");
+            }
+            catch (CodecException exception)
+            {
+                return new Inbound(InboundResult.Malformed, Tagged, null, exception.Message);
+            }
+
+            if (tagged.Payload.Length < sizeof(ushort))
+                return new Inbound(InboundResult.Malformed, Tagged, null, "a tagged message without an inner opcode");
+
+            tag = tagged.Tag;
+            opcode = BinaryPrimitives.ReadUInt16LittleEndian(tagged.Payload);
+            inner = tagged.Payload.AsSpan(sizeof(ushort));
         }
 
-        if (!_table.ContainsKey(opcode))
+        if (opcode is ClientEnvelope or Nested or Tagged)
+            return new Inbound(InboundResult.Malformed, opcode, null, "a wrapper nested past one level");
+        if (!_table.TryGetValue(opcode, out OpcodeRow? row))
             return new Inbound(InboundResult.Dropped, opcode, null, "no opcode table row");
+        if (row.Tag != tag)
+            return new Inbound(InboundResult.Malformed, opcode, null, "a tag other than its row's");
         if (_disabled.Contains(opcode))
             return new Inbound(InboundResult.Dropped, opcode, null, "switched off");
 

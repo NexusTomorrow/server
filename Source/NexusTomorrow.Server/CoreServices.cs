@@ -69,7 +69,7 @@ public static class CoreServices
 
         services.AddSingleton(MessageCatalog.Default);
         services.AddSingleton(provider => new InboundDecoder(
-            provider.GetRequiredService<MessageCatalog>(), OpcodeTable.Pregame, provider.GetRequiredService<IOptions<GatewayOptions>>().Value.DisabledOpcodes));
+            provider.GetRequiredService<MessageCatalog>(), OpcodeTable.All, provider.GetRequiredService<IOptions<GatewayOptions>>().Value.DisabledOpcodes));
         services.AddSingleton<GatewayMetrics>();
         services.AddSingleton<LoginRateLimiter>();
         services.AddSingleton<UnknownAccountCredentials>();

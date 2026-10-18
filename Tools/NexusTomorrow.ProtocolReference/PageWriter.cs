@@ -136,13 +136,14 @@ public static class PageWriter
                 Code(Hex(row.Opcode)),
                 $"[{message.Type.Name}](Messages-{message.Area}#{Anchor(message)})",
                 row.Owner.ToString(),
+                row.Tag is { } tag ? Code($"0x{tag:X2}") : "untagged",
                 PriorityText(row.Priority),
                 Number(row.PerSecond),
                 OverLimitText(row.OverLimit),
             ]);
         }
 
-        blocks.Add(Table(["Opcode", "Message", "Owner", "Priority", "Rate per second", "Past the limit"], table));
+        blocks.Add(Table(["Opcode", "Message", "Owner", "Tag", "Priority", "Rate per second", "Past the limit"], table));
         CodeLives(blocks,
         [
             ["The opcode table", Code("Source/NexusTomorrow.Gateway/Catalog/OpcodeTable.cs")],

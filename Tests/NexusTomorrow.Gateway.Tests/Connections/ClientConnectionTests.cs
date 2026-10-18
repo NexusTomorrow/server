@@ -347,7 +347,7 @@ public sealed class ClientConnectionTests : IAsyncLifetime
 
         public void SwitchKeyTo(PacketCipher cipher) => SwitchKey(cipher);
 
-        protected override ValueTask<bool> HandleAsync(IWireMessage message) => ValueTask.FromResult(OnMessage(message));
+        protected override ValueTask<bool> HandleAsync(IWireMessage message, OpcodeRow row) => ValueTask.FromResult(OnMessage(message));
 
         protected override void OnStart()
         {

@@ -41,7 +41,7 @@ List<(string Name, string Text)> pages = [("Messages.md", PageWriter.IndexPage(m
 foreach (IGrouping<string, ReferenceMessage> area in messages.GroupBy(message => message.Area, StringComparer.Ordinal).OrderBy(group => group.Key, StringComparer.Ordinal))
     pages.Add(($"Messages-{area.Key}.md", PageWriter.AreaPage(area.Key, [.. area], walk, docs, stamp)));
 
-pages.Add(("Gateway-opcode-table.md", PageWriter.OpcodeTablePage(OpcodeTable.Pregame.Values, messages, stamp)));
+pages.Add(("Gateway-opcode-table.md", PageWriter.OpcodeTablePage(OpcodeTable.All.Values, messages, stamp)));
 pages.Add(("Command-layer-commands.md", PageWriter.CommandsPage(Registries.Commands(), stamp)));
 
 IReadOnlyList<string> removed = ReferenceSet.Write(output, pages);

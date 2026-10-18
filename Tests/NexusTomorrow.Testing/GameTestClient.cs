@@ -15,6 +15,7 @@ public sealed class GameTestClient
 {
     public const ushort ClientEnvelope = 0x0244;
     public const ushort NestedOpcode = 0x025C;
+    public const ushort TaggedOpcode = 0x038C;
 
     private readonly IDuplexPipe _pipe;
     private byte[] _pending = [];
@@ -38,6 +39,16 @@ public sealed class GameTestClient
         var inner = new ArrayBufferWriter<byte>();
         FrameWriter.WriteMessage(inner, T.Opcode, message);
         await SendAsync(new NestedMessage { Payload = inner.WrittenSpan[4..].ToArray() });
+    }
+
+    // A world message as the client sends it: inside 0x038C, whose body is the tag in the low 5 bits of its first byte and then the
+    // whole inner frame (a 32-bit length counting itself, the opcode, the body).
+    public async Task SendTaggedAsync<T>(byte tag, T message)
+        where T : class, IWireMessage
+    {
+        var inner = new ArrayBufferWriter<byte>();
+        FrameWriter.WriteMessage(inner, T.Opcode, message);
+        await SendUncheckedAsync(TaggedOpcode, new RawBody([(byte)(tag & 0x1F), .. inner.WrittenSpan]));
     }
 
     // Any opcode and body, for messages the server must refuse.
