@@ -181,6 +181,18 @@ public static class PageWriter
         return Join(blocks);
     }
 
+    /// <summary>
+    /// The sentence a tombstone page ends with.
+    /// </summary>
+    internal const string TombstoneSentence = "This page's messages moved to their feature areas; [Messages](Messages) lists every message and the page that describes it.";
+
+    /// <summary>
+    /// The text of a tombstone page: the badge row, a blank line, then <see cref="TombstoneSentence"/>, verified on <paramref name="date"/>.
+    /// </summary>
+    internal static string TombstonePage(string date) =>
+        "![index, committed](https://img.shields.io/badge/index-committed-2ea44f) "
+        + $"![verified {date}](https://img.shields.io/badge/verified-{Shield(date)}-6e7781)\n\n{TombstoneSentence}\n";
+
     private static void Head(List<string> blocks, string scope, PageStamp stamp, (string From, string Edit) source)
     {
         blocks.Add(
