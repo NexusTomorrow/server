@@ -138,7 +138,8 @@ public sealed class MapSchedulerTests
     public async Task AMapUnregisteredMidTickCannotBeRegisteredUntilThatTickEnds()
     {
         await using MapScheduler scheduler = Create(poolThreads: 2);
-        var map = new CountingMap("busy") { Work = 50 };
+        using var gate = new ManualResetEventSlim(false);
+        var map = new CountingMap("busy") { Gate = gate };
         scheduler.Register(map, MapPlacement.Pool);
         scheduler.Start();
         await Eventually.TrueAsync(() => map.Running == 1);
@@ -147,6 +148,7 @@ public sealed class MapSchedulerTests
 
         Assert.Throws<InvalidOperationException>(() => scheduler.Register(map, MapPlacement.Pool));
         Assert.Same(unregistered, scheduler.UnregisterAsync(map));
+        gate.Set();
         await unregistered.WaitAsync(s_fiveSeconds, TestContext.Current.CancellationToken);
         scheduler.Register(map, MapPlacement.Pool);
         await Eventually.TrueAsync(() => map.Ticks > 2);
