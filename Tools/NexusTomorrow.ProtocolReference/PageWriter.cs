@@ -152,23 +152,24 @@ public static class PageWriter
     }
 
     /// <summary>
-    /// The commands page: every command an actor can type, the dispatcher's own <c>help</c> included, in name order, with each secret
-    /// parameter marked in the usage line.
+    /// The commands page: every command in <paramref name="commands"/> and the dispatcher's own <c>help</c> (unless a command takes its
+    /// name, as the dispatcher lets one), in name order, with each secret parameter marked in the usage line.
     /// </summary>
     public static string CommandsPage(IEnumerable<CommandDefinition> commands, PageStamp stamp)
     {
         var blocks = new List<string>();
         Head(blocks, "Every admin command, the permission it needs, and whether it's console-only.", stamp, s_commands);
 
-        IEnumerable<(string Name, string[] Cells)> rows = commands
+        List<(string Name, string[] Cells)> rows = [.. commands
             .Select(command => (command.Name, new[]
             {
                 Code(command.Usage(markSecrets: true)),
                 command.Permission is { } permission ? Code(permission) : "none",
                 command.ConsoleOnly ? "Yes" : "No",
                 command.Description,
-            }))
-            .Append((CommandDispatcher.HelpName, [Code(CommandDispatcher.HelpName), "none", "No", CommandDispatcher.HelpDescription]));
+            }))];
+        if (!rows.Any(row => string.Equals(row.Name, CommandDispatcher.HelpName, StringComparison.OrdinalIgnoreCase)))
+            rows.Add((CommandDispatcher.HelpName, [Code(CommandDispatcher.HelpName), "none", "No", CommandDispatcher.HelpDescription]));
         blocks.Add(Table(["Command", "Permission", "Console only", "Does"], [.. rows.OrderBy(row => row.Name, StringComparer.Ordinal).Select(row => row.Cells)]));
 
         CodeLives(blocks,
@@ -283,13 +284,15 @@ public static class PageWriter
     private static string PriorityText(MessagePriority priority) => priority switch
     {
         MessagePriority.High => "high",
-        _ => "normal",
+        MessagePriority.Normal => "normal",
+        _ => throw new ArgumentOutOfRangeException(nameof(priority), priority, "The page has no word for this priority."),
     };
 
     private static string OverLimitText(OverLimitAction action) => action switch
     {
+        OverLimitAction.Drop => "drop",
         OverLimitAction.Disconnect => "disconnect",
-        _ => "drop",
+        _ => throw new ArgumentOutOfRangeException(nameof(action), action, "The page has no word for this action."),
     };
 
     private static string RungText(Rung? rung) => rung switch

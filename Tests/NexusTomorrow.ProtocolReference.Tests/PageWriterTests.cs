@@ -152,6 +152,15 @@ public sealed class PageWriterTests
     }
 
     [Fact]
+    public void TheOpcodeTablePageNamesAHighPriorityAndADisconnect()
+    {
+        OpcodeRow[] rows = [new(0xFF20, MessageOwner.Account, MessagePriority.High, 1, OverLimitAction.Disconnect)];
+        string page = PageWriter.OpcodeTablePage(rows, [ReferenceMessage.Of(typeof(SampleRequest))], s_stamp);
+
+        Assert.Contains("| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Account | high | 1 | disconnect |", page, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AnOpcodeRowWithNoClientMessageStopsThePage()
     {
         OpcodeRow[] rows = [new(0xFF21, MessageOwner.Realm, MessagePriority.Normal, 1, OverLimitAction.Disconnect)];
@@ -190,6 +199,18 @@ public sealed class PageWriterTests
             + "| `help` | none | No | List every command you may run, with its usage. |\n"
             + "| `zone reset <zone> [why...]` | `zone.reset` | Yes | Reset a zone. |",
             blocks[3]);
+    }
+
+    [Fact]
+    public void ARegisteredHelpCommandReplacesTheBuiltInRow()
+    {
+        CommandDefinition[] commands =
+        [
+            new() { Name = "help", Description = "Show the house help.", Permission = null, Parameters = [], ExecuteAsync = Never },
+        ];
+        string table = PageWriter.CommandsPage(commands, s_stamp).Split("\n\n")[3];
+
+        Assert.Equal("| Command | Permission | Console only | Does |\n|---|---|---|---|\n| `help` | none | No | Show the house help. |", table);
     }
 
     [Fact]
