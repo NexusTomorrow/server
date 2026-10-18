@@ -37,7 +37,9 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
     // meantime would otherwise pass the RequiresRename check. Released in Renamed on every outcome.
     private readonly HashSet<ulong> _renaming = [];
 
-    // A character away from rest, by character id: loading for a select, or held by a map. It leaves only through Release or Returned.
+    // A character away from rest, by character id: loading for a select, or held by a map. A presence leaves through Release (a load
+    // that found nothing, was abandoned or was refused by its map, and the faults of a select or a load before its arrival was
+    // posted), through Returned, and through the fault path of Returned.
     private readonly Dictionary<ulong, Presence> _presences = [];
 
     // The character each session has on its way in or in the world, by session reference. A session parked behind another's
@@ -140,12 +142,18 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
             case RenameCharacter { Session: var session }:
                 session.Disconnect("the realm owner failed renaming a character");
                 break;
-            case SelectCharacter { Session: var session }:
+            case SelectCharacter { Session: var session, CharacterId: var selectedId }:
+                // A presence this select created and never queued a load for would hold the character until restart; the faulted
+                // session is disconnected, so it is freed without an answer. A load that did queue lands on no matching ticket.
+                if (_presences.TryGetValue(selectedId, out Presence? created) && ReferenceEquals(created.Session, session) && created.Loading)
+                    Release(created, answerGeneral: false);
+
                 session.Disconnect("the realm owner failed selecting a character");
                 break;
             case CharacterLoaded { CharacterId: var characterId, Ticket: var ticket }:
-                // A load that failed to hand over must not strand the character away from rest.
-                if (_presences.TryGetValue(characterId, out Presence? loading) && loading.Ticket == ticket)
+                // Only a presence whose arrival was never posted is released: once the map holds the character, a fault elsewhere in
+                // the handler (the id refill) must not free it.
+                if (_presences.TryGetValue(characterId, out Presence? loading) && loading.Ticket == ticket && loading.Loading)
                     Release(loading, answerGeneral: true);
                 break;
             case CharacterReturned { CharacterId: var returnedId }:

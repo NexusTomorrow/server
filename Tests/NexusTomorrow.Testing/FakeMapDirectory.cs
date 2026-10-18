@@ -53,8 +53,14 @@ public sealed class FakeMapInbox : IMapInbox
     // False refuses every post, as a stopped map does.
     public bool Accepting { get; set; } = true;
 
+    // True makes both posts throw before recording anything: a fault in the poster's handler.
+    public bool Throwing { get; set; }
+
     public bool Post(MapMessage message)
     {
+        if (Throwing)
+            throw new InvalidOperationException("Post refused by the test.");
+
         if (!Accepting)
             return false;
 
@@ -66,6 +72,9 @@ public sealed class FakeMapInbox : IMapInbox
 
     public bool PostHigh(MapMessage message)
     {
+        if (Throwing)
+            throw new InvalidOperationException("PostHigh refused by the test.");
+
         if (!Accepting)
             return false;
 

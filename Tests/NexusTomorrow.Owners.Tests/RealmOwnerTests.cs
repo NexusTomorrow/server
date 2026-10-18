@@ -342,6 +342,128 @@ public sealed class RealmOwnerTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ACharacterLoadedFaultAfterTheArrivalWasPostedLeavesTheCharacterHeld()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        var db = new FakeWriteBehind();
+        RealmOwner owner = StartOwner(db, 501);
+        try
+        {
+            await ListOnAsync(owner, db, _session, Account, InWorld(5, "Rebaser Head", 1));
+
+            // The second create takes the allocator below its refill mark and then throws, so the refill is still owed when the
+            // next message ends; that message is the load, and its refill throws after the arrival is posted.
+            db.ThrowOn = work => work is CreateCharacterWork or TakeIdBlockWork;
+            owner.Post(new CreateCharacter(Account, _session, Create("Aaaa Bbbb")));
+            owner.Post(new SelectCharacter(Account, _session, 5));
+            await Eventually.TrueAsync(() => db.Queued.OfType<LoadCharacterWork>().Any());
+            LoadCharacterWork load = db.Take<LoadCharacterWork>();
+            owner.Post(new CreateCharacter(Account, _session, Create("Cccc Dddd")));
+            load.Character = Record(5, 1);
+            load.Complete(WorkResult.Committed);
+            await Eventually.TrueAsync(() => map.Posted.Count == 1);
+
+            var other = new FakeClientSession();
+            await ListOnAsync(owner, db, other, Account, InWorld(5, "Rebaser Head", 1));
+            owner.Post(new SelectCharacter(Account, other, 5));
+            await SyncAsync(owner, other);
+
+            Assert.Empty(db.Queued.OfType<LoadCharacterWork>());
+            Assert.Empty(other.Sent.OfType<CharacterSelectFailed>());
+            Assert.Empty(_session.Sent.OfType<CharacterSelectFailed>());
+        }
+        finally
+        {
+            await owner.StopAsync().WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        }
+    }
+
+    [Fact]
+    public async Task ACharacterLoadedFaultBeforeTheArrivalIsPostedFreesTheCharacterAndAnswersGeneral()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        map.Throwing = true;
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        await SelectAndLoadAsync(_session, 5, Record(5, 1));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterSelectFailed>().Any());
+        Assert.Equal(SelectReasons.General, _session.Single<CharacterSelectFailed>().Reason);
+
+        map.Throwing = false;
+        _owner.Post(new SelectCharacter(Account, _session, 5));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+    }
+
+    [Fact]
+    public async Task ASelectFaultAfterItsPresenceWasCreatedFreesTheCharacterForAnotherSession()
+    {
+        _maps.Add(1);
+        var other = new FakeClientSession();
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        _db.ThrowOn = work => work is LoadCharacterWork;
+        _owner.Post(new SelectCharacter(Account, _session, 5));
+        await Eventually.TrueAsync(() => _session.DisconnectReason is not null);
+
+        _db.ThrowOn = null;
+        await ListAsync(other, Account, InWorld(5, "Rebaser Head", 1));
+        _owner.Post(new SelectCharacter(Account, other, 5));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+        Assert.Empty(_session.Sent.OfType<CharacterSelectFailed>());
+    }
+
+    [Fact]
+    public async Task ANewerParkedSelectReplacesAnOlderOneWhichIsAnsweredGeneral()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        var older = new FakeClientSession();
+        var newer = new FakeClientSession();
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        await EnterAsync(_session, 5, map);
+        await ListAsync(older, Account, InWorld(5, "Rebaser Head", 1));
+        _owner.Post(new SelectCharacter(Account, older, 5));
+        await ListAsync(newer, Account, InWorld(5, "Rebaser Head", 1));
+        _owner.Post(new SelectCharacter(Account, newer, 5));
+        await Eventually.TrueAsync(() => older.Sent.OfType<CharacterSelectFailed>().Any());
+        Assert.Equal(SelectReasons.General, older.Single<CharacterSelectFailed>().Reason);
+
+        _owner.Post(new CharacterReturned(Account, 5, new CharacterLocation(1, 0, new Vector3(1, 2, 3), 0)));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+        LoadCharacterWork load = _db.Take<LoadCharacterWork>();
+        load.Character = Record(5, 1);
+        load.Complete(WorkResult.Committed);
+        await Eventually.TrueAsync(() => map.Posted.Count == 2);
+        Assert.Same(newer, Assert.IsType<CharacterArrived>(map.Posted[1]).Session);
+        Assert.Empty(newer.Sent.OfType<CharacterSelectFailed>());
+    }
+
+    [Fact]
+    public async Task ClosingAParkedSessionDropsItsSelectSoTheReturnStartsNoLoadForIt()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        var waiting = new FakeClientSession();
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        await EnterAsync(_session, 5, map);
+        await ListAsync(waiting, Account, InWorld(5, "Rebaser Head", 1));
+        _owner.Post(new SelectCharacter(Account, waiting, 5));
+        _owner.Post(new RealmSessionClosed(Account, waiting));
+        _owner.Post(new CharacterReturned(Account, 5, new CharacterLocation(1, 0, new Vector3(1, 2, 3), 0)));
+
+        // The list's load queues behind the return, so once it is answered the return has been handled.
+        await ListAsync(new FakeClientSession(), Account, InWorld(5, "Rebaser Head", 1));
+        Assert.Empty(_db.Queued.OfType<LoadCharacterWork>());
+    }
+
+    [Fact]
+    public async Task ASelectUsesTheLoadedRecordsWorldOverTheListsWorld()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        await ListAsync(InWorld(5, "Rebaser Head", 9));
+        await SelectAndLoadAsync(_session, 5, Record(5, 1));
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+        Assert.Equal((ushort)1, Assert.IsType<CharacterArrived>(map.Posted[0]).Character.Location.WorldId);
+        Assert.Empty(_session.Sent.OfType<CharacterSelectFailed>());
+    }
+
+    [Fact]
     public async Task CreatesInFlightCountAgainstTheCap()
     {
         await ListAsync(Summary(5, "Aaaa Bbbb"));
