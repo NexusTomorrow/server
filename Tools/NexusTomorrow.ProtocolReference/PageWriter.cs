@@ -21,6 +21,9 @@ public static class PageWriter
     private const string Generator = "Tools/NexusTomorrow.ProtocolReference/";
     private const string Repository = "https://github.com/NexusTomorrow/server";
 
+    // The page never explains a value it does not show, so this sentence is on the opcode page only when a row reads purpose.
+    private const string PurposeRowSentence = "A row admitted at `purpose` is handled before its whole message reaches `fields`: every member its handler reads is verified.";
+
     private const string Unsettled = "Unsettled";
 
     private const string AreaGrouping =
@@ -127,8 +130,10 @@ public static class PageWriter
         Head(blocks, "Every client message the gateway admits, with the owner it goes to and its limits.", stamp, s_opcodeTable);
 
         var table = new List<string[]>();
+        bool anyPurpose = false;
         foreach (OpcodeRow row in rows.OrderBy(row => row.Opcode))
         {
+            anyPurpose |= row.ReadsVerifiedMembers;
             ReferenceMessage message = messages.FirstOrDefault(message => message.Opcode == row.Opcode && message.Direction != Direction.ServerToClient)
                 ?? throw new InvalidOperationException($"The opcode table admits {Hex(row.Opcode)}, which no client message declares.");
             table.Add(
@@ -140,10 +145,14 @@ public static class PageWriter
                 PriorityText(row.Priority),
                 Number(row.PerSecond),
                 OverLimitText(row.OverLimit),
+                RungText(row.ReadsVerifiedMembers ? Rung.Purpose : Rung.Fields),
             ]);
         }
 
-        blocks.Add(Table(["Opcode", "Message", "Owner", "Tag", "Priority", "Rate per second", "Past the limit"], table));
+        blocks.Add(Table(["Opcode", "Message", "Owner", "Tag", "Priority", "Rate per second", "Past the limit", "Admitted at"], table));
+        if (anyPurpose)
+            blocks.Add(PurposeRowSentence);
+
         CodeLives(blocks,
         [
             ["The opcode table", Code("Source/NexusTomorrow.Gateway/Catalog/OpcodeTable.cs")],

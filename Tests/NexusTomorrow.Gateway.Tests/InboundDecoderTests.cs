@@ -1,6 +1,10 @@
 ﻿using System.Buffers;
 using System.Collections.Frozen;
+using System.Numerics;
 using NexusTomorrow.Gateway.Catalog;
+using NexusTomorrow.Network.World.Entity;
+using NexusTomorrow.Network.World.Entity.Command;
+using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Network.World.Message.Model.Store;
 using NexusTomorrow.Network.World.Message.Model.Story;
@@ -104,6 +108,19 @@ public sealed class InboundDecoderTests
         Assert.Equal(InboundResult.Message, inbound.Result);
         Assert.Equal(0x00F2, inbound.Opcode);
         Assert.Equal(6, Assert.IsType<WorldReady>(inbound.Message).ZoneId);
+    }
+
+    [Fact]
+    public void AClientMovementIsReadAtPurposeUnderItsRow()
+    {
+        var movement = new ClientMovement { Unknown0 = 1000 };
+        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new Server0262Union2Arm02 { Unknown0 = new Vector3(1, 2, 3) } });
+        byte[] body = ClientFrames.TaggedEnvelopeBody(0x03, 0x0637, movement, s_cipher);
+
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher);
+
+        Assert.Equal(InboundResult.Message, inbound.Result);
+        Assert.IsType<ClientMovement>(inbound.Message);
     }
 
     [Fact]

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Gateway.Catalog;
+using NexusTomorrow.Gateway.World;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message.Model;
 using NexusTomorrow.Network.World.Message.Model.Movement;
@@ -33,10 +34,12 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
     private long? _accountId;
     private bool _greeted;
 
-    // Guarded by _route: the map the session is routed to, and whether the connection has ended. TryEnterMap refuses once it has, so
-    // a map is never kept past the one OnClosed took.
+    // Guarded by _route: the map the session is routed to, whether the connection has ended, and whether the client's unit stands on a
+    // platform (its positions then are not world coordinates). TryEnterMap refuses once it has ended, so a map is never kept past the
+    // one OnClosed took, and clears the platform state, since each map starts in world coordinates.
     private IMapInbox? _map;
     private bool _ended;
+    private bool _onPlatform;
 
     /// <summary>
     /// Create the connection.
@@ -148,6 +151,7 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
                 return false;
 
             _map = map;
+            _onPlatform = false;
             return true;
         }
     }
@@ -224,12 +228,19 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
     }
 
     // The map is read under _route and posted to outside it: a post never runs under the lock, and a map that has stopped refuses it,
-    // which is not a drop.
+    // which is not a drop. A movement is reduced under the lock, which guards the platform state it carries; one that gives no position
+    // or facing is ignored, not dropped.
     private bool RouteToMap(IWireMessage message, OpcodeRow row)
     {
         IMapInbox? map;
+        MovementSample sample = default;
+        bool moved = false;
         lock (_route)
+        {
             map = _map;
+            if (map is not null && message is ClientMovement movement)
+                moved = MovementReads.TryLatest(movement, ref _onPlatform, out sample);
+        }
 
         if (map is null)
         {
@@ -237,8 +248,12 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
             return true;
         }
 
+        if (message is ClientMovement && !moved)
+            return true;
+
         MapMessage? routed = message switch
         {
+            ClientMovement => new ClientMoved(this, sample),
             WorldReady ready => new ClientWorldReady(this, ready.ZoneId),
             MovementControlReceipt receipt => new ClientControlReceipt(this, receipt.Ticket),
             ZoneChange change => new ClientZoneChanged(this, change.ZoneId),

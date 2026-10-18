@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Numerics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -7,6 +8,8 @@ using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Gateway.Connections;
 using NexusTomorrow.Network;
 using NexusTomorrow.Network.Message.Model;
+using NexusTomorrow.Network.World.Entity;
+using NexusTomorrow.Network.World.Entity.Command;
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
@@ -196,6 +199,24 @@ public sealed class WorldConnectionTests : IAsyncLifetime
 
         Assert.Equal(77u, Assert.IsType<ClientControlReceipt>(map.Posted[0]).Ticket);
         Assert.Equal(9, Assert.IsType<ClientZoneChanged>(map.Posted[1]).ZoneId);
+    }
+
+    [Fact]
+    public async Task AClientMovementReachesTheMapAtHighPriority()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+        var movement = new ClientMovement { Unknown0 = 1000 };
+        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new Server0262Union2Arm02 { Unknown0 = new Vector3(1, 2, 3) } });
+
+        await Client.SendTaggedAsync(0x03, movement);
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+
+        ClientMoved moved = Assert.IsType<ClientMoved>(map.Posted[0]);
+        Assert.Equal(new Vector3(1, 2, 3), moved.Sample.Position);
+        Assert.Same(_connection, moved.Session);
+        Assert.Equal(1, map.HighPosts);
     }
 
     [Fact]

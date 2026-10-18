@@ -118,7 +118,7 @@ public sealed class InboundDecoder
         if (_disabled.Contains(opcode))
             return new Inbound(InboundResult.Dropped, opcode, null, "switched off");
 
-        IWireMessage? message = _catalog.CreateInbound(opcode, out InboundRefusal refusal);
+        IWireMessage? message = _catalog.CreateInbound(opcode, row.ReadsVerifiedMembers, out InboundRefusal refusal);
         if (message is null)
             return new Inbound(InboundResult.Dropped, opcode, null, refusal.ToString());
 

@@ -105,13 +105,26 @@ public sealed class MessageCatalogTests
     }
 
     [Fact]
-    public void EveryRowNamesAClientMessageReadToFields()
+    public void EveryRowNamesAClientMessageTheServerMayRead()
     {
         foreach (OpcodeRow row in OpcodeTable.All.Values)
         {
-            IWireMessage? message = MessageCatalog.Default.CreateInbound(row.Opcode, out InboundRefusal refusal);
+            IWireMessage? message = MessageCatalog.Default.CreateInbound(row.Opcode, row.ReadsVerifiedMembers, out InboundRefusal refusal);
             Assert.True(message is not null, $"0x{row.Opcode:X4}: {refusal}");
-            Assert.True(MessageCatalog.Default.RungOf(message.GetType()) >= Rung.Fields);
+            Rung floor = row.ReadsVerifiedMembers ? Rung.Purpose : Rung.Fields;
+            Assert.True(MessageCatalog.Default.RungOf(message.GetType()) >= floor, $"0x{row.Opcode:X4} is read below {floor}");
         }
+    }
+
+    [Fact]
+    public void AMessageAtPurposeIsRefusedUnlessItsRowReadsOnlyVerifiedMembers()
+    {
+        Assert.Null(MessageCatalog.Default.CreateInbound(0x0637, admitPurpose: false, out InboundRefusal withoutRefusal));
+        Assert.Equal(InboundRefusal.BelowFields, withoutRefusal);
+
+        Assert.IsType<Network.World.Message.Model.Movement.ClientMovement>(MessageCatalog.Default.CreateInbound(0x0637, admitPurpose: true, out _));
+
+        Assert.Null(MessageCatalog.Default.CreateInbound(0x0356, admitPurpose: true, out InboundRefusal unverifiedRefusal));
+        Assert.Equal(InboundRefusal.BelowPurpose, unverifiedRefusal);
     }
 }

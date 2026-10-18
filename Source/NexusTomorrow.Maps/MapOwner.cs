@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Numerics;
 using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using NexusTomorrow.Maps.Scheduling;
@@ -225,6 +226,11 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
                     if (_bySession.TryGetValue(receipt.Session, out Player? granted) && receipt.Ticket == granted.ControlTicket)
                         granted.HasControl = true;
                     break;
+                case ClientMoved moved:
+                    // Movement counts once the client has taken control on the grant's ticket.
+                    if (_bySession.TryGetValue(moved.Session, out Player? mover) && mover.HasControl)
+                        KeepMovement(mover, moved.Sample);
+                    break;
                 case ClientZoneChanged zoneChanged:
                     if (_bySession.TryGetValue(zoneChanged.Session, out Player? moving))
                         KeepZone(moving, zoneChanged.ZoneId);
@@ -284,6 +290,17 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     {
         if (zoneId != 0)
             player.MoveTo(player.Location with { ZoneId = zoneId });
+    }
+
+    private static void KeepMovement(Player player, MovementSample sample)
+    {
+        CharacterLocation location = player.Location;
+        if (sample.Position is Vector3 position)
+            location = location with { Position = position };
+        if (sample.Facing is float facing)
+            location = location with { Facing = facing };
+
+        player.MoveTo(location);
     }
 
     // The save is queued before the realm hears of the return, so a select's load queued after the return under the same key reads

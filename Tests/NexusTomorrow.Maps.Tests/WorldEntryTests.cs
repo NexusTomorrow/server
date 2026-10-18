@@ -192,6 +192,51 @@ public sealed class WorldEntryTests : IDisposable
         Assert.Equal((ushort)6, _persistence.Take<SaveCharacterLocationWork>().Location.ZoneId);
     }
 
+    [Fact]
+    public void MovementIsKeptOnceTheClientHasControl()
+    {
+        MapOwner map = NewMap();
+        var session = new FakeClientSession();
+        Arrive(map, session);
+        uint ticket = session.Single<MovementControl>().Ticket;
+        var movement = new ClientMoved(session, new MovementSample(new Vector3(7, 8, 9), 0.5f));
+
+        map.PostHigh(movement);
+        Tick(map);
+        Assert.Equal(new Vector3(10, 20, 30), map.PlayerOf(session)!.Location.Position);
+
+        map.Post(new ClientControlReceipt(session, ticket));
+        Tick(map);
+        map.PostHigh(movement);
+        Tick(map);
+
+        Assert.Equal(new Vector3(7, 8, 9), map.PlayerOf(session)!.Location.Position);
+        Assert.Equal(0.5f, map.PlayerOf(session)!.Location.Facing);
+    }
+
+    [Fact]
+    public void ATickThatAppliesMovementAllocatesNothing()
+    {
+        MapOwner map = NewMap();
+        var session = new FakeClientSession();
+        Arrive(map, session);
+        map.Post(new ClientControlReceipt(session, session.Single<MovementControl>().Ticket));
+        Tick(map);
+
+        for (int i = 0; i < 20; i++)
+        {
+            map.PostHigh(new ClientMoved(session, new MovementSample(new Vector3(i, 0, 0), i)));
+            Tick(map);
+        }
+
+        for (int i = 0; i < 100; i++)
+        {
+            map.PostHigh(new ClientMoved(session, new MovementSample(new Vector3(i, 1, 0), i)));
+            Tick(map);
+            Assert.Equal(0L, map.LastTickAllocatedBytes);
+        }
+    }
+
     private static uint StatValue(Server0262Part4 stat) => Assert.IsType<Server0262Part4.Server0262Union1Arm00>(stat.Unknown2).Unknown0;
 
     private MapOwner NewMap() =>

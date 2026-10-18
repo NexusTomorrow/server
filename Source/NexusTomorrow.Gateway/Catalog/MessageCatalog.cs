@@ -8,7 +8,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Gateway.Catalog;
 
 /// <summary>
-/// Why <see cref="MessageCatalog.CreateInbound"/> refused an opcode.
+/// Why <see cref="MessageCatalog.CreateInbound(ushort, bool, out InboundRefusal)"/> refused an opcode.
 /// </summary>
 public enum InboundRefusal
 {
@@ -26,11 +26,17 @@ public enum InboundRefusal
     /// The message is declared but not read to <see cref="Rung.Fields"/>, so the server may not read it.
     /// </summary>
     BelowFields,
+
+    /// <summary>
+    /// The message is declared but not read to <see cref="Rung.Purpose"/>, so the server may not read it even for its verified members.
+    /// </summary>
+    BelowPurpose,
 }
 
 /// <summary>
 /// Every declared message with its rung, built once from the three message assemblies. The server reads only messages read to
-/// <see cref="Rung.Fields"/> or above, and sends what <see cref="MaySend"/> allows.
+/// <see cref="Rung.Fields"/> or above (or <see cref="Rung.Purpose"/> for a row that reads only verified members), and sends what
+/// <see cref="MaySend"/> allows.
 /// </summary>
 public sealed class MessageCatalog
 {
@@ -61,7 +67,14 @@ public sealed class MessageCatalog
     /// <summary>
     /// A fresh instance of the client message <paramref name="opcode"/> names, or null with the reason when the server may not read it.
     /// </summary>
-    public IWireMessage? CreateInbound(ushort opcode, out InboundRefusal refusal)
+    public IWireMessage? CreateInbound(ushort opcode, out InboundRefusal refusal) => CreateInbound(opcode, admitPurpose: false, out refusal);
+
+    /// <summary>
+    /// A fresh instance of the client message <paramref name="opcode"/> names, or null with the reason when the server may not read it.
+    /// With <paramref name="admitPurpose"/>, a message read to <see cref="Rung.Purpose"/> is admitted too, for a row whose handler reads
+    /// only members marked verified.
+    /// </summary>
+    public IWireMessage? CreateInbound(ushort opcode, bool admitPurpose, out InboundRefusal refusal)
     {
         if (!_inboundRungs.TryGetValue(opcode, out Rung? rung))
         {
@@ -69,9 +82,10 @@ public sealed class MessageCatalog
             return null;
         }
 
-        if (rung is null or < Rung.Fields)
+        Rung floor = admitPurpose ? Rung.Purpose : Rung.Fields;
+        if (rung is null || rung < floor)
         {
-            refusal = InboundRefusal.BelowFields;
+            refusal = admitPurpose ? InboundRefusal.BelowPurpose : InboundRefusal.BelowFields;
             return null;
         }
 

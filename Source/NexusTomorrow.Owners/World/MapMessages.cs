@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Persistence.Realm;
+﻿using System.Numerics;
+using NexusTomorrow.Persistence.Realm;
 
 namespace NexusTomorrow.Owners.World;
 
@@ -38,3 +39,14 @@ public sealed record ClientControlReceipt(IWorldSession Session, uint Ticket) : 
 /// The client reported the zone its unit stands in (<c>ZoneChange</c>).
 /// </summary>
 public sealed record ClientZoneChanged(IWorldSession Session, ushort ZoneId) : SessionMessage(Session);
+
+/// <summary>
+/// The newest position the client sent for its unit, in world coordinates, and its newest facing, the yaw in radians; either is null
+/// when the message carried none.
+/// </summary>
+public readonly record struct MovementSample(Vector3? Position, float? Facing);
+
+/// <summary>
+/// The client moved its unit.
+/// </summary>
+public sealed record ClientMoved(IWorldSession Session, MovementSample Sample) : SessionMessage(Session);

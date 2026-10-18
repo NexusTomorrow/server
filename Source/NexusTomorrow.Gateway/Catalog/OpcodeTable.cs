@@ -63,9 +63,11 @@ public enum OverLimitAction
 /// <summary>
 /// One client opcode the gateway admits: its owner, its priority, its rate limit per session and the action past it, and the tag the
 /// client sends it under inside <c>TaggedMessage</c>, or null for one sent untagged. The tag is checked as a value: a message under any
-/// other tag, or tagged when its row names none, ends the session.
+/// other tag, or tagged when its row names none, ends the session. <paramref name="ReadsVerifiedMembers"/> is whether the message is
+/// admitted at <c>Purpose</c> because its handler reads only members marked verified.
 /// </summary>
-public sealed record OpcodeRow(ushort Opcode, MessageOwner Owner, MessagePriority Priority, int PerSecond, OverLimitAction OverLimit, byte? Tag = null);
+public sealed record OpcodeRow(
+    ushort Opcode, MessageOwner Owner, MessagePriority Priority, int PerSecond, OverLimitAction OverLimit, byte? Tag = null, bool ReadsVerifiedMembers = false);
 
 /// <summary>
 /// The rows of every client message the gateway admits. A message without a row is dropped and counted.
@@ -101,6 +103,10 @@ public static class OpcodeTable
         new(0x00F2, MessageOwner.Map, MessagePriority.Normal, 2, OverLimitAction.Drop, WorldTag), // WorldReady
         new(0x0635, MessageOwner.Map, MessagePriority.Normal, 4, OverLimitAction.Drop, WorldTag), // MovementControlReceipt
         new(0x063A, MessageOwner.Map, MessagePriority.Normal, 10, OverLimitAction.Drop, WorldTag), // ZoneChange
+
+        // ClientMovement: admitted at Purpose since its handler reads only MovementReads.Members, each marked; up to every frame while
+        // dashing.
+        new(0x0637, MessageOwner.Map, MessagePriority.High, 60, OverLimitAction.Drop, WorldTag, ReadsVerifiedMembers: true),
     }.ToFrozenDictionary(row => row.Opcode);
 
     /// <summary>
