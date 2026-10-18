@@ -141,25 +141,36 @@ public sealed class HarnessServer : IAsyncDisposable
         _disposed = true;
         try
         {
-            Maps.Resume();
-            foreach (IOwner owner in _app.Services.GetServices<IOwner>())
-                await Eventually.TrueAsync(() => owner.QueueLength == 0, TimeSpan.FromSeconds(10));
-            foreach (MapOwner map in Service<MapDirectory>().Maps)
-                await Eventually.TrueAsync(() => map.QueueLength == 0, TimeSpan.FromSeconds(10));
-        }
-        finally
-        {
             try
             {
-                await _app.StopAsync().WaitAsync(s_stopBound);
+                Maps.Resume();
+                foreach (IOwner owner in _app.Services.GetServices<IOwner>())
+                    await Eventually.TrueAsync(() => owner.QueueLength == 0, TimeSpan.FromSeconds(10));
+                foreach (MapOwner map in Service<MapDirectory>().Maps)
+                    await Eventually.TrueAsync(() => map.QueueLength == 0, TimeSpan.FromSeconds(10));
             }
             finally
             {
-                await _app.DisposeAsync().AsTask().WaitAsync(s_stopBound);
+                try
+                {
+                    await _app.StopAsync().WaitAsync(s_stopBound);
+                }
+                finally
+                {
+                    await _app.DisposeAsync().AsTask().WaitAsync(s_stopBound);
+                }
             }
         }
+        catch
+        {
+            // The host is already stopped and disposed. A map whose tick throws never drains, so the drain or the stop times out; the
+            // exception that tick held is what surfaces then, with its own stack, in place of the timeout. With none held, the
+            // timeout surfaces as it was.
+            Maps.ThrowIfFaulted();
+            throw;
+        }
 
-        // A map's own exception, not a timeout, is what fails the scenario that broke it.
+        // Nothing threw: a fault a tick held still fails the scenario that broke it.
         Maps.ThrowIfFaulted();
     }
 }
