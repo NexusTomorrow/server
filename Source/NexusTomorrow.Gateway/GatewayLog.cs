@@ -26,4 +26,16 @@ internal static partial class GatewayLog
 
     [LoggerMessage(EventId = 4007, Level = LogLevel.Debug, Message = "Connection from {Remote} refused on the {Listener} listener: the address holds its limit")]
     public static partial void ConnectionRefused(ILogger logger, string listener, IPEndPoint remote);
+
+    [LoggerMessage(EventId = 4008, Level = LogLevel.Debug, Message = "STS request refused: {Method} {Uri}")]
+    public static partial void StsRequestRefusedDetail(ILogger logger, string method, string uri);
+
+    [LoggerMessage(EventId = 4009, Level = LogLevel.Debug, Message = "Connection {ConnectionId} received 0x{Opcode:X4}: {MessageType}")]
+    public static partial void MessageReceived(ILogger logger, long connectionId, ushort opcode, string messageType);
+
+    [LoggerMessage(EventId = 4010, Level = LogLevel.Debug, Message = "Connection {ConnectionId} received 0x{Opcode:X4}: Malformed")]
+    public static partial void MessageMalformed(ILogger logger, long connectionId, ushort opcode);
+
+    [LoggerMessage(EventId = 4011, Level = LogLevel.Debug, Message = "Connection {ConnectionId} sent 0x{Opcode:X4} {MessageType}")]
+    public static partial void MessageSent(ILogger logger, long connectionId, ushort opcode, string messageType);
 }

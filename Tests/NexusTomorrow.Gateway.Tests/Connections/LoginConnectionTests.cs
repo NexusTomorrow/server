@@ -5,6 +5,7 @@ using Microsoft.Extensions.Time.Testing;
 using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Gateway.Connections;
 using NexusTomorrow.Gateway.Limits;
+using NexusTomorrow.Gateway.Tests.Sts;
 using NexusTomorrow.Network;
 using NexusTomorrow.Network.Auth.Message.Model;
 using NexusTomorrow.Network.Message.Model;
@@ -25,6 +26,7 @@ public sealed class LoginConnectionTests : IAsyncLifetime
     private readonly FakeWriteBehind _persistence = new();
     private readonly AccountOwner _accounts;
     private readonly IOptions<GatewayOptions> _gateway = Options.Create(new GatewayOptions { UnknownAccountSecret = Convert.ToBase64String(new byte[32]) });
+    private readonly RecordingLogger<LoginConnection> _log = new();
     private readonly PipePair _pipes = new();
     private readonly CancellationTokenSource _stop = new();
     private Task _run = Task.CompletedTask;
@@ -42,7 +44,7 @@ public sealed class LoginConnectionTests : IAsyncLifetime
         var connection = new LoginConnection(MessageCatalog.Default,
             new InboundDecoder(MessageCatalog.Default, OpcodeTable.Pregame, new HashSet<ushort>()),
             _accounts, _persistence, new LoginRateLimiter(_time, _gateway), _gateway, Options.Create(new RealmOptions()),
-            _time, new GatewayMetrics(), NullLogger<LoginConnection>.Instance);
+            _time, new GatewayMetrics(), _log);
         _run = connection.RunAsync(_pipes.Server, new IPEndPoint(IPAddress.Loopback, 50000), _stop.Token);
         Client = new GameTestClient(_pipes.Client);
         return ValueTask.CompletedTask;
@@ -84,6 +86,32 @@ public sealed class LoginConnectionTests : IAsyncLifetime
         var reply = new TaskCompletionSource<WorldDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
         _accounts.Post(new RedeemSessionKey(key, handoff.Echo, "alice@example.com", new FakeClientSession(), reply));
         Assert.Equal(7, Assert.IsType<WorldGranted>(await reply.Task.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken)).AccountId);
+    }
+
+    [Fact]
+    public async Task TheSessionKeyInTheHandoffReachesNoLogLineAsHexOrBase64()
+    {
+        await Client.ExpectAsync<ServerHello>();
+        await Client.SendAsync(Request(await IssueAsync()));
+        await Client.ExpectAsync<LoginAccepted>();
+        RealmHandoff handoff = await Client.ExpectAsync<RealmHandoff>();
+        byte[] key = new byte[16];
+        handoff.SessionKey.CopyTo(key);
+
+        IReadOnlyList<string> entries = _log.Entries;
+        Assert.Contains(entries, entry => entry.Contains("RealmHandoff", StringComparison.Ordinal));
+        string[] forbidden =
+        [
+            Convert.ToHexString(key),
+            Convert.ToBase64String(key),
+            new Guid(key).ToString(),
+            new Guid(key).ToString("N"),
+        ];
+        foreach (string entry in entries)
+        {
+            foreach (string secret in forbidden)
+                Assert.DoesNotContain(secret, entry, StringComparison.OrdinalIgnoreCase);
+        }
     }
 
     [Fact]

@@ -27,6 +27,9 @@ public sealed class StsConnection
     // The longest email address, so a longer name cannot be an account.
     private const int MaxLoginNameChars = 254;
 
+    // Longest client text a debug line carries.
+    private const int MaxLoggedTextChars = 80;
+
     // N is 1024 bits, so A and B are at most 128 bytes, and M1 is a SHA-256 hash.
     private const int MaxPublicValueBytes = 128;
     private const int MaxEvidenceBytes = 32;
@@ -226,6 +229,24 @@ public sealed class StsConnection
             ? uri
             : "(unknown)";
 
+    // Client text for the debug log: printable ASCII only, anything else becomes '?', cut at MaxLoggedTextChars.
+    internal static string SanitiseForLog(string text) =>
+        string.Create(Math.Min(text.Length, MaxLoggedTextChars), text, static (span, source) =>
+        {
+            for (int i = 0; i < span.Length; i++)
+                span[i] = source[i] is >= ' ' and <= '~' ? source[i] : '?';
+        });
+
+    private void LogRefusedRequest(StsRequest request)
+    {
+        if (!_logger.IsEnabled(LogLevel.Debug))
+            return;
+
+        string method = SanitiseForLog(request.Method);
+        string uri = SanitiseForLog(request.Uri);
+        GatewayLog.StsRequestRefusedDetail(_logger, method, uri);
+    }
+
     private async Task<bool> HandleAsync(StsRequest request, PipeWriter output, IPEndPoint remote, CancellationTokenSource preAuth, CancellationToken cancellationToken)
     {
         switch (request.Uri)
@@ -262,6 +283,7 @@ public sealed class StsConnection
                 return await RequestGameTokenAsync(request, output, account, preAuth, cancellationToken);
             default:
                 GatewayLog.StsRequestRefused(_logger, KnownUri(request.Uri), _state.ToString());
+                LogRefusedRequest(request);
                 _endReason = "request out of order";
                 return false;
         }

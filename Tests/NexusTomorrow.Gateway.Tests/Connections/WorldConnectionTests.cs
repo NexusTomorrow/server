@@ -141,6 +141,18 @@ public sealed class WorldConnectionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheDebugLogNamesTheInboundCharacterSelectAndTheOutboundCharacterSelectFailed()
+    {
+        await GreetAsync();
+        await Client.SendAsync(new CharacterSelect { CharacterId = 424242 });
+        await Client.ExpectAsync<CharacterSelectFailed>();
+
+        Assert.Contains(_log.Lines, line => line.Contains("received 0x07DD: CharacterSelect", StringComparison.Ordinal));
+        Assert.Contains(_log.Lines, line => line.Contains("sent 0x0162 CharacterSelectFailed", StringComparison.Ordinal));
+        Assert.DoesNotContain(_log.Lines, line => line.Contains("424242", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task ClosingTheConnectionTakesTheAccountOffline()
     {
         await GreetAsync();
