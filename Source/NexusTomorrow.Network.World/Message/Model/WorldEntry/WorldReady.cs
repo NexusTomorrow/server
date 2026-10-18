@@ -1,7 +1,7 @@
 ﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Entity;
-using NexusTomorrow.Network.World.Message.Model.PlayerPath;
+using NexusTomorrow.Network.World.Message.Model.Movement;
 
 namespace NexusTomorrow.Network.World.Message.Model.WorldEntry;
 

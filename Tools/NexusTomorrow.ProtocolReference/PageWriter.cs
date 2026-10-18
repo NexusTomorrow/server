@@ -19,8 +19,13 @@ public static class PageWriter
     private const string Generator = "Tools/NexusTomorrow.ProtocolReference/";
     private const string Repository = "https://github.com/NexusTomorrow/server";
 
-    private const string Grouping =
-        "This grouping comes from where the declarations sit today. It claims nothing about what these messages do, and it changes when the client's areas are settled.";
+    private const string Unsettled = "Unsettled";
+
+    private const string AreaGrouping =
+        "This area groups messages by the client feature they belong to; a message may sit here provisionally until its reading confirms the area. None is verified to its purpose yet, so this page claims nothing about what they do.";
+
+    private const string UnsettledGrouping =
+        "These messages wait here until the client feature they belong to is found. This page claims nothing about what they do.";
 
     private static readonly (Direction Direction, string Title)[] s_chapters =
     [
@@ -37,9 +42,11 @@ public static class PageWriter
         var blocks = new List<string>();
         Head(blocks, $"Every message in the {area} area: its opcode, direction, how far it is verified, and its fields.", stamp);
 
-        // An area name is the folder the declarations sit in, a grouping and not a claim, until a message in it is read to Purpose.
-        if (!messages.Any(message => message.Rung >= Rung.Purpose))
-            blocks.Insert(2, Grouping);
+        // A page claims nothing about what its messages do until one of them is read to Purpose; Unsettled holds messages with no area yet.
+        if (area == Unsettled)
+            blocks.Insert(2, UnsettledGrouping);
+        else if (!messages.Any(message => message.Rung >= Rung.Purpose))
+            blocks.Insert(2, AreaGrouping);
 
         foreach ((Direction direction, string title) in s_chapters)
         {

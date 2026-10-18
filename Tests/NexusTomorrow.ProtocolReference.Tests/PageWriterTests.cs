@@ -87,13 +87,23 @@ public sealed class PageWriterTests
     }
 
     [Fact]
-    public void AnAreaWithNothingVerifiedSaysItsNameIsOnlyAGrouping()
+    public void AnAreaWithNothingVerifiedClaimsNothingAboutItsMessages()
     {
-        const string Grouping = "This grouping comes from where the declarations sit today. It claims nothing about what these messages do, and it changes when the client's areas are settled.";
+        const string Grouping = "This area groups messages by the client feature they belong to; a message may sit here provisionally until its reading confirms the area. None is verified to its purpose yet, so this page claims nothing about what they do.";
         string[] blocks = PageWriter.AreaPage("Sample", [ReferenceMessage.Of(typeof(ServerFF22))], s_walk, s_docs, s_stamp).Split("\n\n");
 
         Assert.Equal("Every message in the Sample area: its opcode, direction, how far it is verified, and its fields.", blocks[1]);
         Assert.Equal(Grouping, blocks[2]);
+        Assert.StartsWith("> [!NOTE]", blocks[3], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void TheUnsettledPageSaysItsMessagesHaveNoAreaYet()
+    {
+        const string Waiting = "These messages wait here until the client feature they belong to is found. This page claims nothing about what they do.";
+        string[] blocks = PageWriter.AreaPage("Unsettled", [ReferenceMessage.Of(typeof(ServerFF22))], s_walk, s_docs, s_stamp).Split("\n\n");
+
+        Assert.Equal(Waiting, blocks[2]);
         Assert.StartsWith("> [!NOTE]", blocks[3], StringComparison.Ordinal);
     }
 
