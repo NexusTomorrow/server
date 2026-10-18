@@ -38,8 +38,8 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
     private readonly HashSet<ulong> _renaming = [];
 
     // A character away from rest, by character id: loading for a select, or held by a map. A presence leaves through Release (a load
-    // that found nothing, was abandoned or was refused by its map, and the faults of a select or a load before its arrival was
-    // posted), through Returned, and through the fault path of Returned.
+    // whose session closed, a load that found nothing, a world no map hosts, a map that refused the arrival, and the faults of a
+    // select or of a load before its arrival was posted), through Returned, and through the fault path of Returned.
     private readonly Dictionary<ulong, Presence> _presences = [];
 
     // The character each session has on its way in or in the world, by session reference. A session parked behind another's
@@ -143,8 +143,9 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
                 session.Disconnect("the realm owner failed renaming a character");
                 break;
             case SelectCharacter { Session: var session, CharacterId: var selectedId }:
-                // A presence this select created and never queued a load for would hold the character until restart; the faulted
-                // session is disconnected, so it is freed without an answer. A load that did queue lands on no matching ticket.
+                // This session's presence for the character, still loading, may have no load queued behind it and would then hold the
+                // character until restart; the faulted session is disconnected, so it is freed without an answer. A load that did
+                // queue lands on no matching ticket.
                 if (_presences.TryGetValue(selectedId, out Presence? created) && ReferenceEquals(created.Session, session) && created.Loading)
                     Release(created, answerGeneral: false);
 

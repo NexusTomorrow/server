@@ -353,7 +353,14 @@ public sealed class RealmOwnerTests : IAsyncLifetime
 
             // The second create takes the allocator below its refill mark and then throws, so the refill is still owed when the
             // next message ends; that message is the load, and its refill throws after the arrival is posted.
-            db.ThrowOn = work => work is CreateCharacterWork or TakeIdBlockWork;
+            int refills = 0;
+            db.ThrowOn = work =>
+            {
+                if (work is TakeIdBlockWork)
+                    Interlocked.Increment(ref refills);
+
+                return work is CreateCharacterWork or TakeIdBlockWork;
+            };
             owner.Post(new CreateCharacter(Account, _session, Create("Aaaa Bbbb")));
             owner.Post(new SelectCharacter(Account, _session, 5));
             await Eventually.TrueAsync(() => db.Queued.OfType<LoadCharacterWork>().Any());
@@ -368,6 +375,8 @@ public sealed class RealmOwnerTests : IAsyncLifetime
             owner.Post(new SelectCharacter(Account, other, 5));
             await SyncAsync(owner, other);
 
+            // The one refill, thrown on the load's message, is what put the handler in its fault path.
+            Assert.Equal(1, Volatile.Read(ref refills));
             Assert.Empty(db.Queued.OfType<LoadCharacterWork>());
             Assert.Empty(other.Sent.OfType<CharacterSelectFailed>());
             Assert.Empty(_session.Sent.OfType<CharacterSelectFailed>());
