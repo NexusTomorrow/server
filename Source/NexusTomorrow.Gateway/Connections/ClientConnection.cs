@@ -283,6 +283,9 @@ public abstract class ClientConnection : IClientSession
                 GatewayLog.MessageDropped(_logger, Id, inbound.Opcode, inbound.Reason);
                 return true;
             case InboundResult.Malformed:
+                if (_logger.IsEnabled(LogLevel.Debug))
+                    GatewayLog.MessageMalformed(_logger, Id, inbound.Opcode);
+
                 Disconnect($"a malformed message 0x{inbound.Opcode:X4}: {inbound.Reason}");
                 return false;
         }
@@ -301,7 +304,18 @@ public abstract class ClientConnection : IClientSession
         }
 
         // A message the decoder admitted is non-null by InboundResult.Message's contract.
-        return await HandleAsync(inbound.Message!);
+        IWireMessage admitted = inbound.Message!;
+        if (_logger.IsEnabled(LogLevel.Debug))
+            GatewayLog.MessageReceived(_logger, Id, inbound.Opcode, admitted.GetType().Name);
+
+        return await HandleAsync(admitted);
+    }
+
+    // Names the message type only: field values and payload bytes (RealmHandoff carries the session key) never reach a log line.
+    private void LogSent(in Outbound item)
+    {
+        if (_logger.IsEnabled(LogLevel.Debug))
+            GatewayLog.MessageSent(_logger, Id, item.Opcode, item.Message!.GetType().Name);
     }
 
     private async Task WriteAsync(PipeWriter output, CancellationTokenSource writerDone, CancellationToken cancellationToken)
@@ -320,9 +334,11 @@ public abstract class ClientConnection : IClientSession
                     {
                         case OutboundKind.Bare:
                             FrameWriter.WriteMessage(output, item.Opcode, item.Message!);
+                            LogSent(item);
                             break;
                         case OutboundKind.Enveloped:
                             FrameWriter.WriteEnvelope(output, _envelopeOpcode, item.Opcode, item.Message!, sendCipher);
+                            LogSent(item);
                             break;
                         case OutboundKind.Key:
                             sendCipher = item.Cipher!;

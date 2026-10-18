@@ -393,6 +393,67 @@ public sealed class StsConnectionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AnUnknownUriIsLoggedAtDebugWithItsMethodAndUriAndNeverItsBody()
+    {
+        var logger = new RecordingLogger<StsConnection>();
+        var pipes = new PipePair();
+        Serve(pipes, 50050, logger: logger);
+
+        var client = new StsTestClient(pipes.Client);
+        await client.SendAsync("/Sts/Mystery", "<Request>\n<Marker>body-marker-7741</Marker>\n</Request>\n");
+        Assert.True(await client.IsClosedAsync(s_wait));
+
+        string[] debug = [.. logger.Entries.Where(entry => entry.StartsWith("Debug ", StringComparison.Ordinal))];
+        string line = Assert.Single(debug);
+        Assert.Contains("POST", line, StringComparison.Ordinal);
+        Assert.Contains("/Sts/Mystery", line, StringComparison.Ordinal);
+        Assert.DoesNotContain(logger.Entries, entry => entry.Contains("body-marker-7741", StringComparison.Ordinal));
+        Assert.Contains(logger.Entries, entry => entry.StartsWith("Warning ", StringComparison.Ordinal)
+            && entry.Contains("STS request (unknown) refused in state New", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task AKnownUriOutOfItsStateIsLoggedAtDebugToo()
+    {
+        var logger = new RecordingLogger<StsConnection>();
+        var pipes = new PipePair();
+        Serve(pipes, 50051, logger: logger);
+
+        var client = new StsTestClient(pipes.Client);
+        await client.SendAsync("/Auth/LoginFinish", "");
+        Assert.True(await client.IsClosedAsync(s_wait));
+        Assert.Contains(logger.Entries, entry => entry.StartsWith("Debug ", StringComparison.Ordinal)
+            && entry.Contains("/Auth/LoginFinish", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task ALoggedUriKeepsPrintableAsciiOnlyAndIsCutAtEightyCharacters()
+    {
+        var logger = new RecordingLogger<StsConnection>();
+        var pipes = new PipePair();
+        Serve(pipes, 50052, logger: logger);
+
+        string uri = "/A\u0001B\u007FC\tD" + new string('x', 200);
+        var client = new StsTestClient(pipes.Client);
+        await client.SendAsync(uri, "<Request>\n</Request>\n");
+        Assert.True(await client.IsClosedAsync(s_wait));
+
+        string line = Assert.Single(logger.Entries, entry => entry.StartsWith("Debug ", StringComparison.Ordinal));
+        Assert.Contains("/A?B?C?D" + new string('x', 72), line, StringComparison.Ordinal);
+        Assert.DoesNotContain(new string('x', 73), line, StringComparison.Ordinal);
+        Assert.DoesNotContain('\u0001', line);
+        Assert.DoesNotContain('\u007F', line);
+        Assert.DoesNotContain('\t', line);
+    }
+
+    [Fact]
+    public void NonAsciiTextInALoggedUriBecomesQuestionMarks()
+    {
+        Assert.Equal("/a?b?c", StsConnection.SanitiseForLog("/aéb中c"));
+        Assert.Equal(80, StsConnection.SanitiseForLog(new string('é', 500)).Length);
+    }
+
+    [Fact]
     public async Task NothingSecretIsEverLogged()
     {
         _directory.Add("bob@example.com", "hunter2-correct");

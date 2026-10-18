@@ -92,7 +92,7 @@ Entering the world comes next.
 
 `migrate` applies every schema's pending migrations and exits 0, or exits 1 with the error. The
 server refuses to start while any schema has a pending migration, so run `migrate` again after
-updating.
+updating. To log every refused STS request and every game message a connection receives and sends (type names only), set `${env:Logging__LogLevel__NexusTomorrow.Gateway} = "Debug"` before step 5; the braces keep PowerShell from reading the dot as a property.
 
 Settings come from `appsettings.json`, then environment variables (`__` stands for `:`), then the
 command line. The ones you are most likely to change:
