@@ -39,10 +39,9 @@ public sealed class MapOptions
     public TimeSpan SaveInterval { get; set; } = TimeSpan.FromSeconds(60);
 
     /// <summary>
-    /// How long a tick keeps handling normal-priority messages once it has handled <see cref="NormalDrainFloor"/> of them, in
-    /// milliseconds.
+    /// How long a tick keeps handling normal-priority messages once it has handled <see cref="NormalDrainFloor"/> of them.
     /// </summary>
-    public int NormalDrainBudget { get; set; } = 5;
+    public TimeSpan NormalDrainBudget { get; set; } = TimeSpan.FromMilliseconds(5);
 
     /// <summary>
     /// How many normal-priority messages a tick handles at least, however long that takes.

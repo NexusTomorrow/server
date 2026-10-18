@@ -135,6 +135,51 @@ public sealed class MapSchedulerTests
     }
 
     [Fact]
+    public async Task AMapUnregisteredMidTickCannotBeRegisteredUntilThatTickEnds()
+    {
+        await using MapScheduler scheduler = Create(poolThreads: 2);
+        var map = new CountingMap("busy") { Work = 50 };
+        scheduler.Register(map, MapPlacement.Pool);
+        scheduler.Start();
+        await Eventually.TrueAsync(() => map.Running == 1);
+
+        Task unregistered = scheduler.UnregisterAsync(map);
+
+        Assert.Throws<InvalidOperationException>(() => scheduler.Register(map, MapPlacement.Pool));
+        Assert.Same(unregistered, scheduler.UnregisterAsync(map));
+        await unregistered.WaitAsync(s_fiveSeconds, TestContext.Current.CancellationToken);
+        scheduler.Register(map, MapPlacement.Pool);
+        await Eventually.TrueAsync(() => map.Ticks > 2);
+        Assert.Equal(1, map.MostAtOnce);
+    }
+
+    [Fact]
+    public async Task DisposingCompletesUnregistrationOnlyOnceTheRunningTickHasEnded()
+    {
+        MapScheduler scheduler = Create(poolThreads: 1);
+        using var gate = new ManualResetEventSlim(false);
+        var map = new CountingMap("held") { Gate = gate };
+        scheduler.Register(map, MapPlacement.Pool);
+        scheduler.Start();
+        await Eventually.TrueAsync(() => map.Running == 1);
+
+        Task disposed = scheduler.DisposeAsync().AsTask();
+        Task unregistered = scheduler.UnregisterAsync(map);
+        await Task.Delay(100, TestContext.Current.CancellationToken);
+
+        Assert.False(unregistered.IsCompleted);
+        Assert.False(disposed.IsCompleted);
+
+        gate.Set();
+        await disposed.WaitAsync(s_fiveSeconds, TestContext.Current.CancellationToken);
+        await unregistered.WaitAsync(s_fiveSeconds, TestContext.Current.CancellationToken);
+        long ticks = map.Ticks;
+        await Task.Delay(200, TestContext.Current.CancellationToken);
+
+        Assert.Equal(ticks, map.Ticks);
+    }
+
+    [Fact]
     public async Task FirstDeadlinesAreSpreadAcrossOneTick()
     {
         await using MapScheduler scheduler = Create(poolThreads: 1);
@@ -178,6 +223,10 @@ public sealed class MapSchedulerTests
 
         public bool Throws { get; init; }
 
+        public ManualResetEventSlim? Gate { get; init; }
+
+        public int Running => Volatile.Read(ref _running);
+
         public long Ticks => Interlocked.Read(ref _ticks);
 
         public int MostAtOnce => Volatile.Read(ref _mostAtOnce);
@@ -194,6 +243,8 @@ public sealed class MapSchedulerTests
             Volatile.Write(ref _lastThreadName, Thread.CurrentThread.Name ?? string.Empty);
             if (Work > 0)
                 Thread.Sleep(Work);
+
+            Gate?.Wait();
 
             Interlocked.Increment(ref _ticks);
             Interlocked.Decrement(ref _running);

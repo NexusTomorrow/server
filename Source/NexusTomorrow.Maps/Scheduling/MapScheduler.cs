@@ -85,6 +85,7 @@ public sealed class MapScheduler : IMapScheduler
         {
             if (_stopping)
                 throw new InvalidOperationException("The map scheduler is stopping.");
+            // A removed map stays here while its last tick runs, so the same instance cannot tick on two threads.
             if (_maps.ContainsKey(map))
                 throw new InvalidOperationException($"Map {map.Name} is already registered.");
 
@@ -113,12 +114,15 @@ public sealed class MapScheduler : IMapScheduler
     {
         lock (_lock)
         {
-            if (!_maps.Remove(map, out ScheduledMap? scheduled))
+            if (!_maps.TryGetValue(map, out ScheduledMap? scheduled))
                 return Task.CompletedTask;
 
             scheduled.Removed = true;
             if (!scheduled.Running)
+            {
+                _maps.Remove(map);
                 scheduled.Unregistered.TrySetResult();
+            }
 
             return scheduled.Unregistered.Task;
         }
@@ -135,8 +139,6 @@ public sealed class MapScheduler : IMapScheduler
 
             _stopping = true;
             threads = [.. _threads];
-            foreach (ScheduledMap scheduled in _maps.Values)
-                scheduled.Unregistered.TrySetResult();
         }
 
         _stop.Set();
@@ -146,6 +148,13 @@ public sealed class MapScheduler : IMapScheduler
             ends[i] = threads[i].Task;
 
         await Task.WhenAll(ends);
+
+        // Every thread has ended, so no map can tick again.
+        lock (_lock)
+        {
+            foreach (ScheduledMap scheduled in _maps.Values)
+                scheduled.Unregistered.TrySetResult();
+        }
 
         _wake.Dispose();
         _stop.Dispose();
@@ -171,6 +180,10 @@ public sealed class MapScheduler : IMapScheduler
                 long nowMs;
                 lock (_lock)
                 {
+                    // Disposal sets _stopping under this lock, so no tick starts once it has begun.
+                    if (_stopping)
+                        break;
+
                     nowMs = NowMs;
                     due = _queue.TakeDue(nowMs, out waitMs);
                     if (due is not null)
@@ -190,6 +203,7 @@ public sealed class MapScheduler : IMapScheduler
                     due.Running = false;
                     if (due.Removed)
                     {
+                        _maps.Remove(due.Map);
                         due.Unregistered.TrySetResult();
                     }
                     else
@@ -217,7 +231,7 @@ public sealed class MapScheduler : IMapScheduler
                 long waitMs;
                 lock (_lock)
                 {
-                    if (scheduled.Removed)
+                    if (_stopping || scheduled.Removed)
                         break;
 
                     nowMs = NowMs;
@@ -239,6 +253,7 @@ public sealed class MapScheduler : IMapScheduler
                     scheduled.Running = false;
                     if (scheduled.Removed)
                     {
+                        _maps.Remove(scheduled.Map);
                         scheduled.Unregistered.TrySetResult();
                         break;
                     }
