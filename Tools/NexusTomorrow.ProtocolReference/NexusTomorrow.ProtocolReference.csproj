@@ -12,6 +12,9 @@
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network\NexusTomorrow.Network.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network.Auth\NexusTomorrow.Network.Auth.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network.World\NexusTomorrow.Network.World.csproj" />
+    <!-- The opcode table and the command definitions, for their pages. -->
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Gateway\NexusTomorrow.Gateway.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Commands\NexusTomorrow.Commands.csproj" />
   </ItemGroup>
 
 </Project>

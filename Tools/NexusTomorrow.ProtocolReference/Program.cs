@@ -1,10 +1,11 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.ProtocolReference;
 
-// Writes Messages.md and one Messages-<area>.md per area into --out, stamped with the branch, commit and date the pages describe, and
-// removes a Messages-<area>.md no area has any more.
+// Writes Messages.md, one Messages-<area>.md per area, Gateway-opcode-table.md and Command-layer-commands.md into --out, stamped with
+// the branch, commit and date the pages describe, and removes a Messages-<area>.md no area has any more.
 var options = new Dictionary<string, string>(StringComparer.Ordinal);
 for (int i = 0; i + 1 < args.Length; i += 2)
     options[args[i]] = args[i + 1];
@@ -39,6 +40,9 @@ string output = options["--out"];
 List<(string Name, string Text)> pages = [("Messages.md", PageWriter.IndexPage(messages, stamp))];
 foreach (IGrouping<string, ReferenceMessage> area in messages.GroupBy(message => message.Area, StringComparer.Ordinal).OrderBy(group => group.Key, StringComparer.Ordinal))
     pages.Add(($"Messages-{area.Key}.md", PageWriter.AreaPage(area.Key, [.. area], walk, docs, stamp)));
+
+pages.Add(("Gateway-opcode-table.md", PageWriter.OpcodeTablePage(OpcodeTable.Pregame.Values, messages, stamp)));
+pages.Add(("Command-layer-commands.md", PageWriter.CommandsPage(Registries.Commands(), stamp)));
 
 IReadOnlyList<string> removed = ReferenceSet.Write(output, pages);
 Console.WriteLine(string.Create(CultureInfo.InvariantCulture, $"{messages.Count} messages; {pages.Count} pages written to {output}"));
