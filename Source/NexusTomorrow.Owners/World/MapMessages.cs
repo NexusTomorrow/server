@@ -41,8 +41,8 @@ public sealed record ClientControlReceipt(IWorldSession Session, uint Ticket) : 
 public sealed record ClientZoneChanged(IWorldSession Session, ushort ZoneId) : SessionMessage(Session);
 
 /// <summary>
-/// The newest position the client sent for its unit, in world coordinates, and its newest facing, the yaw in radians; either is null
-/// when the message carried none.
+/// The newest finite position the client sent for its unit, in world coordinates, and its newest finite facing, the yaw in radians;
+/// either is null when the message carried none, a non-finite one counting as none.
 /// </summary>
 public readonly record struct MovementSample(Vector3? Position, float? Facing);
 

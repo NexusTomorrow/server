@@ -26,11 +26,13 @@ public static class MovementReads
     ];
 
     /// <summary>
-    /// Take the newest position and facing from <paramref name="message"/>'s commands, in the order they came. A platform command sets
-    /// <paramref name="onPlatform"/> to whether its unit id is not 0; while it is set, positions and facings are relative to that unit
-    /// and are not taken. The state carries across messages, because the client sends a platform command only when it changes.
+    /// Take the newest finite position and facing from <paramref name="message"/>'s commands, in the order they came. A position is
+    /// taken only when its three components are finite, and a facing only when its first value, the yaw, is; a non-finite one is
+    /// skipped as if absent, so the newest finite one wins. A platform command sets <paramref name="onPlatform"/> to whether its unit
+    /// id is not 0; while it is set, positions and facings are relative to that unit and are not taken. The state carries across
+    /// messages, because the client sends a platform command only when it changes.
     /// </summary>
-    /// <returns>True when a position or a facing was found.</returns>
+    /// <returns>True when a finite position or facing was found.</returns>
     public static bool TryLatest(ClientMovement message, ref bool onPlatform, out MovementSample sample)
     {
         Vector3? position = null;
@@ -42,10 +44,10 @@ public static class MovementReads
                 case Server0262Union2Arm01 platform:
                     onPlatform = platform.Unknown0 != 0;
                     break;
-                case Server0262Union2Arm02 moved when !onPlatform:
+                case Server0262Union2Arm02 moved when !onPlatform && IsFinite(moved.Unknown0):
                     position = moved.Unknown0;
                     break;
-                case Server0262Union2Arm0E turned when !onPlatform:
+                case Server0262Union2Arm0E turned when !onPlatform && float.IsFinite(turned.Unknown0.X):
                     facing = turned.Unknown0.X;
                     break;
             }
@@ -54,4 +56,6 @@ public static class MovementReads
         sample = new MovementSample(position, facing);
         return position is not null || facing is not null;
     }
+
+    private static bool IsFinite(Vector3 value) => float.IsFinite(value.X) && float.IsFinite(value.Y) && float.IsFinite(value.Z);
 }

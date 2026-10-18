@@ -68,6 +68,36 @@ public sealed class MovementReadsTests
         Assert.Equal(new Vector3(9, 9, 9), sample.Position);
     }
 
+    [Fact]
+    public void ANaNPositionAfterAFiniteOneLeavesTheFiniteOne()
+    {
+        ClientMovement message = Movement(Position(1, 2, 3), Position(4, 5, float.NaN));
+        bool onPlatform = false;
+
+        Assert.True(MovementReads.TryLatest(message, ref onPlatform, out MovementSample sample));
+        Assert.Equal(new Vector3(1, 2, 3), sample.Position);
+    }
+
+    [Fact]
+    public void AnInfiniteFacingAloneGivesNoFacing()
+    {
+        ClientMovement message = Movement(Position(1, 2, 3), Facing(float.PositiveInfinity));
+        bool onPlatform = false;
+
+        Assert.True(MovementReads.TryLatest(message, ref onPlatform, out MovementSample sample));
+        Assert.Equal(new Vector3(1, 2, 3), sample.Position);
+        Assert.Null(sample.Facing);
+    }
+
+    [Fact]
+    public void AMessageWhoseOnlyPositionIsNotFiniteAndWithNoFacingGivesNothing()
+    {
+        ClientMovement message = Movement(Position(1, float.NegativeInfinity, 3));
+        bool onPlatform = false;
+
+        Assert.False(MovementReads.TryLatest(message, ref onPlatform, out _));
+    }
+
     private static ClientMovement Movement(params Server0262Part5[] commands)
     {
         var message = new ClientMovement();
