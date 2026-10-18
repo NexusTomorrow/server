@@ -50,6 +50,12 @@ public sealed class FakeClientSession : IWorldSession
     // When set, TryEnterMap throws it: a session fault for the owner's failure policy.
     public Exception? EnterMapFailure { get; set; }
 
+    // When set, LeaveMap throws it, after the session has stopped routing.
+    public Exception? LeaveMapFailure { get; set; }
+
+    // When set, Disconnect throws it, after the reason is recorded.
+    public Exception? DisconnectFailure { get; set; }
+
     // Runs the server's own send gate, so an owner's test fails exactly where the connection would refuse the message.
     public void Send<T>(T message)
         where T : class, IWireMessage
@@ -65,6 +71,9 @@ public sealed class FakeClientSession : IWorldSession
     {
         lock (_gate)
             _disconnectReason ??= reason;
+
+        if (DisconnectFailure is { } failure)
+            throw failure;
     }
 
     public bool TryEnterMap(IMapInbox map)
@@ -89,6 +98,9 @@ public sealed class FakeClientSession : IWorldSession
             if (ReferenceEquals(_map, map))
                 _map = null;
         }
+
+        if (LeaveMapFailure is { } failure)
+            throw failure;
     }
 
     [SuppressMessage("Naming", "CA1720", Justification = "Single reads as LINQ's Single: the one sent message of a type, and it throws otherwise.")]

@@ -329,8 +329,9 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
         _stopped.TrySetResult();
     }
 
-    // The failure policy (spec section 1): log the message, tell its session, and keep ticking. The arrival that failed, or the
-    // player its session holds, is handed back, so no character is left without a map or the realm.
+    // The failure policy (spec section 1): log the message, disconnect its session, and keep ticking. For an arrival, its character
+    // goes back to the realm unless another session holds it, and the arrival session's own player for that character goes back if
+    // it holds one; for any other session message, the session's player goes back.
     private void Fault(MapMessage message, Exception exception)
     {
         var sessionMessage = message as SessionMessage;

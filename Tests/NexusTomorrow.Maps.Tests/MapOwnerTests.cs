@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Numerics;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Owners.World;
@@ -155,7 +156,7 @@ public sealed class MapOwnerTests : IDisposable
 
         Arrive(map, session, 1001);
 
-        Assert.NotNull(session.DisconnectReason);
+        Assert.Equal("the map failed handling a message", session.DisconnectReason);
         Assert.Equal(1001UL, Assert.IsType<CharacterReturned>(Assert.Single(_realm.Posted)).CharacterId);
         Assert.Equal(0, map.PlayerCount);
     }
@@ -188,7 +189,8 @@ public sealed class MapOwnerTests : IDisposable
 
         await stopped.WaitAsync(s_fiveSeconds, TestContext.Current.CancellationToken);
         Assert.Equal(2, _realm.Posted.Count);
-        Assert.NotNull(first.DisconnectReason);
+        Assert.Equal("the map stopped", first.DisconnectReason);
+        Assert.Equal("the map stopped", second.DisconnectReason);
         Assert.False(map.Post(new ClientLeft(first)));
     }
 
@@ -204,7 +206,7 @@ public sealed class MapOwnerTests : IDisposable
 
         await stopped.WaitAsync(s_fiveSeconds, TestContext.Current.CancellationToken);
         Assert.Equal(1001UL, Assert.IsType<CharacterReturned>(Assert.Single(_realm.Posted)).CharacterId);
-        Assert.NotNull(session.DisconnectReason);
+        Assert.Equal("the map stopped", session.DisconnectReason);
         Assert.Equal(0, map.PlayerCount);
     }
 
@@ -222,8 +224,101 @@ public sealed class MapOwnerTests : IDisposable
         }
     }
 
+    [Fact]
+    public async Task AStopReturnsEveryCharacterWhenASessionThrows()
+    {
+        MapOwner map = NewMap();
+        var broken = new FakeClientSession();
+        var sound = new FakeClientSession();
+        Arrive(map, broken, 1001);
+        Arrive(map, sound, 1002);
+        broken.DisconnectFailure = new InvalidOperationException("the session is broken");
+
+        Task stopped = map.StopAsync();
+        Tick(map);
+
+        await stopped.WaitAsync(s_fiveSeconds, TestContext.Current.CancellationToken);
+        ulong[] returned = [.. _realm.Posted.Cast<CharacterReturned>().Select(r => r.CharacterId).Order()];
+        Assert.Equal<ulong[]>([1001, 1002], returned);
+        Assert.Equal("the map stopped", sound.DisconnectReason);
+        Assert.Equal(0, map.PlayerCount);
+    }
+
+    [Fact]
+    public void ALeaveWhoseSessionThrowsReturnsTheCharacterOnce()
+    {
+        MapOwner map = NewMap();
+        var session = new FakeClientSession();
+        var moved = new CharacterLocation(1, 5, new Vector3(4, 5, 6), 1f);
+        int savesWhenReturned = -1;
+        _realm.OnPost = _ => savesWhenReturned = _persistence.Backlog;
+        Arrive(map, session, 1001);
+        map.PlayerOf(session)!.MoveTo(moved);
+        session.LeaveMapFailure = new InvalidOperationException("the session is broken");
+
+        map.Post(new ClientLeft(session));
+        Tick(map);
+
+        CharacterReturned returned = Assert.IsType<CharacterReturned>(Assert.Single(_realm.Posted));
+        Assert.Equal(1001UL, returned.CharacterId);
+        Assert.Equal(moved, returned.Location);
+        Assert.Equal(1, savesWhenReturned);
+        Assert.Equal(0, map.PlayerCount);
+        Assert.Null(map.PlayerOf(session));
+    }
+
+    [Fact]
+    public void AHeldArrivalThatFaultsIsHandedBackOnce()
+    {
+        var logger = new ThrowingLogger(7005);
+        var map = new MapOwner(1, Settings(), _persistence, new Random(1), _metrics, logger);
+        var session = new FakeClientSession();
+
+        Arrive(map, session, 1001);
+
+        Assert.Equal(1001UL, Assert.IsType<CharacterReturned>(Assert.Single(_realm.Posted)).CharacterId);
+        Assert.Equal(0, map.PlayerCount);
+        Assert.Null(map.PlayerOf(session));
+        Assert.Null(session.Map);
+        Assert.Equal("the map failed handling a message", session.DisconnectReason);
+    }
+
+    [Fact]
+    public void AFaultingArrivalForACharacterAnotherSessionHoldsLeavesTheHolderAlone()
+    {
+        MapOwner map = NewMap();
+        var holder = new FakeClientSession();
+        var intruder = new FakeClientSession { DisconnectFailure = new InvalidOperationException("the session is broken") };
+        Arrive(map, holder, 1001);
+
+        Arrive(map, intruder, 1001);
+
+        Assert.Empty(_realm.Posted);
+        Assert.Equal(1, map.PlayerCount);
+        Assert.NotNull(map.PlayerOf(holder));
+        Assert.Same(map, holder.Map);
+    }
+
     private MapOwner NewMap(MapSettings? settings = null) =>
         new(1, settings ?? Settings(), _persistence, new Random(1), _metrics, NullLogger<MapOwner>.Instance);
+
+    private sealed class ThrowingLogger : ILogger<MapOwner>
+    {
+        private readonly int _eventId;
+
+        public ThrowingLogger(int eventId) => _eventId = eventId;
+
+        public IDisposable? BeginScope<TState>(TState state)
+            where TState : notnull => null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+            if (eventId.Id == _eventId)
+                throw new InvalidOperationException("the logger is broken");
+        }
+    }
 
     private void Tick(MapOwner map, int count = 1)
     {
