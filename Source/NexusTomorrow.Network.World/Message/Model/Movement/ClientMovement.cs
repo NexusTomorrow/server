@@ -27,5 +27,5 @@ public sealed partial class ClientMovement
     /// <summary>
     /// The commands, one batch after another; each batch opens with a time command.
     /// </summary>
-    [Array(CountBits = 32)] public List<Server0262Part5> Unknown1 { get; } = [];
+    [VerifiedMember, Array(CountBits = 32)] public List<Server0262Part5> Unknown1 { get; } = [];
 }
