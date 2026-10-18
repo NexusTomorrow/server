@@ -88,12 +88,31 @@ public sealed class WorldScenarios
         await using WorldSession firstSession = await first.ScriptedLoginAsync(Email, Password);
         ulong id = (await firstSession.CreateAsync(CharacterName)).CharacterId;
         await firstSession.EnterWorldAsync(id);
+        var moved = new Vector3(140, 16, -230);
+        await firstSession.MoveAsync(moved, 0.75f, 5000);
+
+        // The list answers after the movement was read, so the movement is in the map's queue by then; the pause waits out the step
+        // that applies it.
+        await firstSession.RequestListAsync();
+        MapOwner map = scenario.Server.Map(1);
+        await Eventually.TrueAsync(() => map.QueueLength == 0, s_bound);
+        await scenario.Server.Maps.PauseAsync();
 
         await using HeadlessClient second = scenario.Server.NewClient();
         await using WorldSession secondSession = await second.ScriptedLoginAsync(Email, Password);
-        EnteredWorld world = await secondSession.EnterWorldAsync(id);
+        Task<EnteredWorld> entering = secondSession.EnterWorldAsync(id);
 
-        Assert.Equal((ushort)1, world.Enter.WorldId);
+        // The second login ended the first session, but a paused map has not handled its leaving and still holds the character, so
+        // the select waits for the hand-back.
+        await Task.Delay(TimeSpan.FromMilliseconds(500), TestContext.Current.CancellationToken);
+        Assert.False(entering.IsCompleted);
+        Assert.Equal(1, map.PlayerCount);
+
+        scenario.Server.Maps.Resume();
+        EnteredWorld world = await entering;
+
+        Assert.Equal(moved, world.Enter.Position);
+        Assert.Equal(moved, Assert.IsType<Server0262Union2Arm02>(world.Unit.Unknown6[0].Unknown1).Unknown0);
         Assert.True(await firstSession.IsClosedAsync(s_bound));
     }
 
@@ -130,7 +149,7 @@ public sealed class WorldScenarios
     {
         await using PostgresTestDatabase database = await Scenario.DatabaseAsync();
         await using HarnessServer server = await HarnessServer.StartAsync(database);
-        await server.RunAsync($"account create {Email} \"{Password}\"");
+        Assert.Equal(CommandOutcome.Done, (await server.RunAsync($"account create {Email} \"{Password}\"")).Outcome);
         await using HeadlessClient client = server.NewClient();
         await using WorldSession session = await client.ScriptedLoginAsync(Email, Password);
         ulong id = (await session.CreateAsync(CharacterName)).CharacterId;
@@ -171,7 +190,8 @@ public sealed class WorldScenarios
         await using Scenario scenario = await Scenario.StartAsync();
         await using HeadlessClient client = scenario.Server.NewClient();
         await using WorldSession session = await client.ScriptedLoginAsync(Email, Password);
-        await session.EnterWorldAsync((await session.CreateAsync(CharacterName)).CharacterId);
+        ulong id = (await session.CreateAsync(CharacterName)).CharacterId;
+        await session.EnterWorldAsync(id);
         MapOwner map = scenario.Server.Map(1);
         await scenario.Server.Maps.PauseAsync();
 
@@ -183,6 +203,13 @@ public sealed class WorldScenarios
             if (i >= 5)
                 Assert.Equal(0L, map.LastTickAllocatedBytes);
         }
+
+        // The hand-back saves where the character stood, so the row holds the last movement the map applied.
+        scenario.Server.Maps.Resume();
+        await session.DisposeAsync();
+        await Eventually.TrueAsync(() => scenario.Row(id).PositionX == 124, s_bound);
+        CharacterRow row = scenario.Row(id);
+        Assert.Equal(new Vector3(124, 10, -200), new Vector3(row.PositionX, row.PositionY, row.PositionZ));
     }
 
     [Fact]

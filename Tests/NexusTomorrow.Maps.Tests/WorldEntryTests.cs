@@ -78,7 +78,7 @@ public sealed class WorldEntryTests : IDisposable
         Assert.Equal((byte)20, create.Unknown1);
         Server0262Union0Arm14 arm = Assert.IsType<Server0262Union0Arm14>(create.Unknown2);
         Assert.Equal(1001UL, arm.Unknown0);
-        Assert.Equal((ushort)3, arm.Unknown1);
+        Assert.Equal((ushort)11, arm.Unknown1);
         Assert.Equal("Rebaser Head", arm.Unknown2);
         Assert.Equal((byte)2, arm.Unknown3);
         Assert.Equal((byte)4, arm.Unknown4);
@@ -235,6 +235,9 @@ public sealed class WorldEntryTests : IDisposable
             Tick(map);
             Assert.Equal(0L, map.LastTickAllocatedBytes);
         }
+
+        Assert.Equal(new Vector3(99, 1, 0), map.PlayerOf(session)!.Location.Position);
+        Assert.Equal(99f, map.PlayerOf(session)!.Location.Facing);
     }
 
     [Fact]

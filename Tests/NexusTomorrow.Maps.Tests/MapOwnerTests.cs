@@ -22,7 +22,8 @@ public sealed class MapOwnerTests : IDisposable
     internal static CharacterRecord Record(ulong id) =>
         new(id, 7, "Rebaser Head", 2, 1, 4, 166, 2, 7, 900, new CharacterLocation(1, 3, new Vector3(10, 20, 30), 1.5f));
 
-    internal static MapSettings Settings() => new(25, 5, TimeSpan.FromHours(1), TimeSpan.FromMilliseconds(5), 32, 3);
+    // Realm 11 is a number no other fixture value uses, so a realm id taken from the wrong field shows.
+    internal static MapSettings Settings() => new(25, 5, TimeSpan.FromHours(1), TimeSpan.FromMilliseconds(5), 32, 11);
 
     public void Dispose() => _metrics.Dispose();
 
