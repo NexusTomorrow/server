@@ -88,8 +88,35 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
         Send(new ServerHello { Build = Build, RealmId = _realmOptions.Id, ProtocolVersion = ProtocolVersion });
 
     /// <inheritdoc/>
+    /// <remarks>
+    /// Before the account owner's grant, only the greeting, and nothing while it is checked: anything else ends the connection unread.
+    /// After it, a map row only while the session is routed to a map: one with no map is dropped unread and the session goes on.
+    /// </remarks>
+    protected override bool Admits(OpcodeRow row)
+    {
+        if (_accountId is null)
+        {
+            if (_greeted)
+                return End("a message while the greeting is checked");
+
+            return row.Opcode == OpcodeOf<WorldHello>() || End("a message before the greeting");
+        }
+
+        if (row.Owner == MessageOwner.Map && !InMap())
+        {
+            Drop(row.Opcode, "a map message with no map");
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <inheritdoc/>
     protected override async ValueTask<bool> HandleAsync(IWireMessage message, OpcodeRow row)
     {
+        // Admits is the admission for the greeting and for a map row with no map. The greeting checks here and in GreetAsync are
+        // guards (GreetAsync's holds the cast), and so is RouteToMap's map check, which also catches a map that handed the character
+        // back between the admission and this handling.
         if (_accountId is not long accountId)
             return _greeted ? End("a message while the greeting is checked") : await GreetAsync(message);
 
@@ -229,7 +256,8 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
 
     // The map is read under _route and posted to outside it: a post never runs under the lock, and a map that has stopped refuses it,
     // which is not a drop. A movement is reduced under the lock, which guards the platform state it carries; one that gives no position
-    // or facing is ignored, not dropped.
+    // or facing is ignored, not dropped. A null map here is the guard behind Admits: the map can hand the character back after the
+    // admission.
     private bool RouteToMap(IWireMessage message, OpcodeRow row)
     {
         IMapInbox? map;

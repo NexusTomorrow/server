@@ -251,6 +251,22 @@ public sealed class WorldConnectionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AMovementThatWouldBeMalformedIsDroppedUnreadWhileTheSessionIsInNoMap()
+    {
+        await GreetAsync();
+        await Client.SendTaggedUncheckedAsync(0x03, 0x0637, new RawBody(ClientFrames.OverclaimingMovement()));
+        await Client.SendAsync(new CharacterListRequest());
+
+        // The list request reaches the realm only while the session is open.
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharactersWork>().Any() || _run.IsCompleted);
+        Assert.DoesNotContain(_log.Lines, line => line.Contains("ended:", StringComparison.Ordinal));
+        _db.Take<LoadCharactersWork>().Complete(WorkResult.Committed);
+
+        Assert.Empty((await Client.ExpectAsync<CharacterList>()).Characters);
+        Assert.Contains(_log.Lines, line => line.Contains("dropped message 0x0637: a map message with no map", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task AWorldMessageAfterTheMapLeavesTheSessionIsDroppedAndTheSessionGoesOn()
     {
         await GreetAsync();

@@ -29,12 +29,17 @@ public abstract class ClientConnection : IClientSession
     private readonly GatewayMetrics _metrics;
     private readonly ILogger _logger;
     private readonly RateGate _rates;
+    private readonly InboundAdmission _admission;
     private readonly Channel<Outbound> _outbound;
     private readonly TaskCompletionSource _disconnected = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private PacketCipher _receiveCipher = new(PacketCipher.BuildKey);
     private CancellationTokenSource? _preAuth;
     private CancellationToken _lifetime;
     private string? _disconnectReason;
+
+    // Read loop only: whether Admit refused the row of the frame being decoded. Admit has acted on that refusal, so OnFrameAsync must
+    // not count it again.
+    private bool _refused;
 
     /// <summary>
     /// Create a connection whose server messages travel inside <paramref name="envelopeOpcode"/>.
@@ -49,6 +54,7 @@ public abstract class ClientConnection : IClientSession
         _logger = logger;
         Time = time;
         _rates = new RateGate(time);
+        _admission = Admit;
         _outbound = Channel.CreateBounded<Outbound>(new BoundedChannelOptions(_options.OutboundQueueCapacity) { SingleReader = true, FullMode = BoundedChannelFullMode.Wait });
     }
 
@@ -142,7 +148,20 @@ public abstract class ClientConnection : IClientSession
     }
 
     /// <summary>
-    /// Handle one decoded message, admitted by <paramref name="row"/>; false ends the connection.
+    /// The opcode <typeparamref name="T"/> is declared with.
+    /// </summary>
+    protected static ushort OpcodeOf<T>()
+        where T : class, IWireMessage => T.Opcode;
+
+    /// <summary>
+    /// Whether the connection, in its current state, handles the message <paramref name="row"/> admits. The decoder asks it from the
+    /// read loop once the row's rate has passed and before the message's body is read, so a refused message is never read. A false
+    /// answer acts on the message first: <see cref="Drop"/> when the session goes on, <see cref="Disconnect"/> when it ends.
+    /// </summary>
+    protected abstract bool Admits(OpcodeRow row);
+
+    /// <summary>
+    /// Handle one message, read in full once <see cref="Admits"/> admitted <paramref name="row"/>; false ends the connection.
     /// </summary>
     protected abstract ValueTask<bool> HandleAsync(IWireMessage message, OpcodeRow row);
 
@@ -171,7 +190,7 @@ public abstract class ClientConnection : IClientSession
     }
 
     /// <summary>
-    /// Count and log a message the connection read but does not act on; the session goes on.
+    /// Count and log a message the connection does not act on, whether or not its body was read; the session goes on.
     /// </summary>
     protected void Drop(ushort opcode, string reason)
     {
@@ -272,14 +291,17 @@ public abstract class ClientConnection : IClientSession
                 return true;
         }
 
+        // The decoder asks Admit (the row's rate, then Admits) before it creates the message or reads its body.
         Inbound inbound;
+        _refused = false;
         try
         {
-            inbound = _decoder.Decode(opcode, body, _receiveCipher);
+            inbound = _decoder.Decode(opcode, body, _receiveCipher, _admission);
         }
         catch (Exception exception)
         {
-            // The decoder turns a codec fault into Malformed; anything else is a declaration bug, and it ends only this connection.
+            // The decoder turns a codec fault into Malformed; anything else (a declaration bug, or a fault in Admits) ends only this
+            // connection.
             GatewayLog.ConnectionFailed(_logger, Id, exception);
             Disconnect($"an unexpected failure decoding frame 0x{opcode:X4}");
             return false;
@@ -288,6 +310,10 @@ public abstract class ClientConnection : IClientSession
         switch (inbound.Result)
         {
             case InboundResult.Dropped:
+                // A row Admit refused is already counted, or its session is ending; every other drop is counted here.
+                if (_refused)
+                    return Volatile.Read(ref _disconnectReason) is null;
+
                 Drop(inbound.Opcode, inbound.Reason);
                 return true;
             case InboundResult.Malformed:
@@ -298,25 +324,32 @@ public abstract class ClientConnection : IClientSession
                 return false;
         }
 
-        OpcodeRow row = _decoder.RowFor(inbound.Opcode);
-        if (!_rates.TryPass(row))
-        {
-            if (row.OverLimit == OverLimitAction.Disconnect)
-            {
-                Disconnect($"0x{inbound.Opcode:X4} over its rate limit");
-                return false;
-            }
-
-            _metrics.Dropped(inbound.Opcode, "over its rate limit");
-            return true;
-        }
-
-        // A message the decoder admitted is non-null by InboundResult.Message's contract.
+        // A message the decoder returned passed Admit and was read in full; it is non-null by InboundResult.Message's contract.
         IWireMessage admitted = inbound.Message!;
         if (_logger.IsEnabled(LogLevel.Debug))
             GatewayLog.MessageReceived(_logger, Id, inbound.Opcode, admitted.GetType().Name);
 
-        return await HandleAsync(admitted, row);
+        return await HandleAsync(admitted, _decoder.RowFor(inbound.Opcode));
+    }
+
+    // The admission the decoder asks once it has resolved a frame's row, before the message is created or its body read: the row's
+    // rate first, its over-limit action deciding drop or disconnect, then the connection's own state (Admits). It acts on what it
+    // refuses, so a refused message costs no read.
+    private bool Admit(OpcodeRow row)
+    {
+        if (!_rates.TryPass(row))
+        {
+            _refused = true;
+            if (row.OverLimit == OverLimitAction.Disconnect)
+                Disconnect($"0x{row.Opcode:X4} over its rate limit");
+            else
+                _metrics.Dropped(row.Opcode, "over its rate limit");
+
+            return false;
+        }
+
+        _refused = !Admits(row);
+        return !_refused;
     }
 
     // Names the message type only: field values and payload bytes (RealmHandoff carries the session key) never reach a log line.

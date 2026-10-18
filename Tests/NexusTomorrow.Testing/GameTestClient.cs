@@ -44,10 +44,13 @@ public sealed class GameTestClient
     // A world message as the client sends it: inside 0x038C, whose body is the tag in the low 5 bits of its first byte and then the
     // whole inner frame (a 32-bit length counting itself, the opcode, the body).
     public async Task SendTaggedAsync<T>(byte tag, T message)
-        where T : class, IWireMessage
+        where T : class, IWireMessage => await SendTaggedUncheckedAsync(tag, T.Opcode, message);
+
+    // Any opcode and body under a tag, for messages the server must refuse.
+    public async Task SendTaggedUncheckedAsync(byte tag, ushort opcode, IWireStruct message)
     {
         var inner = new ArrayBufferWriter<byte>();
-        FrameWriter.WriteMessage(inner, T.Opcode, message);
+        FrameWriter.WriteMessage(inner, opcode, message);
         await SendUncheckedAsync(TaggedOpcode, new RawBody([(byte)(tag & 0x1F), .. inner.WrittenSpan]));
     }
 

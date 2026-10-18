@@ -17,14 +17,17 @@ public enum InboundResult
     Message,
 
     /// <summary>
-    /// A well-formed message the server does not read: without a table row, switched off, undeclared, or read below the rung its row
-    /// admits (<c>Fields</c>, or <c>Purpose</c> for a row that reads only verified members). Counted and dropped; the session continues.
+    /// A message whose body the server does not read. Without a table row, switched off, undeclared, or read below the rung its row
+    /// admits (<c>Fields</c>, or <c>Purpose</c> for a row that reads only verified members): counted and dropped by the caller, and the
+    /// session continues. Refused by the connection's <see cref="InboundAdmission"/>: the admission has already acted on it, counting
+    /// the drop or ending the session.
     /// </summary>
     Dropped,
 
     /// <summary>
-    /// Bytes no client writes: a wrong envelope, a lying length, a body the declaration cannot read, or bits left after it. The
-    /// session ends.
+    /// Bytes no client writes: a wrong envelope, a lying length, a wrapper nested past one level, a tagged message without an inner
+    /// opcode, a tag other than its row's, a body the declaration cannot read, or bits left after it. The session ends. A body is read,
+    /// and so can be found malformed, only once the connection's <see cref="InboundAdmission"/> has admitted its row.
     /// </summary>
     Malformed,
 }
@@ -35,9 +38,17 @@ public enum InboundResult
 public readonly record struct Inbound(InboundResult Result, ushort Opcode, IWireMessage? Message, string Reason);
 
 /// <summary>
-/// Turns a client frame into a message: opens the <c>0x0244</c> envelope with the connection's cipher, opens a <c>0x025C</c> or
-/// <c>0x038C</c> wrapper inside it, then reads the message if the opcode table admits it under the tag it came with and the catalog
-/// lets the server read it.
+/// A connection's say over a client message, asked by <see cref="InboundDecoder.Decode"/> once it has resolved the message's row and
+/// before it creates the message or reads its body. True reads the message. False leaves it unread, and the connection has acted on
+/// the refusal itself: counted the drop, or ended the session.
+/// </summary>
+public delegate bool InboundAdmission(OpcodeRow row);
+
+/// <summary>
+/// Turns a client frame into a message, in this order: opens the <c>0x0244</c> envelope with the connection's cipher, opens a
+/// <c>0x025C</c> or <c>0x038C</c> wrapper inside it, resolves the inner opcode's row (in the opcode table, under the tag the row
+/// names, not switched off), asks the connection's <see cref="InboundAdmission"/>, and only for an admitted row creates the message,
+/// if the catalog lets the server read it, and reads its body. A row the admission refuses never has its body read.
 /// </summary>
 public sealed class InboundDecoder
 {
@@ -68,9 +79,11 @@ public sealed class InboundDecoder
     public OpcodeRow RowFor(ushort opcode) => _table[opcode];
 
     /// <summary>
-    /// Decode one frame's body. The body is decrypted in place.
+    /// Decode one frame's body, decrypted in place: the envelope and any wrapper, then the row, then <paramref name="admit"/>, then the
+    /// message. <paramref name="admit"/> is asked at most once, and only for a row the table holds under the frame's tag that is not
+    /// switched off; a row it refuses comes back <see cref="InboundResult.Dropped"/> with its body unread.
     /// </summary>
-    public Inbound Decode(ushort frameOpcode, Span<byte> body, PacketCipher cipher)
+    public Inbound Decode(ushort frameOpcode, Span<byte> body, PacketCipher cipher, InboundAdmission admit)
     {
         if (frameOpcode != ClientEnvelope)
             return new Inbound(InboundResult.Malformed, frameOpcode, null, "not a client envelope");
@@ -117,6 +130,8 @@ public sealed class InboundDecoder
             return new Inbound(InboundResult.Malformed, opcode, null, "a tag other than its row's");
         if (_disabled.Contains(opcode))
             return new Inbound(InboundResult.Dropped, opcode, null, "switched off");
+        if (!admit(row))
+            return new Inbound(InboundResult.Dropped, opcode, null, "refused by the connection");
 
         IWireMessage? message = _catalog.CreateInbound(opcode, row.ReadsVerifiedMembers, out InboundRefusal refusal);
         if (message is null)

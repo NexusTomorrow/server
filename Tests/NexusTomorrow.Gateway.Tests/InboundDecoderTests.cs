@@ -18,6 +18,9 @@ public sealed class InboundDecoderTests
 {
     private static readonly PacketCipher s_cipher = new(PacketCipher.BuildKey);
 
+    // The connection's admission is ClientConnection's to test; here every row the decoder resolves is admitted.
+    private static readonly InboundAdmission s_admitAll = _ => true;
+
     private static InboundDecoder Decoder(params ushort[] disabled) =>
         new(MessageCatalog.Default, OpcodeTable.All, disabled.ToFrozenSet());
 
@@ -25,7 +28,7 @@ public sealed class InboundDecoderTests
     public void AnEnvelopedMessageIsDecrypted()
     {
         byte[] body = ClientFrames.EnvelopeBody(0x0352, new CharacterDelete { CharacterId = 0x0102030405060708 }, s_cipher);
-        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher);
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
         Assert.Equal(InboundResult.Message, inbound.Result);
         Assert.Equal(0x0102030405060708UL, Assert.IsType<CharacterDelete>(inbound.Message).CharacterId);
     }
@@ -36,7 +39,7 @@ public sealed class InboundDecoderTests
         var create = new CharacterCreate { CreationId = 5, Name = "Rebaser Head", Path = 2 };
         create.Bones.Add(0.5f);
         byte[] body = ClientFrames.NestedEnvelopeBody(0x025B, create, s_cipher);
-        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher);
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
         Assert.Equal(InboundResult.Message, inbound.Result);
         CharacterCreate read = Assert.IsType<CharacterCreate>(inbound.Message);
         Assert.Equal("Rebaser Head", read.Name);
@@ -54,7 +57,7 @@ public sealed class InboundDecoderTests
         }.ToFrozenDictionary(row => row.Opcode);
         byte[] body = ClientFrames.EnvelopeBody(0x0356, new Client0356(), s_cipher);
         var decoder = new InboundDecoder(MessageCatalog.Default, table, new HashSet<ushort>());
-        Inbound inbound = decoder.Decode(ClientFrames.ClientEnvelope, body, s_cipher);
+        Inbound inbound = decoder.Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
         Assert.Equal(InboundResult.Dropped, inbound.Result);
         Assert.Equal(0x0356, inbound.Opcode);
         Assert.Equal(nameof(InboundRefusal.BelowFields), inbound.Reason);
@@ -63,16 +66,16 @@ public sealed class InboundDecoderTests
     [Fact]
     public void AMessageWithoutATableRowIsDropped()
     {
-        // 0x07A4 is read to Fields but has no row in the pregame table.
+        // 0x07A4 is read to Fields but has no row in the opcode table, which this decoder holds whole (OpcodeTable.All).
         byte[] body = ClientFrames.EnvelopeBody(0x07A4, new RealmListRequest(), s_cipher);
-        Assert.Equal(InboundResult.Dropped, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher).Result);
+        Assert.Equal(InboundResult.Dropped, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll).Result);
     }
 
     [Fact]
     public void ADisabledOpcodeIsDropped()
     {
         byte[] body = ClientFrames.EnvelopeBody(0x07E0, new CharacterListRequest(), s_cipher);
-        Assert.Equal(InboundResult.Dropped, Decoder(0x07E0).Decode(ClientFrames.ClientEnvelope, body, s_cipher).Result);
+        Assert.Equal(InboundResult.Dropped, Decoder(0x07E0).Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll).Result);
     }
 
     [Fact]
@@ -80,7 +83,7 @@ public sealed class InboundDecoderTests
     {
         // CharacterListRequest has no fields; a body byte after it is a byte the client never writes.
         byte[] body = ClientFrames.EnvelopeBody(0x0352, new CharacterDelete(), s_cipher);
-        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, Rewrap(body, 0x07E0), s_cipher);
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, Rewrap(body, 0x07E0), s_cipher, s_admitAll);
         Assert.Equal(InboundResult.Malformed, inbound.Result);
     }
 
@@ -88,7 +91,7 @@ public sealed class InboundDecoderTests
     public void AFrameThatIsNotTheClientEnvelopeIsMalformed()
     {
         byte[] body = ClientFrames.EnvelopeBody(0x07E0, new CharacterListRequest(), s_cipher);
-        Assert.Equal(InboundResult.Malformed, Decoder().Decode(0x0076, body, s_cipher).Result);
+        Assert.Equal(InboundResult.Malformed, Decoder().Decode(0x0076, body, s_cipher, s_admitAll).Result);
     }
 
     [Fact]
@@ -96,7 +99,7 @@ public sealed class InboundDecoderTests
     {
         byte[] body = ClientFrames.EnvelopeBody(0x07E0, new CharacterListRequest(), s_cipher);
         body[0]++;
-        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher).Result);
+        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll).Result);
     }
 
     [Fact]
@@ -104,7 +107,7 @@ public sealed class InboundDecoderTests
     {
         WorldReady ready = ClientMessage.With(new WorldReady(), nameof(WorldReady.ZoneId), (ushort)6);
         byte[] body = ClientFrames.TaggedEnvelopeBody(0x03, 0x00F2, ready, s_cipher);
-        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher);
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
         Assert.Equal(InboundResult.Message, inbound.Result);
         Assert.Equal(0x00F2, inbound.Opcode);
         Assert.Equal(6, Assert.IsType<WorldReady>(inbound.Message).ZoneId);
@@ -117,7 +120,7 @@ public sealed class InboundDecoderTests
         movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new Server0262Union2Arm02 { Unknown0 = new Vector3(1, 2, 3) } });
         byte[] body = ClientFrames.TaggedEnvelopeBody(0x03, 0x0637, movement, s_cipher);
 
-        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher);
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
 
         Assert.Equal(InboundResult.Message, inbound.Result);
         Assert.IsType<ClientMovement>(inbound.Message);
@@ -127,21 +130,21 @@ public sealed class InboundDecoderTests
     public void AMessageUnderAnotherTagThanItsRowsIsMalformed()
     {
         byte[] body = ClientFrames.TaggedEnvelopeBody(0x0B, 0x00F2, new WorldReady(), s_cipher);
-        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher).Result);
+        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll).Result);
     }
 
     [Fact]
     public void ATaggedRowsMessageSentWithoutATagIsMalformed()
     {
         byte[] body = ClientFrames.EnvelopeBody(0x00F2, new WorldReady(), s_cipher);
-        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher).Result);
+        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll).Result);
     }
 
     [Fact]
     public void AnUntaggedRowsMessageSentUnderATagIsMalformed()
     {
         byte[] body = ClientFrames.TaggedEnvelopeBody(0x03, 0x07E0, new CharacterListRequest(), s_cipher);
-        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher).Result);
+        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll).Result);
     }
 
     [Fact]
@@ -149,7 +152,7 @@ public sealed class InboundDecoderTests
     {
         // The storefront request the client sends at character select travels inside 0x038C under tag 0x13 and has no row.
         byte[] body = ClientFrames.TaggedEnvelopeBody(0x13, 0x082D, new Client082D(), s_cipher);
-        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher);
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
         Assert.Equal(InboundResult.Dropped, inbound.Result);
         Assert.Equal(0x082D, inbound.Opcode);
     }
@@ -162,14 +165,14 @@ public sealed class InboundDecoderTests
         byte[] lying = [.. frame.WrittenSpan];
         lying[0]++;
         byte[] body = ClientFrames.EnvelopeBody(ClientFrames.Tagged, new RawBody([0x03, .. lying]), s_cipher);
-        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher).Result);
+        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll).Result);
     }
 
     [Fact]
     public void ATaggedMessageHoldingAnotherWrapperIsMalformed()
     {
         byte[] body = ClientFrames.TaggedEnvelopeBody(0x03, ClientFrames.Tagged, new RawBody([0x03]), s_cipher);
-        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher).Result);
+        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll).Result);
     }
 
     // Decrypt an envelope body, replace its inner opcode, and encrypt it again.

@@ -1,4 +1,5 @@
-﻿using System.Collections.Frozen;
+﻿using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.IO.Pipelines;
 using System.Net;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -227,6 +228,35 @@ public sealed class ClientConnectionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AMessagePastItsRateIsDroppedUnreadAndTheSessionGoesOn()
+    {
+        FrozenDictionary<ushort, OpcodeRow> table = new OpcodeRow[]
+        {
+            new(0x07E0, MessageOwner.Realm, MessagePriority.Normal, 1, OverLimitAction.Drop),
+            new(0x0352, MessageOwner.Realm, MessagePriority.Normal, 1, OverLimitAction.Drop),
+        }.ToFrozenDictionary(row => row.Opcode);
+        Use(Small(4096), table);
+        var handled = new ConcurrentQueue<Type>();
+        _connection.OnMessage = message =>
+        {
+            handled.Enqueue(message.GetType());
+            return true;
+        };
+        Start();
+
+        // The clock never moves, so the first request spends 0x07E0's one token. CharacterListRequest declares no fields, so the
+        // second request's byte would be malformed if it were read.
+        await Client.SendAsync(new CharacterListRequest());
+        await Client.SendUncheckedAsync(0x07E0, new RawBody([0xFF]));
+        await Client.SendAsync(new CharacterDelete { CharacterId = 5 });
+
+        await Eventually.TrueAsync(() => handled.Count == 2 || _run.IsCompleted);
+        Assert.Equal(0, _connection.Closed);
+        Type[] expected = [typeof(CharacterListRequest), typeof(CharacterDelete)];
+        Assert.Equal(expected, handled);
+    }
+
+    [Fact]
     public void SendingAMessageTheCatalogDoesNotHoldThrows()
     {
         Assert.Throws<InvalidOperationException>(() => _connection.Send(new UnverifiedForTest()));
@@ -346,6 +376,9 @@ public sealed class ClientConnectionTests : IAsyncLifetime
         public int Closed => Volatile.Read(ref _closed);
 
         public void SwitchKeyTo(PacketCipher cipher) => SwitchKey(cipher);
+
+        // Every row is handled in every state, so only the decoder and the rate gate refuse a message here.
+        protected override bool Admits(OpcodeRow row) => true;
 
         protected override ValueTask<bool> HandleAsync(IWireMessage message, OpcodeRow row) => ValueTask.FromResult(OnMessage(message));
 

@@ -42,7 +42,7 @@ public sealed class LoginConnectionTests : IAsyncLifetime
     {
         _accounts.Start();
         var connection = new LoginConnection(MessageCatalog.Default,
-            new InboundDecoder(MessageCatalog.Default, OpcodeTable.Pregame, new HashSet<ushort>()),
+            new InboundDecoder(MessageCatalog.Default, OpcodeTable.All, new HashSet<ushort>()),
             _accounts, _persistence, new LoginRateLimiter(_time, _gateway), _gateway, Options.Create(new RealmOptions()),
             _time, new GatewayMetrics(), _log);
         _run = connection.RunAsync(_pipes.Server, new IPEndPoint(IPAddress.Loopback, 50000), _stop.Token);
@@ -141,7 +141,7 @@ public sealed class LoginConnectionTests : IAsyncLifetime
         await Client.ExpectAsync<LoginDenied>();
     }
 
-    // 0x03EF has no row in the pregame table, so it is dropped before its body is read.
+    // 0x03EF has no row in the opcode table, so it is dropped before its body is read.
     [Fact]
     public async Task AMessageWithNoRowIsDroppedAndTheLoginStillWorks()
     {
@@ -157,6 +157,17 @@ public sealed class LoginConnectionTests : IAsyncLifetime
         await Client.ExpectAsync<ServerHello>();
         await Client.SendAsync(new CharacterListRequest());
         Assert.True(await Client.IsClosedAsync(TimeSpan.FromSeconds(10)));
+    }
+
+    [Fact]
+    public async Task AMovementBeforeTheLoginEndsTheConnectionAsUnexpectedWithoutItsBodyRead()
+    {
+        await Client.ExpectAsync<ServerHello>();
+        await Client.SendTaggedUncheckedAsync(0x03, 0x0637, new RawBody(ClientFrames.OverclaimingMovement()));
+
+        Assert.True(await Client.IsClosedAsync(TimeSpan.FromSeconds(10)));
+        await _run.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        Assert.Contains(_log.Entries, entry => entry.Contains("ended: a message other than one login request on the login connection", StringComparison.Ordinal));
     }
 
     [Fact]

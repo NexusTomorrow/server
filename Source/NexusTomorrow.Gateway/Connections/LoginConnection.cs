@@ -64,8 +64,20 @@ public sealed class LoginConnection : ClientConnection
     protected override void OnStart() => SendBare(new ServerHello { Build = Build, ProtocolVersion = ProtocolVersion });
 
     /// <inheritdoc/>
+    /// <remarks>The connection takes one login request and nothing after it; any other message ends the connection unread.</remarks>
+    protected override bool Admits(OpcodeRow row)
+    {
+        if (row.Opcode == OpcodeOf<LoginRequest>() && !_answered)
+            return true;
+
+        Disconnect("a message other than one login request on the login connection");
+        return false;
+    }
+
+    /// <inheritdoc/>
     protected override async ValueTask<bool> HandleAsync(IWireMessage message, OpcodeRow row)
     {
+        // Admits is the admission and lets through only the first login request; this check is the guard that holds the cast.
         if (message is not LoginRequest request || _answered)
         {
             Disconnect("a message other than one login request on the login connection");

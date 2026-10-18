@@ -11,6 +11,9 @@ internal static class ClientFrames
     public const ushort Nested = 0x025C;
     public const ushort Tagged = 0x038C;
 
+    // A ClientMovement body that is malformed if read: a clock of 1000, then a count of 10,000 commands with no bits left for them.
+    public static byte[] OverclaimingMovement() => [0xE8, 0x03, 0x00, 0x00, 0x10, 0x27, 0x00, 0x00];
+
     // The body of a 0x0244 frame holding one message, encrypted with the connection's cipher.
     public static byte[] EnvelopeBody(ushort opcode, IWireStruct message, PacketCipher cipher)
     {
