@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Gateway;
+using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Persistence;
 
@@ -27,6 +28,14 @@ public sealed class OptionsValidationTests
     [InlineData(typeof(PersistenceOptions), "Persistence:ConnectionString", "", "Persistence:ConnectionString is required.")]
     [InlineData(typeof(PersistenceOptions), "Persistence:SaveWorkers", "0", "Persistence:SaveWorkers must be at least 1.")]
     [InlineData(typeof(PersistenceOptions), "Persistence:SaveWorkers", "-3", "Persistence:SaveWorkers must be at least 1.")]
+    [InlineData(typeof(PersistenceOptions), "Persistence:FirstRetryDelay", "00:00:00", "Persistence:FirstRetryDelay must be positive.")]
+    [InlineData(typeof(PersistenceOptions), "Persistence:FirstRetryDelay", "-00:00:01", "Persistence:FirstRetryDelay must be positive.")]
+    [InlineData(typeof(PersistenceOptions), "Persistence:MaxRetryDelay", "00:00:00", "Persistence:MaxRetryDelay must be positive.")]
+    [InlineData(typeof(PersistenceOptions), "Persistence:FirstRetryDelay", "00:01:00", "FirstRetryDelay must not exceed Persistence:MaxRetryDelay.")]
+    [InlineData(typeof(AccountOptions), "Account:TokenLifetime", "00:00:00", "Account:TokenLifetime must be positive.")]
+    [InlineData(typeof(AccountOptions), "Account:TokenLifetime", "-00:01:00", "Account:TokenLifetime must be positive.")]
+    [InlineData(typeof(GatewayOptions), "Gateway:PreAuthTimeout", "00:00:00", "Gateway:PreAuthTimeout must be positive.")]
+    [InlineData(typeof(GatewayOptions), "Gateway:PreAuthTimeout", "-00:00:30", "Gateway:PreAuthTimeout must be positive.")]
     [InlineData(typeof(GatewayOptions), "Gateway:UnknownAccountSecret", "", "Gateway:UnknownAccountSecret is required")]
     [InlineData(typeof(GatewayOptions), "Gateway:UnknownAccountSecret", "AAAAAAAAAAA=", "Gateway:UnknownAccountSecret must be base64 of at least 32 bytes.")]
     [InlineData(typeof(GatewayOptions), "Gateway:UnknownAccountSecret", "this-is-not-base64!", "Gateway:UnknownAccountSecret must be base64 of at least 32 bytes.")]
@@ -81,6 +90,8 @@ public sealed class OptionsValidationTests
             _ = services.GetRequiredService<IOptions<PersistenceOptions>>().Value;
         else if (options == typeof(RealmOptions))
             _ = services.GetRequiredService<IOptions<RealmOptions>>().Value;
+        else if (options == typeof(AccountOptions))
+            _ = services.GetRequiredService<IOptions<AccountOptions>>().Value;
         else
             throw new ArgumentOutOfRangeException(nameof(options));
     }

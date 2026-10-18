@@ -45,7 +45,7 @@ public sealed class GatewayOptions
     public int ConnectionsPerAddress { get; set; } = 8;
 
     /// <summary>
-    /// How long a connection may stay open without completing its login.
+    /// How long a connection may stay open without completing its login. Positive: whatever binds this section validates it.
     /// </summary>
     public TimeSpan PreAuthTimeout { get; set; } = TimeSpan.FromSeconds(30);
 

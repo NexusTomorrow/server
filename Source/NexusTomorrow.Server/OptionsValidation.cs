@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Gateway;
+using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Persistence;
 
@@ -34,6 +35,11 @@ internal sealed class GatewayOptionsValidator : IValidateOptions<GatewayOptions>
         int[] ports = [options.Sts.Port, options.Login.Port, options.World.Port];
         if (ports.Distinct().Count() != ports.Length)
             failures.Add($"{GatewayOptions.Section}: the STS, login and world ports must be three different ports.");
+
+        // StsConnection arms each connection's timer with this: zero ends every connection at once, and a negative value throws, or
+        // at -1 ms switches the limit off.
+        if (options.PreAuthTimeout <= TimeSpan.Zero)
+            failures.Add($"{GatewayOptions.Section}:{nameof(GatewayOptions.PreAuthTimeout)} must be positive.");
 
         return failures.Count == 0 ? ValidateOptionsResult.Success : ValidateOptionsResult.Fail(failures);
     }
@@ -77,8 +83,27 @@ internal sealed class PersistenceOptionsValidator : IValidateOptions<Persistence
         if (options.FirstIdBlockTimeout <= TimeSpan.Zero)
             failures.Add($"{PersistenceOptions.Section}:{nameof(PersistenceOptions.FirstIdBlockTimeout)} must be positive.");
 
+        // A zero delay retries failing work in a hot loop, and a negative one throws inside the queue's retry while the work holds its
+        // keys (WriteBehindQueue.ApplyUntilDoneAsync).
+        string first = $"{PersistenceOptions.Section}:{nameof(PersistenceOptions.FirstRetryDelay)}";
+        string max = $"{PersistenceOptions.Section}:{nameof(PersistenceOptions.MaxRetryDelay)}";
+        if (options.FirstRetryDelay <= TimeSpan.Zero)
+            failures.Add($"{first} must be positive.");
+        if (options.MaxRetryDelay <= TimeSpan.Zero)
+            failures.Add($"{max} must be positive.");
+        else if (options.FirstRetryDelay > options.MaxRetryDelay)
+            failures.Add($"{first} must not exceed {max}.");
+
         return failures.Count == 0 ? ValidateOptionsResult.Success : ValidateOptionsResult.Fail(failures);
     }
+}
+
+internal sealed class AccountOptionsValidator : IValidateOptions<AccountOptions>
+{
+    public ValidateOptionsResult Validate(string? name, AccountOptions options) =>
+        options.TokenLifetime <= TimeSpan.Zero
+            ? ValidateOptionsResult.Fail($"{AccountOptions.Section}:{nameof(AccountOptions.TokenLifetime)} must be positive.")
+            : ValidateOptionsResult.Success;
 }
 
 internal sealed class RealmOptionsValidator : IValidateOptions<RealmOptions>

@@ -84,8 +84,10 @@ Entering the world comes next.
    creation offers nothing.
 5. Start it: `dotnet run --project Source/NexusTomorrow.Server`. Every listener binds to
    `127.0.0.1` unless configured otherwise.
-6. At the server's console, create an account: `account create <email> <password>`. `help` lists
-   the commands.
+6. At the server's console, create an account: `account create <email> <password>`. A password
+   with spaces goes in double quotes, as in `account create alice@example.com "correct horse battery"`;
+   the quotes are not part of it, so a password cannot hold a double quote. `help` lists the
+   commands.
 7. Start your client with ClientConnector pointed at `127.0.0.1`, and log in with that account.
 
 `migrate` applies every schema's pending migrations and exits 0, or exits 1 with the error. The

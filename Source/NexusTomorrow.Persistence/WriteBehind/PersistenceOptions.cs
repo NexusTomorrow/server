@@ -22,12 +22,13 @@ public sealed class PersistenceOptions
     public int SaveWorkers { get; set; } = 4;
 
     /// <summary>
-    /// The wait before the first retry of failed work; each retry doubles it.
+    /// The wait before the first retry of failed work; each retry doubles it. Positive and at most <see cref="MaxRetryDelay"/>: the
+    /// queue does not check it, so whatever binds this section validates it.
     /// </summary>
     public TimeSpan FirstRetryDelay { get; set; } = TimeSpan.FromMilliseconds(100);
 
     /// <summary>
-    /// The longest wait between retries.
+    /// The longest wait between retries. Positive: whatever binds this section validates it.
     /// </summary>
     public TimeSpan MaxRetryDelay { get; set; } = TimeSpan.FromSeconds(30);
 

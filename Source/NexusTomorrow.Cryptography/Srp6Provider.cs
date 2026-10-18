@@ -99,7 +99,7 @@ public sealed class Srp6Provider
         BigInteger serverM1 = Hash(false, Hash(false, N) ^ Hash(false, g),
             new BigInteger(IHash, true), _salt, _clientPublicEphemeral, _serverPublicEphemeral, _sessionKey);
 
-        if (!clientM1.SequenceEqual(serverM1.ToByteArray(true)))
+        if (!CryptographicOperations.FixedTimeEquals(clientM1, serverM1.ToByteArray(true)))
             return false;
 
         _clientEvidence = new BigInteger(clientM1, true);

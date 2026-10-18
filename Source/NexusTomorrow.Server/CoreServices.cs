@@ -35,7 +35,7 @@ public static class CoreServices
         AddOptions<GatewayOptions, GatewayOptionsValidator>(services, configuration, GatewayOptions.Section);
         AddOptions<PersistenceOptions, PersistenceOptionsValidator>(services, configuration, PersistenceOptions.Section);
         AddOptions<RealmOptions, RealmOptionsValidator>(services, configuration, RealmOptions.Section);
-        AddOptions<AccountOptions>(services, configuration, AccountOptions.Section);
+        AddOptions<AccountOptions, AccountOptionsValidator>(services, configuration, AccountOptions.Section);
         AddOptions<ContentOptions>(services, configuration, ContentOptions.Section);
         AddOptions<CliOptions>(services, configuration, CliOptions.Section);
 

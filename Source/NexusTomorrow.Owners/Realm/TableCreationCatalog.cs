@@ -51,8 +51,10 @@ public sealed class TableCreationCatalog : ICreationCatalog
                     e.Id, (byte)e.RaceId, (byte)e.Sex, (byte)e.ClassId, (uint)e.FactionId, e.Enabled, e.CharacterCreationStartEnum, e.Xp,
                     LevelFor(levels, e.Xp), e.EntitlementIdRequired, e.AccountCurrencyAmountCost, e.CostumeOnly));
         }
-        catch (Exception exception) when (exception is IOException or InvalidDataException or GameTableException)
+        catch (Exception exception)
         {
+            // Any failure reading the player's tables leaves the catalog empty and the start going on. GameTable is not hardened
+            // against a damaged file, which can fail it with anything from a file the server may not open to a repeated id.
             RealmLog.TableUnavailable(logger, creationPath, exception);
             return FrozenDictionary<uint, CreationOption>.Empty;
         }

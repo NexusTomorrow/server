@@ -11,7 +11,8 @@ public sealed class AccountOptions
     public const string Section = "Account";
 
     /// <summary>
-    /// How long a game token or a session key stays redeemable (decisions.md D9 2b: about a minute).
+    /// How long a game token or a session key stays redeemable (decisions.md D9 2b: about a minute). Positive: whatever binds this
+    /// section validates it.
     /// </summary>
     public TimeSpan TokenLifetime { get; set; } = TimeSpan.FromSeconds(60);
 }

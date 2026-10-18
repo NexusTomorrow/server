@@ -200,6 +200,7 @@ public sealed class ClientConnectionTests : IAsyncLifetime
         await Eventually.TrueAsync(() => output.Flushes >= 4);
         Assert.Equal(4, output.Flushes);
     }
+
     [Fact]
     public async Task TheConnectionRateGatesByTheTableItsDecoderWasBuiltWith()
     {

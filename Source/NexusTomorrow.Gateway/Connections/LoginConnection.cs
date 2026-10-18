@@ -37,7 +37,8 @@ public sealed class LoginConnection : ClientConnection
     /// <summary>
     /// Create the connection.
     /// </summary>
-    /// <exception cref="ArgumentException">The world's public address is not an IPv4 address.</exception>
+    /// <exception cref="FormatException">The world's public address is not an IP address.</exception>
+    /// <exception cref="ArgumentException">The world's public address is an IP address but not an IPv4 one.</exception>
     public LoginConnection(
         MessageCatalog catalog,
         InboundDecoder decoder,
