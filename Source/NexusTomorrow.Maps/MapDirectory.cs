@@ -76,12 +76,21 @@ public sealed class MapDirectory : IMapDirectory
 
             var map = new MapOwner(
                 worldId, _settings, _persistence, new Random(_random.Next()), _metrics, _loggers.CreateLogger<MapOwner>());
+            // The scheduler refuses a registration only while it is stopping; a map it refused would never tick, so it is not kept.
+            try
+            {
+                _scheduler.Register(map, MapPlacement.Pool);
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+
             _byWorld.Add(worldId, map);
             var grown = new MapOwner[_maps.Length + 1];
             _maps.CopyTo(grown, 0);
             grown[^1] = map;
             Volatile.Write(ref _maps, grown);
-            _scheduler.Register(map, MapPlacement.Pool);
             return map;
         }
     }

@@ -49,22 +49,65 @@ public sealed class MapDirectoryTests : IDisposable
     {
         MapDirectory directory = NewDirectory();
         Assert.NotNull(directory.Host(1));
+        Assert.NotNull(directory.Host(5));
 
         Task stopping = directory.StopAsync();
-        _scheduler.TickAll(25);
 
+        Assert.False(stopping.IsCompleted);
+        _scheduler.TickAll(25);
         await stopping.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
         Assert.Empty(_scheduler.Maps);
+        Assert.Equal([true, true], _scheduler.StoppedWhenUnregistered);
         Assert.Null(directory.Host(1));
     }
 
-    // Our own fixture worlds: 1 open, 2 held, 3 instanced, 4 in no table.
+    [Fact]
+    public async Task AWorldAskedForAfterTheStopBeganHasNoMap()
+    {
+        MapDirectory directory = NewDirectory();
+        Assert.NotNull(directory.Host(1));
+        Task stopping = directory.StopAsync();
+
+        Assert.Null(directory.Host(5));
+
+        Assert.Equal(1, _scheduler.RegisterCalls);
+        _scheduler.TickAll(25);
+        await stopping.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+    }
+
+    [Fact]
+    public void ManyCallersAskingForOneWorldMakeOneMap()
+    {
+        MapDirectory directory = NewDirectory();
+        var results = new IMapInbox?[32];
+
+        Parallel.For(0, results.Length, i => results[i] = directory.Host(1));
+
+        Assert.All(results, r => Assert.Same(directory.Maps[0], r));
+        Assert.Single(directory.Maps);
+        Assert.Equal(1, _scheduler.RegisterCalls);
+    }
+
+    [Fact]
+    public void AMapTheSchedulerRefusedIsNotKept()
+    {
+        _scheduler.ThrowOnRegister = true;
+        MapDirectory directory = NewDirectory();
+
+        Assert.Null(directory.Host(1));
+        Assert.Null(directory.Host(1));
+
+        Assert.Equal(2, _scheduler.RegisterCalls);
+        Assert.Empty(directory.Maps);
+    }
+    // Our own fixture worlds: 1 and 5 open, 2 held, 3 instanced, 4 in no table.
     private MapDirectory NewDirectory() => new(
         new FixedWorldCatalog(
         [
             new KeyValuePair<ushort, WorldKind>(1, WorldKind.OpenWorld),
             new KeyValuePair<ushort, WorldKind>(2, WorldKind.Held),
             new KeyValuePair<ushort, WorldKind>(3, WorldKind.Instanced),
+            new KeyValuePair<ushort, WorldKind>(5, WorldKind.OpenWorld),
         ]),
         _scheduler,
         new FakeWriteBehind(),
@@ -77,6 +120,8 @@ public sealed class MapDirectoryTests : IDisposable
     private sealed class RecordingScheduler : IMapScheduler
     {
         private readonly List<ITickable> _maps = [];
+        private readonly List<bool> _stoppedWhenUnregistered = [];
+        private int _registerCalls;
 
         public IReadOnlyList<ITickable> Maps
         {
@@ -87,12 +132,29 @@ public sealed class MapDirectoryTests : IDisposable
             }
         }
 
+        public bool ThrowOnRegister { get; set; }
+
+        public int RegisterCalls => Volatile.Read(ref _registerCalls);
+
+        public IReadOnlyList<bool> StoppedWhenUnregistered
+        {
+            get
+            {
+                lock (_maps)
+                    return [.. _stoppedWhenUnregistered];
+            }
+        }
+
         public void Start()
         {
         }
 
         public void Register(ITickable map, MapPlacement placement)
         {
+            Interlocked.Increment(ref _registerCalls);
+            if (ThrowOnRegister)
+                throw new InvalidOperationException("The map scheduler is stopping.");
+
             lock (_maps)
                 _maps.Add(map);
         }
@@ -100,7 +162,10 @@ public sealed class MapDirectoryTests : IDisposable
         public Task UnregisterAsync(ITickable map)
         {
             lock (_maps)
+            {
+                _stoppedWhenUnregistered.Add(((MapOwner)map).StopAsync().IsCompleted);
                 _maps.Remove(map);
+            }
 
             return Task.CompletedTask;
         }
