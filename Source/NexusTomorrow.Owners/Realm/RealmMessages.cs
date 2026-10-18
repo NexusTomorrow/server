@@ -41,6 +41,11 @@ public sealed record SelectCharacter(long AccountId, IClientSession Session, ulo
 public sealed record RealmSessionClosed(long AccountId, IClientSession Session) : RealmMessage;
 
 /// <summary>
+/// A map handed a character back, standing where it left the world, its save already queued when it changed.
+/// </summary>
+public sealed record CharacterReturned(long AccountId, ulong CharacterId, CharacterLocation Location) : RealmMessage;
+
+/// <summary>
 /// A block of character ids came off the database.
 /// </summary>
 public sealed record IdBlockTaken(IdBlock Block) : RealmMessage;

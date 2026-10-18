@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Realm;
 
@@ -11,7 +12,7 @@ namespace NexusTomorrow.Owners.Realm;
 /// The realm side: each online account's characters, loaded once per world session, and the character-select answers. An answer that
 /// depends on a write is sent only from the write's completion message.
 /// </summary>
-public sealed class RealmOwner : Owner<RealmMessage>
+public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
 {
     // The highest path id CharacterCreate.Path documents (3 Explorer).
     private const byte LastPath = 3;
