@@ -134,7 +134,7 @@ public sealed class TimerWheelTests
     [Fact]
     public void SchedulingAndFiringAllocateNothingOnceTheWheelHasGrown()
     {
-        var wheel = new TimerWheel<int>(startMs: 0, capacity: 128);
+        var wheel = new TimerWheel<int>(startMs: 0, capacity: 16);
         var handler = new Counter();
         for (int i = 1; i <= 100; i++)
             wheel.Schedule(i, i);
@@ -155,6 +155,37 @@ public sealed class TimerWheelTests
         Assert.Equal(10_100, handler.Count);
     }
 
+    [Fact]
+    public void AWheelGrownPastItsStartingCapacityFiresEveryTimerInOrderAndCancelsAcrossTheGrowth()
+    {
+        var wheel = new TimerWheel<int>(startMs: 0, capacity: 1);
+        var handler = new Recorder();
+        var handles = new TimerHandle[100];
+        for (int i = 0; i < 100; i++)
+            handles[i] = wheel.Schedule(1 + ((i % 10) * 700), i);
+
+        // 0 and 1 were scheduled before the array first grew, 5 before its later growths, 70 and 99 after the last.
+        int[] cancelled = [0, 1, 5, 70, 99];
+        foreach (int i in cancelled)
+            Assert.True(wheel.Cancel(handles[i]));
+        Assert.Equal(95, wheel.Count);
+
+        Assert.Equal(95, wheel.Advance(10_000, handler));
+
+        List<(int, long)> expected = [];
+        for (int k = 0; k < 10; k++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                int i = (j * 10) + k;
+                if (!cancelled.Contains(i))
+                    expected.Add((i, 1 + (k * 700L)));
+            }
+        }
+
+        Assert.Equal(expected, handler.Fired);
+        Assert.Equal(0, wheel.Count);
+    }
     private sealed class Recorder : ITimerHandler<int>
     {
         public List<(int Payload, long DueMs)> Fired { get; } = [];
