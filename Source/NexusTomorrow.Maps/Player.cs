@@ -51,6 +51,9 @@ internal sealed class Player
     // True once WorldEntryComplete went out.
     public bool InWorld { get; set; }
 
+    // True while a logout request waits for its confirm.
+    public bool LogoutPending { get; set; }
+
     public void MoveTo(CharacterLocation location)
     {
         if (Location.Equals(location))

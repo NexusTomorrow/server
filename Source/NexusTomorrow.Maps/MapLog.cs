@@ -37,4 +37,7 @@ internal static partial class MapLog
 
     [LoggerMessage(EventId = 7011, Level = LogLevel.Warning, Message = "No client data path is configured; no world is hosted")]
     public static partial void NoClientDataPath(ILogger logger);
+
+    [LoggerMessage(EventId = 7012, Level = LogLevel.Debug, Message = "Map {World} dropped {Message} for connection {ConnectionId}: {Reason}")]
+    public static partial void MessageDropped(ILogger logger, ushort world, string message, long connectionId, string reason);
 }

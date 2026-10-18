@@ -4,6 +4,7 @@ using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using NexusTomorrow.Maps.Scheduling;
 using NexusTomorrow.Maps.Timing;
+using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 using NexusTomorrow.Owners;
 using NexusTomorrow.Owners.Realm;
@@ -19,6 +20,7 @@ namespace NexusTomorrow.Maps;
 /// run the timers, hand the due saves to the write-behind queue, then stop when a stop was requested. Only <see cref="Tick"/>
 /// touches the map's state, so the state needs no locks. An arriving character gets the world entry (<c>WorldEntry</c>); the client's
 /// <c>WorldReady</c> is answered once with <c>WorldEntryComplete</c>.
+/// A logout request is answered with a countdown of 0; its confirm hands the character back and returns the client to character select.
 /// </summary>
 public sealed class MapOwner : IMapInbox, IOwner, ITickable
 {
@@ -41,6 +43,12 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     private readonly List<Player> _due = [];
     private readonly WorldEntryComplete _entryComplete = new();
 
+    // LogoutCountdown.Duration 0 confirms at once, and its unit is not verified, so 0 is the only value the server may send.
+    private readonly LogoutCountdown _logoutCountdown = new();
+
+    // With a reason other than 6, 7, 8, 12, 15, 16, 19 and 20, ToCharacterSelect decides (WorldLogout.Reason); 0 is not one of them.
+    private readonly WorldLogout _logoutToCharacterSelect = new() { ToCharacterSelect = true, Reason = 0 };
+
     // Written by any thread: the queue count by posters and the tick, the stop request by StopAsync.
     private int _queued;
     private int _stopRequested;
@@ -49,6 +57,7 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     private int _playerCount;
     private long _ticks;
     private long _lastTickAllocatedBytes;
+    private long _droppedMessages;
 
     // Touched only on the tick.
     private long _nowMs;
@@ -101,6 +110,11 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     /// The bytes the last tick allocated on its thread, measured with <see cref="GC.GetAllocatedBytesForCurrentThread"/>.
     /// </summary>
     public long LastTickAllocatedBytes => Volatile.Read(ref _lastTickAllocatedBytes);
+
+    /// <summary>
+    /// How many client messages the map read but did not act on.
+    /// </summary>
+    public long DroppedMessages => Volatile.Read(ref _droppedMessages);
 
     /// <inheritdoc/>
     public bool Post(MapMessage message) => Write(_normal.Writer, message);
@@ -235,6 +249,16 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
                     if (_bySession.TryGetValue(zoneChanged.Session, out Player? moving))
                         KeepZone(moving, zoneChanged.ZoneId);
                     break;
+                case ClientLogoutRequested logoutRequest:
+                    if (_bySession.TryGetValue(logoutRequest.Session, out Player? requester))
+                        RequestLogout(requester, logoutRequest.Begin);
+                    break;
+                case ClientLogoutConfirmed logoutConfirmed:
+                    if (_bySession.TryGetValue(logoutConfirmed.Session, out Player? confirmer) && confirmer.LogoutPending)
+                        ConfirmLogout(confirmer);
+                    else
+                        Drop(logoutConfirmed.Session, nameof(ClientLogoutConfirmed), "no logout request pending");
+                    break;
                 case CharacterSaved saved:
                     if (_byCharacter.TryGetValue(saved.CharacterId, out Player? savedPlayer) && savedPlayer.Serial == saved.Serial)
                         savedPlayer.Committed(saved.Version);
@@ -283,6 +307,29 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
         KeepZone(player, zoneId);
         player.InWorld = true;
         player.Session.Send(_entryComplete);
+    }
+
+    private void RequestLogout(Player player, bool begin)
+    {
+        player.LogoutPending = begin;
+        if (begin)
+            player.Session.Send(_logoutCountdown);
+    }
+
+    // The hand-back queues the save and posts the return before WorldLogout goes out, so the client's next select finds the character
+    // at rest. The connection stays open: a client that chose to exit quits itself, and its closed connection no longer routes here.
+    private void ConfirmLogout(Player player)
+    {
+        IWorldSession session = player.Session;
+        HandBack(player);
+        session.Send(_logoutToCharacterSelect);
+    }
+
+    private void Drop(IWorldSession session, string message, string reason)
+    {
+        Interlocked.Increment(ref _droppedMessages);
+        _metrics.Dropped(_worldTag);
+        MapLog.MessageDropped(_logger, _worldId, message, session.Id, reason);
     }
 
     // A zone of 0 is not a zone: the client's report on taking control can carry it, and the player keeps the zone it stands in.

@@ -202,6 +202,24 @@ public sealed class WorldConnectionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheLogoutRequestsAndTheConfirmReachTheMap()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+
+        await Client.SendTaggedAsync(0x03, ClientMessage.With(new LogoutRequest(), nameof(LogoutRequest.Begin), true));
+        await Client.SendTaggedAsync(0x03, ClientMessage.With(new LogoutRequest(), nameof(LogoutRequest.Begin), false));
+        await Client.SendTaggedAsync(0x03, new LogoutConfirm());
+        await Eventually.TrueAsync(() => map.Posted.Count == 3);
+
+        Assert.True(Assert.IsType<ClientLogoutRequested>(map.Posted[0]).Begin);
+        Assert.False(Assert.IsType<ClientLogoutRequested>(map.Posted[1]).Begin);
+        Assert.IsType<ClientLogoutConfirmed>(map.Posted[2]);
+        Assert.All(map.Posted, posted => Assert.Same(_connection, Assert.IsAssignableFrom<SessionMessage>(posted).Session));
+    }
+
+    [Fact]
     public async Task AClientMovementReachesTheMapAtHighPriority()
     {
         await GreetAsync();

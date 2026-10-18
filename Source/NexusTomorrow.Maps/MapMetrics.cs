@@ -13,6 +13,7 @@ public sealed class MapMetrics : IDisposable
     private readonly Histogram<long> _allocated;
     private readonly Counter<long> _skipped;
     private readonly Counter<long> _faults;
+    private readonly Counter<long> _dropped;
 
     /// <summary>
     /// Create the instruments on a meter this object owns.
@@ -24,6 +25,7 @@ public sealed class MapMetrics : IDisposable
         _allocated = _meter.CreateHistogram<long>("nexustomorrow.map.tick.allocated", unit: "By", description: "Bytes a map tick allocated");
         _skipped = _meter.CreateCounter<long>("nexustomorrow.map.ticks_skipped", description: "Map deadlines skipped because a tick ran past them");
         _faults = _meter.CreateCounter<long>("nexustomorrow.map.faults", description: "Map ticks, timers and message handlers that threw");
+        _dropped = _meter.CreateCounter<long>("nexustomorrow.map.dropped", description: "Client messages a map read but did not act on");
     }
 
     /// <summary>
@@ -55,6 +57,12 @@ public sealed class MapMetrics : IDisposable
     /// </summary>
     /// <param name="world">The tag naming the world the map belongs to.</param>
     public void Fault(KeyValuePair<string, object?> world) => _faults.Add(1, world);
+
+    /// <summary>
+    /// Count one client message a map read but did not act on.
+    /// </summary>
+    /// <param name="world">The tag naming the world the map belongs to.</param>
+    public void Dropped(KeyValuePair<string, object?> world) => _dropped.Add(1, world);
 
     /// <inheritdoc/>
     public void Dispose() => _meter.Dispose();

@@ -50,3 +50,13 @@ public readonly record struct MovementSample(Vector3? Position, float? Facing);
 /// The client moved its unit.
 /// </summary>
 public sealed record ClientMoved(IWorldSession Session, MovementSample Sample) : SessionMessage(Session);
+
+/// <summary>
+/// The client asked to leave the world (<paramref name="Begin"/> true) or cancelled a request still counting down (<paramref name="Begin"/> false).
+/// </summary>
+public sealed record ClientLogoutRequested(IWorldSession Session, bool Begin) : SessionMessage(Session);
+
+/// <summary>
+/// The client confirmed its logout request; on an exit it then quits.
+/// </summary>
+public sealed record ClientLogoutConfirmed(IWorldSession Session) : SessionMessage(Session);

@@ -237,6 +237,94 @@ public sealed class WorldEntryTests : IDisposable
         }
     }
 
+    [Fact]
+    public void ALogoutRequestIsAnsweredWithACountdownOfZero()
+    {
+        MapOwner map = NewMap();
+        var session = new FakeClientSession();
+        Arrive(map, session);
+
+        map.Post(new ClientLogoutRequested(session, true));
+        Tick(map);
+
+        LogoutCountdown countdown = session.Single<LogoutCountdown>();
+        Assert.Equal(0U, countdown.Duration);
+        Assert.False(countdown.Cancel);
+        Assert.Empty(session.Sent.OfType<WorldLogout>());
+        Assert.Equal(1, map.PlayerCount);
+        Assert.Empty(_realm.Posted);
+    }
+
+    [Fact]
+    public void AConfirmedLogoutHandsTheCharacterBackThenReturnsTheClientToCharacterSelect()
+    {
+        MapOwner map = NewMap();
+        var session = new FakeClientSession();
+        var moved = new CharacterLocation(1, 5, new Vector3(4, 5, 6), 1f);
+        int savesWhenReturned = -1;
+        int logoutsWhenReturned = -1;
+        _realm.OnPost = _ =>
+        {
+            savesWhenReturned = _persistence.Backlog;
+            logoutsWhenReturned = session.Sent.OfType<WorldLogout>().Count();
+        };
+        Arrive(map, session);
+        map.PlayerOf(session)!.MoveTo(moved);
+        map.Post(new ClientLogoutRequested(session, true));
+        Tick(map);
+
+        map.Post(new ClientLogoutConfirmed(session));
+        Tick(map);
+
+        Assert.Equal(1, savesWhenReturned);
+        Assert.Equal(0, logoutsWhenReturned);
+        Assert.Equal(moved, _persistence.Take<SaveCharacterLocationWork>().Location);
+        Assert.Equal(moved, Assert.IsType<CharacterReturned>(Assert.Single(_realm.Posted)).Location);
+        WorldLogout logout = session.Single<WorldLogout>();
+        Assert.True(logout.ToCharacterSelect);
+        Assert.Equal((byte)0, logout.Reason);
+        Assert.Null(session.Map);
+        Assert.Null(session.DisconnectReason);
+        Assert.Equal(0, map.PlayerCount);
+    }
+
+    [Fact]
+    public void ALogoutConfirmWithNoRequestPendingIsDroppedAndCounted()
+    {
+        MapOwner map = NewMap();
+        var session = new FakeClientSession();
+        Arrive(map, session);
+
+        map.Post(new ClientLogoutConfirmed(session));
+        Tick(map);
+
+        Assert.Empty(session.Sent.OfType<WorldLogout>());
+        Assert.Equal(1, map.PlayerCount);
+        Assert.Empty(_realm.Posted);
+        Assert.Equal(1L, map.DroppedMessages);
+        Assert.Null(session.DisconnectReason);
+    }
+
+    [Fact]
+    public void ACancelledLogoutRequestKeepsTheCharacterInTheWorld()
+    {
+        MapOwner map = NewMap();
+        var session = new FakeClientSession();
+        Arrive(map, session);
+        map.Post(new ClientLogoutRequested(session, true));
+        Tick(map);
+
+        map.Post(new ClientLogoutRequested(session, false));
+        Tick(map);
+        map.Post(new ClientLogoutConfirmed(session));
+        Tick(map);
+
+        session.Single<LogoutCountdown>();
+        Assert.Empty(session.Sent.OfType<WorldLogout>());
+        Assert.Equal(1, map.PlayerCount);
+        Assert.Equal(1L, map.DroppedMessages);
+    }
+
     private static uint StatValue(Server0262Part4 stat) => Assert.IsType<Server0262Part4.Server0262Union1Arm00>(stat.Unknown2).Unknown0;
 
     private MapOwner NewMap() =>

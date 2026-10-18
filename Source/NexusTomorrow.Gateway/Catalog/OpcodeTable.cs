@@ -103,6 +103,8 @@ public static class OpcodeTable
         new(0x00F2, MessageOwner.Map, MessagePriority.Normal, 2, OverLimitAction.Drop, WorldTag), // WorldReady
         new(0x0635, MessageOwner.Map, MessagePriority.Normal, 4, OverLimitAction.Drop, WorldTag), // MovementControlReceipt
         new(0x063A, MessageOwner.Map, MessagePriority.Normal, 10, OverLimitAction.Drop, WorldTag), // ZoneChange
+        new(0x00BF, MessageOwner.Map, MessagePriority.Normal, 2, OverLimitAction.Drop, WorldTag), // LogoutRequest
+        new(0x00C0, MessageOwner.Map, MessagePriority.Normal, 2, OverLimitAction.Drop, WorldTag), // LogoutConfirm
 
         // ClientMovement: admitted at Purpose since its handler reads only MovementReads.Members, each marked; up to every frame while
         // dashing.

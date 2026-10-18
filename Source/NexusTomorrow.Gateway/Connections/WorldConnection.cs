@@ -257,6 +257,8 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
             WorldReady ready => new ClientWorldReady(this, ready.ZoneId),
             MovementControlReceipt receipt => new ClientControlReceipt(this, receipt.Ticket),
             ZoneChange change => new ClientZoneChanged(this, change.ZoneId),
+            LogoutRequest request => new ClientLogoutRequested(this, request.Begin),
+            LogoutConfirm => new ClientLogoutConfirmed(this),
             _ => null,
         };
         if (routed is null)
