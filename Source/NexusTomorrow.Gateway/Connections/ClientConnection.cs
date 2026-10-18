@@ -37,6 +37,10 @@ public abstract class ClientConnection : IClientSession
     private CancellationToken _lifetime;
     private string? _disconnectReason;
 
+    // Set by the writer before it completes the queue, read by Enqueue: the channel's lock orders the write before any TryWrite the
+    // completion refuses.
+    private bool _writerStopped;
+
     // Read loop only: whether Admit refused the row of the frame being decoded. Admit has acted on that refusal, so OnFrameAsync must
     // not count it again.
     private bool _refused;
@@ -77,6 +81,7 @@ public abstract class ClientConnection : IClientSession
 
     /// <inheritdoc/>
     /// <exception cref="InvalidOperationException">The send gate refuses <paramref name="message"/> (<see cref="MessageCatalog.MaySend"/>).</exception>
+    /// <exception cref="CodecException">The message wrote a different number of bytes than it measured.</exception>
     public void Send<T>(T message)
         where T : class, IWireMessage
     {
@@ -180,8 +185,11 @@ public abstract class ClientConnection : IClientSession
     }
 
     /// <summary>
-    /// Queue <paramref name="message"/> as a bare frame, outside any envelope.
+    /// Queue <paramref name="message"/> as a bare frame, outside any envelope. The message is serialized before this returns, so the
+    /// caller may change or reuse it at once; the send gate runs on the message as it is at the call.
     /// </summary>
+    /// <exception cref="InvalidOperationException">The send gate refuses <paramref name="message"/> (<see cref="MessageCatalog.MaySend"/>).</exception>
+    /// <exception cref="CodecException">The message wrote a different number of bytes than it measured.</exception>
     protected void SendBare<T>(T message)
         where T : class, IWireMessage
     {
@@ -214,10 +222,17 @@ public abstract class ClientConnection : IClientSession
     /// </summary>
     protected void MarkAuthenticated() => _preAuth?.CancelAfter(Timeout.InfiniteTimeSpan);
 
-    // A full queue means the client is not reading; the sender is never made to wait, so the connection ends instead.
+    // A refused item never reaches the writer, so its buffer goes back here, and the sender is never made to wait: a refusal ends
+    // the connection unless the writer has already stopped, which ends the connection with the reason RunAsync records. A refusal
+    // while the writer runs is a full queue (the client is not reading) or a queue Disconnect completed, whose first recorded reason
+    // stands.
     private void Enqueue(in Outbound item)
     {
-        if (!_outbound.Writer.TryWrite(item))
+        if (_outbound.Writer.TryWrite(item))
+            return;
+
+        item.ReturnBody();
+        if (!Volatile.Read(ref _writerStopped))
             Disconnect("the outbound queue is full");
     }
 
@@ -357,7 +372,7 @@ public abstract class ClientConnection : IClientSession
     private void LogSent(in Outbound item)
     {
         if (_logger.IsEnabled(LogLevel.Debug))
-            GatewayLog.MessageSent(_logger, Id, item.Opcode, item.Message!.GetType().Name);
+            GatewayLog.MessageSent(_logger, Id, item.Opcode, item.MessageType!.Name);
     }
 
     private async Task WriteAsync(PipeWriter output, CancellationTokenSource writerDone, CancellationToken cancellationToken)
@@ -371,23 +386,31 @@ public abstract class ClientConnection : IClientSession
                 int batched = 0;
                 while (reader.TryRead(out Outbound item))
                 {
-                    // Message is set by the Bare and Enveloped factories and Cipher by Key, the only ways to build those kinds.
-                    switch (item.Kind)
+                    // The writer owns the item once it is read: its buffer goes back after this write, whether or not the write throws.
+                    // Body and MessageType are set by the Bare and Enveloped factories and Cipher by Key, the only ways to build those kinds.
+                    try
                     {
-                        case OutboundKind.Bare:
-                            FrameWriter.WriteMessage(output, item.Opcode, item.Message!);
-                            LogSent(item);
-                            break;
-                        case OutboundKind.Enveloped:
-                            FrameWriter.WriteEnvelope(output, _envelopeOpcode, item.Opcode, item.Message!, sendCipher);
-                            LogSent(item);
-                            break;
-                        case OutboundKind.Key:
-                            sendCipher = item.Cipher!;
-                            break;
-                        case OutboundKind.PingAnswer:
-                            FrameWriter.WritePing(output, TransportOpcodes.PingAnswer, item.PingIndex);
-                            break;
+                        switch (item.Kind)
+                        {
+                            case OutboundKind.Bare:
+                                FrameWriter.WriteMessage(output, item.Opcode, item.Body.AsSpan(0, item.BodyLength));
+                                LogSent(item);
+                                break;
+                            case OutboundKind.Enveloped:
+                                FrameWriter.WriteEnvelope(output, _envelopeOpcode, item.Opcode, item.Body.AsSpan(0, item.BodyLength), sendCipher);
+                                LogSent(item);
+                                break;
+                            case OutboundKind.Key:
+                                sendCipher = item.Cipher!;
+                                break;
+                            case OutboundKind.PingAnswer:
+                                FrameWriter.WritePing(output, TransportOpcodes.PingAnswer, item.PingIndex);
+                                break;
+                        }
+                    }
+                    finally
+                    {
+                        item.ReturnBody();
                     }
 
                     if (++batched == FlushBatch)
@@ -411,6 +434,13 @@ public abstract class ClientConnection : IClientSession
         }
         finally
         {
+            // The flag is set before the completion, so a TryWrite the completion refuses sees it. Completing first refuses every later
+            // TryWrite, so the drain sees each item that was ever accepted and no Send can queue one behind it.
+            Volatile.Write(ref _writerStopped, true);
+            _outbound.Writer.TryComplete();
+            while (reader.TryRead(out Outbound abandoned))
+                abandoned.ReturnBody();
+
             await output.CompleteAsync();
             await writerDone.CancelAsync();
         }

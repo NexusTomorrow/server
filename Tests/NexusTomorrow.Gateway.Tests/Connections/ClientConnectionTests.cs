@@ -2,11 +2,13 @@
 using System.Collections.Frozen;
 using System.IO.Pipelines;
 using System.Net;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Gateway.Connections;
+using NexusTomorrow.Gateway.Tests.Sts;
 using NexusTomorrow.Network.Auth.Message.Model;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
@@ -97,6 +99,105 @@ public sealed class ClientConnectionTests : IAsyncLifetime
         Assert.Equal(1u, (await Client.ExpectAsync<LoginAccepted>()).DroppedForLag);
         Client.Cipher = next;
         Assert.Equal(2u, (await Client.ExpectAsync<LoginAccepted>()).DroppedForLag);
+    }
+
+    [Fact]
+    public async Task AMessageChangedAfterSendGoesOutAsItWasWhenSent()
+    {
+        // Both are queued before the writer runs, so a queue that held the message object would write the second value twice.
+        var message = new LoginAccepted { DroppedForLag = 1 };
+        _connection.Send(message);
+        message.DroppedForLag = 2;
+        _connection.Send(message);
+        Start();
+
+        Assert.Equal(1u, (await Client.ExpectAsync<LoginAccepted>()).DroppedForLag);
+        Assert.Equal(2u, (await Client.ExpectAsync<LoginAccepted>()).DroppedForLag);
+    }
+
+    [Fact]
+    public async Task ASendAfterTheWriterStoppedOnItsOwnDoesNotRecordAFullQueueAsTheEndReason()
+    {
+        var log = new RecordingLogger<ClientConnectionTests>();
+        _connection = new RecordingConnection(_time, Small(4096), OpcodeTable.Pregame, MessageCatalog.Default, log);
+        using var handling = new ManualResetEventSlim();
+        using var release = new ManualResetEventSlim();
+        _connection.OnMessage = _ =>
+        {
+            handling.Set();
+            release.Wait(s_wait);
+            return true;
+        };
+        Start();
+        await Client.SendAsync(new CharacterListRequest());
+        Assert.True(handling.Wait(s_wait, TestContext.Current.CancellationToken));
+
+        // The read loop is held in the handler, so the connection has not yet recorded why it is ending when the writer stops: the
+        // client's reader is gone, so the flush of this message reports the pipe completed.
+        await _pipes.Client.Input.CompleteAsync();
+        _connection.Send(new LoginAccepted());
+        await Eventually.TrueAsync(() => _connection.LifetimeCancelled);
+
+        _connection.Send(new LoginAccepted());
+        release.Set();
+
+        await _run.WaitAsync(s_wait, TestContext.Current.CancellationToken);
+        Assert.DoesNotContain(log.Entries, entry => entry.Contains("the outbound queue is full", StringComparison.Ordinal));
+        Assert.Contains(log.Entries, entry => entry.Contains("ended: closed", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task ASendPastACapacityQueueWhoseWriterIsLiveEndsTheConnectionAsFull()
+    {
+        var log = new RecordingLogger<ClientConnectionTests>();
+        _connection = new RecordingConnection(_time, Small(2), OpcodeTable.Pregame, MessageCatalog.Default, log);
+
+        // The writer has not started, so two items fill the queue and the third is refused.
+        _connection.Send(new LoginAccepted());
+        _connection.Send(new LoginAccepted());
+        _connection.Send(new LoginAccepted());
+        Start();
+
+        await _run.WaitAsync(s_wait, TestContext.Current.CancellationToken);
+        Assert.Contains(log.Entries, entry => entry.Contains("ended: the outbound queue is full", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task SendingAReusedMessageAllocatesNothingOnTheCallersThread()
+    {
+        Start();
+        await Eventually.TrueAsync(() => _connection.Started);
+        var message = new LoginAccepted();
+
+        // The warm-up has two jobs: the queue's ring buffer grows to the deepest backlog it has held and then stays, so 200 backs it up
+        // past anything measured; and the returned buffers stock ArrayPool.Shared, so the measured Sends find one to rent.
+        for (uint i = 0; i < 200; i++)
+        {
+            message.DroppedForLag = i;
+            _connection.Send(message);
+        }
+
+        for (int i = 0; i < 200; i++)
+            await Client.ExpectAsync<LoginAccepted>();
+
+        // Four messages at a time, read back before the next four, so the backlog stays within what ArrayPool.Shared caches per core;
+        // only the Send calls are measured.
+        long allocated = 0;
+        for (uint batch = 0; batch < 25; batch++)
+        {
+            for (uint i = 0; i < 4; i++)
+            {
+                message.DroppedForLag = (batch * 4) + i;
+                long before = GC.GetAllocatedBytesForCurrentThread();
+                _connection.Send(message);
+                allocated += GC.GetAllocatedBytesForCurrentThread() - before;
+            }
+
+            for (uint i = 0; i < 4; i++)
+                Assert.Equal((batch * 4) + i, (await Client.ExpectAsync<LoginAccepted>()).DroppedForLag);
+        }
+
+        Assert.Equal(0L, allocated);
     }
 
     [Fact]
@@ -361,15 +462,17 @@ public sealed class ClientConnectionTests : IAsyncLifetime
         private int _closed;
         private int _started;
 
-        public RecordingConnection(TimeProvider time, GatewayOptions options, FrozenDictionary<ushort, OpcodeRow> table, MessageCatalog catalog)
+        public RecordingConnection(TimeProvider time, GatewayOptions options, FrozenDictionary<ushort, OpcodeRow> table, MessageCatalog catalog, ILogger? logger = null)
             : base(0x0076, catalog, new InboundDecoder(catalog, table, new HashSet<ushort>()),
-                Options.Create(options), time, new GatewayMetrics(), NullLogger.Instance)
+                Options.Create(options), time, new GatewayMetrics(), logger ?? NullLogger.Instance)
         {
         }
 
         public Action<RecordingConnection> OnStartup { get; set; } = _ => { };
 
         public MessageHandler OnMessage { get; set; } = _ => true;
+
+        public bool LifetimeCancelled => Lifetime.IsCancellationRequested;
 
         public bool Started => Volatile.Read(ref _started) == 1;
 
