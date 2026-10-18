@@ -5,7 +5,7 @@ namespace NexusTomorrow.ProtocolReference;
 /// <summary>
 /// Writes a generated set of reference pages into a folder and owns the message pages there: a <c>Messages-*.md</c> page the set no
 /// longer has (an area renamed or emptied) is never deleted but becomes a tombstone, because outside links still point at it. A page is
-/// a tombstone when its text ends with a blank line, the tombstone sentence and a newline. An existing tombstone is never rewritten, so
+/// a tombstone when its text, read with LF line ends, ends with a blank line, the tombstone sentence and a newline. An existing tombstone is never rewritten, so
 /// its verified date stays the date it was retired. <see cref="RetiredPages"/> names the pages that were once written, and a tombstone
 /// is written for each that is missing. Every other file is left alone.
 /// </summary>
@@ -24,7 +24,7 @@ public static class ReferenceSet
     /// <summary>
     /// Write <paramref name="pages"/> into <paramref name="output"/> as UTF-8 without a byte order mark. A message page there that is not
     /// among them and is not yet a tombstone becomes a tombstone stamped <paramref name="date"/>, and its name is returned in name order
-    /// so it can be added to <see cref="RetiredPages"/>. A missing listed page also gets a tombstone, but is not returned.
+    /// so a name not yet in <see cref="RetiredPages"/> can be added. A missing listed page also gets a tombstone, but is not returned.
     /// </summary>
     public static IReadOnlyList<string> Write(string output, IReadOnlyList<(string Name, string Text)> pages, string date)
     {
@@ -58,5 +58,5 @@ public static class ReferenceSet
         return retired;
     }
 
-    private static bool IsTombstone(string text) => text.EndsWith("\n\n" + PageWriter.TombstoneSentence + "\n", StringComparison.Ordinal);
+    private static bool IsTombstone(string text) => text.ReplaceLineEndings("\n").EndsWith("\n\n" + PageWriter.TombstoneSentence + "\n", StringComparison.Ordinal);
 }

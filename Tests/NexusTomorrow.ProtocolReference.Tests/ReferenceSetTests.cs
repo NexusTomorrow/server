@@ -71,6 +71,18 @@ public sealed class ReferenceSetTests : IDisposable
     }
 
     [Fact]
+    public void AnExistingTombstoneWithCrLfLineEndsIsLeftAloneAndNotReported()
+    {
+        byte[] earlier = Encoding.UTF8.GetBytes(Tombstone("2026--09--01", "2026-09-01").Replace("\n", "\r\n", StringComparison.Ordinal));
+        File.WriteAllBytes(PathOf("Messages-B.md"), earlier);
+
+        IReadOnlyList<string> retired = ReferenceSet.Write(_folder, [("Messages-A.md", "a\n")], "2026-10-17");
+
+        Assert.Empty(retired);
+        Assert.Equal(earlier, File.ReadAllBytes(PathOf("Messages-B.md")));
+    }
+
+    [Fact]
     public void AListedNameThatReturnsAsAnAreaIsWrittenAsARealPage()
     {
         ReferenceSet.Write(_folder, [("Messages.md", "index\n")], "2026-10-16");

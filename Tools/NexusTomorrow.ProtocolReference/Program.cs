@@ -47,5 +47,8 @@ pages.Add(("Command-layer-commands.md", PageWriter.CommandsPage(Registries.Comma
 IReadOnlyList<string> retired = ReferenceSet.Write(output, pages, options["--date"]);
 Console.WriteLine(string.Create(CultureInfo.InvariantCulture, $"{messages.Count} messages; {pages.Count} pages written to {output}"));
 foreach (string name in retired)
-    Console.WriteLine($"retired {name}: add it to ReferenceSet.RetiredPages");
+{
+    bool listed = ReferenceSet.RetiredPages.Contains(Path.GetFileNameWithoutExtension(name));
+    Console.WriteLine(listed ? $"retired {name}" : $"retired {name}: add it to ReferenceSet.RetiredPages");
+}
 return 0;
