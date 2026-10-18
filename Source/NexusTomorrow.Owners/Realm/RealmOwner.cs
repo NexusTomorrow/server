@@ -148,8 +148,10 @@ public sealed class RealmOwner : Owner<RealmMessage>
             return;
         }
 
+        // A repeated look id would make two customization rows under one key (RealmContext's character_customization), and the
+        // write would throw on every retry while holding the account's keys.
         CreationOption? option = _catalog.Find(request.CreationId);
-        if (option is not { IsOffered: true } || request.Path > LastPath)
+        if (option is not { IsOffered: true } || request.Path > LastPath || RepeatsAnId(request.LookIds))
         {
             RefuseCreate(session, CreateResults.General);
             return;
@@ -314,6 +316,18 @@ public sealed class RealmOwner : Owner<RealmMessage>
 
     private bool IsNameInUse(string name, List<CharacterSummary> characters) =>
         _pendingNames.Contains(name) || characters.Exists(c => string.Equals(c.Name, name, StringComparison.OrdinalIgnoreCase));
+
+    private static bool RepeatsAnId(List<uint> ids)
+    {
+        var seen = new HashSet<uint>(ids.Count);
+        foreach (uint id in ids)
+        {
+            if (!seen.Add(id))
+                return true;
+        }
+
+        return false;
+    }
 
     private static void RefuseCreate(IClientSession session, byte result) =>
         session.Send(new CharacterCreateResult { CharacterId = 0, Result = result });

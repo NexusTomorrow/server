@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Persistence.Realm;
 using NexusTomorrow.Testing;
+using Npgsql;
 
 namespace NexusTomorrow.Persistence.Tests;
 
@@ -43,6 +44,30 @@ public sealed class CharacterWorkTests
         WorkResult refused = await second.Task.WaitAsync(s_bound, TestContext.Current.CancellationToken);
         Assert.Equal(WorkOutcome.Refused, refused.Outcome);
         Assert.Equal(RealmContext.LiveNameIndex, refused.Constraint);
+    }
+
+    // Two customization rows under one label share a key (RealmContext's character_customization). The work is applied directly,
+    // never queued: the queue retries anything but a unique violation, so this work would hold its keys forever there, which is why
+    // RealmOwner refuses a repeated look id.
+    [Fact]
+    public async Task TwoCustomizationsUnderOneLabelFailEveryAttemptWithoutAUniqueViolation()
+    {
+        await using PostgresTestDatabase database = await Databases.CreateAsync();
+        NewCharacter character = Databases.NewCharacter(1001, 7, "Rebaser Head") with
+        {
+            Customizations = [(Label: 1u, Value: 2u), (Label: 1u, Value: 3u)],
+        };
+        var work = new CreateCharacterWork(character, _ => { });
+        for (int attempt = 0; attempt < 2; attempt++)
+        {
+            InvalidOperationException thrown = await Assert.ThrowsAsync<InvalidOperationException>(
+                () => work.ApplyAsync(database.Contexts, TestContext.Current.CancellationToken));
+            for (Exception? cause = thrown; cause is not null; cause = cause.InnerException)
+                Assert.False(cause is PostgresException);
+        }
+
+        await using RealmContext context = database.Contexts.CreateRealm();
+        Assert.False(await context.Characters.AnyAsync(TestContext.Current.CancellationToken));
     }
 
     [Fact]

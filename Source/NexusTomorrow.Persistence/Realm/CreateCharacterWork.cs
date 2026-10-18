@@ -4,6 +4,10 @@
 /// Writes a new character with its customizations and bones in one <c>SaveChanges</c>. A taken name ends as
 /// <see cref="WorkOutcome.Refused"/> by <see cref="RealmContext.LiveNameIndex"/>.
 /// </summary>
+/// <remarks>
+/// The customizations' labels must differ. Two under one label share a row key, so every attempt throws, and the write-behind queue
+/// retries it without end while it holds the account's keys.
+/// </remarks>
 public sealed class CreateCharacterWork : PersistenceWork
 {
     private readonly NewCharacter _character;

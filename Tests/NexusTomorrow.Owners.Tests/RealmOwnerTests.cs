@@ -271,6 +271,35 @@ public sealed class RealmOwnerTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ACreateThatRepeatsALookIdAnswersTheGeneralFailure()
+    {
+        await ListAsync();
+        CharacterCreate request = Create("Rebaser Head");
+        request.LookIds.AddRange([4, 9, 4]);
+        request.LookValues.AddRange([1, 2, 3]);
+        _owner.Post(new CreateCharacter(Account, _session, request));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterCreateResult>().Any());
+        Assert.Equal(CreateResults.General, _session.Single<CharacterCreateResult>().Result);
+        Assert.Empty(_db.Queued.OfType<CreateCharacterWork>());
+
+        // The refusal holds no name: the same name is free for the next create.
+        _owner.Post(new CreateCharacter(Account, _session, Create("Rebaser Head")));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<CreateCharacterWork>().Any());
+    }
+
+    [Fact]
+    public async Task ACreateWhoseLookIdsDifferIsWritten()
+    {
+        await ListAsync();
+        CharacterCreate request = Create("Rebaser Head");
+        request.LookIds.AddRange([4, 9]);
+        request.LookValues.AddRange([1, 2]);
+        _owner.Post(new CreateCharacter(Account, _session, request));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<CreateCharacterWork>().Any());
+        Assert.Empty(_session.Sent.OfType<CharacterCreateResult>());
+    }
+
+    [Fact]
     public async Task ADeleteThatDoesNotCommitAnswersTheGeneralFailureAndKeepsTheCharacter()
     {
         await ListAsync(Summary(5, "Rebaser Head"));
