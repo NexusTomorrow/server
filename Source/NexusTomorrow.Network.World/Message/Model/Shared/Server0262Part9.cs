@@ -1,5 +1,4 @@
 ﻿using NexusTomorrow.Network.Codec;
-using NexusTomorrow.Network.World.Message.Model.Spell;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 

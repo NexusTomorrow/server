@@ -1,7 +1,7 @@
 ﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.AccountInventory;
+namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 [WireMessage(GameMessageOpcode.Client0233, Direction.ClientToServer)]
 public sealed partial class Client0233

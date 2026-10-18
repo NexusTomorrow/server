@@ -2,7 +2,7 @@
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 
-namespace NexusTomorrow.Network.World.Message.AccountInventory;
+namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 [WireMessage(GameMessageOpcode.Client03F1, Direction.ClientToServer)]
 public sealed partial class Client03F1

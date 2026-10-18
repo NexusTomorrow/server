@@ -1,7 +1,7 @@
 ﻿using System.Collections.Frozen;
 using NexusTomorrow.Gateway.Catalog;
-using NexusTomorrow.Network.World.Message.Model;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Network.World.Message.Model.Story;
 using NexusTomorrow.Transport;
 
 namespace NexusTomorrow.Gateway.Tests;

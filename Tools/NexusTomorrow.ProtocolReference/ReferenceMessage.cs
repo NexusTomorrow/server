@@ -23,7 +23,7 @@ public sealed record ReferenceMessage(Type Type, ushort Opcode, Direction Direct
 
 /// <summary>
 /// The feature area a message belongs to: the namespace segment after <c>.Message.Model.</c>. A message at the root of the Network or
-/// Network.Auth models is pregame; a World message at the model root is <c>Unsorted</c> until it moves into its area's folder.
+/// Network.Auth models is pregame; every World message sits in its area's folder.
 /// </summary>
 public static class Areas
 {
@@ -32,16 +32,22 @@ public static class Areas
     /// <summary>
     /// The area of <paramref name="message"/>.
     /// </summary>
+    /// <exception cref="InvalidOperationException"><paramref name="message"/> is outside every model namespace, or a World message at the
+    /// model root.</exception>
     public static string AreaOf(Type message)
     {
         string space = message.Namespace ?? "";
         int at = space.IndexOf(ModelSegment, StringComparison.Ordinal);
         if (at < 0)
-            return "Unsorted";
+            throw new InvalidOperationException($"{message.FullName} is outside every model namespace.");
 
         string rest = space[(at + ModelSegment.Length)..];
         if (rest.Length == 0)
-            return space.StartsWith("NexusTomorrow.Network.World", StringComparison.Ordinal) ? "Unsorted" : "Pregame";
+        {
+            return space.StartsWith("NexusTomorrow.Network.World", StringComparison.Ordinal)
+                ? throw new InvalidOperationException($"{message.FullName} sits at the World model root, in no area.")
+                : "Pregame";
+        }
 
         string area = rest.TrimStart('.');
         int dot = area.IndexOf('.', StringComparison.Ordinal);

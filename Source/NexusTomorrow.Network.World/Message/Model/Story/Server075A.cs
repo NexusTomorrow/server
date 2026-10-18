@@ -1,6 +1,6 @@
 ﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
-using NexusTomorrow.Network.World.Message.Model.Story.Message;
+using NexusTomorrow.Network.World.Message.Model.Shared.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Story;
 
