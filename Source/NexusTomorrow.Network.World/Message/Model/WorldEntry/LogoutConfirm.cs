@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.WorldEntry;
 /// </summary>
 /// <remarks>
 /// The client sends it once while a request is pending: when the countdown from <see cref="LogoutCountdown"/> ends, or at once
-/// when the player confirms. The server then ends the session with <see cref="Pregame.WorldLogout"/>.
+/// when the player confirms.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client00C0, Direction.ClientToServer)]
 [Verified(Rung.Fields)]

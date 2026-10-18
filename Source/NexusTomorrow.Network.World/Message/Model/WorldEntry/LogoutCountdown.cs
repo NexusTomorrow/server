@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.WorldEntry;
 
 /// <summary>
-/// Starts the countdown before a requested logout completes, or cancels the request.
+/// Starts the countdown before a logout completes, or cancels the pending request.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0092, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]
@@ -20,12 +20,12 @@ public sealed partial class LogoutCountdown
     }
 
     /// <summary>
-    /// How long the countdown runs before the client confirms; 0 confirms at once.
+    /// How long the countdown runs before the client confirms; with 0 the deadline is now.
     /// </summary>
     [UInt(32)] public uint Duration { get; set; }
 
     /// <summary>
-    /// Read only when <see cref="Duration"/> is 0: true cancels the pending request.
+    /// Read only when <see cref="Duration"/> is 0: true cancels, as does having no request pending.
     /// </summary>
     [UInt(1)] public bool Cancel { get; set; }
 

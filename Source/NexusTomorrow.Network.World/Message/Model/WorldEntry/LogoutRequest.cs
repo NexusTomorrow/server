@@ -7,8 +7,8 @@ namespace NexusTomorrow.Network.World.Message.Model.WorldEntry;
 /// Asks to leave the world, or cancels a request still waiting.
 /// </summary>
 /// <remarks>
-/// The request is the same however the player chose to leave. The server answers it with <see cref="LogoutCountdown"/>, and
-/// the client sends <see cref="LogoutConfirm"/> when the countdown ends.
+/// The request is the same however the player chose to leave. The client sends <see cref="LogoutConfirm"/> when the countdown
+/// from <see cref="LogoutCountdown"/> ends.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client00BF, Direction.ClientToServer)]
 [Verified(Rung.Fields)]
