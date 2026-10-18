@@ -17,7 +17,7 @@ public sealed partial class WorldHello
     /// <summary>
     /// The value <c>RealmHandoff</c> (0x03DB) gave the client to send back, unchanged.
     /// </summary>
-    [UInt(32)] public uint Echo { get; private set; }
+    [UInt(32)] public uint Echo { get; set; }
 
     /// <summary>
     /// The session key the client was handed, sent back unchanged, in the GUID layout.
@@ -27,15 +27,15 @@ public sealed partial class WorldHello
     /// <summary>
     /// The client gives this value no meaning. It always sends 0.
     /// </summary>
-    [UInt(64)] public ulong Unknown2 { get; private set; }
+    [UInt(64)] public ulong Unknown2 { get; set; }
 
     /// <summary>
     /// The account name the login server accepted.
     /// </summary>
-    [WideString] public string AccountName { get; private set; } = "";
+    [WideString] public string AccountName { get; set; } = "";
 
     /// <summary>
     /// The client gives this value no meaning. It always sends 3.
     /// </summary>
-    [UInt(32)] public uint Unknown4 { get; private set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
 }

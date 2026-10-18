@@ -135,3 +135,8 @@ dotnet_diagnostic.RS2008.severity = none
 [{Source/NexusTomorrow.Network/Message/Model/**.cs,Source/NexusTomorrow.Network/Message/GameMessageOpcode.cs}]
 dotnet_diagnostic.CS1591.severity = none
 
+# EF Core writes these files (dotnet ef migrations add); marking them generated keeps the style and
+# analyzer rules, which govern hand-written code, off them. Only the single Up statement that runs the
+# collation script is added by hand.
+[Source/NexusTomorrow.Persistence/Migrations/**.cs]
+generated_code = true

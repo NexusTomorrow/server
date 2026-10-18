@@ -2,9 +2,10 @@
 
 A server for the WildStar client, build 16042, written in C# on .NET 10.
 
-> **Note:** NexusTomorrow is in early development and does not run a game server yet. This
-> repository holds the libraries the server is built on, two tools that work with your client, and
-> the build and test baseline. The server core is being built in steps; see [Roadmap](#roadmap).
+> **Note:** NexusTomorrow is in early development. The server takes your client from the login
+> screen to character select and character creation (see [Running the server](#running-the-server)),
+> and entering the world comes next. The server core is being built in steps; see
+> [Roadmap](#roadmap).
 
 ## Goals
 
@@ -20,15 +21,21 @@ A server for the WildStar client, build 16042, written in C# on .NET 10.
 
 | Project | What it holds |
 |---|---|
-| `NexusTomorrow.Cryptography` | SRP6 login, the packet cipher, password and random helpers |
+| `NexusTomorrow.Cryptography` | SRP6 login, the STS's RC4, password and random helpers |
 | `NexusTomorrow.GameTable` | Typed loading of the client's game tables (`.tbl`) and text tables |
 | `NexusTomorrow.Game.Static` | The game's enums and flags, by system |
 | `NexusTomorrow.IO` | Readers for the client's area files and the server's own map format (`.nfmap`) |
-| `NexusTomorrow.Network` | Bit-level packet reading and writing, and the message framing shared by every server |
+| `NexusTomorrow.Network` | The opcode list, the message attributes, and the messages every connection shares |
 | `NexusTomorrow.Network.Sts` | Messages for the STS login protocol |
 | `NexusTomorrow.Network.Auth` | Messages for the auth server |
 | `NexusTomorrow.Network.World` | Messages for the world server |
 | `NexusTomorrow.Shared` | Shared helpers: factories, configuration binding, the update timer |
+| `NexusTomorrow.Transport` | Frames, envelopes and the packet cipher, on the hot-path rules |
+| `NexusTomorrow.Gateway` | The client listeners: STS, login and world connections, the message catalog and the opcode table |
+| `NexusTomorrow.Owners` | The account and realm owners: one thread each over a message queue |
+| `NexusTomorrow.Persistence` | The PostgreSQL schemas, their migrations, and the write-behind queue |
+| `NexusTomorrow.Commands` | Admin commands with their permissions and audit |
+| `NexusTomorrow.Server` | The server: one process hosting all of the above |
 | `NexusTomorrow.MapGenerator` | Tool: extracts tables from your client and generates map files |
 | `NexusTomorrow.ClientConnector` | Tool: starts your client pointed at a server |
 
@@ -54,6 +61,58 @@ dotnet test --solution Source/NexusTomorrow.slnx
 Tests use xUnit v3 on Microsoft Testing Platform. CI runs the same suite on GitHub-hosted runners
 through the `Tests` workflow, which runs only when a maintainer dispatches it. Pushes and pull
 requests don't trigger it, so a pull request shows no checks until a maintainer runs them.
+
+The database tests need a PostgreSQL 18 server: set `NEXUSTOMORROW_TEST_PG` to a connection string for a login that can create databases, and each test makes and drops its own. Without it those tests skip; set `NEXUSTOMORROW_TEST_PG_REQUIRED=1` to make a missing server a failure instead. CI starts the server for you.
+
+## Running the server
+
+The server takes your client from the login screen to character select and character creation.
+Entering the world comes next.
+
+1. Install PostgreSQL 18 and create a database and a role that owns it.
+2. Set two environment variables (keep both out of any file in this repository):
+
+   ```powershell
+   $env:Persistence__ConnectionString = "Host=localhost;Database=nexustomorrow;Username=nexustomorrow;Password=<password>"
+   $env:Gateway__UnknownAccountSecret = [Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(32))
+   ```
+
+   Keep the secret the same across restarts.
+3. Create the schemas: `dotnet run --project Source/NexusTomorrow.Server -- migrate`.
+4. Point `Content:ClientDataPath` at the folder MapGenerator extracted your tables into (the one
+   holding `tbl`), for example `$env:Content__ClientDataPath = "<output>"`. Without it, character
+   creation offers nothing.
+5. Start it: `dotnet run --project Source/NexusTomorrow.Server`. Every listener binds to
+   `127.0.0.1` unless configured otherwise.
+6. At the server's console, create an account: `account create <email> <password>`. A password
+   with spaces goes in double quotes, as in `account create alice@example.com "correct horse battery"`;
+   the quotes are not part of it, so a password cannot hold a double quote. `help` lists the
+   commands.
+7. Start your client with ClientConnector pointed at `127.0.0.1`, and log in with that account.
+
+`migrate` applies every schema's pending migrations and exits 0, or exits 1 with the error. The
+server refuses to start while any schema has a pending migration, so run `migrate` again after
+updating.
+
+Settings come from `appsettings.json`, then environment variables (`__` stands for `:`), then the
+command line. The ones you are most likely to change:
+
+| Key | Default | Meaning |
+|---|---|---|
+| `Persistence:ConnectionString` | none | The PostgreSQL connection string. Required. |
+| `Gateway:UnknownAccountSecret` | none | Base64 of at least 32 bytes. Required. |
+| `Gateway:Sts`, `Gateway:Login`, `Gateway:World` | `127.0.0.1`, ports 6600, 23115, 24000 | Each listener's `BindAddress` and `Port`. The three ports must differ. |
+| `Gateway:WorldPublicAddress` | `127.0.0.1` | The IPv4 address the login server gives the client for the world listener. |
+| `Persistence:FirstIdBlockTimeout` | 30 s | How long start waits to take the first character id block. If the database cannot give one in time, start fails with an error instead of waiting. |
+| `Gateway:ConnectionsPerAddress` | 8 | Connections one address may hold on each listener. Further ones are closed at once. |
+| `Realm:Id`, `Realm:Name` | 1, `NexusTomorrow` | The realm's id (at most 16383) and the name players see. |
+| `Content:ClientDataPath` | none | The folder holding `tbl`. |
+| `Cli:Enabled` | `true` | Whether the console reads commands. It stays off when standard input is redirected. |
+
+A configuration that fails these checks stops the server at start, naming the key and never its
+value. Stopping the server (Ctrl+C) stops accepting connections, lets the account and realm owners
+handle what they have queued, then waits for every queued save to commit, however long the
+database takes. While it waits it logs the backlog every 5 seconds.
 
 ## Tools
 

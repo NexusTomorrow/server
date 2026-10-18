@@ -15,9 +15,17 @@ public class ClientKeyDataMessage : IReadable
 
         using var stream = new MemoryStream(Convert.FromBase64String(keyData));
         using var reader = new BinaryReader(stream);
-        int lengthA = reader.ReadInt32();
-        A = reader.ReadBytes(lengthA);
-        int lengthM = reader.ReadInt32();
-        M1 = reader.ReadBytes(lengthM);
+        A = ReadPart(stream, reader);
+        M1 = ReadPart(stream, reader);
+    }
+
+    // A length that claims more bytes than remain is refused before anything is allocated for it.
+    private static byte[] ReadPart(MemoryStream stream, BinaryReader reader)
+    {
+        int length = reader.ReadInt32();
+        if (length < 0 || length > stream.Length - stream.Position)
+            throw new InvalidDataException("KeyData holds a part longer than the data.");
+
+        return reader.ReadBytes(length);
     }
 }

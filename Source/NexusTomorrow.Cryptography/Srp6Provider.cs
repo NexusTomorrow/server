@@ -99,7 +99,7 @@ public sealed class Srp6Provider
         BigInteger serverM1 = Hash(false, Hash(false, N) ^ Hash(false, g),
             new BigInteger(IHash, true), _salt, _clientPublicEphemeral, _serverPublicEphemeral, _sessionKey);
 
-        if (!clientM1.SequenceEqual(serverM1.ToByteArray(true)))
+        if (!CryptographicOperations.FixedTimeEquals(clientM1, serverM1.ToByteArray(true)))
             return false;
 
         _clientEvidence = new BigInteger(clientM1, true);
@@ -121,7 +121,7 @@ public sealed class Srp6Provider
         return M2Bytes;
     }
 
-    private static BigInteger Hash(bool reverse, params BigInteger[] integers)
+    internal static BigInteger Hash(bool reverse, params BigInteger[] integers)
     {
         using var sha256 = SHA256.Create();
         sha256.Initialize();
@@ -148,7 +148,7 @@ public sealed class Srp6Provider
     /// <summary>
     /// Variable length version of SHA_Interleave from RFC2945.
     /// </summary>
-    private static byte[] ShaInterleave(BigInteger key)
+    internal static byte[] ShaInterleave(BigInteger key)
     {
         byte[] keyBytes = key.ToByteArray(true);
         byte[] T = [.. keyBytes.Reverse()];
@@ -182,7 +182,7 @@ public sealed class Srp6Provider
         return K;
     }
 
-    private static void ReverseBytesAsUInt32(byte[] array)
+    internal static void ReverseBytesAsUInt32(byte[] array)
     {
         // works, but thats sloppy.
         int j = array.Length - 4;

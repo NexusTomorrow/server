@@ -15,5 +15,5 @@ public sealed partial class NestedMessage
     /// <summary>
     /// One whole encoded message, which begins with its own 32-bit length (counting those four bytes).
     /// </summary>
-    [Blob(32, LengthIncludesSelf = true)] public byte[] Payload { get; private set; } = [];
+    [Blob(32, LengthIncludesSelf = true)] public byte[] Payload { get; set; } = [];
 }

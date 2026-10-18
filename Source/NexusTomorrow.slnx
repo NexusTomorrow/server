@@ -4,9 +4,11 @@
     <Project Path="NexusTomorrow.MapGenerator/NexusTomorrow.MapGenerator.csproj" />
   </Folder>
   <Folder Name="/Server/">
+    <Project Path="NexusTomorrow.Commands/NexusTomorrow.Commands.csproj" />
     <Project Path="NexusTomorrow.Cryptography/NexusTomorrow.Cryptography.csproj" />
     <Project Path="NexusTomorrow.Game.Static/NexusTomorrow.Game.Static.csproj" />
     <Project Path="NexusTomorrow.GameTable/NexusTomorrow.GameTable.csproj" />
+    <Project Path="NexusTomorrow.Gateway/NexusTomorrow.Gateway.csproj" />
     <Project Path="NexusTomorrow.IO/NexusTomorrow.IO.csproj" />
     <Project Path="NexusTomorrow.Network.Auth/NexusTomorrow.Network.Auth.csproj" />
     <Project Path="NexusTomorrow.Network.Codec.Generator/NexusTomorrow.Network.Codec.Generator.csproj" />
@@ -14,15 +16,28 @@
     <Project Path="NexusTomorrow.Network.Sts/NexusTomorrow.Network.Sts.csproj" />
     <Project Path="NexusTomorrow.Network.World/NexusTomorrow.Network.World.csproj" />
     <Project Path="NexusTomorrow.Network/NexusTomorrow.Network.csproj" />
+    <Project Path="NexusTomorrow.Owners/NexusTomorrow.Owners.csproj" />
+    <Project Path="NexusTomorrow.Persistence/NexusTomorrow.Persistence.csproj" />
+    <Project Path="NexusTomorrow.Server/NexusTomorrow.Server.csproj" />
     <Project Path="NexusTomorrow.Shared/NexusTomorrow.Shared.csproj" />
+    <Project Path="NexusTomorrow.Transport/NexusTomorrow.Transport.csproj" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="../Tests/NexusTomorrow.ClientConnector.Tests/NexusTomorrow.ClientConnector.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Commands.Tests/NexusTomorrow.Commands.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Cryptography.Tests/NexusTomorrow.Cryptography.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.GameTable.Tests/NexusTomorrow.GameTable.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Gateway.Tests/NexusTomorrow.Gateway.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Harness.Tests/NexusTomorrow.Harness.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Harness/NexusTomorrow.Harness.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Codec.Generator.Tests/NexusTomorrow.Network.Codec.Generator.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Codec.Tests/NexusTomorrow.Network.Codec.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Owners.Tests/NexusTomorrow.Owners.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Persistence.Tests/NexusTomorrow.Persistence.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.ProtocolReference.Tests/NexusTomorrow.ProtocolReference.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Server.Tests/NexusTomorrow.Server.Tests.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Testing/NexusTomorrow.Testing.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Transport.Tests/NexusTomorrow.Transport.Tests.csproj" />
   </Folder>
   <Folder Name="/Tools/">
     <Project Path="../Tools/NexusTomorrow.ProtocolReference/NexusTomorrow.ProtocolReference.csproj" />

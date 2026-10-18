@@ -16,10 +16,10 @@ public sealed partial class CharacterRename
     /// <summary>
     /// The character, as listed in the character list (0x0117).
     /// </summary>
-    [UInt(64)] public ulong CharacterId { get; private set; }
+    [UInt(64)] public ulong CharacterId { get; set; }
 
     /// <summary>
     /// The new name. The client sends only names that pass its own check; a server checks it again.
     /// </summary>
-    [WideString] public string NewName { get; private set; } = "";
+    [WideString] public string NewName { get; set; } = "";
 }

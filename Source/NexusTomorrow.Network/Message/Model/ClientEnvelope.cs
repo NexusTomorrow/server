@@ -19,5 +19,5 @@ public sealed partial class ClientEnvelope
     /// One whole message, which begins with its own 32-bit length (counting those four bytes). The length travels in clear and the bytes
     /// after it are encrypted with the key of the connection it is sent on.
     /// </summary>
-    [Blob(32, LengthIncludesSelf = true)] public byte[] Payload { get; private set; } = [];
+    [Blob(32, LengthIncludesSelf = true)] public byte[] Payload { get; set; } = [];
 }
