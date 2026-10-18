@@ -1,10 +1,9 @@
 ﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
-using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 
-namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
+namespace NexusTomorrow.Network.World.Message.Model.Movement;
 
 /// <summary>
 /// Tells the server the zone of the unit the client moves when it changes, and on some takeovers of the player's own unit repeats the last
