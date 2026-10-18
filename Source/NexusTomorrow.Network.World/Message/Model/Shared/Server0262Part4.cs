@@ -19,7 +19,7 @@ public sealed partial class Server0262Part4
         /// <summary>
         /// The value as an integer.
         /// </summary>
-        [UInt(32)] public uint Unknown0 { get; set; }
+        [VerifiedMember, UInt(32)] public uint Unknown0 { get; set; }
     }
 
     [WireStruct]
@@ -51,15 +51,15 @@ public sealed partial class Server0262Part4
     /// The stat, 0 to 31: 0 is the unit's health, 10 its level, and 11 a level the client uses in place of stat 10's when it is not 0. The
     /// client ignores stats 16 to 18 and 26 to 31.
     /// </summary>
-    [UInt(5)] public byte Unknown0 { get; set; }
+    [VerifiedMember, UInt(5)] public byte Unknown0 { get; set; }
 
     /// <summary>
     /// How the value is sent: 0 an integer, 1 a float, 2 a pair of integers.
     /// </summary>
-    [UInt(2)] public byte Unknown1 { get; set; }
+    [VerifiedMember, UInt(2)] public byte Unknown1 { get; set; }
 
     /// <summary>
     /// The value, in the form <see cref="Unknown1"/> names.
     /// </summary>
-    [Union(nameof(Unknown1))] public IServer0262Union1 Unknown2 { get; set; } = new Server0262Union1Arm00();
+    [VerifiedMember, Union(nameof(Unknown1))] public IServer0262Union1 Unknown2 { get; set; } = new Server0262Union1Arm00();
 }
