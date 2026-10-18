@@ -136,10 +136,11 @@ public sealed partial class UnitCreate
     [VerifiedMember, Array(CountBits = 5)] public List<Server0262Part5> Unknown6 { get; set; } = [];
 
     /// <summary>
-    /// Values the client sets on the unit, each a pair under an id from 0 to 196. The second value under id 7 is the unit's maximum health.
-    /// The client does not take an id above 196.
+    /// Values the client sets on the unit, each a base and a current value under a property id from 0 to 196. The client first resets
+    /// every property to its default and then applies these in order, skipping an id above 196. The current value of property 7 is the
+    /// unit's maximum health and of property 38 its maximum dash energy.
     /// </summary>
-    [Array(CountBits = 8)] public List<Server0262Part6> Unknown7 { get; set; } = [];
+    [VerifiedMember, Array(CountBits = 8)] public List<Server0262Part6> Unknown7 { get; set; } = [];
 
     [Array(CountBits = 7)] public List<Server0117Part1> Unknown8 { get; set; } = [];
 

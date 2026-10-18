@@ -27,9 +27,10 @@ public sealed partial class Server0262Part4
     public sealed partial class Server0262Union1Arm01 : IServer0262Union1
     {
         /// <summary>
-        /// The value as a float.
+        /// The value as a float. The client copies these bits into the stat's float field, so a stat the client keeps as a float (1 to 9,
+        /// 19, and 23 to 25, dash energy being 9) must use this arm: any other arm leaves that stat at 0.
         /// </summary>
-        [Float32] public float Unknown0 { get; set; }
+        [VerifiedMember, Float32] public float Unknown0 { get; set; }
     }
 
     [WireStruct]
