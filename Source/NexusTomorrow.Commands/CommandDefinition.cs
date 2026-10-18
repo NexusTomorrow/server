@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Text;
 
 namespace NexusTomorrow.Commands;
 
@@ -42,4 +43,23 @@ public sealed class CommandDefinition
     /// Run the command once the dispatcher has checked its permission and arguments.
     /// </summary>
     public required Func<CommandInvocation, CancellationToken, Task<CommandReply>> ExecuteAsync { get; init; }
+
+    /// <summary>
+    /// The usage line, such as <c>account suspend &lt;email&gt; &lt;hours&gt; [reason...]</c>: a required parameter in angle brackets,
+    /// an optional one in square brackets, the rest parameter with an ellipsis. With <paramref name="markSecrets"/> a secret parameter
+    /// reads <c>&lt;password, secret&gt;</c>.
+    /// </summary>
+    public string Usage(bool markSecrets = false)
+    {
+        var usage = new StringBuilder(Name);
+        foreach (CommandParameter parameter in Parameters)
+        {
+            string name = parameter.Rest ? $"{parameter.Name}..." : parameter.Name;
+            if (markSecrets && parameter.Secret)
+                name += ", secret";
+            usage.Append(' ').Append(parameter.Optional ? $"[{name}]" : $"<{name}>");
+        }
+
+        return usage.ToString();
+    }
 }

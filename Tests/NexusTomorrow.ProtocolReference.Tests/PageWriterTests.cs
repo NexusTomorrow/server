@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using NexusTomorrow.Commands;
+using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Network.Auth.Message.Model;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.Message.Model;
@@ -133,6 +135,85 @@ public sealed class PageWriterTests
     }
 
     [Fact]
+    public void TheOpcodeTablePageListsEachRowWithItsLinkedMessageAndLimits()
+    {
+        OpcodeRow[] rows = [new(0xFF20, MessageOwner.Realm, MessagePriority.Normal, 2, OverLimitAction.Drop)];
+        string[] blocks = PageWriter.OpcodeTablePage(rows, [ReferenceMessage.Of(typeof(SampleRequest))], s_stamp).Split("\n\n");
+
+        Assert.Equal("Every client message the gateway admits, with the owner it goes to and its limits.", blocks[1]);
+        Assert.Equal(
+            "> [!NOTE]\n> Generated from the opcode table at bootstrap `abc1234` by `Tools/NexusTomorrow.ProtocolReference`. Don't edit it by hand: change the table and regenerate.",
+            blocks[2]);
+        Assert.Equal(
+            "| Opcode | Message | Owner | Priority | Rate per second | Past the limit |\n|---|---|---|---|---|---|\n"
+            + "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Realm | normal | 2 | drop |",
+            blocks[3]);
+        Assert.Contains("| The opcode table | `Source/NexusTomorrow.Gateway/Catalog/OpcodeTable.cs` |", blocks[5], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void TheOpcodeTablePageNamesAHighPriorityAndADisconnect()
+    {
+        OpcodeRow[] rows = [new(0xFF20, MessageOwner.Account, MessagePriority.High, 1, OverLimitAction.Disconnect)];
+        string page = PageWriter.OpcodeTablePage(rows, [ReferenceMessage.Of(typeof(SampleRequest))], s_stamp);
+
+        Assert.Contains("| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Account | high | 1 | disconnect |", page, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AnOpcodeRowWithNoClientMessageStopsThePage()
+    {
+        OpcodeRow[] rows = [new(0xFF21, MessageOwner.Realm, MessagePriority.Normal, 1, OverLimitAction.Disconnect)];
+        Assert.Throws<InvalidOperationException>(() => PageWriter.OpcodeTablePage(rows, [ReferenceMessage.Of(typeof(ServerFF21))], s_stamp));
+    }
+
+    [Fact]
+    public void TheCommandsPageListsEveryCommandAndHelpInNameOrderWithSecretsMarked()
+    {
+        CommandDefinition[] commands =
+        [
+            new()
+            {
+                Name = "zone reset",
+                Description = "Reset a zone.",
+                Permission = "zone.reset",
+                ConsoleOnly = true,
+                Parameters = [new("zone", "the zone"), new("why", "the reason", Optional: true, Rest: true)],
+                ExecuteAsync = Never,
+            },
+            new()
+            {
+                Name = "account create",
+                Description = "Create an account.",
+                Permission = "account.create",
+                Parameters = [new("email", "the login name"), new("password", "the password", Secret: true)],
+                ExecuteAsync = Never,
+            },
+        ];
+        string[] blocks = PageWriter.CommandsPage(commands, s_stamp).Split("\n\n");
+
+        Assert.Equal("Every admin command, the permission it needs, and whether it's console-only.", blocks[1]);
+        Assert.Equal(
+            "| Command | Permission | Console only | Does |\n|---|---|---|---|\n"
+            + "| `account create <email> <password, secret>` | `account.create` | No | Create an account. |\n"
+            + "| `help` | none | No | List every command you may run, with its usage. |\n"
+            + "| `zone reset <zone> [why...]` | `zone.reset` | Yes | Reset a zone. |",
+            blocks[3]);
+    }
+
+    [Fact]
+    public void ARegisteredHelpCommandReplacesTheBuiltInRow()
+    {
+        CommandDefinition[] commands =
+        [
+            new() { Name = "help", Description = "Show the house help.", Permission = null, Parameters = [], ExecuteAsync = Never },
+        ];
+        string table = PageWriter.CommandsPage(commands, s_stamp).Split("\n\n")[3];
+
+        Assert.Equal("| Command | Permission | Console only | Does |\n|---|---|---|---|\n| `help` | none | No | Show the house help. |", table);
+    }
+
+    [Fact]
     public void ATypeOutsideEveryModelNamespaceHasNoArea()
     {
         Assert.Throws<InvalidOperationException>(() => Areas.AreaOf(typeof(PageWriterTests)));
@@ -148,4 +229,7 @@ public sealed class PageWriterTests
             .Order(StringComparer.Ordinal)];
         Assert.Empty(outsideAnArea);
     }
+
+    private static Task<CommandReply> Never(CommandInvocation invocation, CancellationToken cancellationToken) =>
+        throw new InvalidOperationException("A page never runs a command.");
 }

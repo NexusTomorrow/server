@@ -13,6 +13,17 @@ namespace NexusTomorrow.Commands;
 /// </summary>
 public sealed class CommandDispatcher
 {
+    /// <summary>
+    /// The built-in command that lists the commands an actor may run, with their usage. It needs no permission and works in game too;
+    /// a registered command with this name takes its place.
+    /// </summary>
+    public const string HelpName = "help";
+
+    /// <summary>
+    /// What <see cref="HelpName"/> does.
+    /// </summary>
+    public const string HelpDescription = "List every command you may run, with its usage.";
+
     // The ops.audit column widths (OpsContext).
     private const int ActorWidth = 100;
     private const int FrontEndWidth = 20;
@@ -56,7 +67,7 @@ public sealed class CommandDispatcher
             return new CommandReply(CommandOutcome.Refused, "Unbalanced quotes.");
         if (tokens.Count == 0)
             return new CommandReply(CommandOutcome.Refused, "Nothing to run; try help.");
-        if (string.Equals(tokens[0], "help", StringComparison.OrdinalIgnoreCase) && !_byName.ContainsKey("help"))
+        if (string.Equals(tokens[0], HelpName, StringComparison.OrdinalIgnoreCase) && !_byName.ContainsKey(HelpName))
             return Help(actor);
 
         CommandDefinition? command = Resolve(tokens, out int nameTokens);
@@ -72,7 +83,7 @@ public sealed class CommandDispatcher
         if (StorableText.IsUnstorable(line))
             return Audited(actor, command, arguments, new CommandReply(CommandOutcome.Refused, "The line holds a control character or a broken character pair."));
         if (!fits)
-            return Audited(actor, command, arguments, new CommandReply(CommandOutcome.Refused, $"Usage: {Usage(command)}"));
+            return Audited(actor, command, arguments, new CommandReply(CommandOutcome.Refused, $"Usage: {command.Usage()}"));
         if (FirstInvalid(command, arguments) is { } invalid)
             return Audited(actor, command, arguments, new CommandReply(CommandOutcome.Refused, invalid.Invalid ?? $"The {invalid.Name} is not valid."));
 
@@ -112,18 +123,6 @@ public sealed class CommandDispatcher
     // The audit records a value only when it is not secret, can be stored, and passes its parameter's validator.
     private static bool Recordable(CommandParameter parameter, string value) =>
         !parameter.Secret && !StorableText.IsUnstorable(value) && (parameter.IsValid?.Invoke(value) ?? true);
-
-    private static string Usage(CommandDefinition command)
-    {
-        var usage = new StringBuilder(command.Name);
-        foreach (CommandParameter parameter in command.Parameters)
-        {
-            string name = parameter.Rest ? $"{parameter.Name}..." : parameter.Name;
-            usage.Append(' ').Append(parameter.Optional ? $"[{name}]" : $"<{name}>");
-        }
-
-        return usage.ToString();
-    }
 
     // Binds the tokens after the name to the parameters. Whether or not they fit, arguments holds only the tokens a parameter names:
     // an extra token may be the tail of an unquoted password, so it is dropped before anything can record or echo it.
@@ -165,7 +164,7 @@ public sealed class CommandDispatcher
         foreach (CommandDefinition command in Commands)
         {
             if (command.Permission is null || actor.Holds(command.Permission))
-                text.Append(Usage(command)).Append(": ").Append(command.Description).Append('\n');
+                text.Append(command.Usage()).Append(": ").Append(command.Description).Append('\n');
         }
 
         return new CommandReply(CommandOutcome.Done, text.ToString());

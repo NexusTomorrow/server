@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
 using System.Text;
+using NexusTomorrow.Commands;
+using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
@@ -27,6 +29,11 @@ public static class PageWriter
     private const string UnsettledGrouping =
         "These messages wait here until the client feature they belong to is found. This page claims nothing about what they do.";
 
+    // What a page is generated from, and what to change instead of editing it.
+    private static readonly (string From, string Edit) s_declarations = ("the message declarations", "change the declaration's documentation");
+    private static readonly (string From, string Edit) s_opcodeTable = ("the opcode table", "change the table");
+    private static readonly (string From, string Edit) s_commands = ("the command definitions", "change the definition");
+
     private static readonly (Direction Direction, string Title)[] s_chapters =
     [
         (Direction.ServerToClient, "Server to client"),
@@ -40,7 +47,7 @@ public static class PageWriter
     public static string AreaPage(string area, IReadOnlyList<ReferenceMessage> messages, LayoutWalk walk, DocText docs, PageStamp stamp)
     {
         var blocks = new List<string>();
-        Head(blocks, $"Every message in the {area} area: its opcode, direction, how far it is verified, and its fields.", stamp);
+        Head(blocks, $"Every message in the {area} area: its opcode, direction, how far it is verified, and its fields.", stamp, s_declarations);
 
         // A page claims nothing about what its messages do until one of them is read to Purpose; Unsettled holds messages with no area yet.
         if (area == Unsettled)
@@ -74,7 +81,7 @@ public static class PageWriter
     public static string IndexPage(IReadOnlyList<ReferenceMessage> messages, PageStamp stamp)
     {
         var blocks = new List<string>();
-        Head(blocks, "Every client message by opcode, with its direction, how far it is verified, and the page that describes it.", stamp);
+        Head(blocks, "Every client message by opcode, with its direction, how far it is verified, and the page that describes it.", stamp, s_declarations);
 
         blocks.Add("## Messages by opcode");
         var index = new List<string[]>();
@@ -110,7 +117,71 @@ public static class PageWriter
         return Join(blocks);
     }
 
-    private static void Head(List<string> blocks, string scope, PageStamp stamp)
+    /// <summary>
+    /// The opcode table's page: one row per client message the gateway admits, in opcode order, each linked to its message's section.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">A row's opcode has no client message among <paramref name="messages"/>.</exception>
+    public static string OpcodeTablePage(IEnumerable<OpcodeRow> rows, IReadOnlyList<ReferenceMessage> messages, PageStamp stamp)
+    {
+        var blocks = new List<string>();
+        Head(blocks, "Every client message the gateway admits, with the owner it goes to and its limits.", stamp, s_opcodeTable);
+
+        var table = new List<string[]>();
+        foreach (OpcodeRow row in rows.OrderBy(row => row.Opcode))
+        {
+            ReferenceMessage message = messages.FirstOrDefault(message => message.Opcode == row.Opcode && message.Direction != Direction.ServerToClient)
+                ?? throw new InvalidOperationException($"The opcode table admits {Hex(row.Opcode)}, which no client message declares.");
+            table.Add(
+            [
+                Code(Hex(row.Opcode)),
+                $"[{message.Type.Name}](Messages-{message.Area}#{Anchor(message)})",
+                row.Owner.ToString(),
+                PriorityText(row.Priority),
+                Number(row.PerSecond),
+                OverLimitText(row.OverLimit),
+            ]);
+        }
+
+        blocks.Add(Table(["Opcode", "Message", "Owner", "Priority", "Rate per second", "Past the limit"], table));
+        CodeLives(blocks,
+        [
+            ["The opcode table", Code("Source/NexusTomorrow.Gateway/Catalog/OpcodeTable.cs")],
+            ["This page's generator", Code(Generator)],
+        ]);
+        return Join(blocks);
+    }
+
+    /// <summary>
+    /// The commands page: every command in <paramref name="commands"/> and the dispatcher's own <c>help</c> (unless a command takes its
+    /// name, as the dispatcher lets one), in name order, with each secret parameter marked in the usage line.
+    /// </summary>
+    public static string CommandsPage(IEnumerable<CommandDefinition> commands, PageStamp stamp)
+    {
+        var blocks = new List<string>();
+        Head(blocks, "Every admin command, the permission it needs, and whether it's console-only.", stamp, s_commands);
+
+        List<(string Name, string[] Cells)> rows = [.. commands
+            .Select(command => (command.Name, new[]
+            {
+                Code(command.Usage(markSecrets: true)),
+                command.Permission is { } permission ? Code(permission) : "none",
+                command.ConsoleOnly ? "Yes" : "No",
+                command.Description,
+            }))];
+        if (!rows.Any(row => string.Equals(row.Name, CommandDispatcher.HelpName, StringComparison.OrdinalIgnoreCase)))
+            rows.Add((CommandDispatcher.HelpName, [Code(CommandDispatcher.HelpName), "none", "No", CommandDispatcher.HelpDescription]));
+        blocks.Add(Table(["Command", "Permission", "Console only", "Does"], [.. rows.OrderBy(row => row.Name, StringComparer.Ordinal).Select(row => row.Cells)]));
+
+        CodeLives(blocks,
+        [
+            ["The command definitions", Code("Source/NexusTomorrow.Commands/Builtin/")],
+            ["The dispatcher and help", Code("Source/NexusTomorrow.Commands/CommandDispatcher.cs")],
+            ["This page's generator", Code(Generator)],
+        ]);
+        return Join(blocks);
+    }
+
+    private static void Head(List<string> blocks, string scope, PageStamp stamp, (string From, string Edit) source)
     {
         blocks.Add(
             "![reference, committed](https://img.shields.io/badge/reference-committed-2ea44f) "
@@ -119,7 +190,7 @@ public static class PageWriter
         blocks.Add(scope);
         blocks.Add(
             "> [!NOTE]\n"
-            + $"> Generated from the message declarations at {stamp.Branch} `{stamp.Commit}` by `{Generator.TrimEnd('/')}`. Don't edit it by hand: change the declaration's documentation and regenerate.");
+            + $"> Generated from {source.From} at {stamp.Branch} `{stamp.Commit}` by `{Generator.TrimEnd('/')}`. Don't edit it by hand: {source.Edit} and regenerate.");
     }
 
     private static void Section(List<string> blocks, ReferenceMessage message, LayoutWalk walk, DocText docs)
@@ -208,6 +279,20 @@ public static class PageWriter
         Direction.ClientToServer => "client to server",
         Direction.ServerToClient => "server to client",
         _ => "both ways",
+    };
+
+    private static string PriorityText(MessagePriority priority) => priority switch
+    {
+        MessagePriority.High => "high",
+        MessagePriority.Normal => "normal",
+        _ => throw new ArgumentOutOfRangeException(nameof(priority), priority, "The page has no word for this priority."),
+    };
+
+    private static string OverLimitText(OverLimitAction action) => action switch
+    {
+        OverLimitAction.Drop => "drop",
+        OverLimitAction.Disconnect => "disconnect",
+        _ => throw new ArgumentOutOfRangeException(nameof(action), action, "The page has no word for this action."),
     };
 
     private static string RungText(Rung? rung) => rung switch
