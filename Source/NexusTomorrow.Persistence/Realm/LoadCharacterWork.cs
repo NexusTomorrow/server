@@ -5,7 +5,7 @@ namespace NexusTomorrow.Persistence.Realm;
 
 /// <summary>
 /// Loads one live character of an account in full, under the character's own key, so it runs after any save of that character
-/// queued before it; a deleted character or another account's loads as null.
+/// queued before it; a deleted character, another account's, or a load that did not commit loads as null.
 /// </summary>
 public sealed class LoadCharacterWork : PersistenceWork
 {
@@ -15,7 +15,7 @@ public sealed class LoadCharacterWork : PersistenceWork
 
     /// <summary>
     /// Create work that hands character <paramref name="characterId"/> of <paramref name="accountId"/> to <paramref name="loaded"/>
-    /// once read, or null when there is no such live character.
+    /// once read, or null when there is no such live character or the load did not commit.
     /// </summary>
     public LoadCharacterWork(ulong characterId, long accountId, Action<CharacterRecord?> loaded)
         : base(PersistKey.Character(characterId))
@@ -48,7 +48,6 @@ public sealed class LoadCharacterWork : PersistenceWork
     /// <inheritdoc/>
     public override void Complete(WorkResult result)
     {
-        if (result.Outcome == WorkOutcome.Committed)
-            _loaded(Character);
+        _loaded(result.Outcome == WorkOutcome.Committed ? Character : null);
     }
 }

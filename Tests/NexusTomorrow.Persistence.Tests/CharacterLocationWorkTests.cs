@@ -62,12 +62,36 @@ public sealed class CharacterLocationWorkTests
         await using WriteBehindQueue queue = Databases.Queue(database);
         await CreateAsync(queue);
 
+        // The gate holds the character's key, so the save waits behind it and the load behind the save; a load on any other key
+        // would run now and read the old location.
+        var gate = new GateWork(PersistKey.Character(1001));
+        queue.Enqueue(gate);
+        await gate.Started.WaitAsync(s_bound, TestContext.Current.CancellationToken);
         var location = new CharacterLocation(12, 34, new Vector3(5f, 6f, 7f), 1f);
         queue.Enqueue(new SaveCharacterLocationWork(1001, location, _ => { }));
-        CharacterRecord? record = await LoadAsync(queue, 1001, 7);
+        Task<CharacterRecord?> load = LoadAsync(queue, 1001, 7);
+
+        await Task.Delay(TimeSpan.FromMilliseconds(500), TestContext.Current.CancellationToken);
+        Assert.False(load.IsCompleted);
+        gate.Release();
+        CharacterRecord? record = await load;
 
         Assert.NotNull(record);
         Assert.Equal(location, record.Location);
+    }
+
+    [Fact]
+    public void ALoadThatDidNotCommitAnswersNull()
+    {
+        var answers = new List<CharacterRecord?>();
+        var work = new LoadCharacterWork(5, 7, answers.Add)
+        {
+            Character = new CharacterRecord(5, 7, "Stale", 1, 0, 1, 166, 0, 1, 0, default),
+        };
+
+        work.Complete(WorkResult.RefusedBy("any_constraint"));
+
+        Assert.Null(Assert.Single(answers));
     }
 
     [Fact]
@@ -89,16 +113,16 @@ public sealed class CharacterLocationWorkTests
     [Fact]
     public void ANewerSaveOfTheSameCharacterMergesAndKeepsBothCompletions()
     {
-        int completions = 0;
-        var older = new SaveCharacterLocationWork(5, new CharacterLocation(1, 1, Vector3.Zero, 0f), _ => completions++);
-        var newer = new SaveCharacterLocationWork(5, new CharacterLocation(1, 2, Vector3.One, 1f), _ => completions++);
+        var order = new List<string>();
+        var older = new SaveCharacterLocationWork(5, new CharacterLocation(1, 1, Vector3.Zero, 0f), _ => order.Add("older"));
+        var newer = new SaveCharacterLocationWork(5, new CharacterLocation(1, 2, Vector3.One, 1f), _ => order.Add("newer"));
 
         bool merged = older.TryMerge(newer);
         older.Complete(WorkResult.Committed);
 
         Assert.True(merged);
         Assert.Equal(new CharacterLocation(1, 2, Vector3.One, 1f), older.Location);
-        Assert.Equal(2, completions);
+        Assert.Equal(["older", "newer"], order);
     }
 
     [Fact]
@@ -108,5 +132,25 @@ public sealed class CharacterLocationWorkTests
 
         Assert.False(save.TryMerge(new SaveCharacterLocationWork(6, new CharacterLocation(1, 1, Vector3.Zero, 0f), _ => { })));
         Assert.False(save.TryMerge(new LoadCharacterWork(5, 7, _ => { })));
+    }
+
+    private sealed class GateWork(PersistKey key) : PersistenceWork(key)
+    {
+        private readonly TaskCompletionSource _started = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource _release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public Task Started => _started.Task;
+
+        public void Release() => _release.TrySetResult();
+
+        public override async Task ApplyAsync(PersistenceContexts contexts, CancellationToken cancellationToken)
+        {
+            _started.TrySetResult();
+            await _release.Task.WaitAsync(cancellationToken);
+        }
+
+        public override void Complete(WorkResult result)
+        {
+        }
     }
 }
