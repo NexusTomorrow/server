@@ -39,6 +39,8 @@ public sealed class CharacterRow
 
     public float PositionZ { get; set; }
 
+    public float Facing { get; set; }
+
     public bool Disabled { get; set; }
 
     public bool RequiresRename { get; set; }

@@ -96,6 +96,10 @@ namespace NexusTomorrow.Persistence.Migrations.Realm
                         .HasColumnType("boolean")
                         .HasColumnName("disabled");
 
+                    b.Property<float>("Facing")
+                        .HasColumnType("real")
+                        .HasColumnName("facing");
+
                     b.Property<long>("FactionId")
                         .HasColumnType("bigint")
                         .HasColumnName("faction_id");
