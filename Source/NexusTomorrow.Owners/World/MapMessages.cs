@@ -23,3 +23,18 @@ public sealed record CharacterArrived(IWorldSession Session, long AccountId, Cha
 /// The session's connection ended.
 /// </summary>
 public sealed record ClientLeft(IWorldSession Session) : SessionMessage(Session);
+
+/// <summary>
+/// The client loaded the world (<c>WorldReady</c>), standing in the zone it names; 0 names none.
+/// </summary>
+public sealed record ClientWorldReady(IWorldSession Session, ushort ZoneId) : SessionMessage(Session);
+
+/// <summary>
+/// The client answered a movement control grant with its ticket (<c>MovementControlReceipt</c>).
+/// </summary>
+public sealed record ClientControlReceipt(IWorldSession Session, uint Ticket) : SessionMessage(Session);
+
+/// <summary>
+/// The client reported the zone its unit stands in (<c>ZoneChange</c>).
+/// </summary>
+public sealed record ClientZoneChanged(IWorldSession Session, ushort ZoneId) : SessionMessage(Session);

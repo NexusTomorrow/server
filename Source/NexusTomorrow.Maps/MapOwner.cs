@@ -3,6 +3,7 @@ using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using NexusTomorrow.Maps.Scheduling;
 using NexusTomorrow.Maps.Timing;
+using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 using NexusTomorrow.Owners;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Owners.World;
@@ -15,7 +16,8 @@ namespace NexusTomorrow.Maps;
 /// One world's map: it holds the characters the realm hands it, saves a changed one on a jittered timer, and hands each back on
 /// leaving or stopping. A tick runs in this order: drain the high queue in full, drain the normal queue to its floor and budget,
 /// run the timers, hand the due saves to the write-behind queue, then stop when a stop was requested. Only <see cref="Tick"/>
-/// touches the map's state, so the state needs no locks.
+/// touches the map's state, so the state needs no locks. An arriving character gets the world entry (<c>WorldEntry</c>); the client's
+/// <c>WorldReady</c> is answered once with <c>WorldEntryComplete</c>.
 /// </summary>
 public sealed class MapOwner : IMapInbox, IOwner, ITickable
 {
@@ -36,6 +38,7 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     private readonly Dictionary<IWorldSession, Player> _bySession = new(ReferenceEqualityComparer.Instance);
     private readonly Dictionary<ulong, Player> _byCharacter = [];
     private readonly List<Player> _due = [];
+    private readonly WorldEntryComplete _entryComplete = new();
 
     // Written by any thread: the queue count by posters and the tick, the stop request by StopAsync.
     private int _queued;
@@ -49,6 +52,7 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     // Touched only on the tick.
     private long _nowMs;
     private uint _lastUnitId;
+    private uint _lastControlTicket;
     private long _lastSerial;
     private bool _finished;
 
@@ -213,6 +217,18 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
                     if (_bySession.TryGetValue(left.Session, out Player? leaving))
                         HandBack(leaving);
                     break;
+                case ClientWorldReady ready:
+                    if (_bySession.TryGetValue(ready.Session, out Player? loaded) && !loaded.InWorld)
+                        EnterWorldComplete(loaded, ready.ZoneId);
+                    break;
+                case ClientControlReceipt receipt:
+                    if (_bySession.TryGetValue(receipt.Session, out Player? granted) && receipt.Ticket == granted.ControlTicket)
+                        granted.HasControl = true;
+                    break;
+                case ClientZoneChanged zoneChanged:
+                    if (_bySession.TryGetValue(zoneChanged.Session, out Player? moving))
+                        KeepZone(moving, zoneChanged.ZoneId);
+                    break;
                 case CharacterSaved saved:
                     if (_byCharacter.TryGetValue(saved.CharacterId, out Player? savedPlayer) && savedPlayer.Serial == saved.Serial)
                         savedPlayer.Committed(saved.Version);
@@ -252,6 +268,22 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
         player.SaveTimer = _wheel.Schedule(
             _nowMs + _random.NextInt64(1, _saveIntervalMs + 1), new MapTimer(MapTimerKind.Save, character.Id));
         MapLog.Entered(_logger, _worldId, character.Id, player.UnitId);
+        player.ControlTicket = ++_lastControlTicket;
+        WorldEntry.Send(player, _settings);
+    }
+
+    private void EnterWorldComplete(Player player, ushort zoneId)
+    {
+        KeepZone(player, zoneId);
+        player.InWorld = true;
+        player.Session.Send(_entryComplete);
+    }
+
+    // A zone of 0 is not a zone: the client's report on taking control can carry it, and the player keeps the zone it stands in.
+    private static void KeepZone(Player player, ushort zoneId)
+    {
+        if (zoneId != 0)
+            player.MoveTo(player.Location with { ZoneId = zoneId });
     }
 
     // The save is queued before the realm hears of the return, so a select's load queued after the return under the same key reads

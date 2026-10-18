@@ -42,6 +42,15 @@ internal sealed class Player
 
     public TimerHandle SaveTimer { get; set; }
 
+    // The ticket of the movement control grant the world entry sent.
+    public uint ControlTicket { get; set; }
+
+    // True once the client's receipt of ControlTicket arrived: the client moves the unit.
+    public bool HasControl { get; set; }
+
+    // True once WorldEntryComplete went out.
+    public bool InWorld { get; set; }
+
     public void MoveTo(CharacterLocation location)
     {
         if (Location.Equals(location))
