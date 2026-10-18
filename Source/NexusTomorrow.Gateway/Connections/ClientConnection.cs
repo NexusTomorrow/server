@@ -70,11 +70,11 @@ public abstract class ClientConnection : IClientSession
     protected CancellationToken Lifetime => _lifetime;
 
     /// <inheritdoc/>
-    /// <exception cref="InvalidOperationException"><typeparamref name="T"/> is not read to <c>Fields</c>.</exception>
+    /// <exception cref="InvalidOperationException">The send gate refuses <paramref name="message"/> (<see cref="MessageCatalog.MaySend"/>).</exception>
     public void Send<T>(T message)
         where T : class, IWireMessage
     {
-        EnsureSendable<T>();
+        EnsureSendable(message);
         Enqueue(Outbound.Enveloped(T.Opcode, message));
     }
 
@@ -166,7 +166,7 @@ public abstract class ClientConnection : IClientSession
     protected void SendBare<T>(T message)
         where T : class, IWireMessage
     {
-        EnsureSendable<T>();
+        EnsureSendable(message);
         Enqueue(Outbound.Bare(T.Opcode, message));
     }
 
@@ -206,10 +206,10 @@ public abstract class ClientConnection : IClientSession
         }
     }
 
-    private void EnsureSendable<T>()
+    private void EnsureSendable(IWireMessage message)
     {
-        if (!_catalog.IsSendable(typeof(T)))
-            throw new InvalidOperationException($"{typeof(T).Name} is not read to Fields, so the server may not send it.");
+        if (!_catalog.MaySend(message, out string? refusal))
+            throw new InvalidOperationException($"{refusal}, so the server may not send it.");
     }
 
     private async Task ReadAsync(PipeReader input, CancellationToken cancellationToken)

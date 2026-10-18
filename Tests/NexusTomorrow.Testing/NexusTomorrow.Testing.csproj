@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Source\NexusTomorrow.Cryptography\NexusTomorrow.Cryptography.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Gateway\NexusTomorrow.Gateway.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Owners\NexusTomorrow.Owners.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Persistence\NexusTomorrow.Persistence.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Transport\NexusTomorrow.Transport.csproj" />

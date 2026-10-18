@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Owners;
 
@@ -26,9 +27,13 @@ public sealed class FakeClientSession : IClientSession
 
     public string? DisconnectReason { get; private set; }
 
+    // Runs the server's own send gate, so an owner's test fails exactly where the connection would refuse the message.
     public void Send<T>(T message)
         where T : class, IWireMessage
     {
+        if (!MessageCatalog.Default.MaySend(message, out string? refusal))
+            throw new InvalidOperationException(refusal);
+
         lock (_gate)
             _sent.Add(message);
     }

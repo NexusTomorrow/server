@@ -20,7 +20,9 @@ public interface IClientSession
     IPAddress RemoteAddress { get; }
 
     /// <summary>
-    /// Queue <paramref name="message"/> for the client. The message must not be changed after this call.
+    /// Queue <paramref name="message"/> for the client. The message must not be changed after this call. Throws
+    /// <see cref="InvalidOperationException"/> when the send gate refuses the message: its type is not read to Fields, nor to Purpose with
+    /// only verified members set.
     /// </summary>
     void Send<T>(T message)
         where T : class, IWireMessage;

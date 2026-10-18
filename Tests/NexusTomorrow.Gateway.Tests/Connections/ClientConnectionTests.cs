@@ -17,6 +17,7 @@ namespace NexusTomorrow.Gateway.Tests.Connections;
 public sealed class ClientConnectionTests : IAsyncLifetime
 {
     private static readonly TimeSpan s_wait = TimeSpan.FromSeconds(10);
+    private static readonly MessageCatalog s_gate = MessageCatalog.Build([(WireMessages.Layouts, WireMessages.CreateClientToServer, WireMessages.CreateServerToClient)]);
 
     private readonly PipePair _pipes = new();
     private readonly CancellationTokenSource _stop = new();
@@ -26,7 +27,7 @@ public sealed class ClientConnectionTests : IAsyncLifetime
 
     public ClientConnectionTests()
     {
-        _connection = new RecordingConnection(_time, Small(4096), OpcodeTable.Pregame);
+        _connection = new RecordingConnection(_time, Small(4096), OpcodeTable.Pregame, MessageCatalog.Default);
         Client = new GameTestClient(_pipes.Client);
     }
 
@@ -226,9 +227,32 @@ public sealed class ClientConnectionTests : IAsyncLifetime
     }
 
     [Fact]
-    public void SendingAMessageBelowFieldsThrows()
+    public void SendingAMessageTheCatalogDoesNotHoldThrows()
     {
         Assert.Throws<InvalidOperationException>(() => _connection.Send(new UnverifiedForTest()));
+    }
+
+    [Fact]
+    public void SendingAPurposeMessageWithAnUnverifiedMemberSetThrowsNamingTheMember()
+    {
+        Use(Small(4096), catalog: s_gate);
+
+        InvalidOperationException thrown = Assert.Throws<InvalidOperationException>(() => _connection.Send(new GatePurposeMessage { Unread = 1 }));
+
+        Assert.Contains("GatePurposeMessage.Unread", thrown.Message);
+    }
+
+    [Fact]
+    public async Task APurposeMessageWithOnlyVerifiedMembersSetReachesTheClient()
+    {
+        Use(Small(4096), catalog: s_gate);
+        Start();
+        await Eventually.TrueAsync(() => _connection.Started);
+
+        _connection.Send(new GatePurposeMessage { Known = 1 });
+
+        ReadResult read = await _pipes.Client.Input.ReadAsync(TestContext.Current.CancellationToken);
+        Assert.True(read.Buffer.Length > 0);
     }
 
     // Each ping is answered with a 7-byte frame, so this many answers exceed the 64 KiB a pipe holds before its writer waits.
@@ -250,8 +274,8 @@ public sealed class ClientConnectionTests : IAsyncLifetime
         return bytes;
     }
 
-    private void Use(GatewayOptions options, FrozenDictionary<ushort, OpcodeRow>? table = null) =>
-        _connection = new RecordingConnection(_time, options, table ?? OpcodeTable.Pregame);
+    private void Use(GatewayOptions options, FrozenDictionary<ushort, OpcodeRow>? table = null, MessageCatalog? catalog = null) =>
+        _connection = new RecordingConnection(_time, options, table ?? OpcodeTable.Pregame, catalog ?? MessageCatalog.Default);
 
     // The grace runs on the fake clock, so the clock is advanced until the run completes; the pre-auth timeout is far longer.
     private async Task EndedAfterTheGraceAsync() =>
@@ -307,8 +331,8 @@ public sealed class ClientConnectionTests : IAsyncLifetime
         private int _closed;
         private int _started;
 
-        public RecordingConnection(TimeProvider time, GatewayOptions options, FrozenDictionary<ushort, OpcodeRow> table)
-            : base(0x0076, MessageCatalog.Default, new InboundDecoder(MessageCatalog.Default, table, new HashSet<ushort>()),
+        public RecordingConnection(TimeProvider time, GatewayOptions options, FrozenDictionary<ushort, OpcodeRow> table, MessageCatalog catalog)
+            : base(0x0076, catalog, new InboundDecoder(catalog, table, new HashSet<ushort>()),
                 Options.Create(options), time, new GatewayMetrics(), NullLogger.Instance)
         {
         }

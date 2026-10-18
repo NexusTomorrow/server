@@ -1,5 +1,6 @@
 ﻿using System.Collections.Frozen;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
@@ -28,13 +29,13 @@ public enum InboundRefusal
 }
 
 /// <summary>
-/// Every declared message with its rung, built once from the three message assemblies. The server reads and sends only messages read
-/// to <see cref="Rung.Fields"/> or above.
+/// Every declared message with its rung, built once from the three message assemblies. The server reads only messages read to
+/// <see cref="Rung.Fields"/> or above, and sends what <see cref="MaySend"/> allows.
 /// </summary>
 public sealed class MessageCatalog
 {
     // A delegate, because IWireMessage declares static abstract members and so cannot be a type argument of Func.
-    private delegate IWireMessage? MessageFactory(ushort opcode);
+    internal delegate IWireMessage? MessageFactory(ushort opcode);
 
     private readonly FrozenDictionary<ushort, MessageFactory> _inbound;
     private readonly FrozenDictionary<ushort, Rung?> _inboundRungs;
@@ -79,16 +80,43 @@ public sealed class MessageCatalog
     }
 
     /// <summary>
-    /// True when <paramref name="messageType"/> is a declared server message read to <see cref="Rung.Fields"/> or above.
+    /// True when the server may send <paramref name="message"/>: its type is read to <see cref="Rung.Fields"/> or above, or read to
+    /// <see cref="Rung.Purpose"/> with every member set to anything but its default marked <see cref="VerifiedMemberAttribute"/>.
+    /// Otherwise false, with <paramref name="refusal"/> naming the type and, at <see cref="Rung.Purpose"/>, the first unmarked member set.
     /// </summary>
-    public bool IsSendable(Type messageType) => _rungs.TryGetValue(messageType, out Rung? rung) && rung >= Rung.Fields;
+    public bool MaySend(IWireMessage message, [NotNullWhen(false)] out string? refusal)
+    {
+        Type type = message.GetType();
+        Rung? rung = _rungs.GetValueOrDefault(type);
+        if (rung >= Rung.Fields)
+        {
+            refusal = null;
+            return true;
+        }
+
+        if (rung != Rung.Purpose)
+        {
+            refusal = $"{type.Name} is not read to Purpose";
+            return false;
+        }
+
+        if (message.FindUnverifiedValue() is { } path)
+        {
+            refusal = $"{type.Name}.{path} is set, but its meaning is not verified";
+            return false;
+        }
+
+        refusal = null;
+        return true;
+    }
 
     /// <summary>
     /// The rung <paramref name="messageType"/> is verified to, or null when it is unverified or undeclared.
     /// </summary>
     public Rung? RungOf(Type messageType) => _rungs.GetValueOrDefault(messageType);
 
-    private static MessageCatalog Build((ImmutableArray<WireLayout> Layouts, MessageFactory ClientToServer, MessageFactory ServerToClient)[] assemblies)
+    // The catalog of the given assemblies' generated registries; Default is the three message assemblies.
+    internal static MessageCatalog Build((ImmutableArray<WireLayout> Layouts, MessageFactory ClientToServer, MessageFactory ServerToClient)[] assemblies)
     {
         var inbound = new Dictionary<ushort, MessageFactory>();
         var inboundRungs = new Dictionary<ushort, Rung?>();
