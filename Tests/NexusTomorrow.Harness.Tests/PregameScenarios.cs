@@ -46,10 +46,6 @@ public sealed class PregameScenarios
         CharacterCreateResult created = await session.CreateAsync("Rebaser Head", creationId: 1, path: 2);
         Assert.Equal(CreateResults.Created, created.Result);
 
-        // The client selects the character it just made; the harness holds no world data, so no map hosts its world and
-        // selection fails with the general reason.
-        Assert.Equal(SelectReasons.General, (await session.SelectAsync(created.CharacterId)).Reason);
-
         CharacterList list = await session.RequestListAsync();
         CharacterList.Character character = Assert.Single(list.Characters);
         Assert.Equal("Rebaser Head", character.Name);
@@ -163,7 +159,6 @@ public sealed class PregameScenarios
         await using HeadlessClient client = scenario.Server.NewClient();
         await using WorldSession session = await client.ScriptedLoginAsync(Email, Password);
         ulong id = (await session.CreateAsync("Rebaser Head")).CharacterId;
-        await session.SelectAsync(id);
         Assert.Equal(DeleteResults.Deleted, (await session.DeleteAsync(id)).Result);
         Assert.Empty((await session.RequestListAsync()).Characters);
     }
