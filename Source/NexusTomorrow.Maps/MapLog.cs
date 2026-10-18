@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using NexusTomorrow.Maps.Worlds;
 
 namespace NexusTomorrow.Maps;
 
@@ -24,4 +25,16 @@ internal static partial class MapLog
 
     [LoggerMessage(EventId = 7007, Level = LogLevel.Error, Message = "Map {World} was handed character {CharacterId}, which it already holds; connection {ConnectionId} is ended")]
     public static partial void AlreadyHeld(ILogger logger, ushort world, ulong characterId, long connectionId);
+
+    [LoggerMessage(EventId = 7008, Level = LogLevel.Warning, Message = "World {World} is {Kind}, so no map hosts it")]
+    public static partial void WorldNotHosted(ILogger logger, ushort world, WorldKind kind);
+
+    [LoggerMessage(EventId = 7009, Level = LogLevel.Warning, Message = "The start location for faction {FactionId} is in world {World}, which is {Kind}: characters of that faction cannot enter the world")]
+    public static partial void StartLocationNotHosted(ILogger logger, uint factionId, ushort world, WorldKind kind);
+
+    [LoggerMessage(EventId = 7010, Level = LogLevel.Warning, Message = "Table {Path} is missing or unreadable; no world is hosted")]
+    public static partial void WorldTableUnavailable(ILogger logger, string path, Exception? exception);
+
+    [LoggerMessage(EventId = 7011, Level = LogLevel.Warning, Message = "No client data path is configured; no world is hosted")]
+    public static partial void NoClientDataPath(ILogger logger);
 }
