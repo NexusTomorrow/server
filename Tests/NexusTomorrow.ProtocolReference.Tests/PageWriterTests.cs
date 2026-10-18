@@ -145,8 +145,8 @@ public sealed class PageWriterTests
             "> [!NOTE]\n> Generated from the opcode table at bootstrap `abc1234` by `Tools/NexusTomorrow.ProtocolReference`. Don't edit it by hand: change the table and regenerate.",
             blocks[2]);
         Assert.Equal(
-            "| Opcode | Message | Owner | Tag | Priority | Rate per second | Past the limit | Admitted at |\n|---|---|---|---|---|---|---|---|\n"
-            + "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Realm | untagged | normal | 2 | drop | fields |",
+            "| Opcode | Message | Owner | Tag | Priority | Rate per second | Past the limit | Largest body | Admitted at |\n|---|---|---|---|---|---|---|---|---|\n"
+            + "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Realm | untagged | normal | 2 | drop | the frame limit | fields |",
             blocks[3]);
         Assert.Contains("| The opcode table | `Source/NexusTomorrow.Gateway/Catalog/OpcodeTable.cs` |", blocks[5], StringComparison.Ordinal);
     }
@@ -157,7 +157,7 @@ public sealed class PageWriterTests
         OpcodeRow[] rows = [new(0xFF20, MessageOwner.Account, MessagePriority.High, 1, OverLimitAction.Disconnect)];
         string page = PageWriter.OpcodeTablePage(rows, [ReferenceMessage.Of(typeof(SampleRequest))], s_stamp);
 
-        Assert.Contains("| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Account | untagged | high | 1 | disconnect | fields |", page, StringComparison.Ordinal);
+        Assert.Contains("| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Account | untagged | high | 1 | disconnect | the frame limit | fields |", page, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -172,9 +172,9 @@ public sealed class PageWriterTests
         string[] blocks = PageWriter.OpcodeTablePage(rows, messages, s_stamp).Split("\n\n");
 
         Assert.Equal(
-            "| Opcode | Message | Owner | Tag | Priority | Rate per second | Past the limit | Admitted at |\n|---|---|---|---|---|---|---|---|\n"
-            + "| `0x07E0` | [CharacterListRequest](Messages-Pregame#0x07e0-characterlistrequest) | Realm | untagged | normal | 2 | drop | fields |\n"
-            + "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Map | `0x03` | normal | 2 | drop | fields |",
+            "| Opcode | Message | Owner | Tag | Priority | Rate per second | Past the limit | Largest body | Admitted at |\n|---|---|---|---|---|---|---|---|---|\n"
+            + "| `0x07E0` | [CharacterListRequest](Messages-Pregame#0x07e0-characterlistrequest) | Realm | untagged | normal | 2 | drop | the frame limit | fields |\n"
+            + "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Map | `0x03` | normal | 2 | drop | the frame limit | fields |",
             blocks[3]);
     }
 
@@ -189,19 +189,46 @@ public sealed class PageWriterTests
         string[] fieldsAlone = PageWriter.OpcodeTablePage([fieldsRow], messages, s_stamp).Split("\n\n");
 
         Assert.Equal(
-            "| Opcode | Message | Owner | Tag | Priority | Rate per second | Past the limit | Admitted at |\n|---|---|---|---|---|---|---|---|\n"
-            + "| `0x07E0` | [CharacterListRequest](Messages-Pregame#0x07e0-characterlistrequest) | Realm | untagged | normal | 2 | drop | fields |\n"
-            + "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Map | `0x03` | high | 60 | drop | purpose |",
+            "| Opcode | Message | Owner | Tag | Priority | Rate per second | Past the limit | Largest body | Admitted at |\n|---|---|---|---|---|---|---|---|---|\n"
+            + "| `0x07E0` | [CharacterListRequest](Messages-Pregame#0x07e0-characterlistrequest) | Realm | untagged | normal | 2 | drop | the frame limit | fields |\n"
+            + "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Map | `0x03` | high | 60 | drop | the frame limit | purpose |",
             both[3]);
         Assert.Equal("A row admitted at `purpose` is handled before its whole message reaches `fields`: every member its handler reads is verified.", both[4]);
         Assert.Equal("## Where the code lives", both[5]);
 
         Assert.Equal(
-            "| Opcode | Message | Owner | Tag | Priority | Rate per second | Past the limit | Admitted at |\n|---|---|---|---|---|---|---|---|\n"
-            + "| `0x07E0` | [CharacterListRequest](Messages-Pregame#0x07e0-characterlistrequest) | Realm | untagged | normal | 2 | drop | fields |",
+            "| Opcode | Message | Owner | Tag | Priority | Rate per second | Past the limit | Largest body | Admitted at |\n|---|---|---|---|---|---|---|---|---|\n"
+            + "| `0x07E0` | [CharacterListRequest](Messages-Pregame#0x07e0-characterlistrequest) | Realm | untagged | normal | 2 | drop | the frame limit | fields |",
             fieldsAlone[3]);
         Assert.Equal("## Where the code lives", fieldsAlone[4]);
         Assert.DoesNotContain(fieldsAlone, block => block.Contains("`purpose`", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void TheOpcodeTablePageShowsARowsLargestBodyAndExplainsItOnlyWhenARowSetsOne()
+    {
+        ReferenceMessage[] messages = [ReferenceMessage.Of(typeof(SampleRequest)), ReferenceMessage.Of(typeof(CharacterListRequest))];
+        var plainRow = new OpcodeRow(0x07E0, MessageOwner.Realm, MessagePriority.Normal, 2, OverLimitAction.Drop);
+        var limitedRow = new OpcodeRow(0xFF20, MessageOwner.Map, MessagePriority.High, 60, OverLimitAction.Drop, Tag: 0x03, ReadsVerifiedMembers: true, MaxBodyBytes: 2048);
+
+        string[] both = PageWriter.OpcodeTablePage([plainRow, limitedRow], messages, s_stamp).Split("\n\n");
+        string[] plainAlone = PageWriter.OpcodeTablePage([plainRow], messages, s_stamp).Split("\n\n");
+
+        Assert.Equal(
+            "| Opcode | Message | Owner | Tag | Priority | Rate per second | Past the limit | Largest body | Admitted at |\n|---|---|---|---|---|---|---|---|---|\n"
+            + "| `0x07E0` | [CharacterListRequest](Messages-Pregame#0x07e0-characterlistrequest) | Realm | untagged | normal | 2 | drop | the frame limit | fields |\n"
+            + "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | Map | `0x03` | high | 60 | drop | 2,048 bytes | purpose |",
+            both[3]);
+        Assert.Equal("A message whose body is larger than its row's largest body ends the session before the body is read.", both[4]);
+        Assert.Equal("A row admitted at `purpose` is handled before its whole message reaches `fields`: every member its handler reads is verified.", both[5]);
+        Assert.Equal("## Where the code lives", both[6]);
+
+        Assert.Equal(
+            "| Opcode | Message | Owner | Tag | Priority | Rate per second | Past the limit | Largest body | Admitted at |\n|---|---|---|---|---|---|---|---|---|\n"
+            + "| `0x07E0` | [CharacterListRequest](Messages-Pregame#0x07e0-characterlistrequest) | Realm | untagged | normal | 2 | drop | the frame limit | fields |",
+            plainAlone[3]);
+        Assert.Equal("## Where the code lives", plainAlone[4]);
+        Assert.DoesNotContain(plainAlone, block => block.StartsWith("A message whose body", StringComparison.Ordinal));
     }
 
     [Fact]

@@ -24,6 +24,9 @@ public static class PageWriter
     // The page never explains a value it does not show, so this sentence is on the opcode page only when a row reads purpose.
     private const string PurposeRowSentence = "A row admitted at `purpose` is handled before its whole message reaches `fields`: every member its handler reads is verified.";
 
+    // The page never explains a value it does not show, so this sentence is on the opcode page only when a row sets a largest body.
+    private const string LargestBodySentence = "A message whose body is larger than its row's largest body ends the session before the body is read.";
+
     private const string Unsettled = "Unsettled";
 
     private const string AreaGrouping =
@@ -131,9 +134,11 @@ public static class PageWriter
 
         var table = new List<string[]>();
         bool anyPurpose = false;
+        bool anyLargestBody = false;
         foreach (OpcodeRow row in rows.OrderBy(row => row.Opcode))
         {
             anyPurpose |= row.ReadsVerifiedMembers;
+            anyLargestBody |= row.MaxBodyBytes is not null;
             ReferenceMessage message = messages.FirstOrDefault(message => message.Opcode == row.Opcode && message.Direction != Direction.ServerToClient)
                 ?? throw new InvalidOperationException($"The opcode table admits {Hex(row.Opcode)}, which no client message declares.");
             table.Add(
@@ -145,11 +150,14 @@ public static class PageWriter
                 PriorityText(row.Priority),
                 Number(row.PerSecond),
                 OverLimitText(row.OverLimit),
+                row.MaxBodyBytes is { } maxBody ? string.Create(CultureInfo.InvariantCulture, $"{maxBody:N0} bytes") : "the frame limit",
                 RungText(row.ReadsVerifiedMembers ? Rung.Purpose : Rung.Fields),
             ]);
         }
 
-        blocks.Add(Table(["Opcode", "Message", "Owner", "Tag", "Priority", "Rate per second", "Past the limit", "Admitted at"], table));
+        blocks.Add(Table(["Opcode", "Message", "Owner", "Tag", "Priority", "Rate per second", "Past the limit", "Largest body", "Admitted at"], table));
+        if (anyLargestBody)
+            blocks.Add(LargestBodySentence);
         if (anyPurpose)
             blocks.Add(PurposeRowSentence);
 
