@@ -93,7 +93,7 @@ internal static class ModelBuilder
         {
             MemberModel? member = BuildMember(symbol, typeName, isMessage, diagnostics);
             if (member is not null)
-                members.Add(member);
+                members.Add(member with { Verified = FindAttribute(symbol.GetAttributes(), WireNames.VerifiedMember) is not null });
         }
 
         CheckReferences(members, typeName, diagnostics);
@@ -608,7 +608,7 @@ internal static class ModelBuilder
 
     private static MemberModel Member(string name, MemberShape shape, LocationInfo? location, bool settable)
     {
-        return new MemberModel(name, shape, null, 0, null, false, CollectionKind.None, null, 0, null, null, 0, false, false, 0, settable, location);
+        return new MemberModel(name, shape, null, 0, null, false, CollectionKind.None, null, 0, null, null, 0, false, false, 0, settable, location, false);
     }
 
     private static bool TryGetCollection(ITypeSymbol type, out CollectionKind collection, out ITypeSymbol elementType)

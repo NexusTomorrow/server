@@ -43,6 +43,10 @@ internal static class SourceEmitter
         EmitWrite(writer, type, layouts, modifiers);
         writer.Line();
         EmitMeasure(writer, type, layouts, layout, modifiers);
+        writer.Line();
+        EmitFindUnverifiedValue(writer, type, layouts, modifiers);
+        writer.Line();
+        EmitIsDefault(writer, type, layouts, modifiers);
 
         writer.Close();
         foreach (ContainingTypeModel _ in type.ContainingTypes)
@@ -466,6 +470,150 @@ internal static class SourceEmitter
 
         writer.Line("return bits;");
         writer.Close();
+    }
+
+    // Members Write derives from others: a count from its array, a selector from its union's arm. The check judges those instead.
+    private static HashSet<string> DerivedMembers(TypeModel type)
+    {
+        var derived = new HashSet<string>(System.StringComparer.Ordinal);
+        foreach (MemberModel member in type.Members)
+        {
+            if (member.IsCount)
+                derived.Add(member.Name);
+            if (member.Shape == MemberShape.Union && member.UnionSelector is not null)
+                derived.Add(member.UnionSelector);
+        }
+
+        return derived;
+    }
+
+    private static void EmitFindUnverifiedValue(SourceWriter writer, TypeModel type, LayoutCalculator layouts, string modifiers)
+    {
+        writer.Line("/// <inheritdoc/>");
+        writer.Open($"{modifiers} string? FindUnverifiedValue()");
+        if (type.WireBase is not null)
+        {
+            writer.Line("string? inherited = base.FindUnverifiedValue();");
+            writer.Line("if (inherited is not null)");
+            writer.Line("    return inherited;");
+        }
+
+        HashSet<string> derived = DerivedMembers(type);
+        for (int i = 0; i < type.Members.Count; i++)
+        {
+            MemberModel member = type.Members[i];
+            if (member.Shape == MemberShape.Pad || derived.Contains(member.Name))
+                continue;
+
+            if (!member.Verified)
+            {
+                EmitIfNotDefault(writer, member, layouts, i, $"return {Quote(member.Name)};");
+                continue;
+            }
+
+            string name = member.Name;
+            switch (member.Shape)
+            {
+                case MemberShape.Value when member.Value is { Kind: ValueKind.Struct }:
+                    EmitSearch(writer, $"{name}.FindUnverifiedValue()", Quote(name + "."), i);
+                    break;
+                case MemberShape.Array or MemberShape.FixedArray when member.Value is { Kind: ValueKind.Struct }:
+                    writer.Open($"for (int i{i} = 0; i{i} < {name}.{CountOf(member)}; i{i}++)");
+                    writer.Line($"string? inner{i} = {name}[i{i}].FindUnverifiedValue();");
+                    writer.Line($"if (inner{i} is not null)");
+                    writer.Line($"    return {Quote(name + "[")} + i{i}.ToString(global::System.Globalization.CultureInfo.InvariantCulture) + {Quote("].")} + inner{i};");
+                    writer.Close();
+                    break;
+                case MemberShape.Union:
+                    MemberModel? selector = type.Members.FirstOrDefault(candidate => candidate.Name == member.UnionSelector);
+                    if (selector is { Verified: false })
+                    {
+                        TypeModel? zero = layouts.ArmsOf(member.UnionType).FirstOrDefault(arm => arm.UnionCaseValue == 0);
+                        writer.Line(zero is null ? $"if ({name} is not null)" : $"if (!({name} is {zero.FullName}))");
+                        writer.Line($"    return {Quote(selector.Name)};");
+                    }
+
+                    EmitSearch(writer, $"{name}.FindUnverifiedValue()", Quote(name + "."), i);
+                    break;
+            }
+        }
+
+        writer.Line("return null;");
+        writer.Close();
+    }
+
+    private static void EmitSearch(SourceWriter writer, string call, string prefix, int i)
+    {
+        writer.Open("");
+        writer.Line($"string? inner{i} = {call};");
+        writer.Line($"if (inner{i} is not null)");
+        writer.Line($"    return {prefix} + inner{i};");
+        writer.Close();
+    }
+
+    private static void EmitIsDefault(SourceWriter writer, TypeModel type, LayoutCalculator layouts, string modifiers)
+    {
+        writer.Line("/// <inheritdoc/>");
+        writer.Open($"{modifiers} bool IsDefault()");
+        if (type.WireBase is not null)
+        {
+            writer.Line("if (!base.IsDefault())");
+            writer.Line("    return false;");
+        }
+
+        HashSet<string> derived = DerivedMembers(type);
+        for (int i = 0; i < type.Members.Count; i++)
+        {
+            MemberModel member = type.Members[i];
+            if (member.Shape != MemberShape.Pad && !derived.Contains(member.Name))
+                EmitIfNotDefault(writer, member, layouts, i, "return false;");
+        }
+
+        writer.Line("return true;");
+        writer.Close();
+    }
+
+    // Runs action when the member holds anything but its default. Never a constant condition: the compiler would warn of
+    // unreachable code after it, and warnings are errors.
+    private static void EmitIfNotDefault(SourceWriter writer, MemberModel member, LayoutCalculator layouts, int i, string action)
+    {
+        string name = member.Name;
+        switch (member.Shape)
+        {
+            case MemberShape.Value when member.Value is not null:
+                writer.Line($"if ({NotDefault(member.Value, name)})");
+                writer.Line($"    {action}");
+                break;
+            case MemberShape.Array:
+                writer.Line($"if ({name}.{CountOf(member)} != 0)");
+                writer.Line($"    {action}");
+                break;
+            case MemberShape.FixedArray when member.Value is not null:
+                writer.Open($"foreach (var element{i} in {name})");
+                writer.Line($"if ({NotDefault(member.Value, $"element{i}")})");
+                writer.Line($"    {action}");
+                writer.Close();
+                break;
+            case MemberShape.Union:
+                TypeModel? zero = layouts.ArmsOf(member.UnionType).FirstOrDefault(arm => arm.UnionCaseValue == 0);
+                writer.Line(zero is null ? $"if ({name} is not null)" : $"if (!({name} is {zero.FullName} zero{i} && zero{i}.IsDefault()))");
+                writer.Line($"    {action}");
+                break;
+            case MemberShape.Blob:
+                writer.Line($"if ({name}.Length != 0)");
+                writer.Line($"    {action}");
+                break;
+        }
+    }
+
+    private static string NotDefault(ValueModel value, string expression)
+    {
+        return value.Kind switch
+        {
+            ValueKind.Struct => $"!{expression}.IsDefault()",
+            ValueKind.String => $"!string.IsNullOrEmpty({expression})",
+            _ => $"{expression} != default",
+        };
     }
 
     private static string ReadValue(ValueModel value)

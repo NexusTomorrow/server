@@ -86,5 +86,9 @@ public sealed class FrameWriterTests
         public void Write(ref BitWriter writer) => writer.WriteBits(1, 8);
 
         public int MeasureBits() => 16;
+
+        public string? FindUnverifiedValue() => null;
+
+        public bool IsDefault() => true;
     }
 }

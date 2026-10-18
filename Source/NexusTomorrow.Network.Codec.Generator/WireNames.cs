@@ -25,6 +25,7 @@ internal static class WireNames
     public const string Pad = Codec + ".PadAttribute";
     public const string PadType = Codec + ".Pad";
     public const string NotOnWire = Codec + ".NotOnWireAttribute";
+    public const string VerifiedMember = Codec + ".VerifiedMemberAttribute";
     public const string WireLayoutData = Codec + ".WireLayoutDataAttribute";
     public const string IWireStruct = Codec + ".IWireStruct";
 

@@ -345,6 +345,10 @@ public sealed class ClientConnectionTests : IAsyncLifetime
 
         public int MeasureBits() => 0;
 
+        public string? FindUnverifiedValue() => null;
+
+        public bool IsDefault() => true;
+
         public void Write(ref BitWriter writer)
         {
         }
