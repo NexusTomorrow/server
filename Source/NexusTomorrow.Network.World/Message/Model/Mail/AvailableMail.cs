@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
 [WireMessage(GameMessageOpcode.Message05A3, Direction.ServerToClient)]
-public sealed partial class Message05A3
+public sealed partial class AvailableMail
 {
     [WireStruct]
     public sealed partial class Message05A3Part1

@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Mail;
 
 [WireMessage(GameMessageOpcode.Server05A8, Direction.ServerToClient)]
-public sealed partial class Server05A8
+public sealed partial class MailAttachmentResult
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
     [UInt(8)] public byte Unknown1 { get; set; }
