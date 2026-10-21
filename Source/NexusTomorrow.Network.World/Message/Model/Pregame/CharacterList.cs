@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
+using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
@@ -41,23 +42,6 @@ public sealed partial class CharacterList
         /// <see cref="ColorSetId"/>.
         /// </summary>
         [UInt(32)] public uint Color { get; set; }
-    }
-
-    /// <summary>
-    /// A listed character the client hands to its interface with its removal time.
-    /// </summary>
-    [WireStruct]
-    public sealed partial class CharacterRemoval
-    {
-        /// <summary>
-        /// The client gives this value no meaning. The client uses the pair only when this is not 0.
-        /// </summary>
-        [UInt(14)] public ushort Unknown0 { get; set; }
-
-        /// <summary>
-        /// The character, as listed in <see cref="Characters"/>.
-        /// </summary>
-        [UInt(64)] public ulong CharacterId { get; set; }
     }
 
     /// <summary>
@@ -217,9 +201,10 @@ public sealed partial class CharacterList
     [UInt(14)] public ushort RealmId { get; set; }
 
     /// <summary>
-    /// A character the client hands to its interface with <see cref="RemovalTime"/>, when both parts are not 0 and the character is listed.
+    /// A listed character, by its realm and its id as in <see cref="Characters"/>, that the client hands to its interface with
+    /// <see cref="RemovalTime"/>, when both parts are not 0 and the character is listed.
     /// </summary>
-    public CharacterRemoval Removal { get; set; } = new();
+    public RealmScopedId Removal { get; set; } = new();
 
     /// <summary>
     /// Milliseconds left before the character in <see cref="Removal"/> is removed.
