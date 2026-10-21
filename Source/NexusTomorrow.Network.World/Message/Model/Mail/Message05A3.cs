@@ -37,7 +37,7 @@ public sealed partial class Message05A3
         [UInt(64)] public ulong Unknown10 { get; set; }
         [Float32] public float Unknown11 { get; set; }
         [UInt(32)] public uint Unknown12 { get; set; }
-        public Client00B5Part0 Unknown13 { get; set; } = new();
+        public RealmScopedId Unknown13 { get; set; } = new();
         [Array(CountBits = 32)] public List<Message05A3Part1> Unknown14 { get; set; } = [];
     }
 

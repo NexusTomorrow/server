@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell;
 [WireMessage(GameMessageOpcode.Client094F, Direction.ClientToServer)]
 public sealed partial class Client094F
 {
-    public Client00B5Part0 Unknown0 { get; private set; } = new Client00B5Part0();
+    public RealmScopedId Unknown0 { get; private set; } = new RealmScopedId();
     [UInt(18)] public uint Unknown1 { get; private set; }
     [UInt(32)] public uint Unknown2 { get; private set; }
 }

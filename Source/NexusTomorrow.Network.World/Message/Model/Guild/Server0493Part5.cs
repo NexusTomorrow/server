@@ -6,7 +6,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 [WireStruct]
 public sealed partial class Server0493Part5
 {
-    public Client00B5Part0 Unknown0 { get; set; } = new();
+    public RealmScopedId Unknown0 { get; set; } = new();
     [UInt(32)] public uint Unknown1 { get; set; }
     [WideString] public string Unknown2 { get; set; } = "";
     [UInt(2)] public byte Unknown3 { get; set; }

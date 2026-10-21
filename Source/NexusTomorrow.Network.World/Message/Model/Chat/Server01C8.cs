@@ -11,7 +11,7 @@ public sealed partial class Server01C8
     [UInt(1)] public bool Unknown1 { get; set; }
     [UInt(1)] public bool Unknown2 { get; set; }
     [UInt(1)] public bool Unknown3 { get; set; }
-    public Client00B5Part0 Unknown4 { get; set; } = new();
+    public RealmScopedId Unknown4 { get; set; } = new();
     [WideString] public string Unknown5 { get; set; } = "";
     [WideString] public string Unknown6 { get; set; } = "";
     [UInt(3)] public byte Unknown7 { get; set; }

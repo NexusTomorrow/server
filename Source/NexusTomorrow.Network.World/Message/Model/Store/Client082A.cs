@@ -11,6 +11,6 @@ public sealed partial class Client082A
     [UInt(5)] public byte Unknown1 { get; set; }
     [UInt(14)] public ushort Unknown2 { get; set; }
     [UInt(20)] public uint Unknown3 { get; set; }
-    public Client00B5Part0 Unknown4 { get; set; } = new();
+    public RealmScopedId Unknown4 { get; set; } = new();
     [UInt(20)] public uint Unknown5 { get; set; }
 }

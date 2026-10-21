@@ -8,5 +8,5 @@ namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 public sealed partial class Client03F2
 {
     [WideString] public string Unknown0 { get; private set; } = "";
-    public Client00B5Part0 Unknown1 { get; private set; } = new();
+    public RealmScopedId Unknown1 { get; private set; } = new();
 }

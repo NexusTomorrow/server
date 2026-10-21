@@ -15,7 +15,7 @@ public sealed partial class Server05E7
     [UnionCase(0)]
     public sealed partial class Server05E7Union0Arm00 : IServer05E7Union0
     {
-        public Client00B5Part0 Unknown0 { get; set; } = new();
+        public RealmScopedId Unknown0 { get; set; } = new();
         [UInt(5)] public byte Unknown1 { get; set; }
     }
 

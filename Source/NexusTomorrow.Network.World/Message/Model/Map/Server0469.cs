@@ -12,7 +12,7 @@ public sealed partial class Server0469
     [UInt(15)] public uint Unknown1 { get; set; }
 
     [UInt(32), Count] public uint Unknown2 { get; set; }
-    [Array(CountFrom = nameof(Unknown2))] public List<Client00B5Part0> Unknown3 { get; set; } = [];
+    [Array(CountFrom = nameof(Unknown2))] public List<RealmScopedId> Unknown3 { get; set; } = [];
     [Array(CountFrom = nameof(Unknown2))] public List<Client0096Part0> Unknown4 { get; set; } = [];
     [Array(CountFrom = nameof(Unknown2)), UInt(32)] public List<uint> Unknown5 { get; set; } = [];
     [Array(CountFrom = nameof(Unknown2)), UInt(32)] public List<uint> Unknown6 { get; set; } = [];

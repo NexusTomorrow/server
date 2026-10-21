@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 public sealed partial class Server0399Part0
 {
     [WideString] public string Unknown0 { get; set; } = "";
-    public Client00B5Part0 Unknown1 { get; set; } = new();
+    public RealmScopedId Unknown1 { get; set; } = new();
     [UInt(8)] public byte Unknown2 { get; set; }
     [UInt(6)] public byte Unknown3 { get; set; }
     [UInt(8)] public byte Unknown4 { get; set; }

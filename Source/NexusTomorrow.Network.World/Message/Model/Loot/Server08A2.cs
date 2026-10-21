@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Loot;
 public sealed partial class Server08A2
 {
     [UInt(32)] public uint Unknown0 { get; set; }
-    public Client00B5Part0 Unknown1 { get; set; } = new Client00B5Part0();
+    public RealmScopedId Unknown1 { get; set; } = new RealmScopedId();
     [UInt(18)] public uint Unknown2 { get; set; }
     [UInt(32)] public uint Unknown3 { get; set; }
 }

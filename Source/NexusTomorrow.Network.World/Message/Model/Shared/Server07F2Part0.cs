@@ -17,5 +17,5 @@ public sealed partial class Server07F2Part0
     [UInt(64)] public ulong Unknown9 { get; set; }
     [UInt(32)] public uint Unknown10 { get; set; }
     [UInt(32)] public uint Unknown11 { get; set; }
-    [Array(CountBits = 32)] public List<Client00B5Part0> Unknown12 { get; set; } = [];
+    [Array(CountBits = 32)] public List<RealmScopedId> Unknown12 { get; set; } = [];
 }

@@ -13,7 +13,7 @@ public partial class Client04B1
         [UInt(64)] public ulong Unknown0 { get; set; }
     }
 
-    public Client00B5Part0 Unknown0 { get; private set; } = new();
+    public RealmScopedId Unknown0 { get; private set; } = new();
     [UInt(32)] public uint Unknown1 { get; private set; }
     public Client04B1Part0 Unknown2 { get; private set; } = new();
     [WideString] public string Unknown3 { get; private set; } = "";

@@ -7,5 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 [WireMessage(GameMessageOpcode.Client05D1, Direction.ClientToServer)]
 public sealed partial class Client05D1
 {
-    public Client00B5Part0 Unknown0 { get; private set; } = new();
+    public RealmScopedId Unknown0 { get; private set; } = new();
 }

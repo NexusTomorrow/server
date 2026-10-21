@@ -7,6 +7,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Housing;
 [WireMessage(GameMessageOpcode.Server0514, Direction.ServerToClient)]
 public sealed partial class Server0514
 {
-    public Client00B5Part0 Unknown0 { get; set; } = new();
+    public RealmScopedId Unknown0 { get; set; } = new();
     [WideString] public string Unknown1 { get; set; } = "";
 }

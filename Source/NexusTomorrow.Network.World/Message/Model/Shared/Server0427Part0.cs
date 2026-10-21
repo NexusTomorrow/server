@@ -16,7 +16,7 @@ public sealed partial class Server0427Part0
     [UInt(2)] public byte Unknown7 { get; set; }
     [Array(CountFrom = nameof(Unknown2))] public List<Server0405Part0> Unknown8 { get; set; } = [];
 
-    public Client00B5Part0 Unknown9 { get; set; } = new();
+    public RealmScopedId Unknown9 { get; set; } = new();
     [UInt(14)] public ushort Unknown10 { get; set; }
 
     public Server0427Part1 Unknown11 { get; set; } = new();

@@ -10,7 +10,7 @@ public sealed partial class Server08A3
     [WireStruct]
     public sealed partial class Server08A3Part0
     {
-        public Client00B5Part0 Unknown0 { get; set; } = new Client00B5Part0();
+        public RealmScopedId Unknown0 { get; set; } = new RealmScopedId();
         [UInt(32)] public uint Unknown1 { get; set; }
     }
 

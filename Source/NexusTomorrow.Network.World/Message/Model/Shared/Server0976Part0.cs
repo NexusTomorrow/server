@@ -10,9 +10,9 @@ public sealed partial class Server0976Part0
     [UInt(64)] public ulong Unknown2 { get; set; }
     [WideString] public string Unknown3 { get; set; } = "";
     [UInt(32)] public uint Unknown4 { get; set; }
-    public Client00B5Part0 Unknown5 { get; set; } = new();
+    public RealmScopedId Unknown5 { get; set; } = new();
     [UInt(64)] public ulong Unknown6 { get; set; }
     [UInt(5)] public byte Unknown7 { get; set; }
     [UInt(64)] public ulong Unknown8 { get; set; }
-    public Client00B5Part0 Unknown9 { get; set; } = new();
+    public RealmScopedId Unknown9 { get; set; } = new();
 }

@@ -8,5 +8,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Info;
 public sealed partial class Client0597
 {
     [UInt(4)] public byte Unknown0 { get; private set; }
-    public Client00B5Part0 Unknown1 { get; } = new();
+    public RealmScopedId Unknown1 { get; } = new();
 }

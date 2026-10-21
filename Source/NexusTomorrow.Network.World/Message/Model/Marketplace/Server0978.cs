@@ -14,8 +14,8 @@ public sealed partial class Server0978
         [UInt(32)] public uint Unknown1 { get; set; }
         [UInt(1)] public bool Unknown2 { get; set; }
         [UInt(32)] public uint Unknown3 { get; set; }
-        public Client00B5Part0 Unknown4 { get; set; } = new();
-        public Client00B5Part0 Unknown5 { get; set; } = new();
+        public RealmScopedId Unknown4 { get; set; } = new();
+        public RealmScopedId Unknown5 { get; set; } = new();
         [UInt(64)] public ulong Unknown6 { get; set; }
         [UInt(64)] public ulong Unknown7 { get; set; }
     }

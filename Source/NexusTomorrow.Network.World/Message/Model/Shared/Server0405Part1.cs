@@ -34,7 +34,7 @@ public sealed partial class Server0405Part1
 
     [FixedArray(5)] public Server0405Part2[] Unknown12 { get; set; } = [new(), new(), new(), new(), new()];
 
-    public Client00B5Part0 Unknown13 { get; set; } = new();
+    public RealmScopedId Unknown13 { get; set; } = new();
 
     [UInt(32)] public uint Unknown14 { get; set; }
     [UInt(16)] public ushort Unknown15 { get; set; }

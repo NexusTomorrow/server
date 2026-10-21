@@ -9,7 +9,7 @@ public sealed partial class Client0408
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
 
-    public Client00B5Part0 Unknown1 { get; set; } = new();
+    public RealmScopedId Unknown1 { get; set; } = new();
 
     [UInt(32)] public uint Unknown2 { get; set; }
 

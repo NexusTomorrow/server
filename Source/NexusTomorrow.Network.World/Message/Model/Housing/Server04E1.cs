@@ -24,6 +24,6 @@ public sealed partial class Server04E1
         [Float32] public float Unknown11 { get; set; }
     }
 
-    public Client00B5Part0 Unknown0 { get; set; } = new();
+    public RealmScopedId Unknown0 { get; set; } = new();
     [Array(CountBits = 32)] public List<Server04E1Part0> Unknown1 { get; set; } = [];
 }

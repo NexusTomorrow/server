@@ -7,6 +7,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 [WireMessage(GameMessageOpcode.Server04A1, Direction.ServerToClient)]
 public sealed partial class Server04A1
 {
-    public Client00B5Part0 Unknown0 { get; private set; } = new();
+    public RealmScopedId Unknown0 { get; private set; } = new();
     public Server0493Part6 Unknown1 { get; private set; } = new();
 }

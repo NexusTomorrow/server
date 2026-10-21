@@ -9,6 +9,6 @@ public sealed partial class Server0450
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
     [UInt(32)] public uint Unknown1 { get; set; }
-    public Client00B5Part0 Unknown2 { get; set; } = new();
+    public RealmScopedId Unknown2 { get; set; } = new();
     [UInt(4)] public byte Unknown3 { get; set; }
 }

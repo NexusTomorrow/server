@@ -10,7 +10,7 @@ public sealed partial class Server04DF
     [WireStruct]
     public sealed partial class Server04DFPart0
     {
-        public Client00B5Part0 Unknown0 { get; set; } = new();
+        public RealmScopedId Unknown0 { get; set; } = new();
         [UInt(64)] public ulong Unknown1 { get; set; }
         [UInt(64)] public ulong Unknown2 { get; set; }
         [UInt(64)] public ulong Unknown3 { get; set; }
