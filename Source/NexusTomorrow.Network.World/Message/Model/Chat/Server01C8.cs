@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Chat;
 [WireMessage(GameMessageOpcode.Server01C8, Direction.ServerToClient)]
 public sealed partial class Server01C8
 {
-    public Server01B5Part0 Unknown0 { get; set; } = new();
+    public ChatChannelKey Unknown0 { get; set; } = new();
     [UInt(1)] public bool Unknown1 { get; set; }
     [UInt(1)] public bool Unknown2 { get; set; }
     [UInt(1)] public bool Unknown3 { get; set; }

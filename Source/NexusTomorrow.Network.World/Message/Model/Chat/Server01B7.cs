@@ -6,6 +6,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Chat;
 [WireMessage(GameMessageOpcode.Server01B7, Direction.ServerToClient)]
 public sealed partial class Server01B7
 {
-    public Server01B5Part0 Unknown0 { get; set; } = new();
+    public ChatChannelKey Unknown0 { get; set; } = new();
     [UInt(32)] public uint Unknown1 { get; set; }
 }
