@@ -3,9 +3,23 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Inventory;
 
+/// <summary>
+/// Buys an item from the vendor: the request the global script call BuyItemFromVendor sends.
+/// </summary>
+/// <remarks>
+/// The client sends it only while the player interacts with a vendor.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Client00BE, Direction.ClientToServer)]
+[Verified(Rung.Fields)]
 public sealed partial class BuyItemFromVendor
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
-    [UInt(32)] public uint Unknown1 { get; set; }
+    /// <summary>
+    /// The script call's idUnique, documented as the item's unique id number.
+    /// </summary>
+    [UInt(32)] public uint ItemId { get; set; }
+
+    /// <summary>
+    /// How many to buy: the script call's nQuantity.
+    /// </summary>
+    [UInt(32)] public uint Quantity { get; set; }
 }
