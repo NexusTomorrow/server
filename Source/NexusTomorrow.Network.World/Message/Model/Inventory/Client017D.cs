@@ -8,6 +8,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Inventory;
 public sealed partial class Client017D
 {
     [UInt(64)] public ulong Unknown0 { get; private set; }
-    public Server0111Part2 Unknown1 { get; } = new();
+    public ItemLocation Unknown1 { get; } = new();
     [UInt(32)] public uint Unknown2 { get; private set; }
 }

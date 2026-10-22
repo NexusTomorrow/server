@@ -11,7 +11,7 @@ public sealed partial class Server019D
     public sealed partial class Server019DPart0
     {
         [UInt(4)] public byte Unknown0 { get; set; }
-        public Server0111Part2 Unknown1 { get; set; } = new();
+        public ItemLocation Unknown1 { get; set; } = new();
         [UInt(32)] public uint Unknown2 { get; set; }
     }
 

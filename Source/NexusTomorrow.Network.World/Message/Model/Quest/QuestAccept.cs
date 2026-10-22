@@ -14,7 +14,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Quest;
 [Verified(Rung.Purpose)]
 public sealed partial class QuestAccept
 {
-    public Server0111Part2 Unknown0 { get; } = new();
+    public ItemLocation Unknown0 { get; } = new();
 
     /// <summary>
     /// The quest, as its Quest2 row id.

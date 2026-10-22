@@ -7,5 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model.GenericUnlock;
 [WireMessage(GameMessageOpcode.Client0400, Direction.ClientToServer)]
 public sealed partial class Client0400
 {
-    public Server0111Part2 Unknown0 { get; } = new();
+    public ItemLocation Unknown0 { get; } = new();
 }

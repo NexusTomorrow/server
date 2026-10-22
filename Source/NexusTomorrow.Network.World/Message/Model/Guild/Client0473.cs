@@ -11,8 +11,8 @@ public sealed partial class Client0473
     [UInt(64)] public ulong Unknown1 { get; private set; }
     [UInt(64)] public ulong Unknown2 { get; private set; }
     [UInt(18)] public uint Unknown3 { get; private set; }
-    public Server0111Part2 Unknown4 { get; private set; } = new Server0111Part2();
-    public Server0111Part2 Unknown5 { get; private set; } = new Server0111Part2();
+    public ItemLocation Unknown4 { get; private set; } = new ItemLocation();
+    public ItemLocation Unknown5 { get; private set; } = new ItemLocation();
     [UInt(1)] public bool Unknown6 { get; private set; }
     [UInt(32)] public uint Unknown7 { get; private set; }
 }

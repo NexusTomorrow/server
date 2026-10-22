@@ -7,5 +7,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Costume;
 [WireMessage(GameMessageOpcode.Client090F, Direction.ClientToServer)]
 public sealed partial class Client090F
 {
-    public Server0111Part2 Unknown0 { get; } = new();
+    public ItemLocation Unknown0 { get; } = new();
 }

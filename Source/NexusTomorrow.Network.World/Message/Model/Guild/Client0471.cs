@@ -10,7 +10,7 @@ public sealed partial class Client0471
     public RealmScopedId Unknown0 { get; private set; } = new RealmScopedId();
     [UInt(64)] public ulong Unknown1 { get; private set; }
     [UInt(64)] public ulong Unknown2 { get; private set; }
-    public Server0111Part2 Unknown3 { get; private set; } = new Server0111Part2();
-    public Server0111Part2 Unknown4 { get; private set; } = new Server0111Part2();
+    public ItemLocation Unknown3 { get; private set; } = new ItemLocation();
+    public ItemLocation Unknown4 { get; private set; } = new ItemLocation();
     [UInt(32)] public uint Unknown5 { get; private set; }
 }
