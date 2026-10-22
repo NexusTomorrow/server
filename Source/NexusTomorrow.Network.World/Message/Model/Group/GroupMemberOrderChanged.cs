@@ -1,21 +1,41 @@
 ﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
+using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Group;
 
+/// <summary>
+/// Sets the order of a group's members.
+/// </summary>
+/// <remarks>
+/// For its current group the client then raises Group_MemberOrderChanged.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Server0438, Direction.ServerToClient)]
+[Verified(Rung.Fields)]
 public sealed partial class GroupMemberOrderChanged
 {
-    [WireStruct]
-    public sealed partial class Server0438Part0
-    {
-        [UInt(14)] public ushort Unknown0 { get; set; }
-        [UInt(64)] public ulong Unknown1 { get; set; }
-    }
+    /// <summary>
+    /// The group, by id.
+    /// </summary>
+    [UInt(64)] public ulong GroupId { get; set; }
 
-    [UInt(64)] public ulong Unknown0 { get; set; }
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
     [UInt(32)] public uint Unknown1 { get; set; }
-    [UInt(32), Count] public uint Unknown2 { get; set; }
-    [Array(CountFrom = nameof(Unknown2))] public List<Server0438Part0> Unknown3 { get; } = [];
-    [Array(CountFrom = nameof(Unknown2)), UInt(32)] public List<uint> Unknown4 { get; } = [];
+
+    /// <summary>
+    /// How many members the two lists hold.
+    /// </summary>
+    [UInt(32), Count] public uint MemberCount { get; set; }
+
+    /// <summary>
+    /// The members, by id.
+    /// </summary>
+    [Array(CountFrom = nameof(MemberCount))] public List<RealmScopedId> MemberIds { get; } = [];
+
+    /// <summary>
+    /// Each member's order, in the same position; GroupLib.GetGroupMember reports it plus one as nOrder.
+    /// </summary>
+    [Array(CountFrom = nameof(MemberCount)), UInt(32)] public List<uint> Orders { get; } = [];
 }
