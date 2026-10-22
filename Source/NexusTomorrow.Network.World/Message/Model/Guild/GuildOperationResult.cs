@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireMessage(GameMessageOpcode.Server04C9, Direction.ServerToClient)]
-public partial class Server04C9
+public partial class GuildOperationResult
 {
     public RealmScopedId Unknown0 { get; set; } = new();
 
