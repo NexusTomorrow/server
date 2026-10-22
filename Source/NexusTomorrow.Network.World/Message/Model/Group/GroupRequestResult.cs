@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Group;
 
 [WireMessage(GameMessageOpcode.Server0456, Direction.ServerToClient)]
-public sealed partial class Server0456
+public sealed partial class GroupRequestResult
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
 

@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Group;
 
 [WireMessage(GameMessageOpcode.Server0438, Direction.ServerToClient)]
-public sealed partial class Server0438
+public sealed partial class GroupMemberOrderChanged
 {
     [WireStruct]
     public sealed partial class Server0438Part0
