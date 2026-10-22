@@ -3,7 +3,7 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
-[WireMessage(GameMessageOpcode.Client052E, Direction.ClientToServer)]
-public sealed partial class Client052E
+[WireMessage(GameMessageOpcode.Client052C, Direction.ClientToServer)]
+public sealed partial class HousingRequestRandomCommunityList
 {
 }

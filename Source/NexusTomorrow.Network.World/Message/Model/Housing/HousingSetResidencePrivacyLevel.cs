@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [WireMessage(GameMessageOpcode.Client00C9, Direction.ClientToServer)]
-public sealed partial class Client00C9
+public sealed partial class HousingSetResidencePrivacyLevel
 {
     [UInt(32)] public uint Unknown0 { get; private set; }
 }
