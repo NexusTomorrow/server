@@ -120,10 +120,10 @@ public sealed class OracleEndpointTests : IAsyncLifetime
 
     private static int FreePort()
     {
-        var probe = new TcpListener(IPAddress.Loopback, 0);
-        probe.Start();
-        int port = ((IPEndPoint)probe.LocalEndpoint).Port;
-        probe.Stop();
+        var free = new TcpListener(IPAddress.Loopback, 0);
+        free.Start();
+        int port = ((IPEndPoint)free.LocalEndpoint).Port;
+        free.Stop();
         return port;
     }
 
