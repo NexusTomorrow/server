@@ -15,12 +15,12 @@ public sealed partial class ChatLinkNavPoint : IChatLinkPayload
     [UInt(14)] public ushort MapZoneId { get; set; }
 
     /// <summary>
-    /// The point's first coordinate.
+    /// The point's x coordinate.
     /// </summary>
     [Float32] public float X { get; set; }
 
     /// <summary>
-    /// The point's second coordinate.
+    /// The point's z coordinate; the client sets y, the height, to 0.
     /// </summary>
-    [Float32] public float Y { get; set; }
+    [Float32] public float Z { get; set; }
 }
