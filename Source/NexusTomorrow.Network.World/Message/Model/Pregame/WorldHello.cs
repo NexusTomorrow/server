@@ -22,7 +22,7 @@ public sealed partial class WorldHello
     /// <summary>
     /// The session key the client was handed, sent back unchanged, in the GUID layout.
     /// </summary>
-    public NetworkGuid SessionKey { get; } = new();
+    [Secret] public NetworkGuid SessionKey { get; } = new();
 
     /// <summary>
     /// The client gives this value no meaning. It always sends 0.

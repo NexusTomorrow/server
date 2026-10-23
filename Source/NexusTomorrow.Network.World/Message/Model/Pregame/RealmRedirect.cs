@@ -40,7 +40,7 @@ public sealed partial class RealmRedirect
     /// The session key, in the GUID layout. The client sends it back in <see cref="WorldHello"/> on the new connection and derives that
     /// connection's key from it.
     /// </summary>
-    public NetworkGuid SessionKey { get; } = new();
+    [Secret] public NetworkGuid SessionKey { get; } = new();
 
     /// <summary>
     /// The realm's world server.

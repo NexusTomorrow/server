@@ -28,7 +28,7 @@ public sealed partial class RealmHandoff
     /// The session key, in the GUID layout. The client sends it back in <c>WorldHello</c> (0x058F) and derives the world connection's key
     /// from it.
     /// </summary>
-    public NetworkGuid SessionKey { get; } = new();
+    [Secret] public NetworkGuid SessionKey { get; } = new();
 
     /// <summary>
     /// A value the client keeps and sends back unchanged as the first field of <c>WorldHello</c> (0x058F).

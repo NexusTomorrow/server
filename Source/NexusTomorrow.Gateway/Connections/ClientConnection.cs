@@ -15,7 +15,7 @@ namespace NexusTomorrow.Gateway.Connections;
 /// A game connection: one read loop that frames, answers transport pings and decodes, and one writer that drains the session's
 /// outbound queue in order and flushes once per drain. Owners reach it through <see cref="IClientSession"/> from any thread.
 /// </summary>
-public abstract class ClientConnection : IClientSession
+public abstract partial class ClientConnection : IClientSession
 {
     // Items written between flushes, so a queue that never empties still reaches the client.
     private const int FlushBatch = 64;
@@ -323,6 +323,11 @@ public abstract class ClientConnection : IClientSession
             return false;
         }
 
+#if DEBUG
+        // The decoder decrypted the frame in place, so the tap sees the clear envelope, whatever the table did with it.
+        TapReceived(body, inbound);
+#endif
+
         switch (inbound.Result)
         {
             case InboundResult.Dropped:
@@ -407,6 +412,9 @@ public abstract class ClientConnection : IClientSession
                                 FrameWriter.WritePing(output, TransportOpcodes.PingAnswer, item.PingIndex);
                                 break;
                         }
+#if DEBUG
+                        TapSent(item);
+#endif
                     }
                     finally
                     {
