@@ -20,6 +20,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Housing requests carry their real names: residence options, neighbor invitations, evictions and
   permissions, visits, vendor lists, renaming a residence or a community, and community placement and
   privacy.
+- The housing messages the client receives carry their real names: the residence list and privacy,
+  neighbors and neighbor invitations, the random visit lists, a community's placed residences, vendor
+  lists, ownership, plot builds and operation results.
 
 ### Changed
 
