@@ -284,6 +284,49 @@ public sealed class AccountOwnerTests : IAsyncLifetime
         Assert.Equal(0, _owner.OnlineCount);
     }
 
+    [Fact]
+    public async Task AnOnlineSessionIsFoundByItsAccountsEmailWithoutRegardToCase()
+    {
+        var session = new FakeClientSession();
+        LoginGranted grant = Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
+        await GreetAsync(grant.SessionKey, grant.Echo, "alice@example.com", session);
+
+        Assert.Same(session, await FindAsync("ALICE@example.com"));
+    }
+
+    [Fact]
+    public async Task NoSessionIsFoundForAnAccountThatIsNotOnline()
+    {
+        var session = new FakeClientSession();
+        Assert.Null(await FindAsync("alice@example.com"));
+        LoginGranted grant = Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
+        await GreetAsync(grant.SessionKey, grant.Echo, "alice@example.com", session);
+
+        _owner.Post(new WorldSessionClosed(7, session));
+        Assert.Null(await FindAsync("alice@example.com"));
+        Assert.Null(await FindAsync("bob@example.com"));
+    }
+
+    [Fact]
+    public async Task TheSessionThatReplacedAnotherIsTheOneFound()
+    {
+        var first = new FakeClientSession();
+        var second = new FakeClientSession();
+        LoginGranted grant = Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
+        await GreetAsync(grant.SessionKey, grant.Echo, "alice@example.com", first);
+        grant = Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
+        await GreetAsync(grant.SessionKey, grant.Echo, "alice@example.com", second);
+
+        Assert.Same(second, await FindAsync("alice@example.com"));
+    }
+
+    private async Task<IClientSession?> FindAsync(string email)
+    {
+        var reply = new TaskCompletionSource<IClientSession?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        Assert.True(_owner.Post(new FindOnlineSession(email, reply)));
+        return await reply.Task.WaitAsync(TimeSpan.FromSeconds(10));
+    }
+
     private async Task StoreSuspensionAsync(string email, DateTimeOffset? until)
     {
         var reply = new TaskCompletionSource<AdminResult>(TaskCreationOptions.RunContinuationsAsynchronously);

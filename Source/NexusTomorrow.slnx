@@ -40,10 +40,12 @@
     <Project Path="../Tests/NexusTomorrow.ProtocolReference.Tests/NexusTomorrow.ProtocolReference.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Server.Tests/NexusTomorrow.Server.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Testing/NexusTomorrow.Testing.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Tools.Tests/NexusTomorrow.Tools.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Transport.Tests/NexusTomorrow.Transport.Tests.csproj" />
   </Folder>
   <Folder Name="/Tools/">
     <Project Path="../Tools/NexusTomorrow.ProtocolReference/NexusTomorrow.ProtocolReference.csproj" />
+    <Project Path="../Tools/NexusTomorrow.Tools/NexusTomorrow.Tools.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="../Directory.Build.targets" />

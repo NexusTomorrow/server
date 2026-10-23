@@ -16,7 +16,7 @@ internal enum OutboundKind
 // itself, so the sender may change or reuse the message at once. The item is the buffer's single owner: the writer returns it after
 // writing the item, Enqueue returns it when the queue refuses the item, and the writer's close path returns every item still queued.
 // A key change is an item too, so it takes effect exactly between the messages queued before and after it.
-internal readonly record struct Outbound(OutboundKind Kind, ushort Opcode, byte[]? Body, int BodyLength, Type? MessageType, PacketCipher? Cipher, byte PingIndex)
+internal readonly partial record struct Outbound(OutboundKind Kind, ushort Opcode, byte[]? Body, int BodyLength, Type? MessageType, PacketCipher? Cipher, byte PingIndex)
 {
     public static Outbound Bare(ushort opcode, IWireStruct message) => Message(OutboundKind.Bare, opcode, message);
 

@@ -8,6 +8,10 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 
 ### Added
 
+- Debug builds carry a test endpoint for developers, off unless `Tools:Oracle:Enabled` is set and
+  bound to loopback only behind a token written at each start. It sends any server message to a
+  logged-in session, records the session's messages both ways without their secrets, and lists a
+  message's members. Release builds contain none of it, and the test workflow checks that.
 - The protocol reference has a page for the gateway's opcode table and one for the admin commands,
   both generated from the code.
 - More of the client's messages carry their real names and field meanings: mail, quests, the
