@@ -37,8 +37,6 @@ internal static class RegistryDisagreements
         ["0x0359 server to client [2].element[1]"] = new(TreeDiffers, "the client accepts selector 2 and the declaration has no arm"), // Server0359
         ["0x0359 server to client [2].element[1].arm 0x01[0]"] = new(TreeDiffers, "the client has a narrow string, the declaration a wide string"), // Server0359
         ["0x035F server to client [5].element[5]"] = new(TreeDiffers, "the client has a union, the declaration an array"), // Server035F
-        ["0x046F server to client"] = new(BitsDiffer, "the declaration's sequence goes on for 1 nodes after the client's ends"), // GuildBankItemAdded
-        ["0x047A server to client [4].element"] = new(TreeDiffers, "the declaration's sequence goes on for 1 nodes after the client's ends"), // GuildBankTabItems
         ["0x0598 server to client [3]"] = new(StringAsCountAndUnits, "the client has 16, the declaration a terminated wide string"), // Server0598
         ["0x0599 server to client [3]"] = new(StringAsCountAndUnits, "the client has 16, the declaration a terminated wide string"), // Server0599
         ["0x05E7 server to client [1]"] = new(TreeDiffers, "the client accepts selector 2 and the declaration has no arm"), // Server05E7

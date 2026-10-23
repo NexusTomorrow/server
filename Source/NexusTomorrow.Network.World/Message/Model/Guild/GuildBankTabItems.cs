@@ -27,5 +27,5 @@ public sealed partial class GuildBankTabItems
     /// <summary>
     /// The tab's items, each with its slot.
     /// </summary>
-    [Array(CountBits = 32)] public List<Server0111Part0> Items { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server0111Part1> Items { get; set; } = [];
 }

@@ -22,5 +22,5 @@ public sealed partial class GuildBankItemAdded
     /// <summary>
     /// The item, with the bank slot it sits in.
     /// </summary>
-    public Server0111Part0 Item { get; set; } = new();
+    public Server0111Part1 Item { get; set; } = new();
 }
