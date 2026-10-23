@@ -19,6 +19,9 @@ using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Account;
+#if DEBUG
+using NexusTomorrow.Tools;
+#endif
 
 namespace NexusTomorrow.Server;
 
@@ -86,6 +89,10 @@ public static class CoreServices
         services.AddHostedService<CoreLifetime>();
         services.AddHostedService<OwnerWatchdogService>();
         services.AddHostedService<ConsoleFrontEnd>();
+#if DEBUG
+        // In-process tooling (Tools/NexusTomorrow.Tools), in Debug builds only; its endpoint stays off unless Tools:Oracle:Enabled.
+        services.AddOracleTools(configuration);
+#endif
         return services;
     }
 

@@ -19,4 +19,9 @@
     <ProjectReference Include="..\NexusTomorrow.Commands\NexusTomorrow.Commands.csproj" />
   </ItemGroup>
 
+  <!-- In-process tooling, compiled into Debug builds only; CoreServices registers it under #if DEBUG. -->
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ProjectReference Include="..\..\Tools\NexusTomorrow.Tools\NexusTomorrow.Tools.csproj" />
+  </ItemGroup>
+
 </Project>

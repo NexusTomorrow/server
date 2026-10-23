@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="NexusTomorrow.Tools.Tests" />
+  </ItemGroup>
+
+  <!-- In-process tooling exists only in Debug builds: a Release build of this project compiles nothing, since the Gateway's debug
+       session surface it uses is compiled out there. -->
+  <ItemGroup Condition="'$(Configuration)' != 'Debug'">
+    <Compile Remove="**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The server references this project in Debug builds only, and it reaches the Gateway's Debug-only session surface. -->
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Gateway\NexusTomorrow.Gateway.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Owners\NexusTomorrow.Owners.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network\NexusTomorrow.Network.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network.Auth\NexusTomorrow.Network.Auth.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network.World\NexusTomorrow.Network.World.csproj" />
+  </ItemGroup>
+
+</Project>
