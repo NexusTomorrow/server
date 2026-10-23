@@ -31,7 +31,7 @@ internal static class Diagnostics
         "NTC003", "Enum value does not fit the declared width",
         "Member '{0}' of '{1}' is {2} bits wide, but {3} = {4} needs more; writing it throws",
         Category, DiagnosticSeverity.Warning, isEnabledByDefault: true,
-        description: "An enum member needs more bits than its field declares. The member stays, so a sentinel value that's never sent can be suppressed with its reason; writing it throws");
+        description: "An enum member needs more bits than its field declares; the member stays, so a sentinel value that's never sent can be suppressed with its reason, and writing it throws");
 
     public static readonly DiagnosticDescriptor BadReference = new(
         "NTC004", "Count or selector reference is wrong",
@@ -49,7 +49,7 @@ internal static class Diagnostics
         "NTC006", "Unsigned width on a signed type",
         "Member '{0}' of '{1}' is a signed {2} read as an unsigned {3}-bit value; a negative value cannot be written, so declare [SInt({3})] if the field is signed",
         Category, DiagnosticSeverity.Warning, isEnabledByDefault: true,
-        description: "`[UInt(n)]` on a signed integer narrower than its type, so a negative value can't be written. Enums are exempt; `NTC003` covers them");
+        description: "`[UInt(n)]` on a signed integer narrower than its type, so a negative value can't be written; enums are exempt, as `NTC003` covers them");
 
     public static readonly DiagnosticDescriptor SplitAcrossParts = new(
         "NTC007", "Wire members in more than one partial declaration",
@@ -67,7 +67,7 @@ internal static class Diagnostics
         "NTC009", "Wire attribute misused",
         "Member '{0}' of '{1}': {2}",
         Category, DiagnosticSeverity.Error, isEnabledByDefault: true,
-        description: "An attribute misused: both or neither of `CountBits` and `CountFrom`, an encoding that doesn't suit the member's type (a float attribute on an integer, `[Blob]` off `byte[]`, `[Pad]` off `Pad`), a second encoding on one member, a union type that isn't a wire interface or abstract `[WireStruct]`, an abstract `[WireStruct]` held as a plain member, a member with no setter (a get-only `List<T>` or `[WireStruct]` class is filled in place; any other can't be read into), a `[Count]` no array names");
+        description: "An attribute misused: both or neither of `CountBits` and `CountFrom`; a second encoding on one member; an encoding that doesn't suit the member's type (a float or string attribute on the wrong type, `[SInt]` on an unsigned type, `[UInt]` or `[SInt]` on a non-integer, `[Blob]` off `byte[]`, `[Pad]` off `Pad`, `[Array]` off a `List<T>` or `T[]`, `[FixedArray]` off `T[]`); a `[FixedArray]` length under 1; a self-counting blob length that isn't whole bytes; a union type that isn't a wire interface or abstract `[WireStruct]`; an abstract `[WireStruct]` held as a plain member; a nested type holding an aligned blob; a `[WireStruct]` value type with no setter; a `[Count]` that isn't a settable integer or that no array names; a `[Blob]`, `[Union]`, `[Array]` of `T[]`, scalar or string member with no setter or only an `init` one (a get-only `List<T>`, `[FixedArray]` or `[WireStruct]` class member is filled in place)");
 
     public static readonly DiagnosticDescriptor NoArms = new(
         "NTC010", "Union has no arms",
@@ -85,7 +85,7 @@ internal static class Diagnostics
         "NTC012", "Wire type misdeclared",
         "'{0}': {1}",
         Category, DiagnosticSeverity.Error, isEnabledByDefault: true,
-        description: "The type itself is misdeclared: a record, generic or nested in a generic type, both `[WireStruct]` and `[WireMessage]`, an abstract message, no public or internal parameterless constructor, a bad `[UnionCase]` value, opcode or direction, or a union arm holding an aligned blob");
+        description: "The type itself is misdeclared: a record, generic or nested in a generic type, both `[WireStruct]` and `[WireMessage]`, an abstract message, a non-abstract type with no public or internal parameterless constructor, a bad `[UnionCase]` value, opcode or direction, or a union arm holding an aligned blob");
 
     public static readonly DiagnosticDescriptor CaseTooWide = new(
         "NTC013", "Union case does not fit its selector",
@@ -104,23 +104,13 @@ internal static class Diagnostics
 
     public static DiagnosticDescriptor ById(string id)
     {
-        return id switch
+        foreach (DiagnosticDescriptor descriptor in All)
         {
-            "NTC001" => MissingWidth,
-            "NTC002" => BadWidth,
-            "NTC003" => ValueTooWide,
-            "NTC004" => BadReference,
-            "NTC005" => Duplicate,
-            "NTC006" => NarrowSignedUInt,
-            "NTC007" => SplitAcrossParts,
-            "NTC008" => NotPartial,
-            "NTC009" => BadAttribute,
-            "NTC010" => NoArms,
-            "NTC011" => AlignedBlobInStruct,
-            "NTC012" => BadType,
-            "NTC013" => CaseTooWide,
-            _ => throw new ArgumentOutOfRangeException(nameof(id), id, "Unknown diagnostic id."),
-        };
+            if (descriptor.Id == id)
+                return descriptor;
+        }
+
+        throw new ArgumentOutOfRangeException(nameof(id), id, "Unknown diagnostic id.");
     }
 }
 
