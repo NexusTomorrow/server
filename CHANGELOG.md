@@ -41,6 +41,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Unit messages carry their real names and field meanings: a unit's name, title, faction, stand
   state, path, guilds, target and vitals, emotes, vehicles and passengers, speech, loot taken,
   inspecting a unit, moving and swapping items, and the stun breakout.
+- Spell messages carry their real names and field meanings: resurrection and the resurrect dialog,
+  health, threat, CC states, spell thresholds, charges and cooldowns, floaters, the action bar's
+  shortcut sets, stance, and sheathing weapons.
 
 ### Changed
 
@@ -69,5 +72,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   in a line sent, whispered or received.
 - A resurrection request reads as the client writes it: the type in 7 bits, then the value the type
   takes.
+- A formatted floater's text reads as the client reads it, one text block in place of a list of
+  them.
 
 [Unreleased]: https://github.com/NexusTomorrow/server/compare/main...dev

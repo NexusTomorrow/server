@@ -13,7 +13,7 @@ public sealed partial class VehiclePassengerAdded
     /// <summary>
     /// The vehicle, by unit id.
     /// </summary>
-    [UInt(32)] public uint VehicleId { get; set; }
+    [UInt(32)] public uint VehicleUnitId { get; set; }
 
     [UInt(2)] public byte Unknown1 { get; set; }
     [UInt(3)] public byte Unknown2 { get; set; }

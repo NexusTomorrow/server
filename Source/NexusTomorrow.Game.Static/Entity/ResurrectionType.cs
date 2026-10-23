@@ -1,5 +1,9 @@
 ﻿namespace NexusTomorrow.Game.Static.Entity;
 
+/// <summary>
+/// The ways a unit can be resurrected, as the interface's GameLib.RezType names them; the resurrect dialog's options
+/// combine them.
+/// </summary>
 [Flags]
 public enum ResurrectionType
 {
@@ -8,9 +12,5 @@ public enum ResurrectionType
     Holocrypt = 2,
     SpellCasterLocation = 4,
     ExitInstance = 32,
-    WakeHereServiceToken = 64,
-
-    // TODO: Add Holocrypt to below masks when we support them
-    OpenWorld = WakeHere | WakeHereServiceToken,
-    Dungeon = ExitInstance
+    WakeHereServiceToken = 64
 }
