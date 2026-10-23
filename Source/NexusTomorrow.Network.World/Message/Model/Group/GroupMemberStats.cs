@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Group;
 
 [WireMessage(GameMessageOpcode.Server0466, Direction.ServerToClient)]
-public sealed partial class Server0466
+public sealed partial class GroupMemberStats
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
     public RealmScopedId Unknown1 { get; set; } = new();
@@ -16,7 +16,7 @@ public sealed partial class Server0466
     [UInt(17)] public uint Unknown4 { get; set; }
     [UInt(16)] public ushort Unknown5 { get; set; }
 
-    [FixedArray(5)] public Server0405Part1.Server0405Part2[] Unknown6 { get; set; } = [new(), new(), new(), new(), new()];
+    [FixedArray(5)] public GroupMemberInfo.Server0405Part2[] Unknown6 { get; set; } = [new(), new(), new(), new(), new()];
 
     [PackedFloat] public float Unknown7 { get; set; }
     [PackedFloat] public float Unknown8 { get; set; }

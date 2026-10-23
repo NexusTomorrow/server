@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Group;
 
 [WireMessage(GameMessageOpcode.Server044F, Direction.ServerToClient)]
-public sealed partial class Server044F
+public sealed partial class GroupReferral
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
 

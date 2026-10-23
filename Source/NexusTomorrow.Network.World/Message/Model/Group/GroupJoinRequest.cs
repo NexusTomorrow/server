@@ -4,9 +4,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Group;
 
-[WireMessage(GameMessageOpcode.Client0428, Direction.ClientToServer)]
-public sealed partial class Client0428
+[WireMessage(GameMessageOpcode.Server0424, Direction.ServerToClient)]
+public sealed partial class GroupJoinRequest
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
-    public RealmScopedId Unknown1 { get; set; } = new();
+
+    public GroupMemberRecord Unknown1 { get; set; } = new();
 }

@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class Server0405Part1
+public sealed partial class GroupMemberInfo
 {
     [WireStruct]
     public sealed partial class Server0405Part2

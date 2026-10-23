@@ -24,5 +24,5 @@ public sealed partial class GroupAdd
     /// <summary>
     /// The member.
     /// </summary>
-    public Server0405Part0 Member { get; set; } = new();
+    public GroupMemberRecord Member { get; set; } = new();
 }
