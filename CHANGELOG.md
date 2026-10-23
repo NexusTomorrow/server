@@ -38,6 +38,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Chat lines carry their real names: a line sent, whispered or received, the server's acceptance of
   the player's own, and the links in a line (items, quests, archive articles, map points, loot, and
   the alien and profanity ranges).
+- Unit messages carry their real names and field meanings: a unit's name, title, faction, stand
+  state, path, guilds, target and vitals, emotes, vehicles and passengers, speech, loot taken,
+  inspecting a unit, moving and swapping items, and the stun breakout.
 
 ### Changed
 
@@ -64,5 +67,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   only an item added to the player's own inventory carries.
 - A chat line's alien and profanity links carry their whole 32-bit value, as the client reads them,
   in a line sent, whispered or received.
+- A resurrection request reads as the client writes it: the type in 7 bits, then the value the type
+  takes.
 
 [Unreleased]: https://github.com/NexusTomorrow/server/compare/main...dev
