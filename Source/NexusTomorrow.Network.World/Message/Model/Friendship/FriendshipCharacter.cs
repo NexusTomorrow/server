@@ -11,11 +11,12 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 /// The character's name, realm, class, path and faction are not sent here: the client requests them for <see cref="CharacterId"/>.
 /// </remarks>
 [WireStruct]
-public sealed partial class Friendship
+public sealed partial class FriendshipCharacter
 {
     /// <summary>
-    /// The friendship's id, by which <see cref="FriendshipRemove"/>, <see cref="FriendshipNoteUpdate"/> and
-    /// <see cref="FriendshipTypeUpdate"/> name it.
+    /// The friendship's id, by which <see cref="FriendshipRemove"/>, <see cref="FriendshipNoteUpdate"/>, <see cref="FriendshipTypeUpdate"/>
+    /// and <see cref="FriendshipLocations"/> name it. An id below 2^48 marks a temporary entry, and the client shows the friend as
+    /// temporary, so a lasting friendship takes an id with a bit at or above bit 48 set.
     /// </summary>
     [UInt(64)] public ulong Id { get; set; }
 

@@ -12,7 +12,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 public sealed partial class FriendshipGetLocations
 {
     /// <summary>
-    /// The friendships, by <see cref="Friendship.CharacterId"/>.
+    /// The friendships, by <see cref="FriendshipCharacter.CharacterId"/>.
     /// </summary>
     [Array(CountBits = 8)] public List<RealmScopedId> CharacterIds { get; private set; } = [];
 

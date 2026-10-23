@@ -6,6 +6,9 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 /// <summary>
 /// Sets the player's private data on an account friend.
 /// </summary>
+/// <remarks>
+/// The client always writes 2 in <see cref="Unknown1"/>.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Client039D, Direction.ClientToServer)]
 [Verified(Rung.Purpose)]
 public sealed partial class FriendshipAccountSetPrivateData

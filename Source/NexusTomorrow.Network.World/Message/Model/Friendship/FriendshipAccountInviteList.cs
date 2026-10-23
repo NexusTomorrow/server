@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 /// The client files each invite and raises FriendshipAccountInvitesRecieved with them as tInviteList.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server039F, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class FriendshipAccountInviteList
 {
     /// <summary>
@@ -26,7 +26,7 @@ public sealed partial class FriendshipAccountInviteList
         [UInt(64)] public ulong Id { get; set; }
 
         /// <summary>
-        /// The kind of invite, which add-ons read as strInviteType.
+        /// The kind of invite.
         /// </summary>
         [UInt(2)] public byte InviteType { get; set; }
 

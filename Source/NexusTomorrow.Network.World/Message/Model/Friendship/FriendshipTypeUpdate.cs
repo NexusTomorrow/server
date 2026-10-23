@@ -15,12 +15,12 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 public sealed partial class FriendshipTypeUpdate
 {
     /// <summary>
-    /// The friendship, by <see cref="Friendship.Id"/>.
+    /// The friendship, by <see cref="FriendshipCharacter.Id"/>.
     /// </summary>
     [UInt(64)] public ulong Id { get; set; }
 
     /// <summary>
-    /// The new kind of friendship, as <see cref="Friendship.Type"/> gives it.
+    /// The new kind of friendship, as <see cref="FriendshipCharacter.Type"/> gives it.
     /// </summary>
     [UInt(4)] public FriendshipType Type { get; set; }
 }

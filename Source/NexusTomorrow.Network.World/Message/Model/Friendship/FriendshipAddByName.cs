@@ -11,11 +11,18 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 /// The client sends it only with a note that passes its check, and otherwise reports InvalidNote itself.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client03B4, Direction.ClientToServer)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class FriendshipAddByName
 {
-    [WideString] public string Unknown0 { get; private set; } = "";
-    [WideString] public string Unknown1 { get; private set; } = "";
+    /// <summary>
+    /// The character's name.
+    /// </summary>
+    [WideString] public string CharacterName { get; private set; } = "";
+
+    /// <summary>
+    /// The name of the character's realm.
+    /// </summary>
+    [WideString] public string RealmName { get; private set; } = "";
 
     /// <summary>
     /// The kind of friendship to add.

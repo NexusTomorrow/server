@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 /// Sets the level of a character on an account friend's account.
 /// </summary>
 /// <remarks>
-/// The client raises FriendshipAccountCharacterLevelUpdate.
+/// The client raises FriendshipAccountCharacterLevelUpdate only when the level changed.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server03B2, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

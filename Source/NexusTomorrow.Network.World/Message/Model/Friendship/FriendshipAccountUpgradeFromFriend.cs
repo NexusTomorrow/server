@@ -12,7 +12,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 public sealed partial class FriendshipAccountUpgradeFromFriend
 {
     /// <summary>
-    /// The friend, by <see cref="Friendship.CharacterId"/>.
+    /// The friend, by <see cref="FriendshipCharacter.CharacterId"/>.
     /// </summary>
     public RealmScopedId CharacterId { get; private set; } = new();
 

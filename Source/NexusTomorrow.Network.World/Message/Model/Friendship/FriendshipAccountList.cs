@@ -37,7 +37,11 @@ public sealed partial class FriendshipAccountList
         /// </summary>
         [WideString] public string PublicNote { get; set; } = "";
 
-        [Float32] public float Unknown3 { get; set; }
+        /// <summary>
+        /// The account's last-online time, as <see cref="FriendshipAccountLastOnline.LastOnline"/> sets it. A nonzero value marks the
+        /// account offline: the client clears its characters and sets its presence to <see cref="AccountPresenceState.Invisible"/>.
+        /// </summary>
+        [Float32] public float LastOnline { get; set; }
 
         /// <summary>
         /// The private note on the friend, which add-ons read as strPrivateNote.

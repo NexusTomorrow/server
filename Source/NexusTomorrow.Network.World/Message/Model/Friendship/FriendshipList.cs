@@ -16,5 +16,5 @@ public sealed partial class FriendshipList
     /// <summary>
     /// The friendships.
     /// </summary>
-    [Array(CountBits = 16)] public List<Friendship> Friends { get; set; } = [];
+    [Array(CountBits = 16)] public List<FriendshipCharacter> Friends { get; set; } = [];
 }

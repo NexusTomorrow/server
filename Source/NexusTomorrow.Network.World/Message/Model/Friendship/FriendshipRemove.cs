@@ -14,7 +14,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 public sealed partial class FriendshipRemove
 {
     /// <summary>
-    /// The friendship, by <see cref="Friendship.Id"/>.
+    /// The friendship, by <see cref="FriendshipCharacter.Id"/>.
     /// </summary>
     [UInt(64)] public ulong Id { get; set; }
 }

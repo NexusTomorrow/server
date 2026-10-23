@@ -8,11 +8,18 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 /// Removes a friendship with a character, by the character's name.
 /// </summary>
 [WireMessage(GameMessageOpcode.Client03C2, Direction.ClientToServer)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class FriendshipRemoveByName
 {
-    [WideString] public string Unknown0 { get; private set; } = "";
-    [WideString] public string Unknown1 { get; private set; } = "";
+    /// <summary>
+    /// The character's name.
+    /// </summary>
+    [WideString] public string CharacterName { get; private set; } = "";
+
+    /// <summary>
+    /// The name of the character's realm.
+    /// </summary>
+    [WideString] public string RealmName { get; private set; } = "";
 
     /// <summary>
     /// The kind of friendship to remove.

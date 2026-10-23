@@ -29,5 +29,9 @@ public sealed partial class FriendshipPersonalStatus
     /// <summary>
     /// Whether the player ignores invites from strangers, which GetPersonalStatus returns as bIgnoreStrangerInvites.
     /// </summary>
+    /// <remarks>
+    /// The client stores this value whole, so any nonzero value means on; <see cref="FriendshipIgnoreStrangersState.Flags"/> keeps only
+    /// one bit.
+    /// </remarks>
     [UInt(1)] public bool IgnoreStrangers { get; set; }
 }

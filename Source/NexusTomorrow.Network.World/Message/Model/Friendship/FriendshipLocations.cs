@@ -7,8 +7,9 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 /// Sets the zones the player's friends are in.
 /// </summary>
 /// <remarks>
-/// The client sets each zone on the friend its id finds, and on an account friend's character with that id, then raises
-/// FriendshipLocation.
+/// Each id is a friendship's <see cref="FriendshipCharacter.Id"/>, not one of the character ids <see cref="FriendshipGetLocations"/>
+/// sends. The client skips an id it does not hold, and the id and zone pairs after it shift. It reaches an account friend's character
+/// only through the found friendship's <see cref="FriendshipCharacter.CharacterId"/>. It then raises FriendshipLocation.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server03C0, Direction.ServerToClient)]
 [Verified(Rung.Fields)]
@@ -20,7 +21,7 @@ public sealed partial class FriendshipLocations
     [UInt(8), Count] public byte Count { get; set; }
 
     /// <summary>
-    /// The ids the zones are for, each finding a friend or an account friend's character.
+    /// The friendships, by <see cref="FriendshipCharacter.Id"/>.
     /// </summary>
     [Array(CountFrom = nameof(Count)), UInt(64)] public List<ulong> Ids { get; set; } = [];
 

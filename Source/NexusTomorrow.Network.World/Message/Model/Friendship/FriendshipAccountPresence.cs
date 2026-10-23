@@ -8,8 +8,11 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 /// Sets an account's presence.
 /// </summary>
 /// <remarks>
-/// For the player's own account the client sets the player's own presence, prints a line, and sends the presence the player has chosen
-/// again; for an account friend it sets the friend's.
+/// For an account friend the client sets the friend's presence. For the player's own account it stores the presence as stated, and
+/// copies it to the player's chosen presence only while that is 4, a value no <see cref="AccountPresenceState"/> member has. It prints
+/// a line only on a change to <see cref="AccountPresenceState.Available"/> from <see cref="AccountPresenceState.Away"/> or
+/// <see cref="AccountPresenceState.Busy"/>. When the stated and chosen presences differ it sends the chosen one again; otherwise it
+/// raises FriendshipAccountPersonalStatusUpdate.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server03AA, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

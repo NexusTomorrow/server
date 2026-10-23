@@ -17,5 +17,5 @@ public sealed partial class FriendshipAdd
     /// <summary>
     /// The friendship.
     /// </summary>
-    public Friendship Friend { get; set; } = new();
+    public FriendshipCharacter Friend { get; set; } = new();
 }

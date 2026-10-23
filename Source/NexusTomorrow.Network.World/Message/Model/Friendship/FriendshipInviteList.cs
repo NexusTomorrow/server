@@ -27,8 +27,17 @@ public sealed partial class FriendshipInviteList
         [UInt(64)] public ulong Id { get; set; }
 
         public RealmScopedId Unknown1 { get; set; } = new();
-        [UInt(3)] public uint Unknown2 { get; set; }
-        [Float32] public float Unknown3 { get; set; }
+
+        /// <summary>
+        /// Whether the player has seen the invite: it is new while this is 0, which add-ons read as bIsNew, and the client sets 1 when
+        /// it marks the invite seen.
+        /// </summary>
+        [UInt(3)] public uint SeenState { get; set; }
+
+        /// <summary>
+        /// The days until the invite expires, which add-ons read as fDaysUntilExpired.
+        /// </summary>
+        [Float32] public float DaysUntilExpired { get; set; }
 
         /// <summary>
         /// The invite's note, which add-ons read as strNote.
