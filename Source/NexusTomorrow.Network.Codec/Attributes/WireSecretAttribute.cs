@@ -5,4 +5,4 @@
 /// body of any message with a member so marked.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-public sealed class SecretAttribute : Attribute;
+public sealed class WireSecretAttribute : Attribute;

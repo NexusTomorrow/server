@@ -11,7 +11,7 @@ namespace NexusTomorrow.Tools;
 /// The <c>tap</c> verb's tap: every message a session reads or writes, sent to an endpoint connection as
 /// <c>{"tap": {...}}</c> lines. Each direction is numbered from 1 in the order the session handled it, so the n-th message sent is the
 /// n-th the client receives on this connection after the tap was attached. A message whose type has a member marked
-/// <see cref="SecretAttribute"/>, at any depth, is recorded without its bytes.
+/// <see cref="WireSecretAttribute"/>, at any depth, is recorded without its bytes.
 /// </summary>
 public sealed class SessionRecorder : ISessionTap
 {
@@ -70,7 +70,7 @@ public sealed class SessionRecorder : ISessionTap
     }
 
     /// <summary>
-    /// Whether <paramref name="type"/> or any wire struct it holds has a member marked <see cref="SecretAttribute"/>.
+    /// Whether <paramref name="type"/> or any wire struct it holds has a member marked <see cref="WireSecretAttribute"/>.
     /// </summary>
     internal static bool HoldsSecret(Type type) => s_secret.GetOrAdd(type, static t => HoldsSecret(t, []));
 
@@ -82,7 +82,7 @@ public sealed class SessionRecorder : ISessionTap
         const BindingFlags Members = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
         foreach (MemberInfo member in type.GetProperties(Members).Cast<MemberInfo>().Concat(type.GetFields(Members)))
         {
-            if (member.GetCustomAttribute<SecretAttribute>() is not null)
+            if (member.GetCustomAttribute<WireSecretAttribute>() is not null)
                 return true;
 
             Type memberType = member is PropertyInfo property ? property.PropertyType : ((FieldInfo)member).FieldType;
