@@ -18,7 +18,7 @@ public sealed class SettingsPageTests
         const string expected = """
             ![reference, committed](https://img.shields.io/badge/reference-committed-2ea44f) ![verified 2026-10-23](https://img.shields.io/badge/verified-2026--10--23-6e7781) [![dev abc1234](https://img.shields.io/badge/dev-abc1234-6e7781)](https://github.com/NexusTomorrow/server/commit/abc1234)
 
-            Every setting the server reads: its default, what the host checks at start-up, and what it sets. A setting that fails its check stops the server before it listens, naming the setting, never its value ([Host lifecycle](Host-lifecycle#settings)).
+            Every setting a Release build reads: its default, what the host checks at start-up, and what it sets. A setting that fails its check stops the server before it listens, naming the setting, never its value ([Host lifecycle](Host-lifecycle#settings)).
 
             A setting can also come from the environment, its name with `__` for each `:`, such as `Maps__TickMs`.
 
