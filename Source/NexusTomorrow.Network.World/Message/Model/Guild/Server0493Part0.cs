@@ -38,7 +38,7 @@ public sealed partial class Server0493Part0
     [UInt(32)] public uint Unknown2 { get; set; }
     [UInt(4)] public byte Unknown3 { get; set; }
 
-    [FixedArray(10)] public Server0493Part1[] Unknown4 { get; set; } = [.. Enumerable.Range(0, 10).Select(_ => new Server0493Part1())];
+    [FixedArray(10)] public GuildRank[] Unknown4 { get; set; } = [.. Enumerable.Range(0, 10).Select(_ => new GuildRank())];
 
     public GuildHolomark Unknown5 { get; set; } = new();
 
