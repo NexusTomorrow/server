@@ -32,6 +32,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - The guild and member records carry their real names and field meanings: the guilds a player
   belongs to, the roster, a unit's guild on its nameplate, and the recruiting guilds with their
   details and recruiters.
+- Chat channel messages carry their real names and field meanings: joining and leaving, members,
+  moderators, mutes, owners and passwords, the results of sending a line or a whisper, and the zone
+  channels' zone.
 
 ### Changed
 
