@@ -3,9 +3,20 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
+/// <summary>
+/// The result of cancelling an item auction; the client raises ItemCancelResult with the result and the auction.
+/// </summary>
 [WireMessage(GameMessageOpcode.Server0565, Direction.ServerToClient)]
+[Verified(Rung.Purpose)]
 public sealed partial class ItemAuctionCancelResult
 {
-    public ItemAuction Unknown0 { get; set; } = new();
-    [UInt(8)] public byte Unknown1 { get; set; }
+    /// <summary>
+    /// The auction.
+    /// </summary>
+    public ItemAuction Auction { get; set; } = new();
+
+    /// <summary>
+    /// The result, a GameLib.CodeEnumGenericError code.
+    /// </summary>
+    [UInt(8)] public byte Result { get; set; }
 }
