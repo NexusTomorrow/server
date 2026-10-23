@@ -91,7 +91,7 @@ public sealed class OracleVerbsTests : IAsyncLifetime
     {
         JsonObject reply = await RequestAsync("tap", """{"account": "alice@example.com"}""");
         Assert.True((bool)reply["ok"]!);
-        ISessionTap tap = Assert.IsType<SessionRecorder>(_session.Tap);
+        SessionRecorder tap = Assert.IsType<SessionRecorder>(_session.Tap);
 
         tap.Sent(1, 0x036A, [0x01, 0x02], typeof(Kicked));
         tap.Received(1, [0xAA], new Inbound(InboundResult.Dropped, 0x0999, null, "no opcode table row"));
