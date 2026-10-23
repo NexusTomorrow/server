@@ -59,24 +59,21 @@ internal static class MessageBinder
     private static void SetMember(object target, MemberInfo member, JsonNode node, string path)
     {
         Type memberType = MemberType(member);
-        object? value;
-        if (member.GetCustomAttribute<BlobAttribute>() is not null)
-            value = Hex(node, path);
-        else if (member.GetCustomAttribute<UnionAttribute>() is not null)
-            value = Arm(member, memberType, node, path);
-        else if (member.GetCustomAttribute<ArrayAttribute>() is not null)
-            value = Elements(member, memberType, node, path, length: null);
-        else if (member.GetCustomAttribute<FixedArrayAttribute>() is { } fixedArray)
-            value = Elements(member, memberType, node, path, fixedArray.Length);
-        else if (IsWireType(memberType) && CanOnlyRead(member))
+        if (IsWireType(memberType) && CanOnlyRead(member))
         {
             // A nested struct declared { get; } = new() is filled in place.
             Bind(Read(member, target) ?? throw new ArgumentException($"{path}: the nested struct is null"), Object(node, path), path + ".");
             return;
         }
-        else
-            value = Value(member, memberType, node, path);
 
+        object? value = member switch
+        {
+            _ when member.GetCustomAttribute<BlobAttribute>() is not null => Hex(node, path),
+            _ when member.GetCustomAttribute<UnionAttribute>() is not null => Arm(member, memberType, node, path),
+            _ when member.GetCustomAttribute<ArrayAttribute>() is not null => Elements(member, memberType, node, path, length: null),
+            _ when member.GetCustomAttribute<FixedArrayAttribute>() is { } fixedArray => Elements(member, memberType, node, path, fixedArray.Length),
+            _ => Value(member, memberType, node, path),
+        };
         Write(member, target, value);
     }
 
@@ -96,7 +93,9 @@ internal static class MessageBinder
 
         if (member.GetCustomAttribute<WideStringAttribute>() is not null || member.GetCustomAttribute<NarrowStringAttribute>() is not null
             || member.GetCustomAttribute<TerminatedWideStringAttribute>() is not null)
+        {
             return node is JsonValue text && text.GetValueKind() == JsonValueKind.String ? text.GetValue<string>() : throw new ArgumentException($"{path}: a string");
+        }
 
         if (IsWireType(valueType) && !valueType.IsAbstract)
         {
@@ -173,7 +172,7 @@ internal static class MessageBinder
         if (length is { } fixedLength && items.Count != fixedLength)
             throw new ArgumentException($"{path}: exactly {fixedLength} elements");
 
-        System.Array values = System.Array.CreateInstance(element, items.Count);
+        var values = System.Array.CreateInstance(element, items.Count);
         for (int i = 0; i < items.Count; i++)
         {
             JsonNode item = items[i] ?? throw new ArgumentException($"{path}[{i}]: null");
