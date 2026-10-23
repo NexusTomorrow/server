@@ -22,6 +22,7 @@
     <ProjectReference Include="..\NexusTomorrow.Network.Auth\NexusTomorrow.Network.Auth.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Network.World\NexusTomorrow.Network.World.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Persistence\NexusTomorrow.Persistence.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Settings\NexusTomorrow.Settings.csproj" />
   </ItemGroup>
 
 </Project>

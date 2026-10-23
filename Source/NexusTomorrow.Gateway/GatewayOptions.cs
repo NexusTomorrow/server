@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NexusTomorrow.Settings;
 
 namespace NexusTomorrow.Gateway;
 
 /// <summary>
 /// The <c>Gateway</c> configuration section. Everything binds to loopback unless configured otherwise.
 /// </summary>
+[SettingsSection(Section, 1, "Gateway", "Gateway#knobs")]
+[DistinctSettings("ports", "the STS, login and world ports", "Sts:Port", "Login:Port", "World:Port")]
 public sealed class GatewayOptions
 {
     /// <summary>
@@ -30,49 +32,60 @@ public sealed class GatewayOptions
     /// <summary>
     /// The IPv4 address the login server hands the client for the world listener.
     /// </summary>
+    [IPv4Address]
     public string WorldPublicAddress { get; set; } = "127.0.0.1";
 
     /// <summary>
-    /// The largest frame a client may send, in bytes (decisions.md D9 item 3).
+    /// The largest frame a client may send, in bytes.
     /// </summary>
-    [Range(64, 1 << 20)]
+    /// <remarks>
+    /// decisions.md D9 item 3.
+    /// </remarks>
+    [Unit("bytes")]
+    [Between(64, 1 << 20)]
     public int MaxClientFrameBytes { get; set; } = 64 * 1024;
 
     /// <summary>
     /// Connections one address may hold at once on each listener.
     /// </summary>
-    [Range(1, 1000)]
+    [Between(1, 1000)]
     public int ConnectionsPerAddress { get; set; } = 8;
 
     /// <summary>
-    /// How long a connection may stay open without completing its login. Positive: whatever binds this section validates it.
+    /// How long a connection may stay open without completing its login.
     /// </summary>
+    /// <remarks>
+    /// Positive, because <c>StsConnection</c> arms each connection's timer with it: zero ends every connection at once, and a negative
+    /// value throws, or at -1 ms switches the limit off.
+    /// </remarks>
+    [Positive]
     public TimeSpan PreAuthTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
     /// <summary>
-    /// How many messages one connection may have queued for its client. A client that stops reading fills the queue, and the
+    /// How many messages one connection may have queued for its client; a client that stops reading fills the queue, and the
     /// connection is disconnected rather than the sender made to wait.
     /// </summary>
-    [Range(16, 1 << 20)]
+    [Between(16, 1 << 20)]
     public int OutboundQueueCapacity { get; set; } = 4096;
 
     /// <summary>
     /// How long a disconnecting connection may keep trying to deliver what is queued before it is closed regardless, so a client that
-    /// has stopped reading cannot hold the connection open. Zero closes at once; at most a minute.
+    /// has stopped reading cannot hold the connection open; zero closes at once.
     /// </summary>
-    [Range(typeof(TimeSpan), "00:00:00", "00:01:00")]
+    [BetweenDurations("00:00:00", "00:01:00")]
     public TimeSpan DisconnectGrace { get; set; } = TimeSpan.FromSeconds(5);
 
     /// <summary>
     /// Login attempts (STS login starts and login requests) one address may make per minute.
     /// </summary>
-    [Range(1, 1000)]
+    [Between(1, 1000)]
     public int LoginAttemptsPerMinute { get; set; } = 10;
 
     /// <summary>
-    /// Base64 of at least 32 secret bytes, from which unknown accounts get stable fake credentials. Required; the host refuses to start
-    /// without it. Keep it out of the repository.
+    /// The key from which unknown accounts get stable fake credentials; keep it out of the repository.
     /// </summary>
+    [Secret]
+    [Base64Bytes(32)]
     public required string UnknownAccountSecret { get; set; }
 
     /// <summary>
@@ -89,11 +102,12 @@ public sealed class ListenerOptions
     /// <summary>
     /// The address to bind.
     /// </summary>
+    [IPAddress]
     public string BindAddress { get; set; } = "127.0.0.1";
 
     /// <summary>
     /// The TCP port.
     /// </summary>
-    [Range(1, 65535)]
+    [Between(1, 65535)]
     public int Port { get; set; }
 }

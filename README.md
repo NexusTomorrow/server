@@ -32,6 +32,7 @@ A server for the WildStar client, build 16042, written in C# on .NET 10.
 | `NexusTomorrow.Network.Auth` | Messages for the auth server |
 | `NexusTomorrow.Network.World` | Messages for the world server |
 | `NexusTomorrow.Shared` | Shared helpers: factories, configuration binding, the update timer |
+| `NexusTomorrow.Settings` | The rules each setting declares on its options class, and the one check the host runs on them at start |
 | `NexusTomorrow.Transport` | Frames, envelopes and the packet cipher, on the hot-path rules |
 | `NexusTomorrow.Gateway` | The client listeners: STS, login and world connections, the message catalog and the opcode table |
 | `NexusTomorrow.Owners` | The account and realm owners: one thread each over a message queue |

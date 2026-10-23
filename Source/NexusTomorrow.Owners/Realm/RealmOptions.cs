@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NexusTomorrow.Settings;
 
 namespace NexusTomorrow.Owners.Realm;
 
 /// <summary>
 /// The <c>Realm</c> configuration section.
 /// </summary>
+[SettingsSection(Section, 3, "Owners", "Owners#knobs")]
 public sealed class RealmOptions
 {
     /// <summary>
@@ -13,15 +14,18 @@ public sealed class RealmOptions
     public const string Section = "Realm";
 
     /// <summary>
-    /// The realm's id; the client keeps it as its current realm, and a character's unit carries it, where the client refuses 0.
-    /// 1 to 16383 (14 bits).
+    /// The realm's id, which the client keeps as its current realm and a character's unit carries.
     /// </summary>
-    [Range(1, (1 << 14) - 1)]
+    /// <remarks>
+    /// 1 to 16383: the client refuses 0, and the id is 14 bits wide.
+    /// </remarks>
+    [Between(1, (1 << 14) - 1)]
     public ushort Id { get; set; } = 1;
 
     /// <summary>
     /// The realm's name, shown to the player.
     /// </summary>
+    [RequiredSetting]
     public string Name { get; set; } = "NexusTomorrow";
 
     /// <summary>
@@ -32,7 +36,7 @@ public sealed class RealmOptions
     /// <summary>
     /// 0 PvE, 1 PvP.
     /// </summary>
-    [Range(0, 1)]
+    [Between(0, 1)]
     public byte PvpType { get; set; }
 
     /// <summary>
@@ -43,11 +47,11 @@ public sealed class RealmOptions
     /// <summary>
     /// How many live characters an account may hold.
     /// </summary>
-    [Range(1, 50)]
+    [Between(1, 50)]
     public int MaxCharactersPerAccount { get; set; } = 12;
 
     /// <summary>
-    /// Where a new character stands, by faction. A faction with no entry starts in world 0 at the origin.
+    /// Where a new character stands, by faction; a faction with no entry starts in world 0 at the origin.
     /// </summary>
     public List<StartLocation> StartLocations { get; set; } = [];
 }

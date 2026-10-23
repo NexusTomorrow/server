@@ -1,9 +1,11 @@
 ﻿using System.Globalization;
+using System.Net;
 using System.Net.Sockets;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 using NexusTomorrow.Harness;
 using NexusTomorrow.Owners.Realm;
@@ -189,6 +191,26 @@ public sealed class HostTests
         Exception failure = await Assert.ThrowsAnyAsync<Exception>(() => app.StartAsync(TestContext.Current.CancellationToken));
 
         Assert.Contains(key, failure.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AFailedSettingStopsTheServerBeforeItListens()
+    {
+        Dictionary<string, string?> settings = Settings("Host=unused", Convert.ToBase64String(new byte[32]));
+        settings["Maps:TickMs"] = "30";
+        string[] portKeys = ["Gateway:Sts:Port", "Gateway:Login:Port", "Gateway:World:Port"];
+        int[] ports = [.. portKeys.Select(key => int.Parse(settings[key]!, CultureInfo.InvariantCulture))];
+        await using WebApplication app = ServerHost.Build([], builder => builder.Configuration.AddInMemoryCollection(settings));
+
+        OptionsValidationException failure = await Assert.ThrowsAsync<OptionsValidationException>(() => app.StartAsync(TestContext.Current.CancellationToken));
+        Assert.Contains("Maps:TickMs", failure.Message, StringComparison.Ordinal);
+
+        // A port the host had bound is still bound here, before the host is disposed, and Start would throw that the address is in use.
+        foreach (int port in ports)
+        {
+            using var listener = new TcpListener(IPAddress.Loopback, port);
+            listener.Start();
+        }
     }
 
     // Connects and reports whether the server greeted the connection; a connection the server refuses is closed with no bytes sent.

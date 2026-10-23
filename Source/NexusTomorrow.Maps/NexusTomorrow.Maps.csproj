@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NexusTomorrow.Owners\NexusTomorrow.Owners.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Settings\NexusTomorrow.Settings.csproj" />
   </ItemGroup>
 
 </Project>

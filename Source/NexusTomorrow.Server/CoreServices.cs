@@ -19,6 +19,7 @@ using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Account;
+using NexusTomorrow.Settings;
 
 namespace NexusTomorrow.Server;
 
@@ -36,11 +37,11 @@ public static class CoreServices
     /// </summary>
     public static IServiceCollection AddNexusTomorrowCore(this IServiceCollection services, IConfiguration configuration)
     {
-        AddOptions<GatewayOptions, GatewayOptionsValidator>(services, configuration, GatewayOptions.Section);
-        AddOptions<PersistenceOptions, PersistenceOptionsValidator>(services, configuration, PersistenceOptions.Section);
-        AddOptions<RealmOptions, RealmOptionsValidator>(services, configuration, RealmOptions.Section);
-        AddOptions<MapOptions, MapOptionsValidator>(services, configuration, MapOptions.Section);
-        AddOptions<AccountOptions, AccountOptionsValidator>(services, configuration, AccountOptions.Section);
+        AddOptions<GatewayOptions>(services, configuration, GatewayOptions.Section);
+        AddOptions<PersistenceOptions>(services, configuration, PersistenceOptions.Section);
+        AddOptions<RealmOptions>(services, configuration, RealmOptions.Section);
+        AddOptions<MapOptions>(services, configuration, MapOptions.Section);
+        AddOptions<AccountOptions>(services, configuration, AccountOptions.Section);
         AddOptions<ContentOptions>(services, configuration, ContentOptions.Section);
         AddOptions<CliOptions>(services, configuration, CliOptions.Section);
 
@@ -89,18 +90,12 @@ public static class CoreServices
         return services;
     }
 
+    // Every section is checked against the rules its settings declare (SettingsValidator), once at start.
     private static void AddOptions<TOptions>(IServiceCollection services, IConfiguration configuration, string section)
         where TOptions : class
     {
-        services.AddOptions<TOptions>().Bind(configuration.GetSection(section)).ValidateDataAnnotations().ValidateOnStart();
-    }
-
-    private static void AddOptions<TOptions, TValidator>(IServiceCollection services, IConfiguration configuration, string section)
-        where TOptions : class
-        where TValidator : class, IValidateOptions<TOptions>
-    {
-        AddOptions<TOptions>(services, configuration, section);
-        services.AddSingleton<IValidateOptions<TOptions>, TValidator>();
+        services.AddOptions<TOptions>().Bind(configuration.GetSection(section)).ValidateOnStart();
+        services.AddSingleton<IValidateOptions<TOptions>, SettingsValidator<TOptions>>();
     }
 
     // Evaluated afresh on every watchdog check: the registered owners, then every map in MapDirectory.Maps at that moment, so a map

@@ -23,4 +23,8 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NexusTomorrow.Settings\NexusTomorrow.Settings.csproj" />
+  </ItemGroup>
+
 </Project>
