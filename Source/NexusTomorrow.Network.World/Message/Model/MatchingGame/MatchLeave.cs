@@ -1,0 +1,9 @@
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
+
+namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
+
+[WireMessage(GameMessageOpcode.Client05DA, Direction.ClientToServer)]
+public sealed partial class MatchLeave
+{
+}

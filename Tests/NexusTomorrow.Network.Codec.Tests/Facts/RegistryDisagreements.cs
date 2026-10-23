@@ -27,9 +27,9 @@ internal static class RegistryDisagreements
         ["0x035F server to client [5].element[5]"] = new(TreeDiffers, "the client has a union, the declaration an array"), // Server035F
         ["0x0598 server to client [3]"] = new(StringAsCountAndUnits, "the client has 16, the declaration a terminated wide string"), // Server0598
         ["0x0599 server to client [3]"] = new(StringAsCountAndUnits, "the client has 16, the declaration a terminated wide string"), // Server0599
-        ["0x05E7 server to client [1]"] = new(TreeDiffers, "the client accepts selector 2 and the declaration has no arm"), // Server05E7
-        ["0x05E7 server to client [3]"] = new(TreeDiffers, "the client accepts selector 2 and the declaration has no arm"), // Server05E7
-        ["0x060A server to client [2].element[6]"] = new(TreeDiffers, "the client has 2, the declaration 14"), // Server060A
+        ["0x05E7 server to client [1]"] = new(TreeDiffers, "the client accepts selector 2 and the declaration has no arm"), // PvpKillNotification
+        ["0x05E7 server to client [3]"] = new(TreeDiffers, "the client accepts selector 2 and the declaration has no arm"), // PvpKillNotification
+        ["0x060A server to client [2].element[6]"] = new(TreeDiffers, "the client has 2, the declaration 14"), // MatchingQueuedPlayers
         ["0x07DC client to server [6].element[1].arm 0x04[1]"] = new(TreeDiffers, "the client has 32, the declaration 8"), // Client07DC
         ["0x0823 client to server [1]"] = new(PartMissing, "the client has 32, the declaration a blob"), // Client0823
         ["0x082A client to server [0]"] = new(BitsDiffer, "the client has 32, the declaration 20"), // Client082A
