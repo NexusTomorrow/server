@@ -8,8 +8,9 @@ namespace NexusTomorrow.Tools;
 /// <summary>
 /// A message's members as rows in read order, for the <c>layout</c> verb: each row's path, width in bits (empty for a header,
 /// <c>varies</c> for a string or a byte block) and encoding. The members are <see cref="MessageBinder"/>'s, so a row path is the
-/// key the binder takes; a struct opens with a <c>the fields below</c> row, a fixed array has a row per element, and an array counted
-/// on the wire or a union is one row that says so, since its rows depend on the values sent.
+/// key the binder takes; a struct opens with a <c>the fields below</c> row, a fixed array has a row per element, an array counted
+/// on the wire is its own row followed by one element's rows under <c>path[]</c>, and a union is one row that says so, since its
+/// rows depend on the values sent.
 /// </summary>
 internal static class LayoutRows
 {
@@ -39,12 +40,19 @@ internal static class LayoutRows
                 _ when member.GetCustomAttribute<PadAttribute>() is { } pad => (Number(pad.Bits), "padding"),
                 _ when member.GetCustomAttribute<BlobAttribute>() is not null => ("varies", "byte block"),
                 _ when member.GetCustomAttribute<UnionAttribute>() is { } union => ("", $"union, selected by `{prefix}{union.Selector}`"),
-                _ when member.GetCustomAttribute<ArrayAttribute>() is not null => ("", "array, counted on the wire"),
                 _ => null,
             };
             if (single is { } row)
             {
                 rows.Add((path, row.Bits, row.Encoding));
+                continue;
+            }
+
+            if (member.GetCustomAttribute<ArrayAttribute>() is not null)
+            {
+                rows.Add((path, "", "array, counted on the wire"));
+                Type element = memberType.IsArray ? memberType.GetElementType()! : memberType.GetGenericArguments().Single();
+                AppendValue(member, element, path + "[]", rows, open);
                 continue;
             }
 
