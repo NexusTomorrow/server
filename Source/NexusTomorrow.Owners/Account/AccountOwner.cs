@@ -27,7 +27,7 @@ public sealed class AccountOwner : Owner<AccountMessage>
     // one entry per account however often a client asks, and every token in _tokens is its account's entry here.
     private readonly Dictionary<long, Guid> _tokenOf = [];
     private readonly Dictionary<UInt128, PendingSession> _sessionKeys = [];
-    private readonly Dictionary<long, IClientSession> _online = [];
+    private readonly Dictionary<long, OnlineSession> _online = [];
     private readonly Dictionary<long, SuspensionOverride> _suspensions = [];
     private int _onlineCount;
     private int _pendingGameTokens;
@@ -72,9 +72,12 @@ public sealed class AccountOwner : Owner<AccountMessage>
                 greet.Reply.TrySetResult(world);
                 break;
             case WorldSessionClosed closed:
-                if (_online.TryGetValue(closed.AccountId, out IClientSession? current) && current == closed.Session)
+                if (_online.TryGetValue(closed.AccountId, out OnlineSession? current) && current.Session == closed.Session)
                     _online.Remove(closed.AccountId);
                 Volatile.Write(ref _onlineCount, _online.Count);
+                break;
+            case FindOnlineSession find:
+                find.Reply.TrySetResult(Find(find.Email));
                 break;
             case CreateAccount create:
                 _persistence.Enqueue(new CreateAccountWork(
@@ -116,6 +119,9 @@ public sealed class AccountOwner : Owner<AccountMessage>
                 break;
             case RedeemSessionKey greet:
                 greet.Reply.TrySetResult(new WorldRefused("the account owner failed"));
+                break;
+            case FindOnlineSession find:
+                find.Reply.TrySetResult(null);
                 break;
         }
 
@@ -177,14 +183,14 @@ public sealed class AccountOwner : Owner<AccountMessage>
         if (IsSuspended(pending.AccountId, null))
             return new WorldRefused("the account is suspended");
 
-        if (_online.TryGetValue(pending.AccountId, out IClientSession? previous) && previous != greet.Session)
+        if (_online.TryGetValue(pending.AccountId, out OnlineSession? previous) && previous.Session != greet.Session)
         {
             // Kicked.Reason 0 has no message of its own; the client shows its general one (Server036A's declaration).
-            previous.Send(new Kicked { Reason = 0 });
-            previous.Disconnect("replaced by a new login");
+            previous.Session.Send(new Kicked { Reason = 0 });
+            previous.Session.Disconnect("replaced by a new login");
         }
 
-        _online[pending.AccountId] = greet.Session;
+        _online[pending.AccountId] = new OnlineSession(greet.Session, pending.Email);
         Volatile.Write(ref _onlineCount, _online.Count);
         return new WorldGranted(pending.AccountId);
     }
@@ -206,10 +212,10 @@ public sealed class AccountOwner : Owner<AccountMessage>
         }
 
         _suspensions[accountId] = stored.Lifted ? new SuspensionOverride(null, false, true) : Combine(accountId, stored.Until);
-        if (IsSuspended(accountId, null) && _online.Remove(accountId, out IClientSession? online))
+        if (IsSuspended(accountId, null) && _online.Remove(accountId, out OnlineSession? online))
         {
-            online.Send(new Kicked { Reason = 0 });
-            online.Disconnect("the account was suspended");
+            online.Session.Send(new Kicked { Reason = 0 });
+            online.Session.Disconnect("the account was suspended");
             Volatile.Write(ref _onlineCount, _online.Count);
         }
 
@@ -236,6 +242,18 @@ public sealed class AccountOwner : Owner<AccountMessage>
         return stored.Indefinite || stored.Until > now || (!stored.ReplacesCredentials && fromCredentials);
     }
 
+    // Proportional to the accounts online: a lookup an operator or a debug tool asks for, never one a client message causes.
+    private IClientSession? Find(string email)
+    {
+        foreach (OnlineSession online in _online.Values)
+        {
+            if (string.Equals(online.Email, email, StringComparison.OrdinalIgnoreCase))
+                return online.Session;
+        }
+
+        return null;
+    }
+
     private void Expire()
     {
         DateTimeOffset now = _time.GetUtcNow();
@@ -260,4 +278,6 @@ public sealed class AccountOwner : Owner<AccountMessage>
     private sealed record PendingToken(AccountCredentials Account, DateTimeOffset ExpiresAt);
 
     private sealed record PendingSession(long AccountId, string Email, uint Echo, DateTimeOffset ExpiresAt);
+
+    private sealed record OnlineSession(IClientSession Session, string Email);
 }

@@ -34,6 +34,12 @@ public sealed record RedeemSessionKey(
 public sealed record WorldSessionClosed(long AccountId, IClientSession Session) : AccountMessage;
 
 /// <summary>
+/// Find the world session of the account with an email, compared without regard to case: answered with the session, or null when
+/// the account has none.
+/// </summary>
+public sealed record FindOnlineSession(string Email, TaskCompletionSource<IClientSession?> Reply) : AccountMessage;
+
+/// <summary>
 /// An operator asked to create an account. The caller has already made the salt and the verifier; answered once the account is
 /// committed or refused.
 /// </summary>
