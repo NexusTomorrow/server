@@ -1,11 +1,23 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Game.Static.Friendship;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
+/// <summary>
+/// Answers a friend invite: the request RespondToInvite sends.
+/// </summary>
 [WireMessage(GameMessageOpcode.Client03BC, Direction.ClientToServer)]
+[Verified(Rung.Fields)]
 public sealed partial class FriendshipInviteResponse
 {
-    [UInt(64)] public ulong Unknown0 { get; private set; }
-    [UInt(3)] public byte Unknown1 { get; private set; }
+    /// <summary>
+    /// The invite, by <see cref="FriendshipInviteList.FriendshipInvite.Id"/>.
+    /// </summary>
+    [UInt(64)] public ulong Id { get; private set; }
+
+    /// <summary>
+    /// The answer.
+    /// </summary>
+    [UInt(3)] public FriendshipResponse Response { get; private set; }
 }

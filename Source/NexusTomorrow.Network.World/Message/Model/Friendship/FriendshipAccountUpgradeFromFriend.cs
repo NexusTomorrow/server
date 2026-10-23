@@ -4,9 +4,20 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
+/// <summary>
+/// Asks to make a character friend an account friend.
+/// </summary>
 [WireMessage(GameMessageOpcode.Client0398, Direction.ClientToServer)]
+[Verified(Rung.Fields)]
 public sealed partial class FriendshipAccountUpgradeFromFriend
 {
-    public RealmScopedId Unknown0 { get; private set; } = new();
-    [WideString] public string Unknown1 { get; private set; } = "";
+    /// <summary>
+    /// The friend, by <see cref="Friendship.CharacterId"/>.
+    /// </summary>
+    public RealmScopedId CharacterId { get; private set; } = new();
+
+    /// <summary>
+    /// The note that goes with the request.
+    /// </summary>
+    [WideString] public string Note { get; private set; } = "";
 }

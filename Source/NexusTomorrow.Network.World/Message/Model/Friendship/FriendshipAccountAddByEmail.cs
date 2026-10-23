@@ -3,9 +3,23 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
+/// <summary>
+/// Adds an account friend by email address.
+/// </summary>
+/// <remarks>
+/// The client sends it only when both strings pass its checks.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Client0397, Direction.ClientToServer)]
+[Verified(Rung.Fields)]
 public sealed partial class FriendshipAccountAddByEmail
 {
-    [WideString] public string Unknown0 { get; private set; } = "";
-    [WideString] public string Unknown1 { get; private set; } = "";
+    /// <summary>
+    /// The account's email address.
+    /// </summary>
+    [WideString] public string Email { get; private set; } = "";
+
+    /// <summary>
+    /// The note that goes with the request.
+    /// </summary>
+    [WideString] public string Note { get; private set; } = "";
 }

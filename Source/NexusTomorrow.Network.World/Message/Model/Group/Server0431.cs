@@ -3,6 +3,10 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Group;
 
+/// <summary>
+/// Sets a group's target markers: the client finds the group by its id and, for each entry, looks the marker up in the TargetMarker
+/// table, finds the unit and raises Group_SetMark.
+/// </summary>
 [WireMessage(GameMessageOpcode.Server0431, Direction.ServerToClient)]
 public sealed partial class Server0431
 {

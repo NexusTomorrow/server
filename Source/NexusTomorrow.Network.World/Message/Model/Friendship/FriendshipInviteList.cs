@@ -4,23 +4,60 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
+/// <summary>
+/// Lists the friend invites the player has received.
+/// </summary>
+/// <remarks>
+/// The client files each invite and raises FriendshipInvitesRecieved with their tables.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Server03BA, Direction.ServerToClient)]
+[Verified(Rung.Purpose)]
 public sealed partial class FriendshipInviteList
 {
+    /// <summary>
+    /// One friend invite.
+    /// </summary>
     [WireStruct]
     public sealed partial class FriendshipInvite
     {
-        [UInt(64)] public ulong Unknown0 { get; set; }
+        /// <summary>
+        /// The invite's id, by which <see cref="FriendshipInviteRemove"/>, <see cref="FriendshipInviteResponse"/> and
+        /// <see cref="FriendshipInviteMarkSeen"/> name it.
+        /// </summary>
+        [UInt(64)] public ulong Id { get; set; }
+
         public RealmScopedId Unknown1 { get; set; } = new();
         [UInt(3)] public uint Unknown2 { get; set; }
         [Float32] public float Unknown3 { get; set; }
-        [WideString] public string Unknown4 { get; set; } = "";
-        [WideString] public string Unknown5 { get; set; } = "";
-        [UInt(8)] public byte Unknown6 { get; set; }
-        [UInt(6)] public byte Unknown7 { get; set; }
-        [UInt(3)] public byte Unknown8 { get; set; }
-        [UInt(8)] public byte Unknown9 { get; set; }
+
+        /// <summary>
+        /// The invite's note, which add-ons read as strNote.
+        /// </summary>
+        [WideString] public string Note { get; set; } = "";
+
+        /// <summary>
+        /// The character's name, which add-ons read as strCharacterName.
+        /// </summary>
+        [WideString] public string Name { get; set; } = "";
+
+        /// <summary>
+        /// The character's class id, which add-ons read as nClassId.
+        /// </summary>
+        [UInt(14)] public ushort ClassId { get; set; }
+
+        /// <summary>
+        /// The character's path id, which add-ons read as nPathId.
+        /// </summary>
+        [UInt(3)] public byte PathId { get; set; }
+
+        /// <summary>
+        /// The character's level, which add-ons read as nLevel.
+        /// </summary>
+        [UInt(8)] public byte Level { get; set; }
     }
 
-    [Array(CountBits = 16)] public List<FriendshipInvite> Unknown0 { get; set; } = [];
+    /// <summary>
+    /// The invites.
+    /// </summary>
+    [Array(CountBits = 16)] public List<FriendshipInvite> Invites { get; set; } = [];
 }

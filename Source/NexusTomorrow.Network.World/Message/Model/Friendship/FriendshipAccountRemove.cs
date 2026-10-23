@@ -3,8 +3,15 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 
+/// <summary>
+/// Removes an account friend.
+/// </summary>
 [WireMessage(GameMessageOpcode.Client03AF, Direction.ClientToServer)]
+[Verified(Rung.Fields)]
 public sealed partial class FriendshipAccountRemove
 {
-    [UInt(64)] public ulong Unknown0 { get; private set; }
+    /// <summary>
+    /// The account friend, by <see cref="FriendshipAccountList.FriendshipAccount.Id"/>.
+    /// </summary>
+    [UInt(64)] public ulong Id { get; private set; }
 }
