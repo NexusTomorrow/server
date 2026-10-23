@@ -82,6 +82,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   soldier's holdouts, builds and burrows, with the explorer's scavenger clues.
 - Matchmaking messages carry their real names and field meanings: joining and leaving queues, role
   checks, the pending match, the match itself, votes to kick or surrender, penalties and PvP kills.
+- Friends, rivals and ignores, account friends and their invites, presence and the friends list's
+  status messages carry their real names and field meanings. The group's target markers message
+  sits with the group messages.
 
 ### Changed
 
