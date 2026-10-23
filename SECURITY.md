@@ -2,7 +2,8 @@
 
 ## Supported versions
 
-NexusTomorrow has no releases yet. Security fixes land on `main`.
+NexusTomorrow has no releases yet. Security fixes land on `dev` and reach `main` with the next
+promotion ([CONTRIBUTING.md](CONTRIBUTING.md#promotion-to-main)).
 
 ## Reporting a vulnerability
 

@@ -26,8 +26,47 @@ For anything bigger than a small fix, open an issue first and describe what you 
 The design is decided up front, and agreeing on it before you write code saves you from building
 something that can't land.
 
-Pull requests go against `main`. Keep each one to a single concern, and keep reformatting out of a
+Pull requests go against `dev`. Keep each one to a single concern, and keep reformatting out of a
 change that only touches nearby code.
+
+## Branches
+
+- **`main`** holds what has been seen working with the real client. Only the maintainer merges into
+  it, and release tags named for the date (`2026.10.25`) go on it at milestones.
+- **`dev`** is the default branch, where reviewed work lands, each merge with a merge commit.
+  Neither branch takes a force-push or a deletion.
+- **Work branches** are cut from `dev`, named for the kind of work in lowercase with hyphens, and
+  deleted once merged:
+
+  | Branch | For |
+  |---|---|
+  | `feature/<topic>` | new behaviour |
+  | `fix/<topic>` | a bug fix |
+  | `audit/<area>` | message declarations read against the client |
+  | `docs/<topic>` | the repository's own documentation |
+  | `chore/<topic>` | tooling, CI, dependencies and the generators |
+  | `refactor/<topic>` | a change with no change in behaviour, reviewed for exactly that |
+
+- **Test branches** are `ci/<topic>`: a maintainer pushes the commit under test there, dispatches
+  the `Tests` workflow on it, and deletes the branch after the run.
+
+### The changelog
+
+Every merge into `dev` adds its entry to `CHANGELOG.md` under **Unreleased** in the same merge,
+grouped as Added, Changed or Fixed ([Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/)).
+Write it for players and server operators: what they can now do or what now works, not which class
+changed.
+
+### Promotion to `main`
+
+Once a week, `main` fast-forwards to the newest `dev` commit that clears this bar, and
+**Unreleased** takes that date:
+
+- a full CI run on that exact tree, with no test skipped;
+- every merge in it reviewed, each finding fixed or ruled on;
+- the in-game checks it owes, cleared in the maintainer's weekly play session;
+- when the database schema changed, `migrate` run over a database the previous `main` made;
+- the wiki, the README and the changelog current.
 
 ## Building and testing
 
