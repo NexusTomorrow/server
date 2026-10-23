@@ -170,6 +170,9 @@ every plan starts from code that exists.
 See [CONTRIBUTING.md](CONTRIBUTING.md). The rule that matters most: nothing taken from the client
 goes into this repository, ever. To report a security problem, see [SECURITY.md](SECURITY.md).
 
+Work lands on `dev`, the default branch, and `main` holds what has been seen working with the
+client. [CHANGELOG.md](CHANGELOG.md) lists what `dev` holds that `main` doesn't yet.
+
 ## Credits
 
 NexusTomorrow started from the `game_rework` branch of
