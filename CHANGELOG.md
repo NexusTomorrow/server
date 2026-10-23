@@ -63,6 +63,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   carries have their real names and field meanings.
 - The path state's active path, XP list and unlocked mask name the path numbers they use: Soldier 0,
   Settler 1, Scientist 2 and Explorer 3.
+- The combat log carries its real names and field meanings, kind by kind, and so do the player's
+  spell list and the cast requests aimed at a position or at a unit.
 
 ### Changed
 
@@ -82,6 +84,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 
 ### Fixed
 
+- The combat log matches the client's layout: a reflected hit's sixth value is 32 bits, the dispel,
+  transference and one amount kind end with their caster, target, spell and result, and kind 34 is
+  declared.
 - After logging in, the client no longer keeps reconnecting: the server answers its verified-address
   request.
 - Game data read correctly where a 64-bit number follows an odd count of 32-bit ones: tradeskill
