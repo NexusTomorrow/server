@@ -29,6 +29,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 
 - After logging in, the client no longer keeps reconnecting: the server answers its verified-address
   request.
+- Game data read correctly where a 64-bit number follows an odd count of 32-bit ones: tradeskill
+  relearn costs and character customization costs no longer come out four billion times too large.
 - ClientConnector finds the client and `config.json` beside itself, whatever folder it is started
   from.
 - A test run filtered to some tests no longer fails on the test projects the filter leaves empty,
