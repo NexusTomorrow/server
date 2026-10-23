@@ -4,7 +4,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireStruct]
-public sealed partial class Server0493Part5
+public sealed partial class GuildMember
 {
     public RealmScopedId Unknown0 { get; set; } = new();
     [UInt(32)] public uint Unknown1 { get; set; }

@@ -22,7 +22,7 @@ public sealed partial class GuildMemberChange
     /// <summary>
     /// The member.
     /// </summary>
-    public Server0493Part5 Member { get; set; } = new();
+    public GuildMember Member { get; set; } = new();
 
     /// <summary>
     /// The guild's member count.

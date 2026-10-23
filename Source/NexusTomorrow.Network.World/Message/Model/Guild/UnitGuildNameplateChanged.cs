@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireMessage(GameMessageOpcode.Server04AE, Direction.ServerToClient)]
-public sealed partial class Server04AE
+public sealed partial class UnitGuildNameplateChanged
 {
     [UInt(32)] public uint Unknown0 { get; set; }
     [WideString] public string Unknown1 { get; set; } = "";

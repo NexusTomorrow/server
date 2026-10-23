@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireStruct]
-public sealed partial class Server0767Part1
+public sealed partial class GuildRecruitmentSummary
 {
     [UInt(16)] public ushort Unknown0 { get; set; }
     [UInt(16)] public ushort Unknown1 { get; set; }

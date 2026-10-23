@@ -3,13 +3,13 @@
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireStruct]
-public sealed partial class Server0493Part0
+public sealed partial class GuildRecord
 {
     [WireStruct]
-    public sealed partial class Server0493Part3
+    public sealed partial class GuildStatus
     {
         [WireStruct]
-        public sealed partial class Server0493Part4
+        public sealed partial class GuildPvpRecord
         {
             [UInt(32)] public uint Unknown0 { get; set; }
             [UInt(32)] public uint Unknown1 { get; set; }
@@ -22,12 +22,12 @@ public sealed partial class Server0493Part0
         [WideString] public string Unknown0 { get; set; } = "";
         [WideString] public string Unknown1 { get; set; } = "";
         [UInt(3)] public byte Unknown2 { get; set; }
-        public Server0493Part4 Unknown3 { get; set; } = new();
+        public GuildPvpRecord Unknown3 { get; set; } = new();
         [Float32] public float Unknown4 { get; set; }
     }
 
     [WireStruct]
-    public sealed partial class Server0493Part2
+    public sealed partial class GuildActivePerk
     {
         [UInt(14)] public ushort Unknown0 { get; set; }
         [Float32] public float Unknown1 { get; set; }
@@ -54,7 +54,7 @@ public sealed partial class Server0493Part0
 
     [FixedArray(16), UInt(8)] public byte[] Unknown14 { get; set; } = new byte[16];
 
-    [Array(CountBits = 32)] public List<Server0493Part2> Unknown15 { get; set; } = [];
+    [Array(CountBits = 32)] public List<GuildActivePerk> Unknown15 { get; set; } = [];
 
-    public Server0493Part3 Unknown16 { get; set; } = new();
+    public GuildStatus Unknown16 { get; set; } = new();
 }
