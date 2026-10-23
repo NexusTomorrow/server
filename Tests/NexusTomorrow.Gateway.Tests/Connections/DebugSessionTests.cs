@@ -64,13 +64,15 @@ public sealed class DebugSessionTests : IAsyncLifetime
     [Fact]
     public async Task ARawBodyReachesTheClientExactlyAsGiven()
     {
-        byte[] body = [0x01, 0x02, 0xFF, 0x00, 0x7F];
+        _connection.Send(new LoginAccepted { DroppedForLag = 5 });
+        Received built = await _client.ReceiveAsync(s_wait);
 
-        _connection.SendRaw(0x0999, body);
+        _connection.SendRaw(built.Opcode, built.Body);
 
-        Received received = await _client.ReceiveAsync(s_wait);
-        Assert.Equal((ushort)0x0999, received.Opcode);
-        Assert.Equal(body, received.Body);
+        Received raw = await _client.ReceiveAsync(s_wait);
+        Assert.Equal(built.Opcode, raw.Opcode);
+        Assert.Equal(built.Body, raw.Body);
+        Assert.Equal(5u, Assert.IsType<LoginAccepted>(raw.Message).DroppedForLag);
     }
 
     [Fact]
@@ -80,12 +82,12 @@ public sealed class DebugSessionTests : IAsyncLifetime
         _connection.Tap = tap;
 
         _connection.Send(new LoginAccepted { DroppedForLag = 3 });
-        _connection.SendRaw(0x0999, [0xAB]);
-
         Received first = await _client.ReceiveAsync(s_wait);
+        _connection.SendRaw(first.Opcode, first.Body);
         Received second = await _client.ReceiveAsync(s_wait);
+
         await Eventually.TrueAsync(() => tap.SentMessages.Count == 2);
-        (ushort Opcode, Type Type)[] expected = [(OpcodeOf<LoginAccepted>(), typeof(LoginAccepted)), (0x0999, typeof(InjectedBody))];
+        (ushort Opcode, Type Type)[] expected = [(OpcodeOf<LoginAccepted>(), typeof(LoginAccepted)), (OpcodeOf<LoginAccepted>(), typeof(InjectedBody))];
         Assert.Equal(expected, tap.SentMessages.Select(s => (s.Opcode, s.Type)).ToArray());
         Assert.Equal(first.Body, tap.SentMessages.First().Body);
         Assert.Equal(second.Body, tap.SentMessages.Last().Body);
