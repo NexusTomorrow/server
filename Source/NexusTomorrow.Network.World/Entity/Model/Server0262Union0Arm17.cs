@@ -9,7 +9,14 @@ namespace NexusTomorrow.Network.World.Entity.Model;
 [UnionCase(23)]
 public sealed partial class Server0262Union0Arm17 : IServer0262Union0
 {
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
     [UInt(64)] public ulong Unknown0 { get; set; }
+
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
     [UInt(14)] public ushort Unknown1 { get; set; }
 
     /// <summary>
@@ -32,10 +39,38 @@ public sealed partial class Server0262Union0Arm17 : IServer0262Union0
     /// </summary>
     [UInt(2)] public byte Unknown5 { get; set; }
 
-    [UInt(64)] public ulong Unknown6 { get; set; }
-    [WideString] public string Unknown7 { get; set; } = "";
-    [UInt(4)] public byte Unknown8 { get; set; }
-    [Array(CountBits = 5), UInt(64)] public List<ulong> Unknown9 { get; set; } = [];
-    [Array(CountBits = 6), Float32] public List<float> Unknown10 { get; set; } = [];
-    [UInt(14)] public ushort Unknown11 { get; set; }
+    /// <summary>
+    /// The unit's group, by id; 0 when it is in none. Unit:IsInYourGroup compares it with the player's current group, and
+    /// <see cref="Message.Model.Group.UnitGroupChanged"/> sets it.
+    /// </summary>
+    [VerifiedMember, UInt(64)] public ulong GroupId { get; set; }
+
+    /// <summary>
+    /// The name of the unit's guild, which Unit:GetGuildName and Unit:GetAffiliationName read.
+    /// </summary>
+    [VerifiedMember, WideString] public string GuildName { get; set; } = "";
+
+    /// <summary>
+    /// The kind of guild, a GuildType value, which Unit:GetGuildType returns; <see cref="Message.Model.Guild.UnitGuildNameplateChanged"/>
+    /// sets it too.
+    /// </summary>
+    [VerifiedMember, UInt(4)] public byte GuildType { get; set; }
+
+    /// <summary>
+    /// The unit's guilds, by their ids within the realm, which GuildTypeLib.IsUnitMember reads;
+    /// <see cref="Message.Model.Entity.UnitGuildsChanged"/> replaces them.
+    /// </summary>
+    [VerifiedMember, Array(CountBits = 5), UInt(64)] public List<ulong> GuildIds { get; set; } = [];
+
+    /// <summary>
+    /// Values the client applies to the unit's model.
+    /// </summary>
+    [Array(CountBits = 6), Float32] public List<float> ModelValues { get; set; } = [];
+
+    /// <summary>
+    /// The unit's title, a CharacterTitle table id, which Unit:HasTitle and Unit:GetTitleOrName read;
+    /// <see cref="Message.Model.Entity.UnitNameTitleChanged"/> sets it too. The client keeps the title only when the unit's name is not
+    /// empty; with an empty name it also clears the title's text.
+    /// </summary>
+    [VerifiedMember, UInt(14)] public ushort TitleId { get; set; }
 }

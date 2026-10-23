@@ -188,7 +188,7 @@ public sealed partial class UnitCreate
 
     /// <summary>
     /// The unit's minimap marker, by id. Unit:GetMiniMapMarkers returns it, or else the minimap marker of the creature's
-    /// TradeskillHarvestingInfo row for a tier the player knows.
+    /// TradeskillHarvestingInfo row for a tier the player knows. <see cref="UnitMiniMapMarkerChanged"/> sets it too.
     /// </summary>
     [VerifiedMember, UInt(14)] public ushort MiniMapMarkerId { get; set; }
 
