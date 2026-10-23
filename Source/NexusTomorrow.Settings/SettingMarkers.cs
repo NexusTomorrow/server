@@ -1,7 +1,7 @@
 ﻿namespace NexusTomorrow.Settings;
 
 /// <summary>
-/// Marks a setting whose value is a secret: the host settings page says so, and no failure or log carries the value.
+/// Marks a setting whose value is a secret, which the host settings page notes at the end of the setting's Sets cell.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 public sealed class SecretAttribute : Attribute

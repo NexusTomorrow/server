@@ -18,6 +18,7 @@ namespace NexusTomorrow.Server.Tests;
 public sealed class HostTests
 {
     private static readonly TimeSpan s_bound = TimeSpan.FromSeconds(30);
+    private static readonly string[] s_listenerPortKeys = ["Gateway:Sts:Port", "Gateway:Login:Port", "Gateway:World:Port"];
 
     [Fact]
     public async Task TheHostRefusesToStartWithoutTheUnknownAccountSecret()
@@ -198,19 +199,35 @@ public sealed class HostTests
     {
         Dictionary<string, string?> settings = Settings("Host=unused", Convert.ToBase64String(new byte[32]));
         settings["Maps:TickMs"] = "30";
-        string[] portKeys = ["Gateway:Sts:Port", "Gateway:Login:Port", "Gateway:World:Port"];
-        int[] ports = [.. portKeys.Select(key => int.Parse(settings[key]!, CultureInfo.InvariantCulture))];
         await using WebApplication app = ServerHost.Build([], builder => builder.Configuration.AddInMemoryCollection(settings));
 
         OptionsValidationException failure = await Assert.ThrowsAsync<OptionsValidationException>(() => app.StartAsync(TestContext.Current.CancellationToken));
         Assert.Contains("Maps:TickMs", failure.Message, StringComparison.Ordinal);
 
-        // A port the host had bound is still bound here, before the host is disposed, and Start would throw that the address is in use.
-        foreach (int port in ports)
+        // Start throws while the host holds a port (AStartedServerHoldsItsPorts), so each Start here proves the failed start bound none.
+        foreach (int port in ListenerPorts(settings))
         {
             using var listener = new TcpListener(IPAddress.Loopback, port);
             listener.Start();
         }
+    }
+
+    [Fact]
+    public async Task AStartedServerHoldsItsPorts()
+    {
+        await using PostgresTestDatabase database = await Databases.CreateAsync();
+        Dictionary<string, string?> settings = Settings(database.ConnectionString, Convert.ToBase64String(new byte[32]));
+        await using WebApplication app = ServerHost.Build([], builder => builder.Configuration.AddInMemoryCollection(settings));
+        await app.StartAsync(TestContext.Current.CancellationToken);
+
+        foreach (int port in ListenerPorts(settings))
+        {
+            using var listener = new TcpListener(IPAddress.Loopback, port);
+            SocketException refused = Assert.Throws<SocketException>(() => listener.Start());
+            Assert.Equal(SocketError.AddressAlreadyInUse, refused.SocketErrorCode);
+        }
+
+        await app.StopAsync(TestContext.Current.CancellationToken).WaitAsync(s_bound, TestContext.Current.CancellationToken);
     }
 
     // Connects and reports whether the server greeted the connection; a connection the server refuses is closed with no bytes sent.
@@ -232,6 +249,9 @@ public sealed class HostTests
             return false;
         }
     }
+
+    private static int[] ListenerPorts(Dictionary<string, string?> settings) =>
+        [.. s_listenerPortKeys.Select(key => int.Parse(settings[key]!, CultureInfo.InvariantCulture))];
 
     private static Dictionary<string, string?> Settings(string connectionString, string? secret) => new()
     {

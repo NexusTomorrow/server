@@ -2,7 +2,7 @@
 
 /// <summary>
 /// A rule on one setting, declared on its property: the text the host settings page shows in its Must be column, and the check the
-/// host runs at start. A failure names the setting's key and never its value, so a secret or a connection string never reaches a log.
+/// host runs at start. A failure names the setting's key and never its value.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 public abstract class SettingRuleAttribute : Attribute
