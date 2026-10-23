@@ -2,7 +2,7 @@
 
 /// <summary>
 /// Every declared message that disagrees with the client facts, keyed by the opcode, side and path each problem names (the text before its colon,
-/// for example <c>0x01C3 client to server [4].element[3]</c>), each with its reason and the problem text after the colon. The registry check fails
+/// for example <c>0x013C server to client [1].element[1]</c>), each with its reason and the problem text after the colon. The registry check fails
 /// on a disagreement not listed here, on a listed one that no longer occurs and on a listed one whose problem text has changed, so the list only
 /// shrinks as the reading settles each one.
 /// </summary>
