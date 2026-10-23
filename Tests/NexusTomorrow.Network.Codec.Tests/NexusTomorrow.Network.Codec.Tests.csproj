@@ -23,6 +23,8 @@
     <!-- The declared messages the registry facts check compares with the client facts. -->
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network.Auth\NexusTomorrow.Network.Auth.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network.World\NexusTomorrow.Network.World.csproj" />
+    <!-- The gateway's opcode table, which the marker rules hold every dormant message out of. -->
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Gateway\NexusTomorrow.Gateway.csproj" />
   </ItemGroup>
 
   <ItemGroup>

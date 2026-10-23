@@ -1,8 +1,8 @@
 ﻿namespace NexusTomorrow.Network.Codec.Tests.Verification;
 
 /// <summary>
-/// Every declared message below <see cref="Message.Rung.Fields"/>, by opcode. A message read to fields leaves this list, and the registry
-/// verification test fails on an entry that has, so the list only shrinks.
+/// Every declared message below <see cref="Message.Rung.Fields"/> that is not dormant, by opcode. A message read to fields or marked
+/// <see cref="Message.DormantAttribute"/> leaves this list, and the registry verification test fails on an entry that has, so the list only shrinks.
 /// </summary>
 internal static class RegistryVerification
 {

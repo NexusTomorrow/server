@@ -17,3 +17,13 @@ public sealed partial class GateUnreadMessage
 {
     [VerifiedMember, UInt(8)] public byte Known { get; set; }
 }
+
+// Dormant and read to Fields, a pair the registry marker rules refuse among the declared messages, so its rung alone would let it go
+// and only the dormant check refuses it.
+[WireMessage((GameMessageOpcode)0xFE03, Direction.ServerToClient)]
+[Verified(Rung.Fields)]
+[Dormant]
+public sealed partial class GateDormantMessage
+{
+    [UInt(8)] public byte Known { get; set; }
+}

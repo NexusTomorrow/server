@@ -46,12 +46,15 @@ public sealed class MessageCatalog
     private readonly FrozenDictionary<ushort, MessageFactory> _inbound;
     private readonly FrozenDictionary<ushort, Rung?> _inboundRungs;
     private readonly FrozenDictionary<Type, Rung?> _rungs;
+    private readonly FrozenSet<Type> _dormant;
 
-    private MessageCatalog(FrozenDictionary<ushort, MessageFactory> inbound, FrozenDictionary<ushort, Rung?> inboundRungs, FrozenDictionary<Type, Rung?> rungs)
+    private MessageCatalog(
+        FrozenDictionary<ushort, MessageFactory> inbound, FrozenDictionary<ushort, Rung?> inboundRungs, FrozenDictionary<Type, Rung?> rungs, FrozenSet<Type> dormant)
     {
         _inbound = inbound;
         _inboundRungs = inboundRungs;
         _rungs = rungs;
+        _dormant = dormant;
     }
 
     /// <summary>
@@ -94,13 +97,20 @@ public sealed class MessageCatalog
     }
 
     /// <summary>
-    /// True when the server may send <paramref name="message"/>: its type is read to <see cref="Rung.Fields"/> or above, or read to
-    /// <see cref="Rung.Purpose"/> with every member set to anything but its default marked <see cref="VerifiedMemberAttribute"/>.
-    /// Otherwise false, with <paramref name="refusal"/> naming the type and, at <see cref="Rung.Purpose"/>, the first unmarked member set.
+    /// True when the server may send <paramref name="message"/>: its type is not <see cref="DormantAttribute"/>, and it is read to
+    /// <see cref="Rung.Fields"/> or above, or read to <see cref="Rung.Purpose"/> with every member set to anything but its default marked
+    /// <see cref="VerifiedMemberAttribute"/>. Otherwise false, with <paramref name="refusal"/> naming the type and why: dormant whatever its
+    /// rung, below <see cref="Rung.Purpose"/>, or at <see cref="Rung.Purpose"/> the first unmarked member set.
     /// </summary>
     public bool MaySend(IWireMessage message, [NotNullWhen(false)] out string? refusal)
     {
         Type type = message.GetType();
+        if (_dormant.Contains(type))
+        {
+            refusal = $"{type.Name} is dormant";
+            return false;
+        }
+
         Rung? rung = _rungs.GetValueOrDefault(type);
         if (rung >= Rung.Fields)
         {
@@ -153,6 +163,7 @@ public sealed class MessageCatalog
             }
         }
 
-        return new MessageCatalog(inbound.ToFrozenDictionary(), inboundRungs.ToFrozenDictionary(), rungs.ToFrozenDictionary());
+        var dormant = rungs.Keys.Where(type => type.IsDefined(typeof(DormantAttribute), inherit: false)).ToFrozenSet();
+        return new MessageCatalog(inbound.ToFrozenDictionary(), inboundRungs.ToFrozenDictionary(), rungs.ToFrozenDictionary(), dormant);
     }
 }

@@ -68,6 +68,15 @@ public sealed class MessageCatalogTests
     }
 
     [Fact]
+    public void ADormantMessageMayNotSendWhateverItsRungAndTheRefusalSaysItIsDormant()
+    {
+        bool allowed = s_gate.MaySend(new GateDormantMessage { Known = 1 }, out string? refusal);
+
+        Assert.False(allowed);
+        Assert.Equal("GateDormantMessage is dormant", refusal);
+    }
+
+    [Fact]
     public void APurposeMessageWithOnlyVerifiedMembersSetMaySend()
     {
         Assert.True(s_gate.MaySend(new GatePurposeMessage { Known = 5 }, out string? refusal));

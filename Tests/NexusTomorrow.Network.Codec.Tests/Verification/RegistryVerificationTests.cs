@@ -18,19 +18,24 @@ public sealed class RegistryVerificationTests
             .Where(m => m.Attribute is not null)
             .Select(m => (m.Type, $"0x{(ushort)m.Attribute!.Opcode:X4}"));
 
-    // A message below fields must be pinned, and a pinned message must still be below fields, so reading one shows up as an entry to delete.
+    // A message below fields must be pinned unless it is dormant, which counts apart; a pinned message must still be below fields and not dormant,
+    // so reading one, or marking it dormant, shows up as an entry to delete.
     [Fact]
     public void EveryDeclaredMessageReachesFieldsOrIsPinned()
     {
         var messages = s_models.SelectMany(Messages).ToList();
         var declared = messages.Select(m => m.Key).ToHashSet(StringComparer.Ordinal);
-        var below = messages.Where(m => MessageVerification.RungOf(m.Type) is null or < Rung.Fields).Select(m => m.Key).ToHashSet(StringComparer.Ordinal);
-        TestContext.Current.TestOutputHelper?.WriteLine($"{declared.Count} declared messages: {declared.Count - below.Count} read to fields; {below.Count} unverified.");
+        var dormant = messages.Where(m => m.Type.IsDefined(typeof(DormantAttribute), inherit: false)).Select(m => m.Key).ToHashSet(StringComparer.Ordinal);
+        var below = messages.Where(m => MessageVerification.RungOf(m.Type) is null or < Rung.Fields).Select(m => m.Key).Where(k => !dormant.Contains(k)).ToHashSet(StringComparer.Ordinal);
+        TestContext.Current.TestOutputHelper?.WriteLine(
+            $"{declared.Count} declared messages: {declared.Count - dormant.Count - below.Count} read to fields; {dormant.Count} dormant; {below.Count} unverified.");
 
         var report = new List<string>();
         report.AddRange(below.Where(k => !RegistryVerification.Unverified.Contains(k)).Order(StringComparer.Ordinal).Select(k => $"below fields, not pinned: {k}"));
         report.AddRange(RegistryVerification.Unverified.Where(k => !below.Contains(k)).Order(StringComparer.Ordinal)
-            .Select(k => declared.Contains(k) ? $"pinned, but it reached fields: {k}" : $"pinned, but no message declares it: {k}"));
+            .Select(k => dormant.Contains(k) ? $"pinned, but it is dormant: {k}"
+                : declared.Contains(k) ? $"pinned, but it reached fields: {k}"
+                : $"pinned, but no message declares it: {k}"));
         if (report.Count > 0)
             Assert.Fail(string.Join(Environment.NewLine, report));
     }
