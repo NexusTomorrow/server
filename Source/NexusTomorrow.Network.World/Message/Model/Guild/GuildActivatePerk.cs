@@ -4,6 +4,6 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireMessage(GameMessageOpcode.Client04B2, Direction.ClientToServer)]
-public sealed partial class Client04B2 : Client04B1
+public sealed partial class GuildActivatePerk : GuildOperationRequest
 {
 }

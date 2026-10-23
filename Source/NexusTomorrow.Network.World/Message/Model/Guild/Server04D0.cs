@@ -8,5 +8,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 public sealed partial class Server04D0
 {
     public RealmScopedId Unknown0 { get; set; } = new();
-    public Client0481Part0 Unknown1 { get; set; } = new();
+    public GuildHolomark Unknown1 { get; set; } = new();
 }

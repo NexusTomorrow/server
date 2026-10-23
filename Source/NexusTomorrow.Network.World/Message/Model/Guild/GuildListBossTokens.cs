@@ -4,9 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.Client04CF, Direction.ClientToServer)]
-public sealed partial class Client04CF
+[WireMessage(GameMessageOpcode.Client0956, Direction.ClientToServer)]
+public sealed partial class GuildListBossTokens
 {
     public RealmScopedId Unknown0 { get; private set; } = new();
-    public Client0481Part0 Unknown1 { get; private set; } = new();
 }

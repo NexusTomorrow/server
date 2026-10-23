@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 [WireMessage(GameMessageOpcode.Client04B1, Direction.ClientToServer)]
-public partial class Client04B1
+public partial class GuildOperationRequest
 {
     [WireStruct]
     public sealed partial class Client04B1Part0

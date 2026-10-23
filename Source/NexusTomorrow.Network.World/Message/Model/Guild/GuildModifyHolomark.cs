@@ -4,9 +4,9 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-[WireMessage(GameMessageOpcode.Client0477, Direction.ClientToServer)]
-public sealed partial class Client0477
+[WireMessage(GameMessageOpcode.Client04A6, Direction.ClientToServer)]
+public sealed partial class GuildModifyHolomark
 {
     public RealmScopedId Unknown0 { get; private set; } = new();
-    [UInt(9)] public ushort Unknown1 { get; private set; }
+    public GuildHolomark Unknown1 { get; private set; } = new();
 }
