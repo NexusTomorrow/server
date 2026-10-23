@@ -140,9 +140,9 @@ public sealed partial class UnitCreate
     /// every property to its default and then applies these in order, skipping an id above 196. The current value of property 7 is the
     /// unit's maximum health and of property 38 its maximum dash energy.
     /// </summary>
-    [VerifiedMember, Array(CountBits = 8)] public List<Server0262Part6> Unknown7 { get; set; } = [];
+    [VerifiedMember, Array(CountBits = 8)] public List<UnitPropertyValue> Unknown7 { get; set; } = [];
 
-    [Array(CountBits = 7)] public List<Server0117Part1> Unknown8 { get; set; } = [];
+    [Array(CountBits = 7)] public List<ItemVisual> Unknown8 { get; set; } = [];
 
     /// <summary>
     /// Spells the client creates on the unit. A spell it fails to create, or cannot find once created, does not refuse the unit.

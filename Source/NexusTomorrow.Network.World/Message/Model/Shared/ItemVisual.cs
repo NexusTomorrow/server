@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class Server0117Part1
+public sealed partial class ItemVisual
 {
     [UInt(7)] public byte Unknown0 { get; set; }
     [UInt(15)] public ushort Unknown1 { get; set; }

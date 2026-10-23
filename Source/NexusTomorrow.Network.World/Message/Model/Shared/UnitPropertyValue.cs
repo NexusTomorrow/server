@@ -6,7 +6,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Shared;
 /// One property entry: its id, base value and current value.
 /// </summary>
 [WireStruct]
-public sealed partial class Server0262Part6
+public sealed partial class UnitPropertyValue
 {
     /// <summary>
     /// The property, as an id in the client's UnitProperty2 table, 0 to 196.

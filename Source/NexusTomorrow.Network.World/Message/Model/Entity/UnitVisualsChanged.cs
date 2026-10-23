@@ -46,5 +46,5 @@ public sealed partial class UnitVisualsChanged
 
     [UInt(1)] public bool Unknown7 { get; set; }
 
-    [Array(CountBits = 32)] public List<Server0117Part1> Unknown8 { get; set; } = [];
+    [Array(CountBits = 32)] public List<ItemVisual> Unknown8 { get; set; } = [];
 }
