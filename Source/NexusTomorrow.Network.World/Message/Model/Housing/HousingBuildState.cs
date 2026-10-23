@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [WireMessage(GameMessageOpcode.Server053B, Direction.ServerToClient)]
-public sealed partial class Server053B
+public sealed partial class HousingBuildState
 {
     public RealmScopedId Unknown0 { get; set; } = new();
     [UInt(32)] public uint Unknown1 { get; set; }

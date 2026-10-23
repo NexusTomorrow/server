@@ -5,10 +5,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
 [WireMessage(GameMessageOpcode.Server04DF, Direction.ServerToClient)]
-public sealed partial class Server04DF
+public sealed partial class HousingResidences
 {
     [WireStruct]
-    public sealed partial class Server04DFPart0
+    public sealed partial class Residence
     {
         public RealmScopedId Unknown0 { get; set; } = new();
         [UInt(64)] public ulong Unknown1 { get; set; }
@@ -33,5 +33,5 @@ public sealed partial class Server04DF
         [UInt(1)] public bool Unknown20 { get; set; }
     }
 
-    [Array(CountBits = 32)] public List<Server04DFPart0> Unknown0 { get; } = [];
+    [Array(CountBits = 32)] public List<Residence> Unknown0 { get; } = [];
 }
