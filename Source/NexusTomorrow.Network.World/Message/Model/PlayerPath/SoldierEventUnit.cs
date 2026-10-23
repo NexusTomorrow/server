@@ -1,10 +1,21 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Game.Static.PlayerPath;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
+/// <summary>
+/// One unit of a soldier event with its type: the pair <see cref="SoldierEventUnitUpdate"/> adds.
+/// </summary>
 [WireStruct]
 public sealed partial class SoldierEventUnit
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
-    [UInt(32)] public uint Unknown1 { get; set; }
+    /// <summary>
+    /// The unit, by unit id.
+    /// </summary>
+    [UInt(32)] public uint UnitId { get; set; }
+
+    /// <summary>
+    /// The unit's type in the event.
+    /// </summary>
+    [UInt(32)] public SoldierEventUnitType UnitType { get; set; }
 }
