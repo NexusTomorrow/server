@@ -11,7 +11,8 @@ namespace NexusTomorrow.Tools;
 /// The <c>tap</c> verb's tap: every message a session reads or writes, sent to an endpoint connection as
 /// <c>{"tap": {...}}</c> lines. Each direction is numbered from 1 in the order the session handled it, so the n-th message sent is the
 /// n-th the client receives on this connection after the tap was attached. A message whose type has a member marked
-/// <see cref="WireSecretAttribute"/>, at any depth, is recorded without its bytes. A record the connection cannot take (it has ended,
+/// <see cref="WireSecretAttribute"/>, at any depth, is recorded without its bytes. A message the server read carries its decoded
+/// <c>fields</c> (<see cref="MessageDump"/>), which a secret one never does. A record the connection cannot take (it has ended,
 /// or left its outbox full) throws, so the session detaches the tap rather than record with gaps.
 /// </summary>
 public sealed class SessionRecorder : ISessionTap
@@ -49,8 +50,23 @@ public sealed class SessionRecorder : ISessionTap
             ["reason"] = inbound.Reason,
             ["type"] = inbound.Message?.GetType().Name,
             ["envelope"] = secret ? null : Convert.ToHexString(envelope),
+            ["fields"] = secret || inbound.Message is null ? null : Fields(inbound.Message),
             ["redacted"] = secret,
         }));
+    }
+
+    // The message the server decoded, as MessageDump writes it; a shape the dump cannot write is named instead of thrown, since a tap
+    // that throws is detached.
+    private static JsonObject Fields(IWireMessage message)
+    {
+        try
+        {
+            return MessageDump.Of(message);
+        }
+        catch (Exception exception) when (exception is InvalidOperationException or InvalidCastException)
+        {
+            return new JsonObject { ["$error"] = exception.Message };
+        }
     }
 
     /// <inheritdoc/>

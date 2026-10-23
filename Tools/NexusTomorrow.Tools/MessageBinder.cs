@@ -266,7 +266,7 @@ internal static class MessageBinder
 
     private static bool CanOnlyRead(MemberInfo member) => member is PropertyInfo { SetMethod: null };
 
-    private static object? Read(MemberInfo member, object target) => member switch
+    internal static object? Read(MemberInfo member, object target) => member switch
     {
         PropertyInfo property => property.GetValue(target),
         FieldInfo field => field.GetValue(target),

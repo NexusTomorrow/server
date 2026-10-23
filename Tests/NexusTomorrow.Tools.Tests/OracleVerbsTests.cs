@@ -123,9 +123,23 @@ public sealed class OracleVerbsTests : IAsyncLifetime
         Assert.All(records, r => Assert.True((bool)r["redacted"]!));
         Assert.Null(records[0]["body"]);
         Assert.Null(records[1]["envelope"]);
+        Assert.Null(records[1]["fields"]);
         Assert.Null(records[2]["envelope"]);
         Assert.True(SessionRecorder.HoldsSecret(typeof(RealmRedirect)));
         Assert.False(SessionRecorder.HoldsSecret(typeof(Kicked)));
+    }
+
+    [Fact]
+    public async Task AReceivedMessageIsRecordedWithItsDecodedFields()
+    {
+        await RequestAsync("tap", """{"account": "alice@example.com"}""");
+        var receipt = new Network.World.Message.Model.Movement.MovementControlReceipt();
+        MessageBinder.Bind(receipt, new JsonObject { ["Ticket"] = 77 });
+
+        _session.Tap!.Received(1, [0x01], new Inbound(InboundResult.Message, 0x0635, receipt, ""));
+
+        JsonObject record = Assert.Single(Records(1));
+        Assert.Equal("""{"Ticket":77}""", record["fields"]!.ToJsonString());
     }
 
     [Fact]
