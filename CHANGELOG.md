@@ -44,6 +44,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Spell messages carry their real names and field meanings: resurrection and the resurrect dialog,
   health, threat, CC states, spell thresholds, charges and cooldowns, floaters, the action bar's
   shortcut sets, stance, and sheathing weapons.
+- Cast messages carry their real names and field meanings: the cast requests, a cast's start,
+  confirmation, failure and finish, its targets and effects, spell visuals and missiles.
 
 ### Changed
 
