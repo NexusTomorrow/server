@@ -4,7 +4,14 @@ using NexusTomorrow.Network.World.Entity;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
+/// <summary>
+/// Starts a cast the client did not ask for.
+/// </summary>
+/// <remarks>
+/// The client creates the cast under the server's id; a cast it asked for arrives with <see cref="SpellConfirmCast"/>.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Server07FF, Direction.ServerToClient)]
+[Verified(Rung.Purpose)]
 public sealed partial class SpellStart
 {
     [WireStruct]
@@ -28,13 +35,31 @@ public sealed partial class SpellStart
         [Float32] public float Unknown5 { get; set; }
     }
 
-    [UInt(32)] public uint Unknown0 { get; set; }
-    [UInt(18)] public uint Unknown1 { get; set; }
+    /// <summary>
+    /// The server's id for the cast, which later messages find it by.
+    /// </summary>
+    [UInt(32)] public uint CastId { get; set; }
+
+    /// <summary>
+    /// The spell, a Spell4 table id.
+    /// </summary>
+    [UInt(18)] public uint SpellId { get; set; }
+
     [UInt(18)] public uint Unknown2 { get; set; }
     [UInt(18)] public uint Unknown3 { get; set; }
-    [UInt(32)] public uint Unknown4 { get; set; }
+
+    /// <summary>
+    /// The caster, by unit id.
+    /// </summary>
+    [UInt(32)] public uint CasterUnitId { get; set; }
+
     [UInt(16)] public ushort Unknown5 { get; set; }
-    [UInt(32)] public uint Unknown6 { get; set; }
+
+    /// <summary>
+    /// The primary target, by unit id.
+    /// </summary>
+    [UInt(32)] public uint TargetUnitId { get; set; }
+
     public Client0096Part0 Unknown7 { get; set; } = new Client0096Part0();
     [Float32] public float Unknown8 { get; set; }
 
