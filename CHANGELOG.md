@@ -13,6 +13,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - More of the client's messages carry their real names and field meanings: mail, quests, the
   inventory, groups, housing, guilds and logout, plus the realm-scoped id that characters and
   residences go by and chat's channel key.
+- Group invitations, join requests, referrals, mentoring, target markers, instance difficulty and
+  raid lockouts carry their real names and field meanings.
 
 ### Changed
 

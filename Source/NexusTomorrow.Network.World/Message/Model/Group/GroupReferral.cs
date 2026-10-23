@@ -4,12 +4,26 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Group;
 
+/// <summary>
+/// Tells the player that a group member asks for another player to be invited.
+/// </summary>
+/// <remarks>
+/// The client keeps it as the pending request, which <see cref="GroupRequestAnswer"/> answers, and raises Group_Referral with the
+/// referred player's name.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Server044F, Direction.ServerToClient)]
+[Verified(Rung.Purpose)]
 public sealed partial class GroupReferral
 {
-    [UInt(64)] public ulong Unknown0 { get; set; }
+    /// <summary>
+    /// The request, by id; <see cref="GroupRequestAnswer"/> sends it back.
+    /// </summary>
+    [UInt(64)] public ulong RequestId { get; set; }
 
     public RealmScopedId Unknown1 { get; set; } = new();
 
-    [WideString] public string Unknown2 { get; set; } = "";
+    /// <summary>
+    /// The player referred, by name.
+    /// </summary>
+    [WideString] public string TargetName { get; set; } = "";
 }
