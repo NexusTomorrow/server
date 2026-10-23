@@ -46,6 +46,21 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   shortcut sets, stance, and sheathing weapons.
 - Cast messages carry their real names and field meanings: the cast requests, a cast's start,
   confirmation, failure and finish, its targets and effects, spell visuals and missiles.
+- Your character enters the world: each open-world zone is one shared map, a new character starts at
+  its faction's start location, and where it stands, which way it faces and its zone are saved every
+  minute while it moves and whenever it leaves. It stands alone for now; other players, creatures and
+  chat come next.
+- Log Out returns you to character select on the same connection, and Exit Game quits. Logging in
+  again while your character is still in the world waits until it has been handed back, then enters
+  where it stood.
+- Operators give each faction a start location (`Realm:StartLocations`). The map settings under
+  `Maps` (the tick, the update interval, the threads, the save interval and the queue drain) are
+  checked at start, and a bad one stops the server, naming the setting.
+- The stall watchdog watches every map as well as the account and realm owners.
+- The protocol reference's opcode page lists every row with its routing tag, how far its message
+  must be verified before the server reads it, and the largest body it accepts.
+- Dash and the dash taken while knocked down, the unit stat updates, and the properties a new unit
+  carries have their real names and field meanings.
 
 ### Changed
 
@@ -55,6 +70,13 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   reference. Messages no area claims yet sit under Unsettled.
 - A reference page the generator no longer writes keeps a tombstone that says so, instead of going
   stale.
+- `Realm:Id` runs from 1 to 16383: 0 is refused at start, since the client refuses a character's
+  unit that carries it.
+- A message must travel under the routing tag its row names, and one under another tag ends the
+  session. World messages the server doesn't handle yet are dropped and counted, and the session
+  goes on.
+- The server checks a message's row, its rate and the connection's state before reading its body,
+  and a movement message larger than 2,048 bytes ends the session.
 
 ### Fixed
 

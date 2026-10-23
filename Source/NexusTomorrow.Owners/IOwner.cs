@@ -16,7 +16,7 @@ public interface IOwner
     int QueueLength { get; }
 
     /// <summary>
-    /// The messages the owner has handled since it started.
+    /// The messages the owner has handled since it started; for a map, the ticks it has completed.
     /// </summary>
     long Handled { get; }
 }

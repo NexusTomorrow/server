@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Gateway;
 using NexusTomorrow.Gateway.Kestrel;
+using NexusTomorrow.Maps;
+using NexusTomorrow.Maps.Scheduling;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Persistence;
@@ -18,13 +20,15 @@ namespace NexusTomorrow.Server;
 /// Brings the core up before Kestrel listens and takes it down after Kestrel has stopped accepting.
 /// <para>
 /// Start: refuse a schema with pending migrations, start the write-behind queue, hand the realm owner its first character id block
-/// (waiting at most <see cref="PersistenceOptions.FirstIdBlockTimeout"/>), start both owners, then give Kestrel its three listeners.
-/// Kestrel binds only after this start, so nothing listens before the core is ready. A start that fails after the queue began stops
-/// the owners and drops the queue's start-up work, because no player has saved anything yet.
+/// (waiting at most <see cref="PersistenceOptions.FirstIdBlockTimeout"/>), start both owners, start the map scheduler, then give
+/// Kestrel its three listeners. Kestrel binds only after this start, so nothing listens before the core is ready. A start that fails
+/// after the queue began stops the scheduler and the owners and drops the queue's start-up work, because no player has saved
+/// anything yet.
 /// </para>
 /// <para>
-/// Stop: stop both owners (each handles what it has queued), then wait for every queued save to commit. Nothing bounds that wait,
-/// because a bound would drop saves; while it lasts, the backlog is logged every <see cref="WaitLogInterval"/> on the host's clock.
+/// Stop: stop every map, which hands each character back to the realm with its save queued; stop the map threads; stop both owners
+/// (each handles what it has queued); then wait for every queued save to commit. Nothing bounds that wait, because a bound would
+/// drop saves; while it lasts, the backlog is logged every <see cref="WaitLogInterval"/> on the host's clock.
 /// </para>
 /// </summary>
 public sealed class CoreLifetime : IHostedLifecycleService
@@ -38,6 +42,8 @@ public sealed class CoreLifetime : IHostedLifecycleService
     private readonly WriteBehindQueue _queue;
     private readonly AccountOwner _accounts;
     private readonly RealmOwner _realm;
+    private readonly IMapScheduler _scheduler;
+    private readonly MapDirectory _maps;
     private readonly TimeProvider _time;
     private readonly TimeSpan _firstBlockTimeout;
     private readonly KestrelServerOptions _kestrel;
@@ -52,6 +58,8 @@ public sealed class CoreLifetime : IHostedLifecycleService
         WriteBehindQueue queue,
         AccountOwner accounts,
         RealmOwner realm,
+        IMapScheduler scheduler,
+        MapDirectory maps,
         TimeProvider time,
         IOptions<PersistenceOptions> persistence,
         IOptions<KestrelServerOptions> kestrel,
@@ -62,6 +70,8 @@ public sealed class CoreLifetime : IHostedLifecycleService
         _queue = queue;
         _accounts = accounts;
         _realm = realm;
+        _scheduler = scheduler;
+        _maps = maps;
         _time = time;
         _firstBlockTimeout = persistence.Value.FirstIdBlockTimeout;
         _kestrel = kestrel.Value;
@@ -85,11 +95,13 @@ public sealed class CoreLifetime : IHostedLifecycleService
             _realm.Post(new IdBlockTaken(await WaitForFirstBlockAsync(taken.Task, cancellationToken)));
             _accounts.Start();
             _realm.Start();
+            _scheduler.Start();
             GatewayEndpoints.Listen(_kestrel, _gateway);
         }
         catch
         {
             // Nothing a player did is waiting in the queue yet, so the start-up work it still holds is dropped rather than awaited.
+            await _scheduler.DisposeAsync();
             await _realm.StopAsync();
             await _accounts.StopAsync();
             await _queue.AbandonAsync();
@@ -102,6 +114,17 @@ public sealed class CoreLifetime : IHostedLifecycleService
     {
         try
         {
+            // A map stops on its next tick, so the scheduler runs until every map has handed its characters back; the realm then
+            // handles those returns, and the queue is disposed only after the maps' saves are in it.
+            try
+            {
+                await _maps.StopAsync();
+            }
+            finally
+            {
+                await _scheduler.DisposeAsync();
+            }
+
             await _realm.StopAsync();
             await _accounts.StopAsync();
         }

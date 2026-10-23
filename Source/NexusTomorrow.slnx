@@ -10,6 +10,7 @@
     <Project Path="NexusTomorrow.GameTable/NexusTomorrow.GameTable.csproj" />
     <Project Path="NexusTomorrow.Gateway/NexusTomorrow.Gateway.csproj" />
     <Project Path="NexusTomorrow.IO/NexusTomorrow.IO.csproj" />
+    <Project Path="NexusTomorrow.Maps/NexusTomorrow.Maps.csproj" />
     <Project Path="NexusTomorrow.Network.Auth/NexusTomorrow.Network.Auth.csproj" />
     <Project Path="NexusTomorrow.Network.Codec.Generator/NexusTomorrow.Network.Codec.Generator.csproj" />
     <Project Path="NexusTomorrow.Network.Codec/NexusTomorrow.Network.Codec.csproj" />
@@ -30,6 +31,7 @@
     <Project Path="../Tests/NexusTomorrow.Gateway.Tests/NexusTomorrow.Gateway.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Harness.Tests/NexusTomorrow.Harness.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Harness/NexusTomorrow.Harness.csproj" />
+    <Project Path="../Tests/NexusTomorrow.Maps.Tests/NexusTomorrow.Maps.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Codec.Generator.Tests/NexusTomorrow.Network.Codec.Generator.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Network.Codec.Tests/NexusTomorrow.Network.Codec.Tests.csproj" />
     <Project Path="../Tests/NexusTomorrow.Owners.Tests/NexusTomorrow.Owners.Tests.csproj" />

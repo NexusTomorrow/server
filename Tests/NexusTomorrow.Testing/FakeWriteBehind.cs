@@ -19,6 +19,9 @@ public sealed class FakeWriteBehind : IWriteBehind
 
     public bool IsAvailable { get; set; } = true;
 
+    // When set and true for a work item, Enqueue throws before keeping it: a fault in the caller's handler.
+    public Func<PersistenceWork, bool>? ThrowOn { get; set; }
+
     public List<PersistenceWork> Queued
     {
         get
@@ -30,6 +33,9 @@ public sealed class FakeWriteBehind : IWriteBehind
 
     public void Enqueue(PersistenceWork work)
     {
+        if (ThrowOn?.Invoke(work) == true)
+            throw new InvalidOperationException($"Enqueue of {work.GetType().Name} refused by the test.");
+
         lock (_gate)
             _queued.Add(work);
     }

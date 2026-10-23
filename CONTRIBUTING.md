@@ -88,8 +88,9 @@ output, and without them every generated member looks missing.
   PostgreSQL server. `dotnet test --solution Source/NexusTomorrow.slnx` runs them with the rest.
 - Name a test for the behaviour it checks, such as `SessionKeyIsAlwaysSixtyFourBytes`.
 - CI runs only when a maintainer dispatches the `Tests` workflow, so your pull request shows no
-  checks until a maintainer runs them for it. Before it builds, it checks your commit messages and
-  that no `.cs` or `.md` file holds an em dash; after the build, it checks the formatting.
+  checks until a maintainer runs them for it. Before it builds, it checks your commit messages, that
+  no `.cs` or `.md` file holds an em dash, and that none says how a client fact was found; after the
+  build, it checks the formatting.
 - A workflow change uses only GitHub-owned actions, pinned by full commit SHA with the version in a
   comment, and keeps `permissions: contents: read`.
 
@@ -146,8 +147,9 @@ it: in `.editorconfig`, scoped to the files it covers, with a comment above sayi
 ### Hot paths
 
 Code that runs on every tick or for every message lives in projects marked
-`<HotPath>true</HotPath>`; today that's `NexusTomorrow.Network.Codec`. Hot code allocates nothing
-in steady state, so in those projects the build refuses:
+`<HotPath>true</HotPath>`; today that's `NexusTomorrow.Network.Codec`, `NexusTomorrow.Transport` and
+`NexusTomorrow.Maps`. Hot code allocates nothing in steady state, so in those projects the build
+refuses:
 
 - LINQ, `Activator`, `Enum.ToObject` and `Convert`, which allocate or box;
 - `Stream` and `MemoryStream`, since hot code reads and writes spans;

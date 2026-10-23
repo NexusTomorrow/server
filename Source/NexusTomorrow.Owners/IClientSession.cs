@@ -20,7 +20,10 @@ public interface IClientSession
     IPAddress RemoteAddress { get; }
 
     /// <summary>
-    /// Queue <paramref name="message"/> for the client. The message must not be changed after this call.
+    /// Queue <paramref name="message"/> for the client. The message is serialized before this returns, so the caller may
+    /// change or reuse it at once; the send gate runs on the message as it is at the call. Throws <see cref="InvalidOperationException"/>
+    /// when the send gate refuses the message: its type is not read to Fields, nor to Purpose with only verified members set, and
+    /// <see cref="CodecException"/> when the message wrote a different number of bytes than it measured.
     /// </summary>
     void Send<T>(T message)
         where T : class, IWireMessage;

@@ -1,11 +1,14 @@
-﻿using System.Collections.Frozen;
+﻿using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.IO.Pipelines;
 using System.Net;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Gateway.Connections;
+using NexusTomorrow.Gateway.Tests.Sts;
 using NexusTomorrow.Network.Auth.Message.Model;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
@@ -17,6 +20,7 @@ namespace NexusTomorrow.Gateway.Tests.Connections;
 public sealed class ClientConnectionTests : IAsyncLifetime
 {
     private static readonly TimeSpan s_wait = TimeSpan.FromSeconds(10);
+    private static readonly MessageCatalog s_gate = MessageCatalog.Build([(WireMessages.Layouts, WireMessages.CreateClientToServer, WireMessages.CreateServerToClient)]);
 
     private readonly PipePair _pipes = new();
     private readonly CancellationTokenSource _stop = new();
@@ -26,7 +30,7 @@ public sealed class ClientConnectionTests : IAsyncLifetime
 
     public ClientConnectionTests()
     {
-        _connection = new RecordingConnection(_time, Small(4096), OpcodeTable.Pregame);
+        _connection = new RecordingConnection(_time, Small(4096), OpcodeTable.Pregame, MessageCatalog.Default);
         Client = new GameTestClient(_pipes.Client);
     }
 
@@ -95,6 +99,105 @@ public sealed class ClientConnectionTests : IAsyncLifetime
         Assert.Equal(1u, (await Client.ExpectAsync<LoginAccepted>()).DroppedForLag);
         Client.Cipher = next;
         Assert.Equal(2u, (await Client.ExpectAsync<LoginAccepted>()).DroppedForLag);
+    }
+
+    [Fact]
+    public async Task AMessageChangedAfterSendGoesOutAsItWasWhenSent()
+    {
+        // Both are queued before the writer runs, so a queue that held the message object would write the second value twice.
+        var message = new LoginAccepted { DroppedForLag = 1 };
+        _connection.Send(message);
+        message.DroppedForLag = 2;
+        _connection.Send(message);
+        Start();
+
+        Assert.Equal(1u, (await Client.ExpectAsync<LoginAccepted>()).DroppedForLag);
+        Assert.Equal(2u, (await Client.ExpectAsync<LoginAccepted>()).DroppedForLag);
+    }
+
+    [Fact]
+    public async Task ASendAfterTheWriterStoppedOnItsOwnDoesNotRecordAFullQueueAsTheEndReason()
+    {
+        var log = new RecordingLogger<ClientConnectionTests>();
+        _connection = new RecordingConnection(_time, Small(4096), OpcodeTable.Pregame, MessageCatalog.Default, log);
+        using var handling = new ManualResetEventSlim();
+        using var release = new ManualResetEventSlim();
+        _connection.OnMessage = _ =>
+        {
+            handling.Set();
+            release.Wait(s_wait);
+            return true;
+        };
+        Start();
+        await Client.SendAsync(new CharacterListRequest());
+        Assert.True(handling.Wait(s_wait, TestContext.Current.CancellationToken));
+
+        // The read loop is held in the handler, so the connection has not yet recorded why it is ending when the writer stops: the
+        // client's reader is gone, so the flush of this message reports the pipe completed.
+        await _pipes.Client.Input.CompleteAsync();
+        _connection.Send(new LoginAccepted());
+        await Eventually.TrueAsync(() => _connection.LifetimeCancelled);
+
+        _connection.Send(new LoginAccepted());
+        release.Set();
+
+        await _run.WaitAsync(s_wait, TestContext.Current.CancellationToken);
+        Assert.DoesNotContain(log.Entries, entry => entry.Contains("the outbound queue is full", StringComparison.Ordinal));
+        Assert.Contains(log.Entries, entry => entry.Contains("ended: closed", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task ASendPastACapacityQueueWhoseWriterIsLiveEndsTheConnectionAsFull()
+    {
+        var log = new RecordingLogger<ClientConnectionTests>();
+        _connection = new RecordingConnection(_time, Small(2), OpcodeTable.Pregame, MessageCatalog.Default, log);
+
+        // The writer has not started, so two items fill the queue and the third is refused.
+        _connection.Send(new LoginAccepted());
+        _connection.Send(new LoginAccepted());
+        _connection.Send(new LoginAccepted());
+        Start();
+
+        await _run.WaitAsync(s_wait, TestContext.Current.CancellationToken);
+        Assert.Contains(log.Entries, entry => entry.Contains("ended: the outbound queue is full", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task SendingAReusedMessageAllocatesNothingOnTheCallersThread()
+    {
+        Start();
+        await Eventually.TrueAsync(() => _connection.Started);
+        var message = new LoginAccepted();
+
+        // The warm-up has two jobs: the queue's ring buffer grows to the deepest backlog it has held and then stays, so 200 backs it up
+        // past anything measured; and the returned buffers stock ArrayPool.Shared, so the measured Sends find one to rent.
+        for (uint i = 0; i < 200; i++)
+        {
+            message.DroppedForLag = i;
+            _connection.Send(message);
+        }
+
+        for (int i = 0; i < 200; i++)
+            await Client.ExpectAsync<LoginAccepted>();
+
+        // Four messages at a time, read back before the next four, so the backlog stays within what ArrayPool.Shared caches per core;
+        // only the Send calls are measured.
+        long allocated = 0;
+        for (uint batch = 0; batch < 25; batch++)
+        {
+            for (uint i = 0; i < 4; i++)
+            {
+                message.DroppedForLag = (batch * 4) + i;
+                long before = GC.GetAllocatedBytesForCurrentThread();
+                _connection.Send(message);
+                allocated += GC.GetAllocatedBytesForCurrentThread() - before;
+            }
+
+            for (uint i = 0; i < 4; i++)
+                Assert.Equal((batch * 4) + i, (await Client.ExpectAsync<LoginAccepted>()).DroppedForLag);
+        }
+
+        Assert.Equal(0L, allocated);
     }
 
     [Fact]
@@ -226,9 +329,61 @@ public sealed class ClientConnectionTests : IAsyncLifetime
     }
 
     [Fact]
-    public void SendingAMessageBelowFieldsThrows()
+    public async Task AMessagePastItsRateIsDroppedUnreadAndTheSessionGoesOn()
+    {
+        FrozenDictionary<ushort, OpcodeRow> table = new OpcodeRow[]
+        {
+            new(0x07E0, MessageOwner.Realm, MessagePriority.Normal, 1, OverLimitAction.Drop),
+            new(0x0352, MessageOwner.Realm, MessagePriority.Normal, 1, OverLimitAction.Drop),
+        }.ToFrozenDictionary(row => row.Opcode);
+        Use(Small(4096), table);
+        var handled = new ConcurrentQueue<Type>();
+        _connection.OnMessage = message =>
+        {
+            handled.Enqueue(message.GetType());
+            return true;
+        };
+        Start();
+
+        // The clock never moves, so the first request spends 0x07E0's one token. CharacterListRequest declares no fields, so the
+        // second request's byte would be malformed if it were read.
+        await Client.SendAsync(new CharacterListRequest());
+        await Client.SendUncheckedAsync(0x07E0, new RawBody([0xFF]));
+        await Client.SendAsync(new CharacterDelete { CharacterId = 5 });
+
+        await Eventually.TrueAsync(() => handled.Count == 2 || _run.IsCompleted);
+        Assert.Equal(0, _connection.Closed);
+        Type[] expected = [typeof(CharacterListRequest), typeof(CharacterDelete)];
+        Assert.Equal(expected, handled);
+    }
+
+    [Fact]
+    public void SendingAMessageTheCatalogDoesNotHoldThrows()
     {
         Assert.Throws<InvalidOperationException>(() => _connection.Send(new UnverifiedForTest()));
+    }
+
+    [Fact]
+    public void SendingAPurposeMessageWithAnUnverifiedMemberSetThrowsNamingTheMember()
+    {
+        Use(Small(4096), catalog: s_gate);
+
+        InvalidOperationException thrown = Assert.Throws<InvalidOperationException>(() => _connection.Send(new GatePurposeMessage { Unread = 1 }));
+
+        Assert.Contains("GatePurposeMessage.Unread", thrown.Message);
+    }
+
+    [Fact]
+    public async Task APurposeMessageWithOnlyVerifiedMembersSetReachesTheClient()
+    {
+        Use(Small(4096), catalog: s_gate);
+        Start();
+        await Eventually.TrueAsync(() => _connection.Started);
+
+        _connection.Send(new GatePurposeMessage { Known = 1 });
+
+        ReadResult read = await _pipes.Client.Input.ReadAsync(TestContext.Current.CancellationToken);
+        Assert.True(read.Buffer.Length > 0);
     }
 
     // Each ping is answered with a 7-byte frame, so this many answers exceed the 64 KiB a pipe holds before its writer waits.
@@ -250,8 +405,8 @@ public sealed class ClientConnectionTests : IAsyncLifetime
         return bytes;
     }
 
-    private void Use(GatewayOptions options, FrozenDictionary<ushort, OpcodeRow>? table = null) =>
-        _connection = new RecordingConnection(_time, options, table ?? OpcodeTable.Pregame);
+    private void Use(GatewayOptions options, FrozenDictionary<ushort, OpcodeRow>? table = null, MessageCatalog? catalog = null) =>
+        _connection = new RecordingConnection(_time, options, table ?? OpcodeTable.Pregame, catalog ?? MessageCatalog.Default);
 
     // The grace runs on the fake clock, so the clock is advanced until the run completes; the pre-auth timeout is far longer.
     private async Task EndedAfterTheGraceAsync() =>
@@ -307,9 +462,9 @@ public sealed class ClientConnectionTests : IAsyncLifetime
         private int _closed;
         private int _started;
 
-        public RecordingConnection(TimeProvider time, GatewayOptions options, FrozenDictionary<ushort, OpcodeRow> table)
-            : base(0x0076, MessageCatalog.Default, new InboundDecoder(MessageCatalog.Default, table, new HashSet<ushort>()),
-                Options.Create(options), time, new GatewayMetrics(), NullLogger.Instance)
+        public RecordingConnection(TimeProvider time, GatewayOptions options, FrozenDictionary<ushort, OpcodeRow> table, MessageCatalog catalog, ILogger? logger = null)
+            : base(0x0076, catalog, new InboundDecoder(catalog, table, new HashSet<ushort>()),
+                Options.Create(options), time, new GatewayMetrics(), logger ?? NullLogger.Instance)
         {
         }
 
@@ -317,13 +472,18 @@ public sealed class ClientConnectionTests : IAsyncLifetime
 
         public MessageHandler OnMessage { get; set; } = _ => true;
 
+        public bool LifetimeCancelled => Lifetime.IsCancellationRequested;
+
         public bool Started => Volatile.Read(ref _started) == 1;
 
         public int Closed => Volatile.Read(ref _closed);
 
         public void SwitchKeyTo(PacketCipher cipher) => SwitchKey(cipher);
 
-        protected override ValueTask<bool> HandleAsync(IWireMessage message) => ValueTask.FromResult(OnMessage(message));
+        // Every row is handled in every state, so only the decoder and the rate gate refuse a message here.
+        protected override bool Admits(OpcodeRow row) => true;
+
+        protected override ValueTask<bool> HandleAsync(IWireMessage message, OpcodeRow row) => ValueTask.FromResult(OnMessage(message));
 
         protected override void OnStart()
         {
@@ -344,6 +504,10 @@ public sealed class ClientConnectionTests : IAsyncLifetime
         public static WireLayout Layout => throw new NotSupportedException();
 
         public int MeasureBits() => 0;
+
+        public string? FindUnverifiedValue() => null;
+
+        public bool IsDefault() => true;
 
         public void Write(ref BitWriter writer)
         {

@@ -1,5 +1,12 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using System.Numerics;
+using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.World.Entity;
+using NexusTomorrow.Network.World.Entity.Command;
+using NexusTomorrow.Network.World.Message.Model.Entity;
+using NexusTomorrow.Network.World.Message.Model.Movement;
+using NexusTomorrow.Network.World.Message.Model.PlayerPath;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 using NexusTomorrow.Testing;
 
 namespace NexusTomorrow.Harness;
@@ -8,6 +15,16 @@ namespace NexusTomorrow.Harness;
 // bound, so a server that stays silent fails the scenario.
 public sealed class WorldSession : IAsyncDisposable
 {
+    // The tag the client sends every in-world message under.
+    public const byte WorldTag = 0x03;
+
+    private const byte TimeCommand = 0;
+    private const byte PositionCommand = 2;
+    private const byte FacingCommand = 14;
+
+    // Two update intervals of 125 ms: each batch of ClientMovement opens with the client's clock plus both (its remarks).
+    private const uint BatchLeadMs = 250;
+
     private readonly SocketPipe _pipe;
 
     internal WorldSession(SocketPipe pipe, GameTestClient connection, CharacterList firstList)
@@ -45,6 +62,46 @@ public sealed class WorldSession : IAsyncDisposable
     {
         await Connection.SendAsync(new CharacterSelect { CharacterId = characterId });
         return await Connection.ExpectAsync<CharacterSelectFailed>();
+    }
+
+    // As the client does: select, take the seven entry messages in order, answer the control grant, report the first takeover's zone
+    // change and the world loaded, and wait for the end of the entry.
+    public async Task<EnteredWorld> EnterWorldAsync(ulong characterId, ushort zoneId = 7)
+    {
+        await Connection.SendAsync(new CharacterSelect { CharacterId = characterId });
+        var entered = new EnteredWorld(
+            await Connection.ExpectAsync<EnterWorld>(),
+            await Connection.ExpectAsync<UnitCreate>(),
+            await Connection.ExpectAsync<PlayerUnit>(),
+            await Connection.ExpectAsync<WorldSettings>(),
+            await Connection.ExpectAsync<MovementControl>(),
+            await Connection.ExpectAsync<PlayerState>(),
+            await Connection.ExpectAsync<PathState>());
+
+        await Connection.SendTaggedAsync(WorldTag, ClientMessage.With(new MovementControlReceipt(), nameof(MovementControlReceipt.Ticket), entered.Control.Ticket));
+        await Connection.SendTaggedAsync(WorldTag, new ZoneChange());
+        await Connection.SendTaggedAsync(WorldTag, ClientMessage.With(new WorldReady(), nameof(WorldReady.ZoneId), zoneId));
+        await Connection.ExpectAsync<WorldEntryComplete>();
+        return entered;
+    }
+
+    // One ClientMovement as the client sends it: a time, a position and a facing of (yaw, 0, 0).
+    public Task MoveAsync(Vector3 position, float yaw, uint clock)
+    {
+        var movement = new ClientMovement { Unknown0 = clock };
+        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = TimeCommand, Unknown1 = new Server0262Union2Arm00 { Unknown0 = clock + BatchLeadMs } });
+        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = PositionCommand, Unknown1 = new Server0262Union2Arm02 { Unknown0 = position, Unknown1 = true } });
+        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = FacingCommand, Unknown1 = new Server0262Union2Arm0E { Unknown0 = new Vector3(yaw, 0, 0), Unknown1 = true } });
+        return Connection.SendTaggedAsync(WorldTag, movement);
+    }
+
+    // As the client does at the Escape menu's Log Out: ask, take the countdown, confirm, and take the logout to character select.
+    public async Task<(LogoutCountdown Countdown, WorldLogout Logout)> LogOutAsync()
+    {
+        await Connection.SendTaggedAsync(WorldTag, ClientMessage.With(new LogoutRequest(), nameof(LogoutRequest.Begin), true));
+        LogoutCountdown countdown = await Connection.ExpectAsync<LogoutCountdown>();
+        await Connection.SendTaggedAsync(WorldTag, new LogoutConfirm());
+        return (countdown, await Connection.ExpectAsync<WorldLogout>());
     }
 
     public Task<T> ExpectAsync<T>()

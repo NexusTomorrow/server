@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Gateway;
+using NexusTomorrow.Maps;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Persistence;
@@ -112,4 +113,39 @@ internal sealed class RealmOptionsValidator : IValidateOptions<RealmOptions>
         string.IsNullOrWhiteSpace(options.Name)
             ? ValidateOptionsResult.Fail($"{RealmOptions.Section}:{nameof(RealmOptions.Name)} is required.")
             : ValidateOptionsResult.Success;
+}
+
+internal sealed class MapOptionsValidator : IValidateOptions<MapOptions>
+{
+    // The tick divides 250 ms so an effect timed on a multiple of 250 lands exactly on a tick (decisions.md D9 2d).
+    private static readonly int[] s_tickChoices = [25, 50, 125, 250];
+
+    // The client clamps the movement interval it is told to this range (WorldSettings.MovementInterval).
+    private const long MinimumIntervalMs = 25;
+    private const long MaximumIntervalMs = 1000;
+
+    public ValidateOptionsResult Validate(string? name, MapOptions options)
+    {
+        List<string> failures = [];
+        string section = MapOptions.Section;
+        if (options.PoolThreads < 1)
+            failures.Add($"{section}:{nameof(MapOptions.PoolThreads)} must be at least 1.");
+        if (options.DedicatedThreads < 0)
+            failures.Add($"{section}:{nameof(MapOptions.DedicatedThreads)} must not be negative.");
+        if (!s_tickChoices.Contains(options.TickMs))
+            failures.Add($"{section}:{nameof(MapOptions.TickMs)} must be 25, 50, 125 or 250.");
+
+        long intervalMs = (long)options.TickMs * options.ReplicationEveryTicks;
+        if (options.ReplicationEveryTicks < 1 || intervalMs < MinimumIntervalMs || intervalMs > MaximumIntervalMs)
+            failures.Add($"{section}:{nameof(MapOptions.ReplicationEveryTicks)} times {section}:{nameof(MapOptions.TickMs)} must be 25 to 1000 ms.");
+
+        if (options.SaveInterval < TimeSpan.FromSeconds(1))
+            failures.Add($"{section}:{nameof(MapOptions.SaveInterval)} must be at least one second.");
+        if (options.NormalDrainFloor < 1)
+            failures.Add($"{section}:{nameof(MapOptions.NormalDrainFloor)} must be at least 1.");
+        if (options.NormalDrainBudget <= TimeSpan.Zero)
+            failures.Add($"{section}:{nameof(MapOptions.NormalDrainBudget)} must be positive.");
+
+        return failures.Count == 0 ? ValidateOptionsResult.Success : ValidateOptionsResult.Fail(failures);
+    }
 }

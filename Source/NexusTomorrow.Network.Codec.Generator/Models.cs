@@ -74,7 +74,8 @@ internal sealed record MemberModel(
     bool BlobLengthIncludesSelf,
     int PadBits,
     bool Settable,
-    LocationInfo? Location);
+    LocationInfo? Location,
+    bool Verified);
 
 internal sealed record PartModel(int Shape, int At, int ElementBits);
 

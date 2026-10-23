@@ -2,24 +2,29 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Realm;
 
 namespace NexusTomorrow.Owners.Realm;
 
 /// <summary>
-/// The realm side: each online account's characters, loaded once per world session, and the character-select answers. An answer that
-/// depends on a write is sent only from the write's completion message.
+/// The realm side: each online account's characters, loaded once per world session, the character-select answers, and the character
+/// handoff (P6): select loads the character in full and hands it to its world's map, which hands it back when it leaves. An answer that
+/// depends on a write is sent only from the write's completion message. A character away from rest is never loaded again until its
+/// map hands it back.
 /// </summary>
-public sealed class RealmOwner : Owner<RealmMessage>
+public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
 {
     // The highest path id CharacterCreate.Path documents (3 Explorer).
     private const byte LastPath = 3;
 
     private readonly IWriteBehind _persistence;
     private readonly ICreationCatalog _catalog;
+    private readonly IMapDirectory _maps;
     private readonly TimeProvider _time;
     private readonly RealmOptions _options;
+    private readonly ILogger<RealmOwner> _log;
     private readonly IdBlockAllocator _ids = new(refillBelow: RealmContext.CharacterIdBlock / 2);
     private readonly Dictionary<long, AccountCharacters> _accounts = [];
     private readonly HashSet<string> _pendingNames = new(StringComparer.OrdinalIgnoreCase);
@@ -32,17 +37,34 @@ public sealed class RealmOwner : Owner<RealmMessage>
     // meantime would otherwise pass the RequiresRename check. Released in Renamed on every outcome.
     private readonly HashSet<ulong> _renaming = [];
 
+    // A character away from rest, by character id: loading for a select, or held by a map. A presence leaves through Release (a load
+    // whose session closed, a load that found nothing, a world no map hosts, a map that refused the arrival, and the faults of a
+    // select or of a load before its arrival was posted), through Returned, and through the fault path of Returned.
+    private readonly Dictionary<ulong, Presence> _presences = [];
+
+    // The character each session has on its way in or in the world, by session reference. A session parked behind another's
+    // presence holds its character too, so it cannot start a second select.
+    private readonly Dictionary<IWorldSession, ulong> _held = new(ReferenceEqualityComparer.Instance);
+
+    // Selects waiting for a character another session holds, by character id: at most one, the newest.
+    private readonly Dictionary<ulong, SelectCharacter> _parked = [];
+
+    private long _ticket;
+
     /// <summary>
     /// Create the realm owner.
     /// </summary>
     public RealmOwner(
-        IWriteBehind persistence, ICreationCatalog catalog, TimeProvider time, IOptions<RealmOptions> options, ILogger<RealmOwner> logger)
+        IWriteBehind persistence, ICreationCatalog catalog, IMapDirectory maps, TimeProvider time, IOptions<RealmOptions> options,
+        ILogger<RealmOwner> logger)
         : base("realm", logger)
     {
         _persistence = persistence;
         _catalog = catalog;
+        _maps = maps;
         _time = time;
         _options = options.Value;
+        _log = logger;
     }
 
     /// <inheritdoc/>
@@ -85,9 +107,14 @@ public sealed class RealmOwner : Owner<RealmMessage>
             case SelectCharacter select:
                 Select(select);
                 break;
+            case CharacterLoaded loaded:
+                Loaded(loaded);
+                break;
+            case CharacterReturned returned:
+                Returned(returned);
+                break;
             case RealmSessionClosed closed:
-                if (_accounts.TryGetValue(closed.AccountId, out AccountCharacters? open) && open.Session == closed.Session)
-                    _accounts.Remove(closed.AccountId);
+                Closed(closed);
                 break;
         }
 
@@ -115,8 +142,37 @@ public sealed class RealmOwner : Owner<RealmMessage>
             case RenameCharacter { Session: var session }:
                 session.Disconnect("the realm owner failed renaming a character");
                 break;
-            case SelectCharacter { Session: var session }:
+            case SelectCharacter { Session: var session, CharacterId: var selectedId }:
+                // This session's presence for the character, still loading, may have no load queued behind it and would then hold the
+                // character until restart; the faulted session is disconnected, so it is freed without an answer. A load that did
+                // queue lands on no matching ticket.
+                if (_presences.TryGetValue(selectedId, out Presence? created) && ReferenceEquals(created.Session, session) && created.Loading)
+                    Release(created, answerGeneral: false);
+
                 session.Disconnect("the realm owner failed selecting a character");
+                break;
+            case CharacterLoaded { CharacterId: var characterId, Ticket: var ticket }:
+                // Only a presence whose arrival was never posted is released: once the map holds the character, a fault elsewhere in
+                // the handler (the id refill) must not free it.
+                if (_presences.TryGetValue(characterId, out Presence? loading) && loading.Ticket == ticket && loading.Loading)
+                    Release(loading, answerGeneral: true);
+                break;
+            case CharacterReturned { CharacterId: var returnedId }:
+                // Whatever Returned stopped at, the character ends at rest: a presence left over (a parked select's load that never
+                // queued) and any select still parked for it are dropped, freed and answered.
+                if (_presences.Remove(returnedId, out Presence? left))
+                {
+                    Free(left.Session, returnedId);
+                    if (left.Loading)
+                        left.Session.Send(new CharacterSelectFailed { Reason = SelectReasons.General });
+                }
+
+                if (_parked.Remove(returnedId, out SelectCharacter? waiting))
+                {
+                    Free(waiting.Session, returnedId);
+                    waiting.Session.Send(new CharacterSelectFailed { Reason = SelectReasons.General });
+                }
+
                 break;
         }
     }
@@ -215,7 +271,8 @@ public sealed class RealmOwner : Owner<RealmMessage>
     private void Delete(DeleteCharacter delete)
     {
         IClientSession session = delete.Session;
-        if (LoadedFor(delete.AccountId, session)?.Exists(c => c.Id == delete.CharacterId) != true)
+        if (_presences.ContainsKey(delete.CharacterId)
+            || LoadedFor(delete.AccountId, session)?.Exists(c => c.Id == delete.CharacterId) != true)
         {
             session.Send(new CharacterDeleteResult { Result = DeleteResults.General });
             return;
@@ -300,15 +357,136 @@ public sealed class RealmOwner : Owner<RealmMessage>
     {
         CharacterSummary? target = LoadedFor(select.AccountId, select.Session)?.Find(c => c.Id == select.CharacterId);
 
-        // Stage 1 has no world to enter, so a character that could be selected answers the general reason too.
-        byte reason = target switch
+        byte? refusal = target switch
         {
             null => SelectReasons.General,
             { RequiresRename: true } => SelectReasons.MustRename,
             { Disabled: true } => SelectReasons.Disabled,
-            _ => SelectReasons.General,
+            _ => null,
         };
-        select.Session.Send(new CharacterSelectFailed { Reason = reason });
+        if (refusal is byte reason)
+        {
+            select.Session.Send(new CharacterSelectFailed { Reason = reason });
+            return;
+        }
+
+        // The entry already under way answers.
+        if (_held.ContainsKey(select.Session))
+            return;
+
+        _held[select.Session] = select.CharacterId;
+        if (!_presences.ContainsKey(select.CharacterId))
+        {
+            StartLoad(select);
+            return;
+        }
+
+        if (_parked.Remove(select.CharacterId, out SelectCharacter? older))
+        {
+            Free(older.Session, select.CharacterId);
+            older.Session.Send(new CharacterSelectFailed { Reason = SelectReasons.General });
+        }
+
+        _parked[select.CharacterId] = select;
+    }
+
+    private void StartLoad(SelectCharacter select)
+    {
+        long ticket = ++_ticket;
+        ulong characterId = select.CharacterId;
+        _presences[characterId] = new Presence(ticket, characterId, select.AccountId, select.Session);
+        _persistence.Enqueue(new LoadCharacterWork(
+            characterId, select.AccountId, character => Post(new CharacterLoaded(ticket, characterId, character))));
+    }
+
+    private void Loaded(CharacterLoaded loaded)
+    {
+        if (!_presences.TryGetValue(loaded.CharacterId, out Presence? presence) || presence.Ticket != loaded.Ticket)
+            return;
+
+        if (presence.Abandoned)
+        {
+            Release(presence, answerGeneral: false);
+            return;
+        }
+
+        if (loaded.Character is not { } character)
+        {
+            Release(presence, answerGeneral: true);
+            return;
+        }
+
+        // The loaded record's world, not the list's: the map saves the position it last held.
+        ushort world = character.Location.WorldId;
+        IMapInbox? map = _maps.Host(world);
+        if (map is null || !map.Post(new CharacterArrived(presence.Session, presence.AccountId, character, this)))
+        {
+            RealmLog.WorldNotHosted(_log, character.Id, world);
+            Release(presence, answerGeneral: true);
+            return;
+        }
+
+        presence.Loading = false;
+    }
+
+    private void Returned(CharacterReturned returned)
+    {
+        if (!_presences.Remove(returned.CharacterId, out Presence? presence))
+            return;
+
+        Free(presence.Session, returned.CharacterId);
+        if (_accounts.TryGetValue(returned.AccountId, out AccountCharacters? state) && state.Characters is { } characters)
+        {
+            int index = characters.FindIndex(c => c.Id == returned.CharacterId);
+            if (index >= 0)
+            {
+                CharacterLocation at = returned.Location;
+                characters[index] = characters[index] with { WorldId = at.WorldId, ZoneId = at.ZoneId, Position = at.Position };
+            }
+        }
+
+        // The map queued its save before it posted this return, so the load a parked select starts reads it.
+        RunParked(returned.CharacterId);
+    }
+
+    private void Closed(RealmSessionClosed closed)
+    {
+        if (_accounts.TryGetValue(closed.AccountId, out AccountCharacters? open) && open.Session == closed.Session)
+            _accounts.Remove(closed.AccountId);
+
+        if (!_held.Remove(closed.Session, out ulong characterId))
+            return;
+
+        if (_parked.TryGetValue(characterId, out SelectCharacter? parked) && ReferenceEquals(parked.Session, closed.Session))
+            _parked.Remove(characterId);
+
+        // The load stays listed so the character is not loaded twice, and is dropped when it lands. A character already in a map
+        // comes back through the map, which hears of the closed connection itself.
+        if (_presences.TryGetValue(characterId, out Presence? presence) && ReferenceEquals(presence.Session, closed.Session) && presence.Loading)
+            presence.Abandoned = true;
+    }
+
+    private void Release(Presence presence, bool answerGeneral)
+    {
+        ulong characterId = presence.CharacterId;
+        _presences.Remove(characterId);
+        Free(presence.Session, characterId);
+        if (answerGeneral)
+            presence.Session.Send(new CharacterSelectFailed { Reason = SelectReasons.General });
+
+        RunParked(characterId);
+    }
+
+    private void RunParked(ulong characterId)
+    {
+        if (_parked.Remove(characterId, out SelectCharacter? parked))
+            StartLoad(parked);
+    }
+
+    private void Free(IWorldSession session, ulong characterId)
+    {
+        if (_held.TryGetValue(session, out ulong held) && held == characterId)
+            _held.Remove(session);
     }
 
     private List<CharacterSummary>? LoadedFor(long accountId, IClientSession session) =>
@@ -367,6 +545,31 @@ public sealed class RealmOwner : Owner<RealmMessage>
         }
 
         return list;
+    }
+
+    private sealed class Presence
+    {
+        public Presence(long ticket, ulong characterId, long accountId, IWorldSession session)
+        {
+            Ticket = ticket;
+            CharacterId = characterId;
+            AccountId = accountId;
+            Session = session;
+        }
+
+        public long Ticket { get; }
+
+        public ulong CharacterId { get; }
+
+        public long AccountId { get; }
+
+        public IWorldSession Session { get; }
+
+        // True until the arrival is posted to the map.
+        public bool Loading { get; set; } = true;
+
+        // The session closed while the load was out: the load is dropped when it lands.
+        public bool Abandoned { get; set; }
     }
 
     private sealed class AccountCharacters

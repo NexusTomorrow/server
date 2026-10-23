@@ -3,9 +3,9 @@
 A server for the WildStar client, build 16042, written in C# on .NET 10.
 
 > **Note:** NexusTomorrow is in early development. The server takes your client from the login
-> screen to character select and character creation (see [Running the server](#running-the-server)),
-> and entering the world comes next. The server core is being built in steps; see
-> [Roadmap](#roadmap).
+> screen into the world: you can create a character, enter the world and move around, alone (see
+> [Running the server](#running-the-server)). Other players, creatures and chat come next. The
+> server core is being built in steps; see [Roadmap](#roadmap).
 
 ## Goals
 
@@ -25,6 +25,8 @@ A server for the WildStar client, build 16042, written in C# on .NET 10.
 | `NexusTomorrow.GameTable` | Typed loading of the client's game tables (`.tbl`) and text tables |
 | `NexusTomorrow.Game.Static` | The game's enums and flags, by system |
 | `NexusTomorrow.IO` | Readers for the client's area files and the server's own map format (`.nfmap`) |
+| `NexusTomorrow.Network.Codec` | The bit reader and writer, the declaration attributes, the layout types and the client facts table, on the hot-path rules |
+| `NexusTomorrow.Network.Codec.Generator` | The source generator that writes each declared message's reader, writer and layout |
 | `NexusTomorrow.Network` | The opcode list, the message attributes, and the messages every connection shares |
 | `NexusTomorrow.Network.Sts` | Messages for the STS login protocol |
 | `NexusTomorrow.Network.Auth` | Messages for the auth server |
@@ -33,11 +35,13 @@ A server for the WildStar client, build 16042, written in C# on .NET 10.
 | `NexusTomorrow.Transport` | Frames, envelopes and the packet cipher, on the hot-path rules |
 | `NexusTomorrow.Gateway` | The client listeners: STS, login and world connections, the message catalog and the opcode table |
 | `NexusTomorrow.Owners` | The account and realm owners: one thread each over a message queue |
+| `NexusTomorrow.Maps` | The map side: map owners, the map scheduler and the timer wheel, on the hot-path rules |
 | `NexusTomorrow.Persistence` | The PostgreSQL schemas, their migrations, and the write-behind queue |
 | `NexusTomorrow.Commands` | Admin commands with their permissions and audit |
 | `NexusTomorrow.Server` | The server: one process hosting all of the above |
 | `NexusTomorrow.MapGenerator` | Tool: extracts tables from your client and generates map files |
 | `NexusTomorrow.ClientConnector` | Tool: starts your client pointed at a server |
+| `Tools/NexusTomorrow.ProtocolReference` | Writes the wiki's message reference, opcode table and command list from the declarations and the server's registries |
 
 The solution is `Source/NexusTomorrow.slnx`, and the tests live under `Tests/`.
 
@@ -66,8 +70,8 @@ The database tests need a PostgreSQL 18 server: set `NEXUSTOMORROW_TEST_PG` to a
 
 ## Running the server
 
-The server takes your client from the login screen to character select and character creation.
-Entering the world comes next.
+The server takes your client from the login screen into the world, where your character stands
+alone. Seeing other players comes next.
 
 1. Install PostgreSQL 18 and create a database and a role that owns it.
 2. Set two environment variables (keep both out of any file in this repository):
@@ -82,19 +86,36 @@ Entering the world comes next.
 4. Point `Content:ClientDataPath` at the folder MapGenerator extracted your tables into (the one
    holding `tbl`), for example `$env:Content__ClientDataPath = "<output>"`. Without it, character
    creation offers nothing.
-5. Start it: `dotnet run --project Source/NexusTomorrow.Server`. Every listener binds to
+5. Give each faction a start location: the world it starts in, a zone and a point in that world,
+   taken from your own client's data. The server enters a character only into an open-world map
+   (the four classic starting zones are open world); a character whose world is held or an
+   instance cannot enter yet, and the server says so in its log at start-up. For example, for one
+   faction:
+
+   ```powershell
+   $env:Realm__StartLocations__0__FactionId = "<faction id>"
+   $env:Realm__StartLocations__0__WorldId = "<world id>"
+   $env:Realm__StartLocations__0__ZoneId = "<zone id>"
+   $env:Realm__StartLocations__0__X = "<x>"
+   $env:Realm__StartLocations__0__Y = "<y>"
+   $env:Realm__StartLocations__0__Z = "<z>"
+   ```
+6. Start it: `dotnet run --project Source/NexusTomorrow.Server`. Every listener binds to
    `127.0.0.1` unless configured otherwise.
-6. At the server's console, create an account: `account create <email> <password>`. A password
+7. At the server's console, create an account: `account create <email> <password>`. A password
    with spaces goes in double quotes, as in `account create alice@example.com "correct horse battery"`;
    the quotes are not part of it, so a password cannot hold a double quote. `help` lists the
    commands.
-7. Start your client with ClientConnector pointed at `127.0.0.1`, and log in with that account.
+8. Start your client with ClientConnector pointed at `127.0.0.1`, and log in with that account.
+
+Where you are when you log out or exit the game from the Escape menu, or close the client, is
+saved, and you enter there next time. Log Out returns you to character select; Exit Game quits.
 
 `migrate` applies every schema's pending migrations and exits 0, or exits 1 with the error. The
 server refuses to start while any schema has a pending migration, so run `migrate` again after
 updating. To log every refused STS request and every game message a connection decodes, drops
 or sends (type names only; transport pings are not logged), set
-`${env:Logging__LogLevel__NexusTomorrow.Gateway} = "Debug"` before step 5; the braces keep
+`${env:Logging__LogLevel__NexusTomorrow.Gateway} = "Debug"` before step 6; the braces keep
 PowerShell from reading the dot as a property.
 
 Settings come from `appsettings.json`, then environment variables (`__` stands for `:`), then the
@@ -108,14 +129,15 @@ command line. The ones you are most likely to change:
 | `Gateway:WorldPublicAddress` | `127.0.0.1` | The IPv4 address the login server gives the client for the world listener. |
 | `Persistence:FirstIdBlockTimeout` | 30 s | How long start waits to take the first character id block. If the database cannot give one in time, start fails with an error instead of waiting. |
 | `Gateway:ConnectionsPerAddress` | 8 | Connections one address may hold on each listener. Further ones are closed at once. |
-| `Realm:Id`, `Realm:Name` | 1, `NexusTomorrow` | The realm's id (at most 16383) and the name players see. |
+| `Realm:Id`, `Realm:Name` | 1, `NexusTomorrow` | The realm's id (1 to 16383) and the name players see. |
 | `Content:ClientDataPath` | none | The folder holding `tbl`. |
 | `Cli:Enabled` | `true` | Whether the console reads commands. It stays off when standard input is redirected. |
 
 A configuration that fails these checks stops the server at start, naming the key and never its
-value. Stopping the server (Ctrl+C) stops accepting connections, lets the account and realm owners
-handle what they have queued, then waits for every queued save to commit, however long the
-database takes. While it waits it logs the backlog every 5 seconds.
+value. Stopping the server (Ctrl+C) stops accepting connections, then stops each map on its next
+tick, which hands every character in it back with its location saved; then the realm and account
+owners handle what they have queued, and the server waits for every queued save to commit, however
+long the database takes. While it waits it logs the backlog every 5 seconds.
 
 ## Tools
 
@@ -160,7 +182,7 @@ every plan starts from code that exists.
 |---|---|---|
 | 1. Repository | The carried-over libraries, renamed, with nullable reference types on, tests and CI | Done |
 | 2. Codec | Every client message declared once with its field widths; readers and writers generated from the declarations and checked against the client's own layouts | Done; the audit of each message continues |
-| 3. Core | The server process: account, realm and per-map owners, each single-threaded over its own state; timers; saves to PostgreSQL 18; the admin command layer; a test harness with headless clients | In progress: the client logs in and creates a character; entering the world is next |
+| 3. Core | The server process: account, realm and per-map owners, each single-threaded over its own state; timers; saves to PostgreSQL 18; the admin command layer; a test harness with headless clients | In progress: the client logs in, creates a character, enters the world, moves, and logs out or exits with its place saved; seeing other players is next |
 | 4. Milestone one | Log in, create a character, enter the world, walk, see another player move, and `/say` | Planned |
 | 5. Console | A web admin console and a player portal for accounts | Planned |
 | 6. Systems | The content pipeline, then quests, achievements, economy and social; combat after | Planned |

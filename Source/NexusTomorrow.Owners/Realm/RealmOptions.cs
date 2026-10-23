@@ -13,9 +13,10 @@ public sealed class RealmOptions
     public const string Section = "Realm";
 
     /// <summary>
-    /// The realm's id; the client keeps it as its current realm. At most 14 bits.
+    /// The realm's id; the client keeps it as its current realm, and a character's unit carries it, where the client refuses 0.
+    /// 1 to 16383 (14 bits).
     /// </summary>
-    [Range(0, (1 << 14) - 1)]
+    [Range(1, (1 << 14) - 1)]
     public ushort Id { get; set; } = 1;
 
     /// <summary>

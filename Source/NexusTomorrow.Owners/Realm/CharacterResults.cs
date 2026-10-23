@@ -62,7 +62,7 @@ public static class SelectReasons
     /// <summary>The character must be renamed first.</summary>
     public const byte MustRename = 1;
 
-    /// <summary>A general failure; Stage 1 has no world to enter.</summary>
+    /// <summary>A general failure: the character could not be loaded, or no map hosts its world.</summary>
     public const byte General = 2;
 
     /// <summary>The character is disabled.</summary>

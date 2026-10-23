@@ -6,6 +6,8 @@ namespace NexusTomorrow.Gateway.Tests;
 
 public sealed class MessageCatalogTests
 {
+    private static readonly MessageCatalog s_gate = MessageCatalog.Build([(WireMessages.Layouts, WireMessages.CreateClientToServer, WireMessages.CreateServerToClient)]);
+
     [Fact]
     public void EachOpcodeHasOneDeclarationPerDirectionAcrossTheAssemblies()
     {
@@ -46,20 +48,83 @@ public sealed class MessageCatalogTests
     }
 
     [Fact]
-    public void OnlyMessagesReadToFieldsAreSendable()
+    public void AMessageReadToFieldsMaySendWhateverItSets()
     {
-        Assert.True(MessageCatalog.Default.IsSendable(typeof(Network.World.Message.Model.Pregame.CharacterList)));
-        Assert.False(MessageCatalog.Default.IsSendable(typeof(Network.World.Message.Model.Pregame.Server0015)));
+        bool allowed = MessageCatalog.Default.MaySend(new Network.World.Message.Model.Pregame.CharacterList { RealmId = 3 }, out string? refusal);
+
+        Assert.True(allowed);
+        Assert.Null(refusal);
     }
 
     [Fact]
-    public void EveryPregameRowNamesAClientMessageReadToFields()
+    public void AMessageBelowPurposeMayNotSend()
     {
-        foreach (OpcodeRow row in OpcodeTable.Pregame.Values)
+        bool unverified = MessageCatalog.Default.MaySend(new Network.World.Message.Model.Pregame.Server0015(), out string? refusal);
+        bool unread = s_gate.MaySend(new GateUnreadMessage { Known = 1 }, out _);
+
+        Assert.False(unverified);
+        Assert.Equal("Server0015 is not read to Purpose", refusal);
+        Assert.False(unread);
+    }
+
+    [Fact]
+    public void APurposeMessageWithOnlyVerifiedMembersSetMaySend()
+    {
+        Assert.True(s_gate.MaySend(new GatePurposeMessage { Known = 5 }, out string? refusal));
+        Assert.Null(refusal);
+    }
+
+    [Fact]
+    public void APurposeMessageWithAnUnverifiedMemberSetMayNotSendAndTheRefusalNamesIt()
+    {
+        bool allowed = s_gate.MaySend(new GatePurposeMessage { Known = 5, Unread = 1 }, out string? refusal);
+
+        Assert.False(allowed);
+        Assert.Equal("GatePurposeMessage.Unread is set, but its meaning is not verified", refusal);
+    }
+
+    [Fact]
+    public void TheSmallestPlayerStateMaySend()
+    {
+        Assert.True(MessageCatalog.Default.MaySend(new Network.World.Message.Model.WorldEntry.PlayerState(), out _));
+    }
+
+    [Fact]
+    public void ASendTheGateAllowsAllocatesNothing()
+    {
+        var message = new GatePurposeMessage { Known = 5 };
+        for (int i = 0; i < 10; i++)
+            s_gate.MaySend(message, out _);
+
+        long before = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 1000; i++)
+            s_gate.MaySend(message, out _);
+        long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.Equal(0L, allocated);
+    }
+
+    [Fact]
+    public void EveryRowNamesAClientMessageTheServerMayRead()
+    {
+        foreach (OpcodeRow row in OpcodeTable.All.Values)
         {
-            IWireMessage? message = MessageCatalog.Default.CreateInbound(row.Opcode, out InboundRefusal refusal);
+            IWireMessage? message = MessageCatalog.Default.CreateInbound(row.Opcode, row.ReadsVerifiedMembers, out InboundRefusal refusal);
             Assert.True(message is not null, $"0x{row.Opcode:X4}: {refusal}");
-            Assert.True(MessageCatalog.Default.RungOf(message.GetType()) >= Rung.Fields);
+            Rung floor = row.ReadsVerifiedMembers ? Rung.Purpose : Rung.Fields;
+            Assert.True(MessageCatalog.Default.RungOf(message.GetType()) >= floor, $"0x{row.Opcode:X4} is read below {floor}");
         }
+    }
+
+    [Fact]
+    public void AMessageAtPurposeIsRefusedUnlessItsRowReadsOnlyVerifiedMembers()
+    {
+        Assert.Null(MessageCatalog.Default.CreateInbound(0x0637, admitPurpose: false, out InboundRefusal withoutRefusal));
+        Assert.Equal(InboundRefusal.BelowFields, withoutRefusal);
+
+        Assert.IsType<Network.World.Message.Model.Movement.ClientMovement>(MessageCatalog.Default.CreateInbound(0x0637, admitPurpose: true, out _));
+
+        Assert.Null(MessageCatalog.Default.CreateInbound(0x0356, admitPurpose: true, out InboundRefusal unverifiedRefusal));
+        Assert.Equal(InboundRefusal.BelowPurpose, unverifiedRefusal);
     }
 }

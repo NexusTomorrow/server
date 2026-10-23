@@ -35,6 +35,28 @@ public sealed class RegistryVerificationTests
             Assert.Fail(string.Join(Environment.NewLine, report));
     }
 
+    // A mark says the member's meaning is two-observed and documented, so a marked member without a summary shows nothing for it.
+    [Fact]
+    public void EveryVerifiedMemberCarriesASummary()
+    {
+        Dictionary<string, string> summaries = XmlDocs.SummariesOf(s_models);
+        var missing = new List<string>();
+        foreach (Type type in s_models.SelectMany(assembly => assembly.GetTypes()))
+        {
+            foreach (MemberInfo member in type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+            {
+                if (member.GetCustomAttribute<VerifiedMemberAttribute>() is null)
+                    continue;
+
+                string id = (member is PropertyInfo ? "P:" : "F:") + type.FullName!.Replace('+', '.') + "." + member.Name;
+                if (!summaries.ContainsKey(id))
+                    missing.Add(id);
+            }
+        }
+
+        Assert.Empty(missing);
+    }
+
     [Fact]
     public void EveryMessageCarriesTheDocumentationItsRungRequires()
     {

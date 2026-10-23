@@ -46,6 +46,20 @@ public sealed class OwnerWatchdogTests
         Assert.Empty(watchdog.Check());
     }
 
+    [Fact]
+    public void AnOwnerThatAppearsAfterConstructionIsWatched()
+    {
+        var time = new FakeTimeProvider();
+        List<IOwner> owners = [];
+        var watchdog = new OwnerWatchdog(owners, time, TimeSpan.FromSeconds(10), NullLogger<OwnerWatchdog>.Instance);
+
+        Assert.Empty(watchdog.Check());
+        owners.Add(new StubOwner { QueueLength = 3, Handled = 10 });
+        Assert.Empty(watchdog.Check());
+        time.Advance(TimeSpan.FromSeconds(10));
+        Assert.Equal(["stub"], watchdog.Check());
+    }
+
     private sealed class StubOwner : IOwner
     {
         public string Name => "stub";

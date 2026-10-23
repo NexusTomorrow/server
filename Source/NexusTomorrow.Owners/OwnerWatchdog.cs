@@ -8,18 +8,19 @@ namespace NexusTomorrow.Owners;
 /// </summary>
 public sealed class OwnerWatchdog
 {
-    private readonly IOwner[] _owners;
+    private readonly IEnumerable<IOwner> _owners;
     private readonly TimeProvider _time;
     private readonly TimeSpan _stallAfter;
     private readonly ILogger<OwnerWatchdog> _logger;
     private readonly Dictionary<IOwner, (long Handled, long Since)> _seen = [];
 
     /// <summary>
-    /// Watch <paramref name="owners"/>, reporting one after <paramref name="stallAfter"/> without progress.
+    /// Watch the owners <paramref name="owners"/> yields each time it is read, so owners that come and go, such as maps, are watched
+    /// while they exist. Report one after <paramref name="stallAfter"/> without progress.
     /// </summary>
     public OwnerWatchdog(IEnumerable<IOwner> owners, TimeProvider time, TimeSpan stallAfter, ILogger<OwnerWatchdog> logger)
     {
-        _owners = [.. owners];
+        _owners = owners;
         _time = time;
         _stallAfter = stallAfter;
         _logger = logger;

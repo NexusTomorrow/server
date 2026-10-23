@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Numerics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -7,9 +8,14 @@ using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Gateway.Connections;
 using NexusTomorrow.Network;
 using NexusTomorrow.Network.Message.Model;
+using NexusTomorrow.Network.World.Entity;
+using NexusTomorrow.Network.World.Entity.Command;
+using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
+using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Account;
 using NexusTomorrow.Persistence.Realm;
@@ -29,12 +35,13 @@ public sealed class WorldConnectionTests : IAsyncLifetime
     private readonly RealmOwner _realm;
     private readonly PipePair _pipes = new();
     private readonly CancellationTokenSource _stop = new();
+    private WorldConnection _connection = null!;
     private Task _run = Task.CompletedTask;
 
     public WorldConnectionTests()
     {
         _accounts = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind());
-        _realm = new RealmOwner(_db, new FixedCreationCatalog([]), _time, Options.Create(new RealmOptions { Id = 3 }), NullLogger<RealmOwner>.Instance);
+        _realm = new RealmOwner(_db, new FixedCreationCatalog([]), new FakeMapDirectory(), _time, Options.Create(new RealmOptions { Id = 3 }), NullLogger<RealmOwner>.Instance);
     }
 
     private GameTestClient Client { get; set; } = null!;
@@ -45,9 +52,9 @@ public sealed class WorldConnectionTests : IAsyncLifetime
         _realm.Post(new IdBlockTaken(new IdBlock(1001, 1000)));
         _realm.Start();
         IOptions<GatewayOptions> gateway = Options.Create(new GatewayOptions { UnknownAccountSecret = Convert.ToBase64String(new byte[32]) });
-        var connection = new WorldConnection(MessageCatalog.Default, new InboundDecoder(MessageCatalog.Default, OpcodeTable.Pregame, new HashSet<ushort>()),
+        _connection = new WorldConnection(MessageCatalog.Default, new InboundDecoder(MessageCatalog.Default, OpcodeTable.All, new HashSet<ushort>()),
             _accounts, _realm, gateway, Options.Create(new RealmOptions { Id = 3 }), _time, new GatewayMetrics(), _log);
-        _run = connection.RunAsync(_pipes.Server, new IPEndPoint(IPAddress.Loopback, 50002), _stop.Token);
+        _run = _connection.RunAsync(_pipes.Server, new IPEndPoint(IPAddress.Loopback, 50002), _stop.Token);
         Client = new GameTestClient(_pipes.Client);
         return ValueTask.CompletedTask;
     }
@@ -159,6 +166,184 @@ public sealed class WorldConnectionTests : IAsyncLifetime
         await Eventually.TrueAsync(() => _accounts.OnlineCount == 1);
         await _pipes.Client.Output.CompleteAsync();
         await Eventually.TrueAsync(() => _accounts.OnlineCount == 0);
+    }
+
+    [Fact]
+    public async Task AWorldMessageReachesTheMapTheSessionEnteredAndItsEndLeavesIt()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+
+        await Client.SendTaggedAsync(0x03, ClientMessage.With(new WorldReady(), nameof(WorldReady.ZoneId), (ushort)6));
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+        ClientWorldReady ready = Assert.IsType<ClientWorldReady>(map.Posted[0]);
+        Assert.Equal(6, ready.ZoneId);
+        Assert.Same(_connection, ready.Session);
+
+        await _pipes.Client.Output.CompleteAsync();
+        await Eventually.TrueAsync(() => map.Posted.Count == 2);
+        Assert.Same(_connection, Assert.IsType<ClientLeft>(map.Posted[1]).Session);
+    }
+
+    [Fact]
+    public async Task EveryMapRowReachesTheMapAsItsOwnMessage()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+
+        await Client.SendTaggedAsync(0x03, ClientMessage.With(new MovementControlReceipt(), nameof(MovementControlReceipt.Ticket), 77u));
+        await Client.SendTaggedAsync(0x03, ClientMessage.With(new ZoneChange(), nameof(ZoneChange.ZoneId), (ushort)9));
+        await Eventually.TrueAsync(() => map.Posted.Count == 2);
+
+        Assert.Equal(77u, Assert.IsType<ClientControlReceipt>(map.Posted[0]).Ticket);
+        Assert.Equal(9, Assert.IsType<ClientZoneChanged>(map.Posted[1]).ZoneId);
+    }
+
+    [Fact]
+    public async Task TheLogoutRequestsAndTheConfirmReachTheMap()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+
+        await Client.SendTaggedAsync(0x03, ClientMessage.With(new LogoutRequest(), nameof(LogoutRequest.Begin), true));
+        await Client.SendTaggedAsync(0x03, ClientMessage.With(new LogoutRequest(), nameof(LogoutRequest.Begin), false));
+        await Client.SendTaggedAsync(0x03, new LogoutConfirm());
+        await Eventually.TrueAsync(() => map.Posted.Count == 3);
+
+        Assert.True(Assert.IsType<ClientLogoutRequested>(map.Posted[0]).Begin);
+        Assert.False(Assert.IsType<ClientLogoutRequested>(map.Posted[1]).Begin);
+        Assert.IsType<ClientLogoutConfirmed>(map.Posted[2]);
+        Assert.All(map.Posted, posted => Assert.Same(_connection, Assert.IsAssignableFrom<SessionMessage>(posted).Session));
+    }
+
+    [Fact]
+    public async Task AClientMovementReachesTheMapAtHighPriority()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+        var movement = new ClientMovement { Unknown0 = 1000 };
+        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new Server0262Union2Arm02 { Unknown0 = new Vector3(1, 2, 3) } });
+
+        await Client.SendTaggedAsync(0x03, movement);
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+
+        ClientMoved moved = Assert.IsType<ClientMoved>(map.Posted[0]);
+        Assert.Equal(new Vector3(1, 2, 3), moved.Sample.Position);
+        Assert.Same(_connection, moved.Session);
+        Assert.Equal(1, map.HighPosts);
+    }
+
+    [Fact]
+    public async Task AnOversizedClientMovementEndsTheSessionBeforeItIsRead()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+
+        await Client.SendTaggedUncheckedAsync(0x03, 0x0637, new RawBody(new byte[2049]));
+
+        await _run.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        Assert.Contains(_log.Lines, line => line.Contains("a body over its row's size limit", StringComparison.Ordinal));
+        // Ending the session tells the map it left; no movement reached it.
+        Assert.DoesNotContain(map.Posted, posted => posted is ClientMoved);
+        Assert.IsType<ClientLeft>(Assert.Single(map.Posted));
+    }
+
+    [Fact]
+    public async Task AWorldMessageWithNoMapIsDroppedAndTheSessionGoesOn()
+    {
+        await GreetAsync();
+        await Client.SendTaggedAsync(0x03, ClientMessage.With(new ZoneChange(), nameof(ZoneChange.ZoneId), (ushort)9));
+        await Client.SendAsync(new CharacterListRequest());
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharactersWork>().Any());
+        _db.Take<LoadCharactersWork>().Complete(WorkResult.Committed);
+
+        Assert.Empty((await Client.ExpectAsync<CharacterList>()).Characters);
+        Assert.Contains(_log.Lines, line => line.Contains("dropped message 0x063A: a map message with no map", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task AMovementThatWouldBeMalformedIsDroppedUnreadWhileTheSessionIsInNoMap()
+    {
+        await GreetAsync();
+        await Client.SendTaggedUncheckedAsync(0x03, 0x0637, new RawBody(ClientFrames.OverclaimingMovement()));
+        await Client.SendAsync(new CharacterListRequest());
+
+        // The list request reaches the realm only while the session is open.
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharactersWork>().Any() || _run.IsCompleted);
+        Assert.DoesNotContain(_log.Lines, line => line.Contains("ended:", StringComparison.Ordinal));
+        _db.Take<LoadCharactersWork>().Complete(WorkResult.Committed);
+
+        Assert.Empty((await Client.ExpectAsync<CharacterList>()).Characters);
+        Assert.Contains(_log.Lines, line => line.Contains("dropped message 0x0637: a map message with no map", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task AWorldMessageAfterTheMapLeavesTheSessionIsDroppedAndTheSessionGoesOn()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+        await Client.SendTaggedAsync(0x03, ClientMessage.With(new WorldReady(), nameof(WorldReady.ZoneId), (ushort)6));
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+
+        _connection.LeaveMap(map);
+        await Client.SendTaggedAsync(0x03, ClientMessage.With(new ZoneChange(), nameof(ZoneChange.ZoneId), (ushort)9));
+        await Client.SendAsync(new CharacterListRequest());
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharactersWork>().Any());
+        _db.Take<LoadCharactersWork>().Complete(WorkResult.Committed);
+
+        // The list answers after the zone change was read, so the zone change was handled by then.
+        Assert.Empty((await Client.ExpectAsync<CharacterList>()).Characters);
+        Assert.Contains(_log.Lines, line => line.Contains("dropped message 0x063A: a map message with no map", StringComparison.Ordinal));
+        await _pipes.Client.Output.CompleteAsync();
+        await _run.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        Assert.Single(map.Posted);
+    }
+
+    [Fact]
+    public async Task AMapThatHasStoppedRefusesAPostAndTheSessionGoesOnWithNoDropCounted()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1) { Accepting = false };
+        Assert.True(_connection.TryEnterMap(map));
+        await Client.SendTaggedAsync(0x03, ClientMessage.With(new WorldReady(), nameof(WorldReady.ZoneId), (ushort)6));
+        await Client.SendAsync(new CharacterListRequest());
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharactersWork>().Any());
+        _db.Take<LoadCharactersWork>().Complete(WorkResult.Committed);
+
+        Assert.Empty((await Client.ExpectAsync<CharacterList>()).Characters);
+        Assert.Empty(map.Posted);
+        Assert.DoesNotContain(_log.Lines, line => line.Contains("dropped message 0x00F2", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task ACharacterSelectWhileInTheWorldIsDroppedAndChangesNothing()
+    {
+        await GreetAsync();
+        Assert.True(_connection.TryEnterMap(new FakeMapInbox(1)));
+        await Client.SendAsync(new CharacterSelect { CharacterId = 424242 });
+        await Client.SendAsync(new CharacterListRequest());
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharactersWork>().Any());
+        _db.Take<LoadCharactersWork>().Complete(WorkResult.Committed);
+
+        // A select the realm owner saw would answer CharacterSelectFailed first; the list is the first answer.
+        Assert.Empty((await Client.ExpectAsync<CharacterList>()).Characters);
+        Assert.Contains(_log.Lines, line => line.Contains("dropped message 0x07DD: a select while in the world", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task AnEndedConnectionEntersNoMap()
+    {
+        await Client.ExpectAsync<ServerHello>();
+        await _pipes.Client.Output.CompleteAsync();
+        await _run.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+
+        Assert.False(_connection.TryEnterMap(new FakeMapInbox(1)));
     }
 
     private async Task GreetAsync()

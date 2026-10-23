@@ -1,20 +1,25 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Gateway.Catalog;
+using NexusTomorrow.Gateway.World;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message.Model;
+using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
+using NexusTomorrow.Owners.World;
 using NexusTomorrow.Transport;
 
 namespace NexusTomorrow.Gateway.Connections;
 
 /// <summary>
 /// The world connection: greets inside the world envelope under the build key, redeems the session key through the account owner,
-/// switches both directions to the session cipher, and hands character-select messages to the realm owner.
+/// switches both directions to the session cipher, hands character-select messages to the realm owner, and routes in-world messages
+/// to the map holding the session's character.
 /// </summary>
-public sealed class WorldConnection : ClientConnection
+public sealed class WorldConnection : ClientConnection, IWorldSession
 {
     private const uint Build = 16042;
     private const uint ProtocolVersion = 0x097998A0;
@@ -25,8 +30,16 @@ public sealed class WorldConnection : ClientConnection
     private readonly RealmOptions _realmOptions;
     private readonly ILogger _logger;
     private readonly SessionKeyRedeemer _redeem;
+    private readonly Lock _route = new();
     private long? _accountId;
     private bool _greeted;
+
+    // Guarded by _route: the map the session is routed to, whether the connection has ended, and whether the client's unit stands on a
+    // platform (its positions then are not world coordinates). TryEnterMap refuses once it has ended, so a map is never kept past the
+    // one OnClosed took, and clears the platform state, since each map starts in world coordinates.
+    private IMapInbox? _map;
+    private bool _ended;
+    private bool _onPlatform;
 
     /// <summary>
     /// Create the connection.
@@ -75,10 +88,40 @@ public sealed class WorldConnection : ClientConnection
         Send(new ServerHello { Build = Build, RealmId = _realmOptions.Id, ProtocolVersion = ProtocolVersion });
 
     /// <inheritdoc/>
-    protected override async ValueTask<bool> HandleAsync(IWireMessage message)
+    /// <remarks>
+    /// Before the account owner's grant, only the greeting, and nothing while it is checked: anything else ends the connection unread.
+    /// After it, a map row only while the session is routed to a map: one with no map is dropped unread and the session goes on.
+    /// </remarks>
+    protected override bool Admits(OpcodeRow row)
     {
+        if (_accountId is null)
+        {
+            if (_greeted)
+                return End("a message while the greeting is checked");
+
+            return row.Opcode == OpcodeOf<WorldHello>() || End("a message before the greeting");
+        }
+
+        if (row.Owner == MessageOwner.Map && !InMap())
+        {
+            Drop(row.Opcode, "a map message with no map");
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <inheritdoc/>
+    protected override async ValueTask<bool> HandleAsync(IWireMessage message, OpcodeRow row)
+    {
+        // Admits is the admission for the greeting and for a map row with no map. The greeting checks here and in GreetAsync are
+        // guards (GreetAsync's holds the cast), and so is RouteToMap's map check, which also catches a map that handed the character
+        // back between the admission and this handling.
         if (_accountId is not long accountId)
             return _greeted ? End("a message while the greeting is checked") : await GreetAsync(message);
+
+        if (row.Owner == MessageOwner.Map)
+            return RouteToMap(message, row);
 
         switch (message)
         {
@@ -91,6 +134,12 @@ public sealed class WorldConnection : ClientConnection
             case CharacterRename rename:
                 return Post(new RenameCharacter(accountId, this, rename.CharacterId, rename.NewName));
             case CharacterSelect select:
+                if (InMap())
+                {
+                    Drop(row.Opcode, "a select while in the world");
+                    return true;
+                }
+
                 return Post(new SelectCharacter(accountId, this, select.CharacterId));
             case PregameKeepAlive:
                 return true;
@@ -102,10 +151,46 @@ public sealed class WorldConnection : ClientConnection
     /// <inheritdoc/>
     protected override void OnClosed()
     {
+        // A map taken here hears of the end once: the connection holds no map afterwards, so LeaveMap and a later TryEnterMap change
+        // nothing.
+        IMapInbox? map;
+        lock (_route)
+        {
+            _ended = true;
+            map = _map;
+            _map = null;
+        }
+
+        map?.Post(new ClientLeft(this));
+
         // Both owners are told only when the account owner granted this session, which sets _accountId; a connection that ended before
         // the grant was read tells them from GreetAsync once the grant arrives.
         if (_accountId is long accountId)
             CloseSession(accountId);
+    }
+
+    /// <inheritdoc/>
+    public bool TryEnterMap(IMapInbox map)
+    {
+        lock (_route)
+        {
+            if (_ended)
+                return false;
+
+            _map = map;
+            _onPlatform = false;
+            return true;
+        }
+    }
+
+    /// <inheritdoc/>
+    public void LeaveMap(IMapInbox map)
+    {
+        lock (_route)
+        {
+            if (ReferenceEquals(_map, map))
+                _map = null;
+        }
     }
 
     private async ValueTask<bool> GreetAsync(IWireMessage message)
@@ -161,6 +246,57 @@ public sealed class WorldConnection : ClientConnection
             default:
                 return End("an unrecognized decision from the account owner");
         }
+    }
+
+    private bool InMap()
+    {
+        lock (_route)
+            return _map is not null;
+    }
+
+    // The map is read under _route and posted to outside it: a post never runs under the lock, and a map that has stopped refuses it,
+    // which is not a drop. A movement is reduced under the lock, which guards the platform state it carries; one that gives no position
+    // or facing is ignored, not dropped. A null map here is the guard behind Admits: the map can hand the character back after the
+    // admission.
+    private bool RouteToMap(IWireMessage message, OpcodeRow row)
+    {
+        IMapInbox? map;
+        MovementSample sample = default;
+        bool moved = false;
+        lock (_route)
+        {
+            map = _map;
+            if (map is not null && message is ClientMovement movement)
+                moved = MovementReads.TryLatest(movement, ref _onPlatform, out sample);
+        }
+
+        if (map is null)
+        {
+            Drop(row.Opcode, "a map message with no map");
+            return true;
+        }
+
+        if (message is ClientMovement && !moved)
+            return true;
+
+        MapMessage? routed = message switch
+        {
+            ClientMovement => new ClientMoved(this, sample),
+            WorldReady ready => new ClientWorldReady(this, ready.ZoneId),
+            MovementControlReceipt receipt => new ClientControlReceipt(this, receipt.Ticket),
+            ZoneChange change => new ClientZoneChanged(this, change.ZoneId),
+            LogoutRequest request => new ClientLogoutRequested(this, request.Begin),
+            LogoutConfirm => new ClientLogoutConfirmed(this),
+            _ => null,
+        };
+        if (routed is null)
+        {
+            Drop(row.Opcode, "a map message with no handler");
+            return true;
+        }
+
+        _ = row.Priority == MessagePriority.High ? map.PostHigh(routed) : map.Post(routed);
+        return true;
     }
 
     private Task<WorldDecision>? RedeemThroughOwner(WorldConnection connection, WorldHello hello, byte[] sessionKey)

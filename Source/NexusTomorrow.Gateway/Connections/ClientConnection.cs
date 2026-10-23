@@ -29,12 +29,21 @@ public abstract class ClientConnection : IClientSession
     private readonly GatewayMetrics _metrics;
     private readonly ILogger _logger;
     private readonly RateGate _rates;
+    private readonly InboundAdmission _admission;
     private readonly Channel<Outbound> _outbound;
     private readonly TaskCompletionSource _disconnected = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private PacketCipher _receiveCipher = new(PacketCipher.BuildKey);
     private CancellationTokenSource? _preAuth;
     private CancellationToken _lifetime;
     private string? _disconnectReason;
+
+    // Set by the writer before it completes the queue, read by Enqueue: the channel's lock orders the write before any TryWrite the
+    // completion refuses.
+    private bool _writerStopped;
+
+    // Read loop only: whether Admit refused the row of the frame being decoded. Admit has acted on that refusal, so OnFrameAsync must
+    // not count it again.
+    private bool _refused;
 
     /// <summary>
     /// Create a connection whose server messages travel inside <paramref name="envelopeOpcode"/>.
@@ -49,6 +58,7 @@ public abstract class ClientConnection : IClientSession
         _logger = logger;
         Time = time;
         _rates = new RateGate(time);
+        _admission = Admit;
         _outbound = Channel.CreateBounded<Outbound>(new BoundedChannelOptions(_options.OutboundQueueCapacity) { SingleReader = true, FullMode = BoundedChannelFullMode.Wait });
     }
 
@@ -70,11 +80,12 @@ public abstract class ClientConnection : IClientSession
     protected CancellationToken Lifetime => _lifetime;
 
     /// <inheritdoc/>
-    /// <exception cref="InvalidOperationException"><typeparamref name="T"/> is not read to <c>Fields</c>.</exception>
+    /// <exception cref="InvalidOperationException">The send gate refuses <paramref name="message"/> (<see cref="MessageCatalog.MaySend"/>).</exception>
+    /// <exception cref="CodecException">The message wrote a different number of bytes than it measured.</exception>
     public void Send<T>(T message)
         where T : class, IWireMessage
     {
-        EnsureSendable<T>();
+        EnsureSendable(message);
         Enqueue(Outbound.Enveloped(T.Opcode, message));
     }
 
@@ -142,9 +153,22 @@ public abstract class ClientConnection : IClientSession
     }
 
     /// <summary>
-    /// Handle one decoded message; false ends the connection.
+    /// The opcode <typeparamref name="T"/> is declared with.
     /// </summary>
-    protected abstract ValueTask<bool> HandleAsync(IWireMessage message);
+    protected static ushort OpcodeOf<T>()
+        where T : class, IWireMessage => T.Opcode;
+
+    /// <summary>
+    /// Whether the connection, in its current state, handles the message <paramref name="row"/> admits. The decoder asks it from the
+    /// read loop once the row's rate has passed and before the message's body is read, so a refused message is never read. A false
+    /// answer acts on the message first: <see cref="Drop"/> when the session goes on, <see cref="Disconnect"/> when it ends.
+    /// </summary>
+    protected abstract bool Admits(OpcodeRow row);
+
+    /// <summary>
+    /// Handle one message, read in full once <see cref="Admits"/> admitted <paramref name="row"/>; false ends the connection.
+    /// </summary>
+    protected abstract ValueTask<bool> HandleAsync(IWireMessage message, OpcodeRow row);
 
     /// <summary>
     /// Called once when the connection starts, before anything is read.
@@ -161,13 +185,25 @@ public abstract class ClientConnection : IClientSession
     }
 
     /// <summary>
-    /// Queue <paramref name="message"/> as a bare frame, outside any envelope.
+    /// Queue <paramref name="message"/> as a bare frame, outside any envelope. The message is serialized before this returns, so the
+    /// caller may change or reuse it at once; the send gate runs on the message as it is at the call.
     /// </summary>
+    /// <exception cref="InvalidOperationException">The send gate refuses <paramref name="message"/> (<see cref="MessageCatalog.MaySend"/>).</exception>
+    /// <exception cref="CodecException">The message wrote a different number of bytes than it measured.</exception>
     protected void SendBare<T>(T message)
         where T : class, IWireMessage
     {
-        EnsureSendable<T>();
+        EnsureSendable(message);
         Enqueue(Outbound.Bare(T.Opcode, message));
+    }
+
+    /// <summary>
+    /// Count and log a message the connection does not act on, whether or not its body was read; the session goes on.
+    /// </summary>
+    protected void Drop(ushort opcode, string reason)
+    {
+        _metrics.Dropped(opcode, reason);
+        GatewayLog.MessageDropped(_logger, Id, opcode, reason);
     }
 
     /// <summary>
@@ -186,10 +222,17 @@ public abstract class ClientConnection : IClientSession
     /// </summary>
     protected void MarkAuthenticated() => _preAuth?.CancelAfter(Timeout.InfiniteTimeSpan);
 
-    // A full queue means the client is not reading; the sender is never made to wait, so the connection ends instead.
+    // A refused item never reaches the writer, so its buffer goes back here, and the sender is never made to wait: a refusal ends
+    // the connection unless the writer has already stopped, which ends the connection with the reason RunAsync records. A refusal
+    // while the writer runs is a full queue (the client is not reading) or a queue Disconnect completed, whose first recorded reason
+    // stands.
     private void Enqueue(in Outbound item)
     {
-        if (!_outbound.Writer.TryWrite(item))
+        if (_outbound.Writer.TryWrite(item))
+            return;
+
+        item.ReturnBody();
+        if (!Volatile.Read(ref _writerStopped))
             Disconnect("the outbound queue is full");
     }
 
@@ -206,10 +249,10 @@ public abstract class ClientConnection : IClientSession
         }
     }
 
-    private void EnsureSendable<T>()
+    private void EnsureSendable(IWireMessage message)
     {
-        if (!_catalog.IsSendable(typeof(T)))
-            throw new InvalidOperationException($"{typeof(T).Name} is not read to Fields, so the server may not send it.");
+        if (!_catalog.MaySend(message, out string? refusal))
+            throw new InvalidOperationException($"{refusal}, so the server may not send it.");
     }
 
     private async Task ReadAsync(PipeReader input, CancellationToken cancellationToken)
@@ -263,14 +306,18 @@ public abstract class ClientConnection : IClientSession
                 return true;
         }
 
+        // The decoder checks the row's size limit, then asks Admit (the row's rate, then Admits), before it creates the message or reads
+        // its body.
         Inbound inbound;
+        _refused = false;
         try
         {
-            inbound = _decoder.Decode(opcode, body, _receiveCipher);
+            inbound = _decoder.Decode(opcode, body, _receiveCipher, _admission);
         }
         catch (Exception exception)
         {
-            // The decoder turns a codec fault into Malformed; anything else is a declaration bug, and it ends only this connection.
+            // The decoder turns a codec fault into Malformed; anything else (a declaration bug, or a fault in Admits) ends only this
+            // connection.
             GatewayLog.ConnectionFailed(_logger, Id, exception);
             Disconnect($"an unexpected failure decoding frame 0x{opcode:X4}");
             return false;
@@ -279,8 +326,11 @@ public abstract class ClientConnection : IClientSession
         switch (inbound.Result)
         {
             case InboundResult.Dropped:
-                _metrics.Dropped(inbound.Opcode, inbound.Reason);
-                GatewayLog.MessageDropped(_logger, Id, inbound.Opcode, inbound.Reason);
+                // A row Admit refused is already counted, or its session is ending; every other drop is counted here.
+                if (_refused)
+                    return Volatile.Read(ref _disconnectReason) is null;
+
+                Drop(inbound.Opcode, inbound.Reason);
                 return true;
             case InboundResult.Malformed:
                 if (_logger.IsEnabled(LogLevel.Debug))
@@ -290,32 +340,39 @@ public abstract class ClientConnection : IClientSession
                 return false;
         }
 
-        OpcodeRow row = _decoder.RowFor(inbound.Opcode);
-        if (!_rates.TryPass(row))
-        {
-            if (row.OverLimit == OverLimitAction.Disconnect)
-            {
-                Disconnect($"0x{inbound.Opcode:X4} over its rate limit");
-                return false;
-            }
-
-            _metrics.Dropped(inbound.Opcode, "over its rate limit");
-            return true;
-        }
-
-        // A message the decoder admitted is non-null by InboundResult.Message's contract.
+        // A message the decoder returned passed Admit and was read in full; it is non-null by InboundResult.Message's contract.
         IWireMessage admitted = inbound.Message!;
         if (_logger.IsEnabled(LogLevel.Debug))
             GatewayLog.MessageReceived(_logger, Id, inbound.Opcode, admitted.GetType().Name);
 
-        return await HandleAsync(admitted);
+        return await HandleAsync(admitted, _decoder.RowFor(inbound.Opcode));
+    }
+
+    // The admission the decoder asks once it has resolved a frame's row, before the message is created or its body read: the row's
+    // rate first, its over-limit action deciding drop or disconnect, then the connection's own state (Admits). It acts on what it
+    // refuses, so a refused message costs no read.
+    private bool Admit(OpcodeRow row)
+    {
+        if (!_rates.TryPass(row))
+        {
+            _refused = true;
+            if (row.OverLimit == OverLimitAction.Disconnect)
+                Disconnect($"0x{row.Opcode:X4} over its rate limit");
+            else
+                _metrics.Dropped(row.Opcode, "over its rate limit");
+
+            return false;
+        }
+
+        _refused = !Admits(row);
+        return !_refused;
     }
 
     // Names the message type only: field values and payload bytes (RealmHandoff carries the session key) never reach a log line.
     private void LogSent(in Outbound item)
     {
         if (_logger.IsEnabled(LogLevel.Debug))
-            GatewayLog.MessageSent(_logger, Id, item.Opcode, item.Message!.GetType().Name);
+            GatewayLog.MessageSent(_logger, Id, item.Opcode, item.MessageType!.Name);
     }
 
     private async Task WriteAsync(PipeWriter output, CancellationTokenSource writerDone, CancellationToken cancellationToken)
@@ -329,23 +386,31 @@ public abstract class ClientConnection : IClientSession
                 int batched = 0;
                 while (reader.TryRead(out Outbound item))
                 {
-                    // Message is set by the Bare and Enveloped factories and Cipher by Key, the only ways to build those kinds.
-                    switch (item.Kind)
+                    // The writer owns the item once it is read: its buffer goes back after this write, whether or not the write throws.
+                    // Body and MessageType are set by the Bare and Enveloped factories and Cipher by Key, the only ways to build those kinds.
+                    try
                     {
-                        case OutboundKind.Bare:
-                            FrameWriter.WriteMessage(output, item.Opcode, item.Message!);
-                            LogSent(item);
-                            break;
-                        case OutboundKind.Enveloped:
-                            FrameWriter.WriteEnvelope(output, _envelopeOpcode, item.Opcode, item.Message!, sendCipher);
-                            LogSent(item);
-                            break;
-                        case OutboundKind.Key:
-                            sendCipher = item.Cipher!;
-                            break;
-                        case OutboundKind.PingAnswer:
-                            FrameWriter.WritePing(output, TransportOpcodes.PingAnswer, item.PingIndex);
-                            break;
+                        switch (item.Kind)
+                        {
+                            case OutboundKind.Bare:
+                                FrameWriter.WriteMessage(output, item.Opcode, item.Body.AsSpan(0, item.BodyLength));
+                                LogSent(item);
+                                break;
+                            case OutboundKind.Enveloped:
+                                FrameWriter.WriteEnvelope(output, _envelopeOpcode, item.Opcode, item.Body.AsSpan(0, item.BodyLength), sendCipher);
+                                LogSent(item);
+                                break;
+                            case OutboundKind.Key:
+                                sendCipher = item.Cipher!;
+                                break;
+                            case OutboundKind.PingAnswer:
+                                FrameWriter.WritePing(output, TransportOpcodes.PingAnswer, item.PingIndex);
+                                break;
+                        }
+                    }
+                    finally
+                    {
+                        item.ReturnBody();
                     }
 
                     if (++batched == FlushBatch)
@@ -369,6 +434,13 @@ public abstract class ClientConnection : IClientSession
         }
         finally
         {
+            // The flag is set before the completion, so a TryWrite the completion refuses sees it. Completing first refuses every later
+            // TryWrite, so the drain sees each item that was ever accepted and no Send can queue one behind it.
+            Volatile.Write(ref _writerStopped, true);
+            _outbound.Writer.TryComplete();
+            while (reader.TryRead(out Outbound abandoned))
+                abandoned.ReturnBody();
+
             await output.CompleteAsync();
             await writerDone.CancelAsync();
         }

@@ -44,6 +44,34 @@ public sealed class FrameWriterTests
     }
 
     [Fact]
+    public void AFrameFromASerializedBodyMatchesAFrameFromTheMessage()
+    {
+        var accepted = new LoginAccepted { DroppedForLag = 0x04030201 };
+        byte[] body = FrameWriter.RentBody(accepted, out int length);
+        try
+        {
+            var fromMessage = new ArrayBufferWriter<byte>();
+            var fromBody = new ArrayBufferWriter<byte>();
+            FrameWriter.WriteMessage(fromMessage, LoginAcceptedOpcode, accepted);
+            FrameWriter.WriteMessage(fromBody, LoginAcceptedOpcode, body.AsSpan(0, length));
+            Assert.Equal(4, length);
+            Assert.Equal(fromMessage.WrittenSpan.ToArray(), fromBody.WrittenSpan.ToArray());
+
+            var messageCipher = new PacketCipher(0x1122334455667788UL);
+            var bodyCipher = new PacketCipher(0x1122334455667788UL);
+            var envelopeFromMessage = new ArrayBufferWriter<byte>();
+            var envelopeFromBody = new ArrayBufferWriter<byte>();
+            FrameWriter.WriteEnvelope(envelopeFromMessage, LoginEnvelopeOpcode, LoginAcceptedOpcode, accepted, messageCipher);
+            FrameWriter.WriteEnvelope(envelopeFromBody, LoginEnvelopeOpcode, LoginAcceptedOpcode, body.AsSpan(0, length), bodyCipher);
+            Assert.Equal(envelopeFromMessage.WrittenSpan.ToArray(), envelopeFromBody.WrittenSpan.ToArray());
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(body, clearArray: true);
+        }
+    }
+
+    [Fact]
     public void APingFrameCarriesOneIndexByte()
     {
         var output = new ArrayBufferWriter<byte>();
@@ -86,5 +114,9 @@ public sealed class FrameWriterTests
         public void Write(ref BitWriter writer) => writer.WriteBits(1, 8);
 
         public int MeasureBits() => 16;
+
+        public string? FindUnverifiedValue() => null;
+
+        public bool IsDefault() => true;
     }
 }

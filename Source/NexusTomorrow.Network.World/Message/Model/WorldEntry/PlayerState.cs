@@ -75,7 +75,7 @@ public sealed partial class PlayerState
     /// <summary>
     /// The player's total experience. The client works out from it which level the total falls in.
     /// </summary>
-    [UInt(32)] public uint Unknown2 { get; set; }
+    [VerifiedMember, UInt(32)] public uint Unknown2 { get; set; }
 
     /// <summary>
     /// The player's rest experience, as the client's interface shows it.
@@ -112,14 +112,14 @@ public sealed partial class PlayerState
     /// <summary>
     /// Which of the player's key binding sets is in use, as the client's interface shows it: 3 or 4. The client takes any other value as 3.
     /// </summary>
-    [UInt(32)] public uint Unknown12 { get; set; }
+    [VerifiedMember, UInt(32)] public uint Unknown12 { get; set; }
 
     [UInt(16)] public ushort Unknown13 { get; set; }
 
     /// <summary>
     /// The index of the costume the player wears, as the client's interface shows it. Until a value arrives the client holds 0xFFFFFFFF.
     /// </summary>
-    [UInt(32)] public uint Unknown14 { get; set; }
+    [VerifiedMember, UInt(32)] public uint Unknown14 { get; set; }
 
     [UInt(32)] public uint Unknown15 { get; set; }
 

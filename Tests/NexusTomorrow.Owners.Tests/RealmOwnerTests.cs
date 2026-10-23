@@ -1,10 +1,12 @@
 ﻿using System.Collections.Immutable;
+using System.Numerics;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 using NexusTomorrow.Game.Static;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Owners.Realm;
+using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Realm;
 using NexusTomorrow.Testing;
@@ -26,11 +28,12 @@ public sealed class RealmOwnerTests : IAsyncLifetime
     private readonly FakeTimeProvider _time = new(new DateTimeOffset(2026, 10, 16, 12, 0, 0, TimeSpan.Zero));
     private readonly FakeWriteBehind _db = new();
     private readonly FakeClientSession _session = new();
+    private readonly FakeMapDirectory _maps = new();
     private readonly RealmOwner _owner;
 
     public RealmOwnerTests()
     {
-        _owner = new RealmOwner(_db, s_catalog, _time, Options.Create(new RealmOptions { MaxCharactersPerAccount = 2 }), NullLogger<RealmOwner>.Instance);
+        _owner = new RealmOwner(_db, s_catalog, _maps, _time, Options.Create(new RealmOptions { MaxCharactersPerAccount = 2 }), NullLogger<RealmOwner>.Instance);
     }
 
     public ValueTask InitializeAsync()
@@ -185,7 +188,6 @@ public sealed class RealmOwnerTests : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData(false, false, 2)]
     [InlineData(true, false, 1)]
     [InlineData(false, true, 3)]
     public async Task ASelectionAnswersSelectFailedWithItsReason(bool requiresRename, bool disabled, int reason)
@@ -194,6 +196,280 @@ public sealed class RealmOwnerTests : IAsyncLifetime
         _owner.Post(new SelectCharacter(Account, _session, 5));
         await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterSelectFailed>().Any());
         Assert.Equal(reason, _session.Single<CharacterSelectFailed>().Reason);
+    }
+
+    [Fact]
+    public async Task ASelectLoadsTheCharacterAndHandsItToItsWorldsMap()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        _owner.Post(new SelectCharacter(Account, _session, 5));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+        LoadCharacterWork load = _db.Take<LoadCharacterWork>();
+        PersistKey[] expectedKeys = [PersistKey.Character(5)];
+        Assert.Equal(expectedKeys, load.Keys.ToArray());
+
+        load.Character = Record(5, 1);
+        load.Complete(WorkResult.Committed);
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+        CharacterArrived arrived = Assert.IsType<CharacterArrived>(map.Posted[0]);
+        Assert.Same(_session, arrived.Session);
+        Assert.Equal(Account, arrived.AccountId);
+        Assert.Equal(5UL, arrived.Character.Id);
+        Assert.Same(_owner, arrived.ReturnTo);
+        Assert.Empty(_session.Sent.OfType<CharacterSelectFailed>());
+    }
+
+    [Fact]
+    public async Task ASelectForAWorldNoMapHostsFailsWithTheGeneralReasonAndFreesTheCharacter()
+    {
+        await ListAsync(InWorld(5, "Rebaser Head", 9));
+        await SelectAndLoadAsync(_session, 5, Record(5, 9));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterSelectFailed>().Any());
+        Assert.Equal(SelectReasons.General, _session.Single<CharacterSelectFailed>().Reason);
+
+        _owner.Post(new SelectCharacter(Account, _session, 5));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+    }
+
+    [Fact]
+    public async Task ASelectWhoseMapRefusesTheArrivalFailsWithTheGeneralReasonAndFreesTheCharacter()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        map.Accepting = false;
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        await SelectAndLoadAsync(_session, 5, Record(5, 1));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterSelectFailed>().Any());
+        Assert.Equal(SelectReasons.General, _session.Single<CharacterSelectFailed>().Reason);
+        Assert.Empty(map.Posted);
+
+        _owner.Post(new SelectCharacter(Account, _session, 5));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+    }
+
+    [Fact]
+    public async Task ACharacterTheLoadCannotFindFailsWithTheGeneralReason()
+    {
+        _maps.Add(1);
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        await SelectAndLoadAsync(_session, 5, null);
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterSelectFailed>().Any());
+        Assert.Equal(SelectReasons.General, _session.Single<CharacterSelectFailed>().Reason);
+    }
+
+    [Fact]
+    public async Task ASecondSelectFromASessionWithACharacterOnItsWayChangesNothing()
+    {
+        _maps.Add(1);
+        await ListAsync(InWorld(5, "Aaaa Bbbb", 1), InWorld(6, "Cccc Dddd", 1));
+        _owner.Post(new SelectCharacter(Account, _session, 5));
+        _owner.Post(new SelectCharacter(Account, _session, 6));
+        await SyncAsync(_owner, _session);
+
+        Assert.Single(_db.Queued.OfType<LoadCharacterWork>());
+        Assert.Empty(_session.Sent.OfType<CharacterSelectFailed>());
+    }
+
+    [Fact]
+    public async Task ASelectOfACharacterAnotherSessionHoldsWaitsForItsReturn()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        var other = new FakeClientSession();
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        await EnterAsync(_session, 5, map);
+
+        await ListAsync(other, Account, InWorld(5, "Rebaser Head", 1));
+        _owner.Post(new SelectCharacter(Account, other, 5));
+        await SyncAsync(_owner, other);
+        Assert.Empty(_db.Queued.OfType<LoadCharacterWork>());
+
+        _owner.Post(new CharacterReturned(Account, 5, new CharacterLocation(1, 4, new Vector3(7, 8, 9), 0.5f)));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+        LoadCharacterWork load = _db.Take<LoadCharacterWork>();
+        load.Character = Record(5, 1);
+        load.Complete(WorkResult.Committed);
+        await Eventually.TrueAsync(() => map.Posted.Count == 2);
+        CharacterArrived arrived = Assert.IsType<CharacterArrived>(map.Posted[1]);
+        Assert.Same(other, arrived.Session);
+    }
+
+    [Fact]
+    public async Task AReturnedCharacterIsListedWhereItLeftTheWorld()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        await EnterAsync(_session, 5, map);
+
+        _owner.Post(new CharacterReturned(Account, 5, new CharacterLocation(1, 4, new Vector3(7, 8, 9), 0.5f)));
+        await SyncAsync(_owner, _session);
+
+        CharacterList.Character listed = Assert.Single(_session.Sent.OfType<CharacterList>().Last().Characters);
+        Assert.Equal((ushort)1, listed.WorldId);
+        Assert.Equal((ushort)4, listed.ZoneId);
+        Assert.Equal(new Vector3(7, 8, 9), listed.Position);
+    }
+
+    [Fact]
+    public async Task ALoadThatLandsAfterItsSessionClosedIsDroppedAndFreesTheCharacter()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        var other = new FakeClientSession();
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        _owner.Post(new SelectCharacter(Account, _session, 5));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+        LoadCharacterWork load = _db.Take<LoadCharacterWork>();
+        _owner.Post(new RealmSessionClosed(Account, _session));
+        load.Character = Record(5, 1);
+        load.Complete(WorkResult.Committed);
+
+        await ListAsync(other, Account, InWorld(5, "Rebaser Head", 1));
+        _owner.Post(new SelectCharacter(Account, other, 5));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+        Assert.Empty(map.Posted);
+    }
+
+    [Fact]
+    public async Task ACharacterInTheWorldCannotBeDeleted()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        await EnterAsync(_session, 5, map);
+
+        _owner.Post(new DeleteCharacter(Account, _session, 5));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterDeleteResult>().Any());
+        Assert.Equal(DeleteResults.General, _session.Single<CharacterDeleteResult>().Result);
+        Assert.Empty(_db.Queued.OfType<DeleteCharacterWork>());
+    }
+
+    [Fact]
+    public async Task ACharacterLoadedFaultAfterTheArrivalWasPostedLeavesTheCharacterHeld()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        var db = new FakeWriteBehind();
+        RealmOwner owner = StartOwner(db, 501);
+        try
+        {
+            await ListOnAsync(owner, db, _session, Account, InWorld(5, "Rebaser Head", 1));
+
+            // The second create takes the allocator below its refill mark and then throws, so the refill is still owed when the
+            // next message ends; that message is the load, and its refill throws after the arrival is posted.
+            int refills = 0;
+            db.ThrowOn = work =>
+            {
+                if (work is TakeIdBlockWork)
+                    Interlocked.Increment(ref refills);
+
+                return work is CreateCharacterWork or TakeIdBlockWork;
+            };
+            owner.Post(new CreateCharacter(Account, _session, Create("Aaaa Bbbb")));
+            owner.Post(new SelectCharacter(Account, _session, 5));
+            await Eventually.TrueAsync(() => db.Queued.OfType<LoadCharacterWork>().Any());
+            LoadCharacterWork load = db.Take<LoadCharacterWork>();
+            owner.Post(new CreateCharacter(Account, _session, Create("Cccc Dddd")));
+            load.Character = Record(5, 1);
+            load.Complete(WorkResult.Committed);
+            await Eventually.TrueAsync(() => map.Posted.Count == 1);
+
+            var other = new FakeClientSession();
+            await ListOnAsync(owner, db, other, Account, InWorld(5, "Rebaser Head", 1));
+            owner.Post(new SelectCharacter(Account, other, 5));
+            await SyncAsync(owner, other);
+
+            // The one refill, thrown on the load's message, is what put the handler in its fault path.
+            Assert.Equal(1, Volatile.Read(ref refills));
+            Assert.Empty(db.Queued.OfType<LoadCharacterWork>());
+            Assert.Empty(other.Sent.OfType<CharacterSelectFailed>());
+            Assert.Empty(_session.Sent.OfType<CharacterSelectFailed>());
+        }
+        finally
+        {
+            await owner.StopAsync().WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        }
+    }
+
+    [Fact]
+    public async Task ACharacterLoadedFaultBeforeTheArrivalIsPostedFreesTheCharacterAndAnswersGeneral()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        map.Throwing = true;
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        await SelectAndLoadAsync(_session, 5, Record(5, 1));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterSelectFailed>().Any());
+        Assert.Equal(SelectReasons.General, _session.Single<CharacterSelectFailed>().Reason);
+
+        map.Throwing = false;
+        _owner.Post(new SelectCharacter(Account, _session, 5));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+    }
+
+    [Fact]
+    public async Task ASelectFaultAfterItsPresenceWasCreatedFreesTheCharacterForAnotherSession()
+    {
+        _maps.Add(1);
+        var other = new FakeClientSession();
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        _db.ThrowOn = work => work is LoadCharacterWork;
+        _owner.Post(new SelectCharacter(Account, _session, 5));
+        await Eventually.TrueAsync(() => _session.DisconnectReason is not null);
+
+        _db.ThrowOn = null;
+        await ListAsync(other, Account, InWorld(5, "Rebaser Head", 1));
+        _owner.Post(new SelectCharacter(Account, other, 5));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+        Assert.Empty(_session.Sent.OfType<CharacterSelectFailed>());
+    }
+
+    [Fact]
+    public async Task ANewerParkedSelectReplacesAnOlderOneWhichIsAnsweredGeneral()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        var older = new FakeClientSession();
+        var newer = new FakeClientSession();
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        await EnterAsync(_session, 5, map);
+        await ListAsync(older, Account, InWorld(5, "Rebaser Head", 1));
+        _owner.Post(new SelectCharacter(Account, older, 5));
+        await ListAsync(newer, Account, InWorld(5, "Rebaser Head", 1));
+        _owner.Post(new SelectCharacter(Account, newer, 5));
+        await Eventually.TrueAsync(() => older.Sent.OfType<CharacterSelectFailed>().Any());
+        Assert.Equal(SelectReasons.General, older.Single<CharacterSelectFailed>().Reason);
+
+        _owner.Post(new CharacterReturned(Account, 5, new CharacterLocation(1, 0, new Vector3(1, 2, 3), 0)));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+        LoadCharacterWork load = _db.Take<LoadCharacterWork>();
+        load.Character = Record(5, 1);
+        load.Complete(WorkResult.Committed);
+        await Eventually.TrueAsync(() => map.Posted.Count == 2);
+        Assert.Same(newer, Assert.IsType<CharacterArrived>(map.Posted[1]).Session);
+        Assert.Empty(newer.Sent.OfType<CharacterSelectFailed>());
+    }
+
+    [Fact]
+    public async Task ClosingAParkedSessionDropsItsSelectSoTheReturnStartsNoLoadForIt()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        var waiting = new FakeClientSession();
+        await ListAsync(InWorld(5, "Rebaser Head", 1));
+        await EnterAsync(_session, 5, map);
+        await ListAsync(waiting, Account, InWorld(5, "Rebaser Head", 1));
+        _owner.Post(new SelectCharacter(Account, waiting, 5));
+        _owner.Post(new RealmSessionClosed(Account, waiting));
+        _owner.Post(new CharacterReturned(Account, 5, new CharacterLocation(1, 0, new Vector3(1, 2, 3), 0)));
+
+        // The list's load queues behind the return, so once it is answered the return has been handled.
+        await ListAsync(new FakeClientSession(), Account, InWorld(5, "Rebaser Head", 1));
+        Assert.Empty(_db.Queued.OfType<LoadCharacterWork>());
+    }
+
+    [Fact]
+    public async Task ASelectUsesTheLoadedRecordsWorldOverTheListsWorld()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        await ListAsync(InWorld(5, "Rebaser Head", 9));
+        await SelectAndLoadAsync(_session, 5, Record(5, 1));
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+        Assert.Equal((ushort)1, Assert.IsType<CharacterArrived>(map.Posted[0]).Character.Location.WorldId);
+        Assert.Empty(_session.Sent.OfType<CharacterSelectFailed>());
     }
 
     [Fact]
@@ -464,7 +740,7 @@ public sealed class RealmOwnerTests : IAsyncLifetime
 
     private RealmOwner StartOwner(FakeWriteBehind db, int? ids)
     {
-        var owner = new RealmOwner(db, s_catalog, _time, Options.Create(new RealmOptions()), NullLogger<RealmOwner>.Instance);
+        var owner = new RealmOwner(db, s_catalog, _maps, _time, Options.Create(new RealmOptions()), NullLogger<RealmOwner>.Instance);
         if (ids is int count)
             owner.Post(new IdBlockTaken(new IdBlock(5001, count)));
         owner.Start();
@@ -500,6 +776,30 @@ public sealed class RealmOwnerTests : IAsyncLifetime
     private static CharacterSummary Summary(ulong id, string name) =>
         new(id, Account, name, Race: 1, Sex: 0, Class: 1, FactionId: 166, Path: 0, Level: 1, WorldId: 0, ZoneId: 0, Position: default,
             Disabled: false, RequiresRename: false, Bones: []);
+
+    private static CharacterSummary InWorld(ulong id, string name, ushort world) => Summary(id, name) with { WorldId = world };
+
+    private static CharacterRecord Record(ulong id, ushort world) =>
+        new(id, Account, "Rebaser Head", Race: 1, Sex: 0, Class: 1, FactionId: 166, Path: 0, Level: 1, TotalXp: 0,
+            new CharacterLocation(world, 0, new Vector3(1, 2, 3), 0));
+
+    // Selects, takes the queued load and completes it with the record.
+    private async Task SelectAndLoadAsync(FakeClientSession session, ulong id, CharacterRecord? record)
+    {
+        _owner.Post(new SelectCharacter(Account, session, id));
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+        LoadCharacterWork load = _db.Take<LoadCharacterWork>();
+        load.Character = record;
+        load.Complete(WorkResult.Committed);
+    }
+
+    // Selects, loads the character in the map's world and waits for the map's next post.
+    private async Task EnterAsync(FakeClientSession session, ulong id, FakeMapInbox map)
+    {
+        int before = map.Posted.Count;
+        await SelectAndLoadAsync(session, id, Record(id, map.WorldId));
+        await Eventually.TrueAsync(() => map.Posted.Count > before);
+    }
 
     private static CharacterCreate Create(string name) => new() { CreationId = 1, Name = name, Path = 1 };
 }
