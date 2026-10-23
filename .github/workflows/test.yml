@@ -133,6 +133,29 @@ jobs:
             exit 1
           fi
 
+      # In-process tooling exists only in Debug builds (Tools/NexusTomorrow.Tools and the Gateway's ClientConnection.Debug.cs). The
+      # Release build restores for itself, since the server references the tools in Debug only, and its ReleaseBuildTests prove no send
+      # there skips the send gate.
+      - name: Release build
+        run: dotnet build Source/NexusTomorrow.slnx --configuration Release
+
+      - name: Release carries no debug tools
+        run: |
+          set -euo pipefail
+          shopt -s nullglob globstar
+          dotnet test --solution Source/NexusTomorrow.slnx --configuration Release --no-build \
+            --results-directory "$RUNNER_TEMP/release-results" -- --report-trx --filter-class '*ReleaseBuildTests*' --ignore-exit-code 8
+          executed=0
+          for file in "$RUNNER_TEMP"/release-results/**/*.trx; do
+            count=$(grep -o '<Counters [^>]*' "$file" | grep -o ' executed="[0-9]*"' | grep -o '[0-9]\+' || true)
+            executed=$((executed + ${count:-0}))
+          done
+          echo "$executed release checks executed"
+          if [ "$executed" -lt 2 ]; then
+            echo "::error::The release checks did not run"
+            exit 1
+          fi
+
       - name: Upload results
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
