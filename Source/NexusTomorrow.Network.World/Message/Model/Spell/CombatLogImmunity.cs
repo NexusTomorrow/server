@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 /// <summary>
-/// A combat log entry of kind 18: the target was immune.
+/// A combat log entry of kind 18, which carries the action alone; the client raises it as CombatLogImmunity.
 /// </summary>
 [WireStruct]
 [UnionCase(18)]

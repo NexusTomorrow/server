@@ -29,9 +29,20 @@ public sealed partial class CombatLogTransference : ICombatLogPayload
     /// </summary>
     [UInt(32)] public uint Absorption { get; set; }
 
-    [UInt(32)] public uint Unknown4 { get; set; }
-    [UInt(32)] public uint Unknown5 { get; set; }
-    [UInt(1)] public bool Unknown6 { get; set; }
+    /// <summary>
+    /// The damage beyond what the target had left.
+    /// </summary>
+    [UInt(32)] public uint Overkill { get; set; }
+
+    /// <summary>
+    /// The damage a glancing blow took off.
+    /// </summary>
+    [UInt(32)] public uint GlanceAmount { get; set; }
+
+    /// <summary>
+    /// Whether the target was vulnerable.
+    /// </summary>
+    [UInt(1)] public bool TargetVulnerable { get; set; }
 
     /// <summary>
     /// The units the transference healed.
