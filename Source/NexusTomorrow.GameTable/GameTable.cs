@@ -205,6 +205,7 @@ public class GameTable<T> where T : class, new()
                                     array.SetValue(Convert.ToBoolean(reader.ReadUInt32()), j);
                                     break;
                                 case DataType.ULong:
+                                    SkipToEightByteBoundary(reader, recordStartPosition);
                                     array.SetValue(reader.ReadUInt64(), j);
                                     break;
                             }
@@ -232,6 +233,7 @@ public class GameTable<T> where T : class, new()
                                 modelField.SetValue(entry, Convert.ToBoolean(reader.ReadUInt32()));
                                 break;
                             case DataType.ULong:
+                                SkipToEightByteBoundary(reader, recordStartPosition);
                                 modelField.SetValue(entry, reader.ReadUInt64());
                                 break;
                             case DataType.String:
@@ -264,6 +266,17 @@ public class GameTable<T> where T : class, new()
         }
 
         return (entries, lookup);
+    }
+
+    /// <summary>
+    /// A 64-bit column starts on an 8-byte boundary within its record, so one that follows an odd number of 4-byte columns
+    /// has 4 bytes of padding before it (TradeskillTier's RelearnCost, after eleven uints).
+    /// </summary>
+    private static void SkipToEightByteBoundary(BinaryReader reader, long recordStart)
+    {
+        long misalignment = (reader.BaseStream.Position - recordStart) % 8;
+        if (misalignment != 0)
+            reader.BaseStream.Position += 8 - misalignment;
     }
 
     public T? GetEntry(ulong id)
