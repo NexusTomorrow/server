@@ -80,6 +80,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   episodes and mission progress, the explorer's power maps and progress reports, the scientist's
   scanbot, experimentation and creature data, the settler's builds, hubs and infrastructure, and the
   soldier's holdouts, builds and burrows, with the explorer's scavenger clues.
+- Matchmaking messages carry their real names and field meanings: joining and leaving queues, role
+  checks, the pending match, the match itself, votes to kick or surrender, penalties and PvP kills.
 
 ### Changed
 
@@ -104,6 +106,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - The combat log matches the client's layout: a reflected hit's sixth value is 32 bits, the dispel,
   transference and one amount kind end with their caster, target, spell and result, and kind 34 is
   declared.
+- Matchmaking messages match the client's layout: each entry of the queued-players list has a 2-bit
+  sixth value, and a PvP kill's killer can be of a third kind.
 - After logging in, the client no longer keeps reconnecting: the server answers its verified-address
   request.
 - Game data read correctly where a 64-bit number follows an odd count of 32-bit ones: tradeskill
