@@ -23,6 +23,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - The housing messages the client receives carry their real names: the residence list and privacy,
   neighbors and neighbor invitations, the random visit lists, a community's placed residences, vendor
   lists, ownership, plot builds and operation results.
+- Guild requests carry their real names and field meanings: guild operations, creating a guild,
+  holomarks and standards, the guild bank's tabs, money and items, perks, boss tokens and recruitment
+  details. The vendor repair, which a guild can pay for, sits with the inventory messages.
 
 ### Changed
 

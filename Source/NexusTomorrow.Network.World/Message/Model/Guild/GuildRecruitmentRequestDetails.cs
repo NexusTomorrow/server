@@ -4,8 +4,18 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
+/// <summary>
+/// Asks for a recruiting guild's details.
+/// </summary>
+/// <remarks>
+/// The client sends it at most once a second.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Client076E, Direction.ClientToServer)]
+[Verified(Rung.Purpose)]
 public sealed partial class GuildRecruitmentRequestDetails
 {
-    public RealmScopedId Unknown0 { get; private set; } = new();
+    /// <summary>
+    /// The guild, by id.
+    /// </summary>
+    public RealmScopedId GuildId { get; private set; } = new();
 }
