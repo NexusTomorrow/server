@@ -574,7 +574,6 @@ internal static class RegistryVerification
         "0x0876",
         "0x0879",
         "0x0880",
-        "0x0881",
         "0x0885",
         "0x0889",
         "0x088C",
