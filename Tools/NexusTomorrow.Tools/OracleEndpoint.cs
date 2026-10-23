@@ -70,7 +70,7 @@ public sealed partial class OracleEndpoint : BackgroundService
         {
             NetworkStream stream = client.GetStream();
             using var reader = new StreamReader(stream, new UTF8Encoding(false), detectEncodingFromByteOrderMarks: false, leaveOpen: true);
-            Channel<string> outbox = Channel.CreateUnbounded<string>(new UnboundedChannelOptions { SingleReader = true });
+            var outbox = Channel.CreateUnbounded<string>(new UnboundedChannelOptions { SingleReader = true });
             using var connection = new OracleConnection(outbox.Writer);
             Task writer = WriteLinesAsync(stream, outbox.Reader, stoppingToken);
             try
