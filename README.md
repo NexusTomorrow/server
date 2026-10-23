@@ -42,7 +42,7 @@ A server for the WildStar client, build 16042, written in C# on .NET 10.
 | `NexusTomorrow.Server` | The server: one process hosting all of the above |
 | `NexusTomorrow.MapGenerator` | Tool: extracts tables from your client and generates map files |
 | `NexusTomorrow.ClientConnector` | Tool: starts your client pointed at a server |
-| `Tools/NexusTomorrow.ProtocolReference` | Writes the wiki's message reference, opcode table and command list from the declarations and the server's registries |
+| `Tools/NexusTomorrow.ProtocolReference` | Writes the wiki's message reference, opcode table, command list and host settings from the declarations and the server's registries |
 
 The solution is `Source/NexusTomorrow.slnx`, and the tests live under `Tests/`.
 
@@ -133,6 +133,9 @@ command line. The ones you are most likely to change:
 | `Realm:Id`, `Realm:Name` | 1, `NexusTomorrow` | The realm's id (1 to 16383) and the name players see. |
 | `Content:ClientDataPath` | none | The folder holding `tbl`. |
 | `Cli:Enabled` | `true` | Whether the console reads commands. It stays off when standard input is redirected. |
+
+The wiki's [Host-settings](https://github.com/NexusTomorrow/server/wiki/Host-settings) page lists
+every setting with its default and its limits.
 
 A configuration that fails these checks stops the server at start, naming the key and never its
 value. Stopping the server (Ctrl+C) stops accepting connections, then stops each map on its next

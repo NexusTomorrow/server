@@ -4,6 +4,7 @@ using NexusTomorrow.Commands;
 using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
+using NexusTomorrow.Settings;
 
 namespace NexusTomorrow.ProtocolReference;
 
@@ -35,10 +36,17 @@ public static class PageWriter
     private const string UnsettledGrouping =
         "These messages wait here until the client feature they belong to is found. This page claims nothing about what they do.";
 
+    // HostTests.AFailedSettingStopsTheServerBeforeItListens holds "before it listens": a failed setting's start binds no port.
+    private const string SettingsScope =
+        "Every setting the server reads: its default, what the host checks at start-up, and what it sets. A setting that fails its check stops the server before it listens, naming the setting, never its value ([Host lifecycle](Host-lifecycle#settings)).";
+
+    private const string EnvironmentSentence = "A setting can also come from the environment, its name with `__` for each `:`, such as `Maps__TickMs`.";
+
     // What a page is generated from, and what to change instead of editing it.
     private static readonly (string From, string Edit) s_declarations = ("the message declarations", "change the declaration's documentation");
     private static readonly (string From, string Edit) s_opcodeTable = ("the opcode table", "change the table");
     private static readonly (string From, string Edit) s_commands = ("the command definitions", "change the definition");
+    private static readonly (string From, string Edit) s_settings = ("the settings classes", "change the setting's documentation or its rule");
 
     private static readonly (Direction Direction, string Title)[] s_chapters =
     [
@@ -200,6 +208,32 @@ public static class PageWriter
     }
 
     /// <summary>
+    /// The host settings page: the environment sentence under the scope, then one chapter per section in its declared order, each
+    /// opening with the pages that explain it, then a row per setting in declaration order (its default, its rules and its summary),
+    /// then one sentence per rule spanning several settings. <paramref name="docs"/> holds the settings' summaries.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">A setting has no summary.</exception>
+    public static string SettingsPage(IEnumerable<SettingsSection> sections, DocText docs, PageStamp stamp)
+    {
+        var blocks = new List<string>();
+        Head(blocks, SettingsScope, stamp, s_settings);
+        blocks.Insert(2, EnvironmentSentence);
+
+        foreach (SettingsSection section in sections.OrderBy(section => section.Order))
+        {
+            blocks.Add($"## {section.Name}");
+            blocks.Add(ExplainedBy(section.ExplainedBy));
+            blocks.Add(Table(
+                ["Setting", "Default", "Must be", "Sets"],
+                [.. section.Settings.Select(setting => new[] { $"**{Code(setting.Key)}**", setting.DefaultText, setting.MustBe, Sets(setting, docs) })]));
+            foreach (CrossSettingRuleAttribute rule in section.CrossRules)
+                blocks.Add(rule.Sentence(section));
+        }
+
+        return Join(blocks);
+    }
+
+    /// <summary>
     /// The sentence a tombstone page ends with.
     /// </summary>
     internal const string TombstoneSentence = "This page's messages moved to their feature areas; [Messages](Messages) lists every message and the page that describes it.";
@@ -250,6 +284,23 @@ public static class PageWriter
 
         if (purpose && docs.Remarks(typeId) is { } remarks)
             blocks.Add(remarks);
+    }
+
+    // "[A](a) explains these." for one page, "[A](a) and [B](b) explain these." for two.
+    private static string ExplainedBy(IReadOnlyList<PageLink> pages)
+    {
+        string[] links = [.. pages.Select(page => $"[{page.Title}]({page.Target})")];
+        string named = links.Length < 2 ? string.Concat(links) : $"{string.Join(", ", links[..^1])} and {links[^1]}";
+        return $"{named} {(links.Length == 1 ? "explains" : "explain")} these.";
+    }
+
+    // The setting's summary as one fragment, its closing full stop dropped, with a secret marked.
+    private static string Sets(Setting setting, DocText docs)
+    {
+        string summary = docs.Summary(DocumentationIds.Of(setting.Property))
+            ?? throw new InvalidOperationException($"{setting.Key} has no summary for the settings page.");
+        string fragment = summary.EndsWith('.') ? summary[..^1] : summary;
+        return setting.IsSecret ? $"{fragment}; a secret, never logged" : fragment;
     }
 
     private static void CodeLives(List<string> blocks, IReadOnlyList<string[]> rows)
