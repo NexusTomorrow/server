@@ -4,9 +4,23 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
+/// <summary>
+/// Names a guild's bank tabs.
+/// </summary>
+/// <remarks>
+/// GuildTypeLib's GetBankTabName returns each; the client raises GuildBankTabRename.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Server0479, Direction.ServerToClient)]
+[Verified(Rung.Fields)]
 public sealed partial class GuildBankTabNames
 {
-    public RealmScopedId Unknown0 { get; set; } = new();
-    [FixedArray(10), WideString] public string[] Unknown1 { get; set; } = new string[10];
+    /// <summary>
+    /// The guild, by id.
+    /// </summary>
+    public RealmScopedId GuildId { get; set; } = new();
+
+    /// <summary>
+    /// Each bank tab's name, in tab order.
+    /// </summary>
+    [FixedArray(10), WideString] public string[] TabNames { get; set; } = new string[10];
 }

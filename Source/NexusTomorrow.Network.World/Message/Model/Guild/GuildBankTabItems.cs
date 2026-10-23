@@ -4,10 +4,28 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
+/// <summary>
+/// Fills a guild bank tab with its items.
+/// </summary>
+/// <remarks>
+/// The client marks the tab loaded and raises GuildBankTab with the tab's 1-based index.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Server047A, Direction.ServerToClient)]
+[Verified(Rung.Purpose)]
 public sealed partial class GuildBankTabItems
 {
-    public RealmScopedId Unknown0 { get; set; } = new();
-    [UInt(9)] public ushort Unknown1 { get; set; }
-    [Array(CountBits = 32)] public List<Server0111Part0> Unknown2 { get; set; } = [];
+    /// <summary>
+    /// The guild, by id.
+    /// </summary>
+    public RealmScopedId GuildId { get; set; } = new();
+
+    /// <summary>
+    /// The tab, as an inventory location: 100 to 109 a guild's tabs, 200 to 209 a war party's.
+    /// </summary>
+    [UInt(9)] public ushort Location { get; set; }
+
+    /// <summary>
+    /// The tab's items, each with its slot.
+    /// </summary>
+    [Array(CountBits = 32)] public List<Server0111Part0> Items { get; set; } = [];
 }

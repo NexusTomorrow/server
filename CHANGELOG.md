@@ -26,6 +26,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Guild requests carry their real names and field meanings: guild operations, creating a guild,
   holomarks and standards, the guild bank's tabs, money and items, perks, boss tokens and recruitment
   details. The vendor repair, which a guild can pay for, sits with the inventory messages.
+- The guild state the client receives carries real names and field meanings: the bank's tabs, items
+  and today's withdrawals, ranks, the event log, perks, the PvP record and queue state, the standard,
+  recruitment, and a war party's boss tokens and match results.
 
 ### Changed
 
@@ -46,5 +49,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   from.
 - A test run filtered to some tests no longer fails on the test projects the filter leaves empty,
   and one whose filter matches nothing now fails.
+- A war plot match's results carry both sides' values, and a guild's event log entries carry no guild
+  id, as the client reads them.
 
 [Unreleased]: https://github.com/NexusTomorrow/server/compare/main...dev
