@@ -15,8 +15,8 @@ namespace NexusTomorrow.Tools;
 /// The oracle's endpoint: loopback TCP, one JSON object per line each way. A connection's first line must carry the token written to
 /// <see cref="OracleOptions.TokenFile"/> at this start, within <see cref="FirstLineTime"/> and <see cref="FirstLineChars"/>; the
 /// connection closes on the first line that does not parse or authenticate. Each later line is a request (<see cref="OracleVerbs"/>),
-/// answered in order; a tap's records interleave with the answers. A connection that leaves <see cref="OutboxLines"/> lines unread is
-/// closed, and its taps detach.
+/// answered in order; a tap's records interleave with the answers. A connection with <see cref="OutboxLines"/> lines waiting, an answer
+/// or a tap record, is closed: its socket is closed and its taps detach.
 /// </summary>
 public sealed partial class OracleEndpoint : BackgroundService
 {
@@ -81,14 +81,15 @@ public sealed partial class OracleEndpoint : BackgroundService
         }
     }
 
-    // The token file sits under the user's local application data, which Windows keeps to the user; elsewhere it is created for its
-    // owner alone, and the mode applies only to a file this call creates.
+    // The token file sits under the user's local application data, which Windows keeps to the user; elsewhere it is created anew for
+    // its owner alone (CreateNew, so a file that reappears after the delete fails the start rather than keep its old mode).
     private static async Task WriteTokenAsync(string path, string token, CancellationToken cancellationToken)
     {
         var options = new FileStreamOptions { Mode = FileMode.Create, Access = FileAccess.Write };
         if (!OperatingSystem.IsWindows())
         {
             File.Delete(path);
+            options.Mode = FileMode.CreateNew;
             options.UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
         }
 
@@ -103,30 +104,37 @@ public sealed partial class OracleEndpoint : BackgroundService
             NetworkStream stream = client.GetStream();
             using var reader = new StreamReader(stream, new UTF8Encoding(false), detectEncodingFromByteOrderMarks: false, leaveOpen: true);
             var outbox = Channel.CreateBounded<string>(new BoundedChannelOptions(OutboxLines) { SingleReader = true, FullMode = BoundedChannelFullMode.Wait });
-            var connection = new OracleConnection(outbox.Writer);
-            Task writer = WriteLinesAsync(stream, outbox.Reader, stoppingToken);
+
+            // The connection's life: the host stopping, a refusal, or a full outbox (a reply, or a tap record through
+            // OracleConnection.Send) ends it, and the socket is closed before the writer is awaited, so a peer that stops reading
+            // cannot hold it open.
+            var lifetime = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+            bool overflowed = false;
+            var connection = new OracleConnection(outbox.Writer, full: () =>
+            {
+                overflowed = true;
+                Cancel(lifetime);
+            });
+            Task writer = WriteLinesAsync(stream, outbox.Reader, lifetime.Token);
             try
             {
-                if (await FirstLineAsync(reader, stoppingToken) is not { } first || !Authenticates(first))
+                if (await FirstLineAsync(reader, lifetime.Token) is not { } first || !Authenticates(first))
                 {
-                    Refused("no token line");
+                    Closed("its first line was not the token");
                     return;
                 }
 
-                while (await reader.ReadLineAsync(stoppingToken) is { } line)
+                while (await reader.ReadLineAsync(lifetime.Token) is { } line)
                 {
                     if (Parse(line) is not { } request)
                     {
-                        Refused("a line that is not a JSON object");
+                        Closed("it sent a line that is not a JSON object");
                         return;
                     }
 
-                    JsonObject reply = await _verbs.HandleAsync(request, connection, stoppingToken);
-                    if (!outbox.Writer.TryWrite(reply.ToJsonString()))
-                    {
-                        Refused($"more than {OutboxLines} lines it had not read");
+                    JsonObject reply = await _verbs.HandleAsync(request, connection, lifetime.Token);
+                    if (!connection.Send(reply.ToJsonString()))
                         return;
-                    }
                 }
             }
             catch (Exception exception) when (exception is IOException or OperationCanceledException or ObjectDisposedException)
@@ -138,11 +146,29 @@ public sealed partial class OracleEndpoint : BackgroundService
             }
             finally
             {
+                if (overflowed)
+                    Closed($"it left {OutboxLines} lines unread");
+
                 // Taps first, so none writes to an outbox that has completed.
                 connection.Dispose();
                 outbox.Writer.TryComplete();
+                Cancel(lifetime);
+                client.Close();
                 await writer;
+                lifetime.Dispose();
             }
+        }
+    }
+
+    // A tap can report a full outbox from another thread after the connection has ended and disposed its source.
+    private static void Cancel(CancellationTokenSource lifetime)
+    {
+        try
+        {
+            lifetime.Cancel();
+        }
+        catch (ObjectDisposedException)
+        {
         }
     }
 
@@ -213,8 +239,8 @@ public sealed partial class OracleEndpoint : BackgroundService
     [LoggerMessage(EventId = 9001, Level = LogLevel.Warning, Message = "The oracle endpoint is listening on {Endpoint}")]
     private partial void Listening(EndPoint endpoint);
 
-    [LoggerMessage(EventId = 9002, Level = LogLevel.Warning, Message = "The oracle endpoint closed a connection that sent {Reason}")]
-    private partial void Refused(string reason);
+    [LoggerMessage(EventId = 9002, Level = LogLevel.Warning, Message = "The oracle endpoint closed a connection: {Reason}")]
+    private partial void Closed(string reason);
 
     [LoggerMessage(EventId = 9003, Level = LogLevel.Error, Message = "The oracle endpoint dropped a connection on an error it did not expect")]
     private partial void ConnectionFailed(Exception exception);

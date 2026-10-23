@@ -9,21 +9,32 @@ namespace NexusTomorrow.Tools;
 public sealed class OracleConnection : IDisposable
 {
     private readonly ChannelWriter<string> _lines;
+    private readonly Action? _full;
     private readonly List<(IDebugSession Session, ISessionTap Tap)> _taps = [];
     private readonly Lock _lock = new();
 
     /// <summary>
-    /// Create a connection whose outgoing lines go to <paramref name="lines"/>.
+    /// Create a connection whose outgoing lines go to <paramref name="lines"/>; <paramref name="full"/> is called, from the sending
+    /// thread, when a line does not fit.
     /// </summary>
-    public OracleConnection(ChannelWriter<string> lines)
+    public OracleConnection(ChannelWriter<string> lines, Action? full = null)
     {
         _lines = lines;
+        _full = full;
     }
 
     /// <summary>
-    /// Send one line to the connection, from any thread; false once the connection has ended.
+    /// Send one line to the connection, from any thread; false, after calling the <c>full</c> callback, when the outbox is full or the
+    /// connection has ended.
     /// </summary>
-    public bool Send(string line) => _lines.TryWrite(line);
+    public bool Send(string line)
+    {
+        if (_lines.TryWrite(line))
+            return true;
+
+        _full?.Invoke();
+        return false;
+    }
 
     /// <summary>
     /// Attach <paramref name="tap"/> to <paramref name="session"/> for as long as this connection lasts.
