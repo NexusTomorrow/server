@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="NexusTomorrow.Network.Codec.Generator.Tests" />
+    <InternalsVisibleTo Include="NexusTomorrow.ProtocolReference" />
   </ItemGroup>
 
 </Project>
