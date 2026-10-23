@@ -1,5 +1,8 @@
 ﻿namespace NexusTomorrow.Game.Static.Entity;
 
+/// <summary>
+/// A unit's stand state. The client refuses a stand state above <see cref="Mannequin"/>.
+/// </summary>
 public enum StandState
 {
     Stand,
@@ -15,12 +18,5 @@ public enum StandState
     Burrowed,
     State3,
     Chair,
-    Mannequin,
-    Land,
-    Water,
-    Hover,
-    Air,
-    None,
-    Forward,
-    Reverse
+    Mannequin
 }
