@@ -8,7 +8,7 @@ public sealed class OracleConnectionTests
     public void ALineThatDoesNotFitCallsBackAndIsRefused()
     {
         int calls = 0;
-        Channel<string> lines = Channel.CreateBounded<string>(new BoundedChannelOptions(1) { FullMode = BoundedChannelFullMode.Wait });
+        var lines = Channel.CreateBounded<string>(new BoundedChannelOptions(1) { FullMode = BoundedChannelFullMode.Wait });
         using var connection = new OracleConnection(lines.Writer, full: () => calls++);
 
         Assert.True(connection.Send("one"));
@@ -24,7 +24,7 @@ public sealed class OracleConnectionTests
 
     private sealed class Mixed
     {
-        public int Field;
+        public int Field = 1;
 
         public int Property { get; set; }
     }
