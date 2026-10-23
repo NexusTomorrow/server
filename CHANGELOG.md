@@ -35,6 +35,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Chat channel messages carry their real names and field meanings: joining and leaving, members,
   moderators, mutes, owners and passwords, the results of sending a line or a whisper, and the zone
   channels' zone.
+- Chat lines carry their real names: a line sent, whispered or received, the server's acceptance of
+  the player's own, and the links in a line (items, quests, archive articles, map points, loot, and
+  the alien and profanity ranges).
 
 ### Changed
 
@@ -59,5 +62,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   id, as the client reads them.
 - Items added to a guild bank, and a bank tab's items, carry the item alone, without the extra value
   only an item added to the player's own inventory carries.
+- A chat line's alien and profanity links carry their whole 32-bit value, as the client reads them,
+  in a line sent, whispered or received.
 
 [Unreleased]: https://github.com/NexusTomorrow/server/compare/main...dev
