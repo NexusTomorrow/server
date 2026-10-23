@@ -17,6 +17,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   raid lockouts carry their real names and field meanings.
 - Deleting an item, salvaging one and taking items from the supply satchel carry their real names and
   field meanings.
+- Housing requests carry their real names: residence options, neighbor invitations, evictions and
+  permissions, visits, vendor lists, renaming a residence or a community, and community placement and
+  privacy.
 
 ### Changed
 

@@ -1,5 +1,6 @@
 ﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
+using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
@@ -7,17 +8,20 @@ namespace NexusTomorrow.Network.World.Message.Model.Housing;
 /// Invites a player to be a neighbor: the request HousingLib.NeighborInviteByName sends, among others.
 /// </summary>
 /// <remarks>
-/// By name the client sends the first two fields as 0; another sender sends a pair from the targeted unit and an empty name.
+/// The client names the player by id or by name: FriendshipLib.NeighborInvite sends a friend's id and no name,
+/// HousingLib.NeighborInviteByName zeros and the name.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client0512, Direction.ClientToServer)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class HousingNeighborInvite
 {
-    [UInt(14)] public ushort Unknown0 { get; set; }
-
-    [UInt(64)] public ulong Unknown1 { get; set; }
     /// <summary>
-    /// The player, by name: HousingLib.NeighborInviteByName's argument.
+    /// The player, by character id; zeros when the client names the player instead.
+    /// </summary>
+    public RealmScopedId PlayerId { get; set; } = new();
+
+    /// <summary>
+    /// The player, by name: HousingLib.NeighborInviteByName's argument; empty when the client sends an id instead.
     /// </summary>
     [WideString] public string PlayerName { get; set; } = "";
 }

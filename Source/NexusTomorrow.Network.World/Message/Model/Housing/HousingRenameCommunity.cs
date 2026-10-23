@@ -4,10 +4,18 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Housing;
 
+/// <summary>
+/// Renames the community: the request the client sends when the player confirms the new name.
+/// </summary>
 [WireMessage(GameMessageOpcode.Client0788, Direction.ClientToServer)]
-public sealed partial class Client0788
+[Verified(Rung.Purpose)]
+public sealed partial class HousingRenameCommunity
 {
-    public RealmScopedId Unknown0 { get; } = new();
+    /// <summary>
+    /// The community, by id: the player's realm and the community guild's id.
+    /// </summary>
+    public RealmScopedId CommunityId { get; } = new();
+
     [WideString] public string Unknown1 { get; private set; } = "";
     [UInt(1)] public bool Unknown2 { get; private set; }
 }
