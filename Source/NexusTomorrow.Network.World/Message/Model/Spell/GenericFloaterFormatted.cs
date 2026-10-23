@@ -4,10 +4,18 @@ using NexusTomorrow.Network.World.Message.Model.Shared.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
+/// <summary>
+/// Shows a floater with formatted text.
+/// </summary>
+/// <remarks>
+/// The client formats the text as it does a unit's speech, and raises GenericFloater.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Server0738, Direction.ServerToClient)]
+[Verified(Rung.Purpose)]
 public sealed partial class GenericFloaterFormatted
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
-    [UInt(32)] public uint Unknown1 { get; set; }
-    [Array(CountBits = 8)] public List<Server0738Part0> Unknown2 { get; set; } = [];
+    /// <summary>
+    /// The text.
+    /// </summary>
+    public Server0738Part0 Text { get; set; } = new();
 }
