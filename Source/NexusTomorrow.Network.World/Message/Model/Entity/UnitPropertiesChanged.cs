@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Entity;
 /// </summary>
 /// <remarks>
 /// The client sets each entry as it sets those of <see cref="UnitCreate.Properties"/>, and for the player's unit it then recomputes
-/// its property hash.
+/// its property hash. An id above 196 ends the message there: the client sets no later entry and skips the recompute.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server093A, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

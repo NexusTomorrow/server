@@ -21,8 +21,8 @@ public sealed partial class UnitIntegerStat
     {
         /// <summary>
         /// The stat, 0 to 31. The client keeps stats 10, 11, 15, 17, 20, 21, 22 and 26 as integers, and a float stat sent here is set to 0.
-        /// Stat 10 is the level, and setting it raises PlayerLevelChange; setting stat 20 refreshes the health and shield bar
-        /// (RefreshHealthShieldBar); stat 21 is the interrupt armor.
+        /// Stat 10 is the level: the client raises UnitLevelChanged for any unit, and PlayerLevelChange for the player's unit. For stat 20
+        /// the client raises RefreshHealthShieldBar for the player's unit. Stat 21 is the interrupt armor.
         /// </summary>
         [UInt(5)] public byte Id { get; set; }
 

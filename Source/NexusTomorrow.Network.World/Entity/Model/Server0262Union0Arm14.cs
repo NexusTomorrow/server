@@ -13,8 +13,9 @@ public sealed partial class Server0262Union0Arm14 : IServer0262Union0
     /// <summary>
     /// The character's id, as <see cref="Message.Model.Pregame.CharacterList.Character.CharacterId"/> gives it. With
     /// <see cref="RealmId"/> it makes a realm-scoped id: the key under which the client files the unit's name, and the unit's id when that
-    /// id's top two bits are clear. The client looks a player's name up under that key before it asks the server for it, and
-    /// GroupLib.GetMentoringList and GameLib.GetPlayerUnitByName find a player's unit through it. The client refuses the unit when it is 0.
+    /// id's top two bits are clear. Some of the client's name requests look the name up under that key before they ask the server.
+    /// GroupLib.GetMentoringList finds a group member's unit through it, and GameLib.GetPlayerUnitByName reads the same map. The client
+    /// refuses the unit when it is 0.
     /// </summary>
     [VerifiedMember, UInt(64)] public ulong CharacterId { get; set; }
 
@@ -74,12 +75,21 @@ public sealed partial class Server0262Union0Arm14 : IServer0262Union0
     /// </summary>
     [Array(CountBits = 6), Float32] public List<float> ModelValues { get; set; } = [];
 
-    [UInt(3)] public byte Unknown12 { get; set; }
-    [UInt(8)] public byte Unknown13 { get; set; }
+    /// <summary>
+    /// The unit's PvP flags, of which Unit:IsPvpFlagged reads bit 0.
+    /// </summary>
+    [VerifiedMember, UInt(3)] public byte PvpFlags { get; set; }
+
+    /// <summary>
+    /// The unit's premium tier, with 255 read as 0. Unit:GetPremiumTier returns it, and the client puts it on the unit's chat lines and
+    /// emotes.
+    /// </summary>
+    [VerifiedMember, UInt(8)] public byte PremiumTier { get; set; }
 
     /// <summary>
     /// The unit's title, a CharacterTitle table id, which Unit:HasTitle and Unit:GetTitleOrName read;
-    /// <see cref="Message.Model.Entity.UnitNameTitleChanged"/> sets it too.
+    /// <see cref="Message.Model.Entity.UnitNameTitleChanged"/> sets it too. The client keeps the title only when the unit's name is not
+    /// empty; with an empty name it also clears the title's text.
     /// </summary>
     [VerifiedMember, UInt(14)] public ushort TitleId { get; set; }
 }
