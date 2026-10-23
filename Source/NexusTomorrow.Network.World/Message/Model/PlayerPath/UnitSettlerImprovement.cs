@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 [WireMessage(GameMessageOpcode.Server08B6, Direction.ServerToClient)]
-public sealed partial class Server08B6
+public sealed partial class UnitSettlerImprovement
 {
     [WireStruct]
     public sealed partial class Server08B6Part0
