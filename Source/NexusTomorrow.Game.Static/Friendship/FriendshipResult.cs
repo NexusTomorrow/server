@@ -19,7 +19,7 @@ public enum FriendshipResult
     MaxIgnored,               // Max Ignored Count.
     UnableToProcess,          // Unable to Process.
     PlayerNotFriend,          // Invite canceled: No such player.
-    PlayerQueuedRequests,     // Player considering other friendships. Try again in a bit.
+    PlayerConsideringOtherFriend,     // Player considering other friendships. Try again in a bit.
     RequestSent,              // Friend invited.
     PlayerAlreadyRival,       // Already a Rival.
     PlayerAlreadyNeighbor,    // Player Already a Neighbor.
@@ -36,12 +36,12 @@ public enum FriendshipResult
     ThrottledRequest = 30, // Please try again, and slow down!
     ContainsProfanity = 31, // This text contains profanity.
     InvalidPublicNote = 32, // Invalid public note
-    InvalidDisplayName = 33, // Invalid display name
+    InvalidPublicDisplayName = 33, // Invalid display name
     InvalidEmail = 34, // Invalid display name
     InvalidInviteNote = 35, //
     BlockedForStrangers = 36, // Request is blocked for strangers
     InvalidAutoResponse = 37, // Invalid auto-response
-    TrialAccountDenied = 38, // Trial account can't add other players to their Friends list.
+    MissingEntitlement = 38, // Trial account can't add other players to their Friends list.
     NameUnavailable = 39, // That name is unavailable.
-    PrivilegesSuspended = 40, // Your friend invite privileges have temporarily been restricted.
+    PrivilegeRestricted = 40, // Your friend invite privileges have temporarily been restricted.
 }
