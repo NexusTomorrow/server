@@ -16,9 +16,9 @@ public sealed partial class UnitScanRewardsChanged
     [UInt(32)] public uint UnitId { get; set; }
 
     /// <summary>
-    /// The unit's scan rewards the player already has, one bit per kind: bit 0 the scan mission of type 2 or 14, bit 1 the creature's own
-    /// scan, bit 2 the progress reward, bit 3 the type-23 mission and bit 4 a sixth reward kind. A set bit withholds that kind from the
-    /// unit's rewards, which Unit:GetRewardInfo reports.
+    /// The unit's scan rewards the player already has, as a mask: bit 0 the scan mission of type 2 or 14, bit 1 the creature's own scan,
+    /// bit 2 the progress reward, bit 3 the type-23 mission, bit 4 one further reward kind. A set bit withholds that kind from the unit's
+    /// rewards, which Unit:GetRewardInfo reports.
     /// </summary>
     [UInt(32)] public uint CompletedScanRewards { get; set; }
 

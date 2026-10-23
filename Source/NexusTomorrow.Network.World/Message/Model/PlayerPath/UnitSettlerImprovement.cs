@@ -23,8 +23,8 @@ public sealed partial class UnitSettlerImprovement
     [UInt(32)] public uint UnitId { get; set; }
 
     /// <summary>
-    /// The settler improvement the unit is, which Unit:IsSettlerImprovement, IsSettlerReward, GetSettlerRewardName and
-    /// GetSettlerImprovementInfo look up.
+    /// The settler improvement the unit is, as a PathSettlerImprovementGroup id, which Unit:IsSettlerImprovement, Unit:IsSettlerReward,
+    /// Unit:GetSettlerRewardName and Unit:GetSettlerImprovementInfo look up.
     /// </summary>
     [UInt(14)] public uint ImprovementId { get; set; }
 

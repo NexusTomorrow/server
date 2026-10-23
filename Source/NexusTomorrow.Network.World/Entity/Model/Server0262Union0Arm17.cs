@@ -40,8 +40,7 @@ public sealed partial class Server0262Union0Arm17 : IServer0262Union0
     [UInt(2)] public byte Unknown5 { get; set; }
 
     /// <summary>
-    /// The unit's group, by id; 0 when it is in none. Unit:IsInYourGroup compares it with the player's current group, and
-    /// <see cref="Message.Model.Group.UnitGroupChanged"/> sets it.
+    /// The unit's group, by id; 0 when it is in none.
     /// </summary>
     [VerifiedMember, UInt(64)] public ulong GroupId { get; set; }
 
