@@ -10,5 +10,5 @@ public sealed partial class Server0497
     [UInt(32)] public uint Unknown1 { get; set; }
     [Array(CountFrom = nameof(Unknown0))] public List<Server0493Part0> Unknown2 { get; set; } = [];
     [Array(CountFrom = nameof(Unknown0))] public List<Server0493Part5> Unknown3 { get; set; } = [];
-    [Array(CountFrom = nameof(Unknown0))] public List<Server0493Part6> Unknown4 { get; set; } = [];
+    [Array(CountFrom = nameof(Unknown0))] public List<GuildBankWithdrawals> Unknown4 { get; set; } = [];
 }
