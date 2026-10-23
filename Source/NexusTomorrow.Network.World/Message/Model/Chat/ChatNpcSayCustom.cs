@@ -3,10 +3,19 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
+/// <summary>
+/// Posts a line on a chat channel, part from the game's own text and part given.
+/// </summary>
 [WireMessage(GameMessageOpcode.Server01CA, Direction.ServerToClient)]
-public sealed partial class Server01CA
+[Verified(Rung.Purpose)]
+public sealed partial class ChatNpcSayCustom
 {
-    public ChatChannelKey Unknown0 { get; set; } = new();
+    /// <summary>
+    /// The channel.
+    /// </summary>
+    public ChatChannelKey Channel { get; set; } = new();
+
     [UInt(21)] public uint Unknown1 { get; set; }
+
     [WideString] public string Unknown2 { get; set; } = "";
 }
