@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Nodes;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Message.Model.Contract;
+using NexusTomorrow.Network.World.Message.Model.Entity;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Network.World.Message.Model.Spell;
 using NexusTomorrow.Network.World.Message.Model.Unsettled;
@@ -80,6 +81,15 @@ public sealed class MessageBuildTests
     {
         Assert.Equal("Unknown0: exactly 3 elements", Build<Server0252>("""{"Unknown0": [1, 2]}""").Refusal);
         Assert.Equal([1u, 2u, 3u], Assert.IsType<Server0252>(Build<Server0252>("""{"Unknown0": [1, 2, 3]}""").Message).Unknown0);
+    }
+
+    [Fact]
+    public void ACountedArrayOfFloatsBinds()
+    {
+        (IWireStruct? message, _, string? refusal) = Build<Server0931>("""{"Unknown0": 7, "Unknown1": [1.5, -2.25]}""");
+
+        Assert.Null(refusal);
+        Assert.Equal([1.5f, -2.25f], Assert.IsType<Server0931>(message).Unknown1);
     }
 
     [Fact]
