@@ -39,7 +39,7 @@ public enum Stat : byte
     [Stat(StatType.Integer)]
     MentorLevel = 11,
     [Stat(StatType.Data, false)]
-    StandState = 12, // 0 = Standing (Combat Pose), 1 = Sitting, 2 = Laying Down, 3 = Standing (Idle) More info: https://github.com/Hammster/wildstar-api-docs/blob/36be999b77a9dcdc4b27e95d217d54e419fdcbf3/Classes/Unit.md#getstandstate
+    StandState = 12, // 0 = Standing (Combat Pose), 1 = Sitting, 2 = Laying Down, 3 = Standing (Idle)
     [Stat(StatType.Integer, false)]
     Unknown13 = 13,
     [Stat(StatType.Integer, false)]

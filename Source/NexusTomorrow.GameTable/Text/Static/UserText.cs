@@ -1,7 +1,7 @@
 ﻿namespace NexusTomorrow.GameTable.Text.Static;
 
 /// <remarks>
-/// Information for <see cref="UserTextAttribute"/> comes from the text filter manager constructor in the client.
+/// Each kind of text a player types, with the flags and the length limits the client applies to it (<see cref="UserTextAttribute"/>).
 /// </remarks>
 public enum UserText
 {
