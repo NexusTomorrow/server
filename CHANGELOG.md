@@ -68,6 +68,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - A new unit names its items, who tagged it, its minimap marker and, for a player, the character,
   realm, group, guild, title, PvP flags and premium tier. A unit's property and item look updates
   carry their real names, and the item look record is one shared by the character list and units.
+- The protocol reference has a Host-settings page: every setting the server reads, its default, what
+  the server checks at start and what it sets, generated from the settings themselves.
 
 ### Changed
 
@@ -84,6 +86,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   goes on.
 - The server checks a message's row, its rate and the connection's state before reading its body,
   and a movement message larger than 2,048 bytes ends the session.
+- Every setting's limits are checked in one place. A range failure at start reads like the others
+  ("Gateway:Sts:Port must be 1 to 65535."), and a section reports all its failing settings at once.
 
 ### Fixed
 

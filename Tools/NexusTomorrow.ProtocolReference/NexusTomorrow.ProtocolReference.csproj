@@ -15,6 +15,10 @@
     <!-- The opcode table and the command definitions, for their pages. -->
     <ProjectReference Include="..\..\Source\NexusTomorrow.Gateway\NexusTomorrow.Gateway.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Commands\NexusTomorrow.Commands.csproj" />
+    <!-- The settings classes and their rules, for the host settings page; each project's documentation file holds its settings' summaries. -->
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Settings\NexusTomorrow.Settings.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Maps\NexusTomorrow.Maps.csproj" />
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Server\NexusTomorrow.Server.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,8 +1,11 @@
-﻿namespace NexusTomorrow.Owners.Account;
+﻿using NexusTomorrow.Settings;
+
+namespace NexusTomorrow.Owners.Account;
 
 /// <summary>
 /// The <c>Account</c> configuration section.
 /// </summary>
+[SettingsSection(Section, 2, "Owners", "Owners#knobs")]
 public sealed class AccountOptions
 {
     /// <summary>
@@ -11,8 +14,11 @@ public sealed class AccountOptions
     public const string Section = "Account";
 
     /// <summary>
-    /// How long a game token or a session key stays redeemable (decisions.md D9 2b: about a minute). Positive: whatever binds this
-    /// section validates it.
+    /// How long a game token or a session key stays redeemable.
     /// </summary>
+    /// <remarks>
+    /// About a minute (decisions.md D9 2b).
+    /// </remarks>
+    [Positive]
     public TimeSpan TokenLifetime { get; set; } = TimeSpan.FromSeconds(60);
 }

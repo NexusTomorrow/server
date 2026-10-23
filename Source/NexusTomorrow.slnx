@@ -20,6 +20,7 @@
     <Project Path="NexusTomorrow.Owners/NexusTomorrow.Owners.csproj" />
     <Project Path="NexusTomorrow.Persistence/NexusTomorrow.Persistence.csproj" />
     <Project Path="NexusTomorrow.Server/NexusTomorrow.Server.csproj" />
+    <Project Path="NexusTomorrow.Settings/NexusTomorrow.Settings.csproj" />
     <Project Path="NexusTomorrow.Shared/NexusTomorrow.Shared.csproj" />
     <Project Path="NexusTomorrow.Transport/NexusTomorrow.Transport.csproj" />
   </Folder>

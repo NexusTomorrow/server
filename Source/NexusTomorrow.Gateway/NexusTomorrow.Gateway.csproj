@@ -23,6 +23,7 @@
     <ProjectReference Include="..\NexusTomorrow.Cryptography\NexusTomorrow.Cryptography.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Owners\NexusTomorrow.Owners.csproj" />
     <ProjectReference Include="..\NexusTomorrow.Persistence\NexusTomorrow.Persistence.csproj" />
+    <ProjectReference Include="..\NexusTomorrow.Settings\NexusTomorrow.Settings.csproj" />
   </ItemGroup>
 
 </Project>

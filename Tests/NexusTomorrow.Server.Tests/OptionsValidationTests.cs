@@ -43,15 +43,20 @@ public sealed class OptionsValidationTests
     [InlineData(typeof(GatewayOptions), "Gateway:WorldPublicAddress", "::1", "Gateway:WorldPublicAddress must be an IPv4 address.")]
     [InlineData(typeof(GatewayOptions), "Gateway:WorldPublicAddress", "not-an-address", "Gateway:WorldPublicAddress must be an IPv4 address.")]
     [InlineData(typeof(GatewayOptions), "Gateway:Login:Port", "6600", "the STS, login and world ports must be three different ports")]
-    [InlineData(typeof(GatewayOptions), "Gateway:Sts:Port", "0", "Gateway:Sts: The field Port must be between 1 and 65535.")]
-    [InlineData(typeof(GatewayOptions), "Gateway:World:Port", "70000", "Gateway:World: The field Port must be between 1 and 65535.")]
+    [InlineData(typeof(GatewayOptions), "Gateway:Sts:Port", "0", "Gateway:Sts:Port must be 1 to 65535.")]
+    [InlineData(typeof(GatewayOptions), "Gateway:World:Port", "70000", "Gateway:World:Port must be 1 to 65535.")]
     [InlineData(typeof(GatewayOptions), "Gateway:Login:BindAddress", "localhost", "Gateway:Login:BindAddress must be an IP address.")]
-    [InlineData(typeof(GatewayOptions), "Gateway:ConnectionsPerAddress", "0", "ConnectionsPerAddress")]
-    [InlineData(typeof(GatewayOptions), "Gateway:OutboundQueueCapacity", "1", "OutboundQueueCapacity")]
-    [InlineData(typeof(GatewayOptions), "Gateway:DisconnectGrace", "00:05:00", "DisconnectGrace")]
-    [InlineData(typeof(RealmOptions), "Realm:Id", "16384", "between 1 and 16383")]
-    [InlineData(typeof(RealmOptions), "Realm:Id", "0", "between 1 and 16383")]
+    [InlineData(typeof(GatewayOptions), "Gateway:ConnectionsPerAddress", "0", "Gateway:ConnectionsPerAddress must be 1 to 1000.")]
+    [InlineData(typeof(GatewayOptions), "Gateway:OutboundQueueCapacity", "1", "Gateway:OutboundQueueCapacity must be 16 to 1048576.")]
+    [InlineData(typeof(GatewayOptions), "Gateway:DisconnectGrace", "00:05:00", "Gateway:DisconnectGrace must be 0 to 60 s.")]
+    [InlineData(typeof(GatewayOptions), "Gateway:MaxClientFrameBytes", "63", "Gateway:MaxClientFrameBytes must be 64 to 1048576.")]
+    [InlineData(typeof(GatewayOptions), "Gateway:LoginAttemptsPerMinute", "1001", "Gateway:LoginAttemptsPerMinute must be 1 to 1000.")]
+    [InlineData(typeof(RealmOptions), "Realm:Id", "16384", "Realm:Id must be 1 to 16383.")]
+    [InlineData(typeof(RealmOptions), "Realm:Id", "0", "Realm:Id must be 1 to 16383.")]
     [InlineData(typeof(RealmOptions), "Realm:Name", "", "Realm:Name is required.")]
+    [InlineData(typeof(RealmOptions), "Realm:PvpType", "2", "Realm:PvpType must be 0 to 1.")]
+    [InlineData(typeof(RealmOptions), "Realm:MaxCharactersPerAccount", "51", "Realm:MaxCharactersPerAccount must be 1 to 50.")]
+    [InlineData(typeof(PersistenceOptions), "Persistence:FirstIdBlockTimeout", "00:00:00", "Persistence:FirstIdBlockTimeout must be positive.")]
     [InlineData(typeof(MapOptions), "Maps:TickMs", "30", "Maps:TickMs must be 25, 50, 125 or 250.")]
     [InlineData(typeof(MapOptions), "Maps:ReplicationEveryTicks", "50", "Maps:ReplicationEveryTicks times Maps:TickMs must be 25 to 1000 ms.")]
     [InlineData(typeof(MapOptions), "Maps:ReplicationEveryTicks", "0", "Maps:ReplicationEveryTicks times Maps:TickMs must be 25 to 1000 ms.")]
@@ -65,6 +70,47 @@ public sealed class OptionsValidationTests
         using WebApplication app = Build(new() { [key] = value });
         OptionsValidationException failure = Assert.Throws<OptionsValidationException>(() => Resolve(app.Services, options));
         Assert.Contains(expected, failure.Message, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData(typeof(GatewayOptions), "Gateway:Sts:Port", "65535")]
+    [InlineData(typeof(GatewayOptions), "Gateway:MaxClientFrameBytes", "64")]
+    [InlineData(typeof(GatewayOptions), "Gateway:MaxClientFrameBytes", "1048576")]
+    [InlineData(typeof(GatewayOptions), "Gateway:DisconnectGrace", "00:00:00")]
+    [InlineData(typeof(GatewayOptions), "Gateway:DisconnectGrace", "00:01:00")]
+    [InlineData(typeof(GatewayOptions), "Gateway:WorldPublicAddress", "10.0.0.1")]
+    [InlineData(typeof(RealmOptions), "Realm:Id", "16383")]
+    [InlineData(typeof(RealmOptions), "Realm:MaxCharactersPerAccount", "50")]
+    [InlineData(typeof(MapOptions), "Maps:PoolThreads", "1")]
+    [InlineData(typeof(MapOptions), "Maps:DedicatedThreads", "0")]
+    [InlineData(typeof(MapOptions), "Maps:SaveInterval", "00:00:01")]
+    [InlineData(typeof(MapOptions), "Maps:ReplicationEveryTicks", "1")]
+    [InlineData(typeof(MapOptions), "Maps:ReplicationEveryTicks", "40")]
+    [InlineData(typeof(PersistenceOptions), "Persistence:SaveWorkers", "1")]
+    [InlineData(typeof(PersistenceOptions), "Persistence:FirstRetryDelay", "00:00:30")]
+    public void ASettingAtTheEdgeOfItsLimitIsAccepted(Type options, string key, string value)
+    {
+        using WebApplication app = Build(new() { [key] = value });
+        Resolve(app.Services, options);
+    }
+
+    [Fact]
+    public void EveryFailingRuleInASectionIsReported()
+    {
+        using WebApplication app = Build(new() { ["Maps:PoolThreads"] = "0", ["Maps:TickMs"] = "30" });
+        OptionsValidationException failure = Assert.Throws<OptionsValidationException>(() => Resolve(app.Services, typeof(MapOptions)));
+        string[] expected = ["Maps:PoolThreads must be at least 1.", "Maps:TickMs must be 25, 50, 125 or 250."];
+        Assert.Equal(expected, failure.Failures.Order(StringComparer.Ordinal));
+    }
+
+    [Fact]
+    public void AMaxRetryDelayThatIsNotPositiveIsReportedWithTheFirstDelayThatExceedsIt()
+    {
+        // The first delay keeps its default of 100 ms, which exceeds a maximum of zero.
+        using WebApplication app = Build(new() { ["Persistence:MaxRetryDelay"] = "00:00:00" });
+        OptionsValidationException failure = Assert.Throws<OptionsValidationException>(() => Resolve(app.Services, typeof(PersistenceOptions)));
+        string[] expected = ["Persistence:FirstRetryDelay must not exceed Persistence:MaxRetryDelay.", "Persistence:MaxRetryDelay must be positive."];
+        Assert.Equal(expected, failure.Failures.Order(StringComparer.Ordinal));
     }
 
     [Fact]
