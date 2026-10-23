@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using NexusTomorrow.Commands;
 using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Network.Codec;
@@ -40,12 +41,24 @@ public static class PageWriter
     private const string SettingsScope =
         "Every setting the server reads: its default, what the host checks at start-up, and what it sets. A setting that fails its check stops the server before it listens, naming the setting, never its value ([Host lifecycle](Host-lifecycle#settings)).";
 
+    private const string DiagnosticsScope =
+        "Every diagnostic the codec's source generator reports: when it fires and how severe it is. How a declaration is written is on [Codec declarations](Codec-declarations).";
+
+    // DiagnosticTests holds both sentences: TypeWithAnErrorGetsNoSourceWhileAValidTypeDoes and TypesBuiltOnATypeWithAnErrorGetNoSourceAndTheBuildFailsOnlyAtTheDeclaration.
+    private const string DiagnosticsRefusal =
+        "The generator refuses to emit code for a type that breaks a rule, and the build fails. A type with any error gets no generated code, and neither does a type that nests or derives from it.";
+
+    // DiagnosticTests.ADiagnosticSitsOnTheSyntaxTreeOfItsDeclaration holds it: a diagnostic on its tree is one path-scoped severities and pragmas reach.
+    private const string DiagnosticsReach =
+        "Each diagnostic sits on its declaration's syntax tree, so `.editorconfig` severities and `#pragma` reach it exactly as they reach the compiler's own.";
+
     private const string EnvironmentSentence = "A setting can also come from the environment, its name with `__` for each `:`, such as `Maps__TickMs`.";
 
     // What a page is generated from, and what to change instead of editing it.
     private static readonly (string From, string Edit) s_declarations = ("the message declarations", "change the declaration's documentation");
     private static readonly (string From, string Edit) s_opcodeTable = ("the opcode table", "change the table");
     private static readonly (string From, string Edit) s_commands = ("the command definitions", "change the definition");
+    private static readonly (string From, string Edit) s_diagnostics = ("the source generator's diagnostics", "change the diagnostic's description");
     private static readonly (string From, string Edit) s_settings = ("the settings classes", "change the setting's documentation or its rule");
 
     private static readonly (Direction Direction, string Title)[] s_chapters =
@@ -234,6 +247,23 @@ public static class PageWriter
     }
 
     /// <summary>
+    /// The codec diagnostics page: a row per diagnostic in id order, with its severity (a warning adds that the build makes it an error)
+    /// and its description.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">A diagnostic's default severity is neither error nor warning.</exception>
+    public static string CodecDiagnosticsPage(IEnumerable<CodecDiagnostic> diagnostics, PageStamp stamp)
+    {
+        var blocks = new List<string>();
+        Head(blocks, DiagnosticsScope, stamp, s_diagnostics);
+        blocks.Add(DiagnosticsRefusal);
+        blocks.Add(Table(
+            ["Id", "Severity", "When"],
+            [.. diagnostics.OrderBy(diagnostic => diagnostic.Id, StringComparer.Ordinal).Select(diagnostic => new[] { $"**{Code(diagnostic.Id)}**", SeverityText(diagnostic.Severity), diagnostic.When })]));
+        blocks.Add(DiagnosticsReach);
+        return Join(blocks);
+    }
+
+    /// <summary>
     /// The sentence a tombstone page ends with.
     /// </summary>
     internal const string TombstoneSentence = "This page's messages moved to their feature areas; [Messages](Messages) lists every message and the page that describes it.";
@@ -374,6 +404,14 @@ public static class PageWriter
         OverLimitAction.Drop => "drop",
         OverLimitAction.Disconnect => "disconnect",
         _ => throw new ArgumentOutOfRangeException(nameof(action), action, "The page has no word for this action."),
+    };
+
+    // Every project builds with TreatWarningsAsErrors, so a warning still fails the build.
+    private static string SeverityText(DiagnosticSeverity severity) => severity switch
+    {
+        DiagnosticSeverity.Error => "error",
+        DiagnosticSeverity.Warning => "warning, an error in our build",
+        _ => throw new ArgumentOutOfRangeException(nameof(severity), severity, "The page has no word for this severity."),
     };
 
     private static string RungText(Rung? rung) => rung switch

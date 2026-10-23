@@ -42,7 +42,7 @@ A server for the WildStar client, build 16042, written in C# on .NET 10.
 | `NexusTomorrow.Server` | The server: one process hosting all of the above |
 | `NexusTomorrow.MapGenerator` | Tool: extracts tables from your client and generates map files |
 | `NexusTomorrow.ClientConnector` | Tool: starts your client pointed at a server |
-| `Tools/NexusTomorrow.ProtocolReference` | Writes the wiki's message reference, opcode table, command list and host settings from the declarations and the server's registries |
+| `Tools/NexusTomorrow.ProtocolReference` | Writes the wiki's message reference, opcode table, command list, codec diagnostics and host settings from the declarations and the server's registries |
 
 The solution is `Source/NexusTomorrow.slnx`, and the tests live under `Tests/`.
 

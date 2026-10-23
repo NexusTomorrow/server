@@ -70,6 +70,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   carry their real names, and the item look record is one shared by the character list and units.
 - The protocol reference has a Host-settings page: every setting the server reads, its default, what
   the server checks at start and what it sets, generated from the settings themselves.
+- The protocol reference has a Codec-diagnostics page: every diagnostic the codec's source generator
+  reports, how severe it is and when it fires, generated from the diagnostics themselves.
 
 ### Changed
 

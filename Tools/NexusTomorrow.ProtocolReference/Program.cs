@@ -4,7 +4,7 @@ using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.ProtocolReference;
 
-// Writes Messages.md, one Messages-<area>.md per area, Gateway-opcode-table.md, Command-layer-commands.md and Host-settings.md into
+// Writes Messages.md, one Messages-<area>.md per area, Gateway-opcode-table.md, Command-layer-commands.md, Codec-diagnostics.md and Host-settings.md into
 // --out, stamped with the branch, commit and date the pages describe, and turns a Messages-<area>.md no area has any more into a
 // tombstone.
 var options = new Dictionary<string, string>(StringComparer.Ordinal);
@@ -44,6 +44,7 @@ foreach (IGrouping<string, ReferenceMessage> area in messages.GroupBy(message =>
 
 pages.Add(("Gateway-opcode-table.md", PageWriter.OpcodeTablePage(OpcodeTable.All.Values, messages, stamp)));
 pages.Add(("Command-layer-commands.md", PageWriter.CommandsPage(Registries.Commands(), stamp)));
+pages.Add(("Codec-diagnostics.md", PageWriter.CodecDiagnosticsPage(Registries.CodecDiagnostics(), stamp)));
 pages.Add(("Host-settings.md", PageWriter.SettingsPage(Registries.SettingsSections(), DocText.Load(Registries.SettingsAssemblies), stamp)));
 
 IReadOnlyList<string> retired = ReferenceSet.Write(output, pages, options["--date"]);
