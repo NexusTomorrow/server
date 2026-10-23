@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       args:
-        description: "Arguments forwarded to the test applications, for example --filter-class *Srp6*"
+        description: "Arguments forwarded to the test applications, for example --filter-class *Srp6* (a filter brings its own --ignore-exit-code 8)"
         type: string
         default: ""
 
@@ -99,13 +99,39 @@ jobs:
             echo "::error::logged in without the pgpass file"; exit 1
           fi
 
+      # Every test application gets the filter, and one the filter leaves empty exits with code 8 ("Zero tests ran"), which
+      # fails the run. A filtered run ignores that code; the next step fails it instead when no application ran a test.
       - name: Test
         env:
           TEST_ARGS: ${{ inputs.args }}
         run: |
           set -f
+          args="--report-trx $TEST_ARGS"
+          case " $TEST_ARGS " in
+            *" --filter"* | *" --treenode-filter"*)
+              case " $TEST_ARGS " in
+                *" --ignore-exit-code "*) ;;
+                *) args="$args --ignore-exit-code 8" ;;
+              esac ;;
+          esac
           dotnet test --solution Source/NexusTomorrow.slnx --configuration Debug --no-build \
-            --results-directory "$RUNNER_TEMP/test-results" -- --report-trx $TEST_ARGS
+            --results-directory "$RUNNER_TEMP/test-results" -- $args
+
+      - name: Executed tests
+        run: |
+          set -euo pipefail
+          shopt -s nullglob globstar
+          files=("$RUNNER_TEMP"/test-results/**/*.trx)
+          executed=0
+          for file in "${files[@]}"; do
+            count=$(grep -o '<Counters [^>]*' "$file" | grep -o ' executed="[0-9]*"' | grep -o '[0-9]\+' || true)
+            executed=$((executed + ${count:-0}))
+          done
+          echo "${#files[@]} result files, $executed tests executed"
+          if [ "$executed" -eq 0 ]; then
+            echo "::error::No test executed: the filter matched no test"
+            exit 1
+          fi
 
       - name: Upload results
         if: always()
