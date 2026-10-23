@@ -115,6 +115,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   declared.
 - Matchmaking messages match the client's layout: each entry of the queued-players list has a 2-bit
   sixth value, and a PvP kill's killer can be of a third kind.
+- In a Debug build, the developer tools can set a message's float values.
 - After logging in, the client no longer keeps reconnecting: the server answers its verified-address
   request.
 - Game data read correctly where a 64-bit number follows an odd count of 32-bit ones: tradeskill

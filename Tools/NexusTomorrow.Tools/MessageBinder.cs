@@ -114,7 +114,7 @@ internal static class MessageBinder
         if (valueType == typeof(float) || valueType == typeof(double))
         {
             double number = Double(node, path);
-            return valueType == typeof(float) ? (float)number : number;
+            return valueType == typeof(float) ? (object)(float)number : number;
         }
 
         if (valueType.IsEnum)
