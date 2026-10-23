@@ -26,8 +26,12 @@ public sealed partial class MatchingQueueRequest
     [UInt(14)] public ushort GameTypeId { get; set; }
 
     /// <summary>
-    /// The queue flags. Only <see cref="MatchingQueueFlags.GroupIsQueued"/> (4) has a known meaning here, and the client also sets
-    /// 0x40, which <see cref="MatchingQueueFlags"/> lacks.
+    /// The queue flags. The client sends 0x40 by default, or <see cref="MatchingQueueFlags.AsMercenary"/> (0x20) in its place when
+    /// queueing as a mercenary, adds <see cref="MatchingQueueFlags.FindOthers"/> when it looks for others and
+    /// <see cref="MatchingQueueFlags.Veteran"/> for a veteran queue, and keeps each only where the match type allows it (only
+    /// <see cref="MatchType.Warplot"/> allows 0x20 and 0x40). On an entry it receives in <see cref="MatchingQueueJoined"/> it adds
+    /// <see cref="MatchingQueueFlags.GroupIsQueued"/> when <see cref="MatchingQueueJoined.MatchingQueueEntry.AsGroup"/> is set, takes
+    /// bit 0 as the mark of a random queue, and compares <see cref="MatchingQueueFlags.Veteran"/> with the entry's own veteran flag.
     /// </summary>
-    [UInt(32)] public uint Flags { get; set; }
+    [UInt(32)] public MatchingQueueFlags Flags { get; set; }
 }

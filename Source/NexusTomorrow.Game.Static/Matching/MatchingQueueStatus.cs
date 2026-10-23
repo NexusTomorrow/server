@@ -3,7 +3,7 @@ namespace NexusTomorrow.Game.Static.Matching;
 
 public enum MatchingQueueStatus
 {
-    NotInQueue = 0, // no effect on client
+    NotInQueue = 0, // leaves the match and cancels role check on client
     InQueue = 1, // cancels role check on client
     MatchReady = 2, // no effect on client
     GroupQueuedWaitingPlayerRoleSelection = 3, // no effect on client

@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 /// </summary>
 /// <remarks>
 /// On <see cref="MatchingQueueResult.PersonalKickCooldown"/> or <see cref="MatchingQueueResult.GlobalKickCooldown"/> the client keeps the
-/// result and prints the time left in the matching text.
+/// result and prints a time in the matching text.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0616, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]

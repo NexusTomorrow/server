@@ -2,7 +2,7 @@
 
 public enum MatchingQueueResult
 {
-    InQueue = 0,
+    Success = 0,
     InGame = 1,
     Level = 2,
     GroupSize = 3,

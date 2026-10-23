@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 /// Joins the random matching queue of a match type as a group.
 /// </summary>
 [WireMessage(GameMessageOpcode.Client05F9, Direction.ClientToServer)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class MatchingQueueRandomAsGroup
 {
     /// <summary>
@@ -20,7 +20,7 @@ public sealed partial class MatchingQueueRandomAsGroup
     /// <summary>
     /// The queue flags, as <see cref="MatchingQueueRequest.Flags"/> carries them.
     /// </summary>
-    [UInt(32)] public uint Flags { get; private set; }
+    [UInt(32)] public MatchingQueueFlags Flags { get; private set; }
 
     /// <summary>
     /// The roles queued for, as a mask of <see cref="Role"/>. For <see cref="MatchType.Dungeon"/> and <see cref="MatchType.Adventure"/>

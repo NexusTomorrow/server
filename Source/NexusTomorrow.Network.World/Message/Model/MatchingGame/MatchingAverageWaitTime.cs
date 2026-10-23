@@ -5,7 +5,7 @@ using MatchType = NexusTomorrow.Game.Static.Matching.MatchType;
 namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 
 /// <summary>
-/// Sets the average wait of one matching queue; the client raises MatchingAverageWaitTimeUpdated.
+/// Sets the average wait of one matching queue; for an entry not in its match the client also raises MatchingAverageWaitTimeUpdated.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0628, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

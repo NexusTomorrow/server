@@ -9,7 +9,8 @@ namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 /// </summary>
 /// <remarks>
 /// The client applies <see cref="State"/> and <see cref="QueuedTypes"/> first, then stores <see cref="ActiveMatchType"/> and
-/// <see cref="RoleCheckMatchType"/>, raising MatchLeft first when the active match type changes.
+/// <see cref="RoleCheckMatchType"/>. It raises MatchLeft first only when the stored active match type is not
+/// <see cref="MatchType.None"/> and differs from the new one.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server05E3, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]

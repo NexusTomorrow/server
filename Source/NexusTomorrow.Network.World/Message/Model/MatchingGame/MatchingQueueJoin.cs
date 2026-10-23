@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using NexusTomorrow.Game.Static.Matching;
+﻿using NexusTomorrow.Game.Static.Matching;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
@@ -9,9 +8,8 @@ namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 /// Joins a matching queue; MatchMakingLib.Queue sends it.
 /// </summary>
 [WireMessage(GameMessageOpcode.Client05EF, Direction.ClientToServer)]
-[Verified(Rung.Purpose)]
-[SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix", Justification = "The request joins the matching queue; the type is not a collection.")]
-public sealed partial class MatchingQueue
+[Verified(Rung.Fields)]
+public sealed partial class MatchingQueueJoin
 {
     /// <summary>
     /// The queue to join.
@@ -23,5 +21,10 @@ public sealed partial class MatchingQueue
     /// </summary>
     [UInt(32)] public Role Roles { get; private set; }
 
-    [UInt(32)] public uint Unknown2 { get; private set; }
+    /// <summary>
+    /// The prime level asked for. The client lowers it to the smallest ceiling among the prime-level maps queued for, each the
+    /// level the player has unlocked there less the map's offset, capped at the map's maximum; it sends 0 when it queues no
+    /// prime-level map.
+    /// </summary>
+    [UInt(32)] public uint PrimeLevel { get; private set; }
 }

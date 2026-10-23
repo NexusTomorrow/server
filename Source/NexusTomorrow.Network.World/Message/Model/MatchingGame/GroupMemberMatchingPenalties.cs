@@ -1,14 +1,15 @@
 ﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 using NexusTomorrow.Network.World.Message.Model.Shared;
+using MatchType = NexusTomorrow.Game.Static.Matching.MatchType;
 
 namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 
 /// <summary>
-/// Sets a group member's matching penalties; the client raises MatchingPenaltyUpdated.
+/// Sets a group member's queue penalties, one per match type; the client raises MatchingPenaltyUpdated.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0436, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class GroupMemberMatchingPenalties
 {
     /// <summary>
@@ -27,7 +28,7 @@ public sealed partial class GroupMemberMatchingPenalties
     public RealmScopedId MemberId { get; set; } = new();
 
     /// <summary>
-    /// The member's sixteen penalty values, as <see cref="MatchingPenalties.Penalties"/> carries the player's.
+    /// The member's queue penalty for each match type, indexed by <see cref="MatchType"/>: a duration in milliseconds, 0 for none.
     /// </summary>
     [FixedArray(16), UInt(32)] public uint[] Penalties { get; set; } = new uint[16];
 }

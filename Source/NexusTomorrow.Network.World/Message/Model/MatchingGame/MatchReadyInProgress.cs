@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 /// </summary>
 /// <remarks>
 /// The client stores it as the pending match and raises MatchingGameReady for a match in progress, or MatchingGamePendingUpdate when
-/// the player is already in the match.
+/// the player is in the match's instance.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server05C4, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

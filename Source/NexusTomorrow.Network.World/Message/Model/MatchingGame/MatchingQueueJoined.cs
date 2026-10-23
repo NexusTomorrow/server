@@ -6,10 +6,14 @@ using MatchType = NexusTomorrow.Game.Static.Matching.MatchType;
 namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 
 /// <summary>
-/// Adds a matching queue entry; the client files it under <see cref="MatchingQueueEntry.MatchType"/> and raises MatchingJoinQueue.
+/// Adds a matching queue entry, filed under <see cref="MatchingQueueEntry.MatchType"/>.
 /// </summary>
+/// <remarks>
+/// For an entry already in its match the client stores the fields and does nothing else. Otherwise it also prints the joined text,
+/// raises MatchingJoinQueue, ends any role check, and stops the player's cast of one spell a GameFormula row names.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Server05DF, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class MatchingQueueJoined
 {
     /// <summary>
