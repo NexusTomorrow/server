@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Chat.Model;
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
 [WireMessage(GameMessageOpcode.Server01C2, Direction.ServerToClient)]
-public sealed partial class Server01C2
+public sealed partial class ChatSendAccepted
 {
     [UInt(16)] public ushort Unknown0 { get; set; }
     [UInt(1)] public bool Unknown1 { get; set; }

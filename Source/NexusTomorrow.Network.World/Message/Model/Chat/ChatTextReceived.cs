@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
 [WireMessage(GameMessageOpcode.Message01C1, Direction.Both)]
-public sealed partial class Message01C1
+public sealed partial class ChatTextReceived
 {
     [WireStruct]
     public sealed partial class Message01C1Part0
