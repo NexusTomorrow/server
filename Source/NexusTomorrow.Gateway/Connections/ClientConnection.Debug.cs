@@ -23,6 +23,12 @@ public interface IDebugSession
     ISessionTap? Tap { get; set; }
 
     /// <summary>
+    /// Detach <paramref name="tap"/> if it is still the connection's tap, in one atomic step, so a tap another caller attached in the
+    /// meantime stays; true when it was detached.
+    /// </summary>
+    bool Untap(ISessionTap tap);
+
+    /// <summary>
     /// Queue <paramref name="message"/> under <paramref name="opcode"/> without asking the send gate
     /// (<see cref="MessageCatalog.MaySend"/>). The message is serialized before this returns.
     /// </summary>
@@ -72,6 +78,9 @@ public abstract partial class ClientConnection : IDebugSession
     }
 
     /// <inheritdoc/>
+    public bool Untap(ISessionTap tap) => Interlocked.CompareExchange(ref _tap, null, tap) == tap;
+
+    /// <inheritdoc/>
     public void SendUnchecked(ushort opcode, IWireStruct message) => Enqueue(Outbound.Enveloped(opcode, message));
 
     /// <inheritdoc/>
@@ -111,7 +120,7 @@ public abstract partial class ClientConnection : IDebugSession
     // A faulty tap never ends the connection it watches.
     private void Detach(ISessionTap tap, Exception exception)
     {
-        Interlocked.CompareExchange(ref _tap, null, tap);
+        Untap(tap);
         DebugLog.TapDetached(_logger, Id, exception);
     }
 }

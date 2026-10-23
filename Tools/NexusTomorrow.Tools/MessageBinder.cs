@@ -234,6 +234,8 @@ internal static class MessageBinder
 
     private static decimal CaseNumber(object value) => Convert.ToDecimal(value, CultureInfo.InvariantCulture);
 
+    // The generator's member order, base type first: LayoutRowsTests holds it to every fixed message's generated widths, as
+    // LayoutWalkTests holds the protocol reference's copy of the rule to every generated tree.
     internal static List<MemberInfo> WireMembers(Type type)
     {
         List<MemberInfo> members = type.BaseType is { } baseType && IsWireType(baseType) ? WireMembers(baseType) : [];
@@ -244,6 +246,10 @@ internal static class MessageBinder
         List<MemberInfo> fields = [.. type.GetFields(Declared)
             .Where(field => field.GetCustomAttribute<CompilerGeneratedAttribute>() is null && field.GetCustomAttribute<NotOnWireAttribute>() is null)
             .OrderBy(field => field.MetadataToken)];
+
+        // Properties and fields sit in separate metadata tables, so their tokens cannot order one against the other.
+        if (properties.Count > 0 && fields.Count > 0)
+            throw new InvalidOperationException($"{type.Name} puts both fields and properties on the wire; their order cannot be read back by reflection");
         members.AddRange(properties.Count > 0 ? properties : fields);
         return members;
     }

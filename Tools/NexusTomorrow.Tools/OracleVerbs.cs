@@ -44,20 +44,31 @@ public sealed class OracleVerbs
     }
 
     /// <summary>
-    /// Answer one request from <paramref name="connection"/>.
+    /// Answer one request from <paramref name="connection"/>; a verb that fails on an error it does not name is answered with that
+    /// error, so the connection goes on.
     /// </summary>
     public async Task<JsonObject> HandleAsync(JsonObject request, OracleConnection connection, CancellationToken cancellationToken)
     {
         JsonNode? id = request["id"]?.DeepClone();
-        JsonObject reply = Text(request["verb"]) switch
+        string? verb = Text(request["verb"]);
+        JsonObject reply;
+        try
         {
-            "status" => Status(),
-            "inject" => await InjectAsync(request, cancellationToken),
-            "tap" => await TapAsync(request, connection, cancellationToken),
-            "layout" => Layout(request),
-            null => Error("a request names its verb"),
-            string verb => Error($"no verb {verb}"),
-        };
+            reply = verb switch
+            {
+                "status" => Status(),
+                "inject" => await InjectAsync(request, cancellationToken),
+                "tap" => await TapAsync(request, connection, cancellationToken),
+                "layout" => Layout(request),
+                null => Error("a request names its verb"),
+                _ => Error($"no verb {verb}"),
+            };
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            reply = Error($"{verb} failed: {exception.GetType().Name}: {exception.Message}");
+        }
+
         reply["id"] = id;
         return reply;
     }

@@ -43,10 +43,7 @@ public sealed class OracleConnection : IDisposable
         lock (_lock)
         {
             foreach ((IDebugSession session, ISessionTap tap) in _taps)
-            {
-                if (session.Tap == tap)
-                    session.Tap = null;
-            }
+                session.Untap(tap);
 
             _taps.Clear();
         }

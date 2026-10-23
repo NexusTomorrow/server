@@ -18,5 +18,5 @@ public sealed partial class ChatChannelSetPassword
     /// <summary>
     /// The new password; the slash command sends it empty when given none.
     /// </summary>
-    [WideString] public string Password { get; private set; } = "";
+    [WideString, WireSecret] public string Password { get; private set; } = "";
 }

@@ -120,6 +120,19 @@ public sealed class DebugSessionTests : IAsyncLifetime
         await Eventually.TrueAsync(() => _connection.Tap is null);
     }
 
+    [Fact]
+    public void UntapDetachesOnlyTheTapStillInPlace()
+    {
+        var old = new RecordingTap();
+        var current = new RecordingTap();
+        _connection.Tap = current;
+
+        Assert.False(_connection.Untap(old));
+        Assert.Same(current, _connection.Tap);
+        Assert.True(_connection.Untap(current));
+        Assert.Null(_connection.Tap);
+    }
+
     private static ushort OpcodeOf<T>()
         where T : IWireMessage => T.Opcode;
 

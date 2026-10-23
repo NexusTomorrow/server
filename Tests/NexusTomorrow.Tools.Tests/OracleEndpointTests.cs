@@ -89,6 +89,39 @@ public sealed class OracleEndpointTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AConnectionThatSendsNoTokenInTimeIsClosed()
+    {
+        int port = await StartAsync(enabled: true, firstLineTime: TimeSpan.FromMilliseconds(200));
+        await TokenAsync();
+        using LineClient client = await LineClient.ConnectAsync(port);
+
+        Assert.Null(await client.ReadAsync());
+    }
+
+    [Fact]
+    public async Task AFirstLineLongerThanTheCapIsClosedBeforeItEnds()
+    {
+        int port = await StartAsync(enabled: true);
+        await TokenAsync();
+        using LineClient client = await LineClient.ConnectAsync(port);
+
+        await client.SendRawAsync(new string('x', 5000));
+
+        Assert.Null(await client.ReadAsync());
+    }
+
+    [Fact]
+    public async Task TheTokenFileIsItsOwnersAlone()
+    {
+        await StartAsync(enabled: true);
+        await TokenAsync();
+
+        Assert.SkipWhen(OperatingSystem.IsWindows(), "Windows keeps local application data to its user");
+        if (!OperatingSystem.IsWindows())
+            Assert.Equal(UnixFileMode.UserRead | UnixFileMode.UserWrite, File.GetUnixFileMode(TokenFile));
+    }
+
+    [Fact]
     public async Task AnUnknownVerbIsAnsweredWithAnError()
     {
         int port = await StartAsync(enabled: true);
@@ -102,11 +135,14 @@ public sealed class OracleEndpointTests : IAsyncLifetime
         Assert.Equal("no verb fly", (string)reply["error"]!);
     }
 
-    private async Task<int> StartAsync(bool enabled)
+    private async Task<int> StartAsync(bool enabled, TimeSpan? firstLineTime = null)
     {
         int port = FreePort();
         var options = new OracleOptions { Enabled = enabled, Port = port, TokenFile = TokenFile };
-        _endpoint = new OracleEndpoint(Options.Create(options), new OracleVerbs(_accounts, TimeProvider.System), NullLogger<OracleEndpoint>.Instance);
+        _endpoint = new OracleEndpoint(Options.Create(options), new OracleVerbs(_accounts, TimeProvider.System), NullLogger<OracleEndpoint>.Instance)
+        {
+            FirstLineTime = firstLineTime ?? TimeSpan.FromSeconds(5),
+        };
         await _endpoint.StartAsync(CancellationToken.None);
         return port;
     }
@@ -161,11 +197,13 @@ public sealed class OracleEndpointTests : IAsyncLifetime
 
         public Task SendAsync(JsonObject message) => SendLineAsync(message.ToJsonString());
 
-        public async Task SendLineAsync(string line)
+        public Task SendLineAsync(string line) => SendRawAsync(line + "\n");
+
+        public async Task SendRawAsync(string text)
         {
             try
             {
-                await _stream.WriteAsync(Encoding.UTF8.GetBytes(line + "\n"));
+                await _stream.WriteAsync(Encoding.UTF8.GetBytes(text));
             }
             catch (IOException)
             {

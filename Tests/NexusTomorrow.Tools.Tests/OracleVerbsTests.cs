@@ -129,6 +129,30 @@ public sealed class OracleVerbsTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AVerbThatFailsOnAnErrorItDoesNotNameIsAnsweredWithIt()
+    {
+        // The union's case is parsed as a decimal, which takes no exponent.
+        JsonObject reply = await RequestAsync(
+            "inject", """{"account": "alice@example.com", "opcode": "0x0247", "fields": {"Type": 0, "Payload": {"$case": 1e400}}}""");
+
+        Assert.False((bool)reply["ok"]!);
+        Assert.StartsWith("inject failed: FormatException", (string)reply["error"]!);
+        Assert.Empty(_session.Unchecked);
+    }
+
+    [Theory]
+    [InlineData(typeof(RealmRedirect))]
+    [InlineData(typeof(WorldHello))]
+    [InlineData(typeof(Network.Auth.Message.Model.RealmHandoff))]
+    [InlineData(typeof(Network.Auth.Message.Model.LoginRequest))]
+    [InlineData(typeof(Network.World.Message.Model.Chat.ChatJoinChannel))]
+    [InlineData(typeof(Network.World.Message.Model.Chat.ChatChannelSetPassword))]
+    public void EveryMessageCarryingAKeyATokenOrAPasswordIsRecordedWithoutItsBytes(Type message)
+    {
+        Assert.True(SessionRecorder.HoldsSecret(message));
+    }
+
+    [Fact]
     public async Task LayoutListsTheMembersInWireOrder()
     {
         JsonObject reply = await RequestAsync("layout", """{"opcode": "0x036A"}""");
@@ -186,7 +210,15 @@ public sealed class OracleVerbsTests : IAsyncLifetime
 
         public IPAddress RemoteAddress => IPAddress.Loopback;
 
-        public ISessionTap? Tap { get; set; }
+        private ISessionTap? _tap;
+
+        public ISessionTap? Tap
+        {
+            get => _tap;
+            set => _tap = value;
+        }
+
+        public bool Untap(ISessionTap tap) => Interlocked.CompareExchange(ref _tap, null, tap) == tap;
 
         public void Send<T>(T message)
             where T : class, IWireMessage

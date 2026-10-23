@@ -13,8 +13,10 @@ namespace NexusTomorrow.Tools;
 
 /// <summary>
 /// The oracle's endpoint: loopback TCP, one JSON object per line each way. A connection's first line must carry the token written to
-/// <see cref="OracleOptions.TokenFile"/> at this start; the connection closes on the first line that does not parse or authenticate.
-/// Each later line is a request (<see cref="OracleVerbs"/>), answered in order; a tap's records interleave with the answers.
+/// <see cref="OracleOptions.TokenFile"/> at this start, within <see cref="FirstLineTime"/> and <see cref="FirstLineChars"/>; the
+/// connection closes on the first line that does not parse or authenticate. Each later line is a request (<see cref="OracleVerbs"/>),
+/// answered in order; a tap's records interleave with the answers. A connection that leaves <see cref="OutboxLines"/> lines unread is
+/// closed, and its taps detach.
 /// </summary>
 public sealed partial class OracleEndpoint : BackgroundService
 {
@@ -22,6 +24,21 @@ public sealed partial class OracleEndpoint : BackgroundService
     private readonly OracleVerbs _verbs;
     private readonly ILogger<OracleEndpoint> _logger;
     private byte[] _token = [];
+
+    /// <summary>
+    /// How long a connection has to send its token line.
+    /// </summary>
+    internal TimeSpan FirstLineTime { get; init; } = TimeSpan.FromSeconds(5);
+
+    /// <summary>
+    /// The longest token line read, in characters; the token line itself is under a hundred.
+    /// </summary>
+    internal int FirstLineChars { get; init; } = 4096;
+
+    /// <summary>
+    /// The lines a connection may have waiting to be written to it.
+    /// </summary>
+    internal int OutboxLines { get; init; } = 1 << 16;
 
     /// <summary>
     /// Create the endpoint.
@@ -41,7 +58,7 @@ public sealed partial class OracleEndpoint : BackgroundService
 
         string token = RandomNumberGenerator.GetHexString(64, lowercase: true);
         Directory.CreateDirectory(Path.GetDirectoryName(_options.TokenFile)!);
-        await File.WriteAllTextAsync(_options.TokenFile, token, stoppingToken);
+        await WriteTokenAsync(_options.TokenFile, token, stoppingToken);
         _token = Encoding.ASCII.GetBytes(token);
 
         var listener = new TcpListener(IPAddress.Parse(_options.Address), _options.Port);
@@ -64,20 +81,35 @@ public sealed partial class OracleEndpoint : BackgroundService
         }
     }
 
+    // The token file sits under the user's local application data, which Windows keeps to the user; elsewhere it is created for its
+    // owner alone, and the mode applies only to a file this call creates.
+    private static async Task WriteTokenAsync(string path, string token, CancellationToken cancellationToken)
+    {
+        var options = new FileStreamOptions { Mode = FileMode.Create, Access = FileAccess.Write };
+        if (!OperatingSystem.IsWindows())
+        {
+            File.Delete(path);
+            options.UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
+        }
+
+        await using var file = new FileStream(path, options);
+        await file.WriteAsync(Encoding.ASCII.GetBytes(token), cancellationToken);
+    }
+
     private async Task ServeAsync(TcpClient client, CancellationToken stoppingToken)
     {
         using (client)
         {
             NetworkStream stream = client.GetStream();
             using var reader = new StreamReader(stream, new UTF8Encoding(false), detectEncodingFromByteOrderMarks: false, leaveOpen: true);
-            var outbox = Channel.CreateUnbounded<string>(new UnboundedChannelOptions { SingleReader = true });
-            using var connection = new OracleConnection(outbox.Writer);
+            var outbox = Channel.CreateBounded<string>(new BoundedChannelOptions(OutboxLines) { SingleReader = true, FullMode = BoundedChannelFullMode.Wait });
+            var connection = new OracleConnection(outbox.Writer);
             Task writer = WriteLinesAsync(stream, outbox.Reader, stoppingToken);
             try
             {
-                if (!Authenticates(await reader.ReadLineAsync(stoppingToken)))
+                if (await FirstLineAsync(reader, stoppingToken) is not { } first || !Authenticates(first))
                 {
-                    Refused("a first line without the token");
+                    Refused("no token line");
                     return;
                 }
 
@@ -90,21 +122,56 @@ public sealed partial class OracleEndpoint : BackgroundService
                     }
 
                     JsonObject reply = await _verbs.HandleAsync(request, connection, stoppingToken);
-                    outbox.Writer.TryWrite(reply.ToJsonString());
+                    if (!outbox.Writer.TryWrite(reply.ToJsonString()))
+                    {
+                        Refused($"more than {OutboxLines} lines it had not read");
+                        return;
+                    }
                 }
             }
             catch (Exception exception) when (exception is IOException or OperationCanceledException or ObjectDisposedException)
             {
             }
+            catch (Exception exception)
+            {
+                ConnectionFailed(exception);
+            }
             finally
             {
+                // Taps first, so none writes to an outbox that has completed.
+                connection.Dispose();
                 outbox.Writer.TryComplete();
                 await writer;
             }
         }
     }
 
-    private bool Authenticates(string? line)
+    // The token line, or null when it does not arrive whole within the limits; read before the connection is trusted.
+    private async Task<string?> FirstLineAsync(StreamReader reader, CancellationToken stoppingToken)
+    {
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+        deadline.CancelAfter(FirstLineTime);
+        var line = new StringBuilder();
+        char[] one = new char[1];
+        try
+        {
+            while (await reader.ReadAsync(one, deadline.Token) == 1)
+            {
+                if (one[0] == '\n')
+                    return line.ToString().TrimEnd('\r');
+                if (line.Length == FirstLineChars)
+                    return null;
+                line.Append(one[0]);
+            }
+        }
+        catch (OperationCanceledException) when (!stoppingToken.IsCancellationRequested)
+        {
+        }
+
+        return null;
+    }
+
+    private bool Authenticates(string line)
     {
         if (Parse(line) is not { } first || first["token"] is not JsonValue value || !value.TryGetValue(out string? token))
             return false;
@@ -148,4 +215,7 @@ public sealed partial class OracleEndpoint : BackgroundService
 
     [LoggerMessage(EventId = 9002, Level = LogLevel.Warning, Message = "The oracle endpoint closed a connection that sent {Reason}")]
     private partial void Refused(string reason);
+
+    [LoggerMessage(EventId = 9003, Level = LogLevel.Error, Message = "The oracle endpoint dropped a connection on an error it did not expect")]
+    private partial void ConnectionFailed(Exception exception);
 }

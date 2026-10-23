@@ -11,7 +11,8 @@ namespace NexusTomorrow.Tools;
 /// The <c>tap</c> verb's tap: every message a session reads or writes, sent to an endpoint connection as
 /// <c>{"tap": {...}}</c> lines. Each direction is numbered from 1 in the order the session handled it, so the n-th message sent is the
 /// n-th the client receives on this connection after the tap was attached. A message whose type has a member marked
-/// <see cref="WireSecretAttribute"/>, at any depth, is recorded without its bytes.
+/// <see cref="WireSecretAttribute"/>, at any depth, is recorded without its bytes. A record the connection cannot take (it has ended,
+/// or left its outbox full) throws, so the session detaches the tap rather than record with gaps.
 /// </summary>
 public sealed class SessionRecorder : ISessionTap
 {
@@ -37,7 +38,7 @@ public sealed class SessionRecorder : ISessionTap
         // A frame whose decode failed has no message; the client's declaration for its opcode says whether it can carry a secret.
         Type? type = inbound.Message?.GetType() ?? ClientMessageType(inbound.Opcode);
         bool secret = type is not null && HoldsSecret(type);
-        _connection.Send(Line(new JsonObject
+        Send(Line(new JsonObject
         {
             ["dir"] = "c2s",
             ["n"] = Interlocked.Increment(ref _received),
@@ -56,7 +57,7 @@ public sealed class SessionRecorder : ISessionTap
     public void Sent(long session, ushort opcode, ReadOnlySpan<byte> body, Type messageType)
     {
         bool secret = HoldsSecret(messageType);
-        _connection.Send(Line(new JsonObject
+        Send(Line(new JsonObject
         {
             ["dir"] = "s2c",
             ["n"] = Interlocked.Increment(ref _sent),
@@ -100,4 +101,10 @@ public sealed class SessionRecorder : ISessionTap
             ?? Network.WireMessages.CreateClientToServer(opcode))?.GetType();
 
     private static string Line(JsonObject record) => new JsonObject { ["tap"] = record }.ToJsonString();
+
+    private void Send(string line)
+    {
+        if (!_connection.Send(line))
+            throw new InvalidOperationException("the endpoint connection took no more records");
+    }
 }
