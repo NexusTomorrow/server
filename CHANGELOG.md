@@ -29,6 +29,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - The guild state the client receives carries real names and field meanings: the bank's tabs, items
   and today's withdrawals, ranks, the event log, perks, the PvP record and queue state, the standard,
   recruitment, and a war party's boss tokens and match results.
+- The guild and member records carry their real names and field meanings: the guilds a player
+  belongs to, the roster, a unit's guild on its nameplate, and the recruiting guilds with their
+  details and recruiters.
 
 ### Changed
 

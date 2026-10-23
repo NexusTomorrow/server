@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 /// The client files the perk among the active ones and raises GuildPerkActivated.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server04B6, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class GuildPerkActivated
 {
     /// <summary>
@@ -24,5 +24,8 @@ public sealed partial class GuildPerkActivated
     /// </summary>
     [UInt(14)] public ushort PerkId { get; set; }
 
-    [Float32] public float Unknown2 { get; set; }
+    /// <summary>
+    /// How many days the perk stays active.
+    /// </summary>
+    [Float32] public float DaysRemaining { get; set; }
 }
