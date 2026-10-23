@@ -17,17 +17,18 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 public sealed partial class PathState
 {
     /// <summary>
-    /// The player's active path; the client's path lookups use it when they name no path.
+    /// The player's active path: Soldier 0, Settler 1, Scientist 2, Explorer 3. The client's path lookups use it when they name no
+    /// path.
     /// </summary>
     [UInt(3)] public byte ActivePath { get; set; }
 
     /// <summary>
-    /// The XP of each path, by path.
+    /// The XP of each path, indexed by the path's number (<see cref="ActivePath"/>).
     /// </summary>
     [FixedArray(4), UInt(32)] public uint[] PathXp { get; set; } = new uint[4];
 
     /// <summary>
-    /// Which paths are unlocked: bit n for path n.
+    /// Which paths are unlocked: bit n for path number n (<see cref="ActivePath"/>).
     /// </summary>
     [UInt(4)] public byte UnlockedPaths { get; set; }
 

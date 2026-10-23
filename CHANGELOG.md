@@ -61,6 +61,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   must be verified before the server reads it, and the largest body it accepts.
 - Dash and the dash taken while knocked down, the unit stat updates, and the properties a new unit
   carries have their real names and field meanings.
+- The path state's active path, XP list and unlocked mask name the path numbers they use: Soldier 0,
+  Settler 1, Scientist 2 and Explorer 3.
 
 ### Changed
 
