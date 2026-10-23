@@ -51,5 +51,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   and one whose filter matches nothing now fails.
 - A war plot match's results carry both sides' values, and a guild's event log entries carry no guild
   id, as the client reads them.
+- Items added to a guild bank, and a bank tab's items, carry the item alone, without the extra value
+  only an item added to the player's own inventory carries.
 
 [Unreleased]: https://github.com/NexusTomorrow/server/compare/main...dev
