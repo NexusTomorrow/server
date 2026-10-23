@@ -234,7 +234,7 @@ internal static class MessageBinder
 
     private static decimal CaseNumber(object value) => Convert.ToDecimal(value, CultureInfo.InvariantCulture);
 
-    private static List<MemberInfo> WireMembers(Type type)
+    internal static List<MemberInfo> WireMembers(Type type)
     {
         List<MemberInfo> members = type.BaseType is { } baseType && IsWireType(baseType) ? WireMembers(baseType) : [];
         List<MemberInfo> properties = [.. type.GetProperties(Declared)
@@ -248,10 +248,10 @@ internal static class MessageBinder
         return members;
     }
 
-    private static bool IsWireType(Type type) =>
+    internal static bool IsWireType(Type type) =>
         type.GetCustomAttribute<WireStructAttribute>() is not null || type.GetCustomAttribute<WireMessageAttribute>() is not null;
 
-    private static Type MemberType(MemberInfo member) => member switch
+    internal static Type MemberType(MemberInfo member) => member switch
     {
         PropertyInfo property => property.PropertyType,
         FieldInfo field => field.FieldType,

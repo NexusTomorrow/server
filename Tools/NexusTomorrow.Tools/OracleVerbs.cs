@@ -7,7 +7,6 @@ using NexusTomorrow.Gateway.Connections;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Owners;
 using NexusTomorrow.Owners.Account;
-using NexusTomorrow.ProtocolReference;
 using NexusTomorrow.Transport;
 
 namespace NexusTomorrow.Tools;
@@ -24,16 +23,13 @@ namespace NexusTomorrow.Tools;
 /// byte left over; it is then queued on the account's world session below the send gate. Answered with the body sent.</item>
 /// <item><c>tap</c>: <c>account</c>; from the answer on, every message the account's world session reads or writes arrives as a
 /// <c>{"tap": {...}}</c> line (<see cref="SessionRecorder"/>), for as long as this connection lasts.</item>
-/// <item><c>layout</c>: <c>opcode</c>; the server message's members in wire order, each with its path, width and encoding, as the protocol
-/// reference walks them.</item>
+/// <item><c>layout</c>: <c>opcode</c>; the server message's members in wire order, each with its path, width and encoding
+/// (<see cref="LayoutRows"/>).</item>
 /// </list>
 /// </remarks>
 public sealed class OracleVerbs
 {
     private static readonly TimeSpan s_lookup = TimeSpan.FromSeconds(5);
-
-    private static readonly LayoutWalk s_layouts = new([
-        typeof(Network.World.WireMessages).Assembly, typeof(Network.Auth.WireMessages).Assembly, typeof(Network.WireMessages).Assembly]);
 
     private readonly AccountOwner _accounts;
     private readonly TimeProvider _time;
@@ -163,8 +159,8 @@ public sealed class OracleVerbs
             return Error($"no server message 0x{opcode:X4}");
 
         var members = new JsonArray();
-        foreach (LayoutRow row in s_layouts.Walk(message.GetType()).Rows)
-            members.Add(new JsonObject { ["path"] = row.Path, ["bits"] = row.Bits, ["encoding"] = row.Encoding });
+        foreach ((string path, string bits, string encoding) in LayoutRows.Of(message.GetType()))
+            members.Add(new JsonObject { ["path"] = path, ["bits"] = bits, ["encoding"] = encoding });
         return new JsonObject { ["ok"] = true, ["type"] = message.GetType().Name, ["members"] = members };
     }
 
