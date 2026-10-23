@@ -106,7 +106,7 @@ public sealed class OracleEndpointTests : IAsyncLifetime
     {
         int port = FreePort();
         var options = new OracleOptions { Enabled = enabled, Port = port, TokenFile = TokenFile };
-        _endpoint = new OracleEndpoint(Options.Create(options), new OracleVerbs(_accounts), NullLogger<OracleEndpoint>.Instance);
+        _endpoint = new OracleEndpoint(Options.Create(options), new OracleVerbs(_accounts, TimeProvider.System), NullLogger<OracleEndpoint>.Instance);
         await _endpoint.StartAsync(CancellationToken.None);
         return port;
     }

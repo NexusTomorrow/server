@@ -27,6 +27,8 @@
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network\NexusTomorrow.Network.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network.Auth\NexusTomorrow.Network.Auth.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network.World\NexusTomorrow.Network.World.csproj" />
+    <!-- The layout verb walks a message as the protocol reference does (LayoutWalk). -->
+    <ProjectReference Include="..\NexusTomorrow.ProtocolReference\NexusTomorrow.ProtocolReference.csproj" />
   </ItemGroup>
 
 </Project>
