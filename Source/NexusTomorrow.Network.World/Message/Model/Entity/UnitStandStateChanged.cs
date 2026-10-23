@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Entity;
 
 [WireMessage(GameMessageOpcode.Server093C, Direction.ServerToClient)]
-public sealed partial class Server093C
+public sealed partial class UnitStandStateChanged
 {
     [UInt(32)] public uint Unknown0 { get; set; }
     [UInt(4)] public byte Unknown1 { get; set; }

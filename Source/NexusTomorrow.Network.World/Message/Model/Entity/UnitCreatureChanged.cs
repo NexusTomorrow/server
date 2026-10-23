@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Entity;
 
 [WireMessage(GameMessageOpcode.Server08A8, Direction.ServerToClient)]
-public sealed partial class Server08A8
+public sealed partial class UnitCreatureChanged
 {
     [UInt(32)] public uint Unknown0 { get; set; }
     [UInt(18)] public uint Unknown1 { get; set; }

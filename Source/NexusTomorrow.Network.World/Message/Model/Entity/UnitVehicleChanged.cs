@@ -3,10 +3,11 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Entity;
 
-[WireMessage(GameMessageOpcode.Client0432, Direction.ClientToServer)]
-public sealed partial class Client0432
+[WireMessage(GameMessageOpcode.Server089B, Direction.ServerToClient)]
+public sealed partial class UnitVehicleChanged
 {
     [UInt(32)] public uint Unknown0 { get; set; }
-
     [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(2)] public byte Unknown2 { get; set; }
+    [UInt(3)] public byte Unknown3 { get; set; }
 }

@@ -20,7 +20,7 @@ internal static class RegistryDisagreements
         ["0x0134 server to client [7].arm 0x03"] = new(TreeDiffers, "the declaration's sequence goes on for 1 nodes after the client's ends"), // Server0134
         ["0x013C server to client [1].element[1]"] = new(TreeDiffers, "the client has 32, the declaration 3"), // Server013C
         ["0x0152 server to client [1].element[0]"] = new(TreeDiffers, "the client has 8, the declaration 3"), // Server0152
-        ["0x015A client to server [1]"] = new(BitsDiffer, "the client has 7, the declaration 32"), // Client015A
+        ["0x015A client to server [1]"] = new(BitsDiffer, "the client has 7, the declaration 32"), // Resurrect
         ["0x01B4 server to client [1]"] = new(TreeDiffers, "the client has 32, the declaration a blob"), // Server01B4
         ["0x0247 server to client [1]"] = new(TreeDiffers, "the client accepts selector 34 and the declaration has no arm"), // Server0247
         ["0x0247 server to client [1].arm 0x05[5]"] = new(TreeDiffers, "the client has 32, the declaration 1"), // Server0247

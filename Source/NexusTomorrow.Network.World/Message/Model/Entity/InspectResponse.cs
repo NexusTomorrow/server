@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Entity;
 
 [WireMessage(GameMessageOpcode.Server0553, Direction.ServerToClient)]
-public sealed partial class Server0553
+public sealed partial class InspectResponse
 {
     [UInt(32)] public uint Unknown0 { get; set; }
     [Array(CountBits = 5)] public List<Server0111Part1> Unknown1 { get; set; } = [];

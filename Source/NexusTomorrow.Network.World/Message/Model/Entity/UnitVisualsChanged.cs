@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Entity;
 
 [WireMessage(GameMessageOpcode.Server0905, Direction.ServerToClient)]
-public sealed partial class Server0905
+public sealed partial class UnitVisualsChanged
 {
     [UInt(32)] public uint Unknown0 { get; set; }
     [UInt(5)] public byte Unknown1 { get; set; }
