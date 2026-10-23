@@ -816,8 +816,6 @@ internal static class RegistryVerification
         "0x092F",
         "0x0931",
         "0x0932",
-        "0x0933",
-        "0x093A",
         "0x093B",
         "0x093D",
         "0x093E",

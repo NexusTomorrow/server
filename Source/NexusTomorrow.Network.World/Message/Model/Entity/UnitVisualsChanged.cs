@@ -46,5 +46,9 @@ public sealed partial class UnitVisualsChanged
 
     [UInt(1)] public bool Unknown7 { get; set; }
 
-    [Array(CountBits = 32)] public List<Server0117Part1> Unknown8 { get; set; } = [];
+    /// <summary>
+    /// The items the unit shows, each giving one slot of its model its look and colour as <see cref="UnitItemVisualsChanged.Items"/>
+    /// does.
+    /// </summary>
+    [Array(CountBits = 32)] public List<ItemVisual> Items { get; set; } = [];
 }

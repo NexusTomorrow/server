@@ -65,6 +65,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   Settler 1, Scientist 2 and Explorer 3.
 - The combat log carries its real names and field meanings, kind by kind, and so do the player's
   spell list and the cast requests aimed at a position or at a unit.
+- A new unit names its items, who tagged it, its minimap marker and, for a player, the character,
+  realm, group, guild, title, PvP flags and premium tier. A unit's property and item look updates
+  carry their real names, and the item look record is one shared by the character list and units.
 
 ### Changed
 

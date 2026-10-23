@@ -17,34 +17,6 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 public sealed partial class CharacterList
 {
     /// <summary>
-    /// One item a character shows in a slot.
-    /// </summary>
-    [WireStruct]
-    public sealed partial class CharacterItem
-    {
-        /// <summary>
-        /// The item slot, 0 to 71.
-        /// </summary>
-        [UInt(7)] public byte Slot { get; set; }
-
-        /// <summary>
-        /// The look to show in the slot, as a display id.
-        /// </summary>
-        [UInt(15)] public ushort DisplayId { get; set; }
-
-        /// <summary>
-        /// A colour set, as an id in the ItemColorSet table, used when <see cref="Color"/> is 0.
-        /// </summary>
-        [UInt(14)] public ushort ColorSetId { get; set; }
-
-        /// <summary>
-        /// The slot's colour, with the top bit set and three 10-bit channels below it; 0 means the colour comes from
-        /// <see cref="ColorSetId"/>.
-        /// </summary>
-        [UInt(32)] public uint Color { get; set; }
-    }
-
-    /// <summary>
     /// One of the account's characters.
     /// </summary>
     [WireStruct]
@@ -88,12 +60,12 @@ public sealed partial class CharacterList
         /// <summary>
         /// Items that set a slot's look only: the client reads each item's slot and display id here, and neither colour field.
         /// </summary>
-        [Array(CountBits = 32)] public List<CharacterItem> PlainItems { get; } = [];
+        [Array(CountBits = 32)] public List<ItemVisual> PlainItems { get; } = [];
 
         /// <summary>
         /// Items that set a slot's look and colour, applied after <see cref="PlainItems"/> and over it for the same slot.
         /// </summary>
-        [Array(CountBits = 32)] public List<CharacterItem> ColoredItems { get; } = [];
+        [Array(CountBits = 32)] public List<ItemVisual> ColoredItems { get; } = [];
 
         /// <summary>
         /// The world the character is in.
