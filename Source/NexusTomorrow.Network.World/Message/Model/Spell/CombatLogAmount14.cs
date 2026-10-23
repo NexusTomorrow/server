@@ -2,10 +2,11 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
+/// <summary>
+/// A combat log entry of kind 14, which reports one amount.
+/// </summary>
 [WireStruct]
 [UnionCase(14)]
-public sealed partial class CombatLogAmount14 : ICombatLogPayload
+public sealed partial class CombatLogAmount14 : CombatLogAmount
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
-    public CombatLogAction Unknown1 { get; set; } = new();
 }

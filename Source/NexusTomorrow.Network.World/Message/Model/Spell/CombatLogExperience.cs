@@ -2,13 +2,35 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
+/// <summary>
+/// A combat log entry of kind 27: experience gained.
+/// </summary>
 [WireStruct]
 [UnionCase(27)]
 public sealed partial class CombatLogExperience : ICombatLogPayload
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
-    [UInt(32)] public uint Unknown1 { get; set; }
-    [UInt(32)] public uint Unknown2 { get; set; }
-    [UInt(32)] public uint Unknown3 { get; set; }
-    [UInt(32)] public uint Unknown4 { get; set; }
+    /// <summary>
+    /// The caster, by unit id.
+    /// </summary>
+    [UInt(32)] public uint CasterId { get; set; }
+
+    /// <summary>
+    /// The experience gained.
+    /// </summary>
+    [UInt(32)] public uint Xp { get; set; }
+
+    /// <summary>
+    /// The rested experience gained.
+    /// </summary>
+    [UInt(32)] public uint RestXp { get; set; }
+
+    /// <summary>
+    /// The elder points gained.
+    /// </summary>
+    [UInt(32)] public uint ElderPoints { get; set; }
+
+    /// <summary>
+    /// The rested elder points gained.
+    /// </summary>
+    [UInt(32)] public uint RestElderPoints { get; set; }
 }

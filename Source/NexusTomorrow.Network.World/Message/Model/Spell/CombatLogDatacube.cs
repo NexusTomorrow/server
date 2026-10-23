@@ -2,11 +2,25 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
+/// <summary>
+/// A combat log entry of kind 33: a datacube.
+/// </summary>
 [WireStruct]
 [UnionCase(33)]
 public sealed partial class CombatLogDatacube : ICombatLogPayload
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
-    [UInt(3)] public byte Unknown1 { get; set; }
-    [UInt(1)] public bool Unknown2 { get; set; }
+    /// <summary>
+    /// The caster, by unit id.
+    /// </summary>
+    [UInt(32)] public uint CasterId { get; set; }
+
+    /// <summary>
+    /// The datacube's type.
+    /// </summary>
+    [UInt(3)] public byte DatacubeType { get; set; }
+
+    /// <summary>
+    /// Whether the datacube comes in pieces.
+    /// </summary>
+    [UInt(1)] public bool HasPieces { get; set; }
 }

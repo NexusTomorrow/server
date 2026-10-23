@@ -2,11 +2,25 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
+/// <summary>
+/// A combat log entry of kind 20: a kill streak.
+/// </summary>
 [WireStruct]
 [UnionCase(20)]
 public sealed partial class CombatLogKillStreak : ICombatLogPayload
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
-    [UInt(5)] public byte Unknown1 { get; set; }
-    [UInt(32)] public uint Unknown2 { get; set; }
+    /// <summary>
+    /// The caster, by unit id.
+    /// </summary>
+    [UInt(32)] public uint CasterId { get; set; }
+
+    /// <summary>
+    /// The kind of streak.
+    /// </summary>
+    [UInt(5)] public byte StatType { get; set; }
+
+    /// <summary>
+    /// The streak's count.
+    /// </summary>
+    [UInt(32)] public uint StreakAmount { get; set; }
 }

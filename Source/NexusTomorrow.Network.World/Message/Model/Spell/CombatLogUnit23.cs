@@ -2,9 +2,11 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
+/// <summary>
+/// A combat log entry of kind 23, which names only a unit.
+/// </summary>
 [WireStruct]
 [UnionCase(23)]
-public sealed partial class CombatLogUnit23 : ICombatLogPayload
+public sealed partial class CombatLogUnit23 : CombatLogUnit
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
 }

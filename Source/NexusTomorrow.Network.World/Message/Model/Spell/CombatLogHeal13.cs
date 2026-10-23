@@ -2,13 +2,11 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
+/// <summary>
+/// A combat log entry of kind 13, which reports a heal.
+/// </summary>
 [WireStruct]
 [UnionCase(13)]
-public sealed partial class CombatLogHeal13 : ICombatLogPayload
+public sealed partial class CombatLogHeal13 : CombatLogHeal
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
-    [UInt(32)] public uint Unknown1 { get; set; }
-    [UInt(32)] public uint Unknown2 { get; set; }
-    [UInt(8)] public byte Unknown3 { get; set; }
-    public CombatLogAction Unknown4 { get; set; } = new();
 }

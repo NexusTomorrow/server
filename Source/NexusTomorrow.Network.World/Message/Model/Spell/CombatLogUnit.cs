@@ -2,9 +2,14 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
+/// <summary>
+/// The payload of the entries that name only a unit, such as a death, a resurrection or a change of action set: arms 22, 23 and 31.
+/// </summary>
 [WireStruct]
-[UnionCase(22)]
-public sealed partial class CombatLogUnit : ICombatLogPayload
+public partial class CombatLogUnit : ICombatLogPayload
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
+    /// <summary>
+    /// The caster, by unit id.
+    /// </summary>
+    [UInt(32)] public uint CasterId { get; set; }
 }

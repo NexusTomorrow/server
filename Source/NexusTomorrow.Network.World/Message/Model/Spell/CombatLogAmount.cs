@@ -2,10 +2,19 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
+/// <summary>
+/// The payload of the entries that report one amount, such as damage or healing absorbed or interrupt armor changed: arms 0, 14 and 35.
+/// </summary>
 [WireStruct]
-[UnionCase(0)]
-public sealed partial class CombatLogAmount : ICombatLogPayload
+public partial class CombatLogAmount : ICombatLogPayload
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
-    public CombatLogAction Unknown1 { get; set; } = new();
+    /// <summary>
+    /// The amount the entry reports.
+    /// </summary>
+    [UInt(32)] public uint Amount { get; set; }
+
+    /// <summary>
+    /// The caster, target, spell and combat result.
+    /// </summary>
+    public CombatLogAction Action { get; set; } = new();
 }
