@@ -59,7 +59,7 @@ changed.
 
 ### Promotion to `main`
 
-Once a week, `main` fast-forwards to the newest `dev` commit that clears this bar, and
+Every Tuesday, `main` fast-forwards to the newest `dev` commit that clears this bar, and
 **Unreleased** takes that date:
 
 - a full CI run on that exact tree, with no test skipped;

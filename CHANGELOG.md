@@ -17,7 +17,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 ### Changed
 
 - Work lands on `dev`, now the default branch, and `main` holds what has been seen working with the
-  client.
+  client. Every Tuesday, `main` takes the newest `dev` that has been proven.
 - The World messages are grouped by the client's feature areas, in the code and in the protocol
   reference. Messages no area claims yet sit under Unsettled.
 - A reference page the generator no longer writes keeps a tombstone that says so, instead of going
