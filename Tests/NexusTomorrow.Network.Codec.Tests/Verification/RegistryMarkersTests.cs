@@ -65,10 +65,10 @@ public sealed class RegistryMarkersTests
             Assert.Fail(string.Join(Environment.NewLine, problems));
     }
 
-    // A dormant message is neither read nor sent, so it has no rung, no opcode table row admits it, and it counts apart from the messages
-    // still to be read.
+    // A dormant message never travels by itself, so no opcode table row admits it, and it counts apart from the messages still to be read.
+    // Its rung is independent of the mark: the client may read it as a record inside other messages.
     [Fact]
-    public void EveryDormantMessageIsUnverifiedUnadmittedAndOffTheUnverifiedList()
+    public void EveryDormantMessageIsUnadmittedAndOffTheUnverifiedList()
     {
         var dormant = Messages().Where(m => Carries<DormantAttribute>(m.Type)).ToList();
         TestContext.Current.TestOutputHelper?.WriteLine($"{dormant.Count} dormant messages: {string.Join(", ", dormant.Select(m => m.Key))}.");
@@ -76,8 +76,6 @@ public sealed class RegistryMarkersTests
         var problems = new List<string>();
         foreach ((Type type, WireMessageAttribute message, string key) in dormant)
         {
-            if (Carries<VerifiedAttribute>(type))
-                problems.Add($"{key} {type.Name}: dormant, but it carries [Verified]");
             if (OpcodeTable.All.ContainsKey((ushort)message.Opcode))
                 problems.Add($"{key} {type.Name}: dormant, but the opcode table has a row for it");
             if (RegistryVerification.Unverified.Contains(key))

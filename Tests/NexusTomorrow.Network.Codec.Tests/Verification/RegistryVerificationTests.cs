@@ -19,14 +19,16 @@ public sealed class RegistryVerificationTests
             .Select(m => (m.Type, $"0x{(ushort)m.Attribute!.Opcode:X4}"));
 
     // A message below fields must be pinned unless it is dormant, which counts apart; a pinned message must still be below fields and not dormant,
-    // so reading one, or marking it dormant, shows up as an entry to delete.
+    // so reading one, or marking it dormant, shows up as an entry to delete. Each message counts once: read to fields (dormant or not), dormant
+    // below fields, or unverified.
     [Fact]
     public void EveryDeclaredMessageReachesFieldsOrIsPinned()
     {
         var messages = s_models.SelectMany(Messages).ToList();
         var declared = messages.Select(m => m.Key).ToHashSet(StringComparer.Ordinal);
-        var dormant = messages.Where(m => m.Type.IsDefined(typeof(DormantAttribute), inherit: false)).Select(m => m.Key).ToHashSet(StringComparer.Ordinal);
-        var below = messages.Where(m => MessageVerification.RungOf(m.Type) is null or < Rung.Fields).Select(m => m.Key).Where(k => !dormant.Contains(k)).ToHashSet(StringComparer.Ordinal);
+        var belowFields = messages.Where(m => MessageVerification.RungOf(m.Type) is null or < Rung.Fields).ToList();
+        var dormant = belowFields.Where(m => m.Type.IsDefined(typeof(DormantAttribute), inherit: false)).Select(m => m.Key).ToHashSet(StringComparer.Ordinal);
+        var below = belowFields.Select(m => m.Key).Where(k => !dormant.Contains(k)).ToHashSet(StringComparer.Ordinal);
         TestContext.Current.TestOutputHelper?.WriteLine(
             $"{declared.Count} declared messages: {declared.Count - dormant.Count - below.Count} read to fields; {dormant.Count} dormant; {below.Count} unverified.");
 

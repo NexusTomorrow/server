@@ -97,7 +97,8 @@ public sealed class MessageCatalog
     }
 
     /// <summary>
-    /// True when the server may send <paramref name="message"/>: its type is not <see cref="DormantAttribute"/>, and it is read to
+    /// True when the server may send <paramref name="message"/>: its own type is not <see cref="DormantAttribute"/> (a dormant message
+    /// held as a member is a record there, and does not count), and it is read to
     /// <see cref="Rung.Fields"/> or above, or read to <see cref="Rung.Purpose"/> with every member set to anything but its default marked
     /// <see cref="VerifiedMemberAttribute"/>. Otherwise false, with <paramref name="refusal"/> naming the type and why: dormant whatever its
     /// rung, below <see cref="Rung.Purpose"/>, or at <see cref="Rung.Purpose"/> the first unmarked member set.

@@ -59,11 +59,11 @@ public sealed class MessageCatalogTests
     [Fact]
     public void AMessageBelowPurposeMayNotSend()
     {
-        bool unverified = MessageCatalog.Default.MaySend(new Network.World.Message.Model.Pregame.Server0015(), out string? refusal);
+        bool unverified = MessageCatalog.Default.MaySend(new Network.World.Message.Model.Pet.Server0068(), out string? refusal);
         bool unread = s_gate.MaySend(new GateUnreadMessage { Known = 1 }, out _);
 
         Assert.False(unverified);
-        Assert.Equal("Server0015 is not read to Purpose", refusal);
+        Assert.Equal("Server0068 is not read to Purpose", refusal);
         Assert.False(unread);
     }
 
@@ -74,6 +74,15 @@ public sealed class MessageCatalogTests
 
         Assert.False(allowed);
         Assert.Equal("GateDormantMessage is dormant", refusal);
+    }
+
+    [Fact]
+    public void AMessageHoldingADormantMessageAsAMemberMaySend()
+    {
+        bool allowed = s_gate.MaySend(new GateHolderMessage { Count = 1, Record = new GateDormantMessage { Known = 2 } }, out string? refusal);
+
+        Assert.True(allowed);
+        Assert.Null(refusal);
     }
 
     [Fact]

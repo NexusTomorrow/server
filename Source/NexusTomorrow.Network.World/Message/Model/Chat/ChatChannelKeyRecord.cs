@@ -8,6 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Chat;
 /// </summary>
 [WireMessage(GameMessageOpcode.Message01B6, Direction.Both)]
 [Verified(Rung.Fields)]
+[Dormant]
 public sealed partial class ChatChannelKeyRecord
 {
     /// <summary>

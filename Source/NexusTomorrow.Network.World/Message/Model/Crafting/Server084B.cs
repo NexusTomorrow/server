@@ -4,6 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Crafting;
 
 [WireMessage(GameMessageOpcode.Server084B, Direction.ServerToClient)]
+[Dormant]
 public sealed partial class Server084B
 {
     [UInt(32)] public uint Unknown0 { get; set; }
