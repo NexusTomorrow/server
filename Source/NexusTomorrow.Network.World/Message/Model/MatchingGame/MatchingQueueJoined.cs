@@ -1,30 +1,58 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Game.Static.Matching;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
+using MatchType = NexusTomorrow.Game.Static.Matching.MatchType;
 
 namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 
+/// <summary>
+/// Adds a matching queue entry; the client files it under <see cref="MatchingQueueEntry.MatchType"/> and raises MatchingJoinQueue.
+/// </summary>
 [WireMessage(GameMessageOpcode.Server05DF, Direction.ServerToClient)]
+[Verified(Rung.Purpose)]
 public sealed partial class MatchingQueueJoined
 {
-    [WireStruct]
-    public sealed partial class MatchingQueueRequest
-    {
-        [UInt(5)] public byte Unknown0 { get; set; }
-        [Array(CountBits = 32), UInt(32)] public List<uint> Unknown1 { get; set; } = [];
-        [UInt(14)] public ushort Unknown2 { get; set; }
-        [UInt(32)] public uint Unknown3 { get; set; }
-    }
-
+    /// <summary>
+    /// The entry's match type, how it was joined, and its times.
+    /// </summary>
     [WireStruct]
     public sealed partial class MatchingQueueEntry
     {
-        [UInt(5)] public byte Unknown0 { get; set; }
-        [UInt(1)] public bool Unknown1 { get; set; }
-        [UInt(32)] public uint Unknown2 { get; set; }
-        [UInt(32)] public uint Unknown3 { get; set; }
+        /// <summary>
+        /// The match type the entry is filed under.
+        /// </summary>
+        [UInt(5)] public MatchType MatchType { get; set; }
+
+        /// <summary>
+        /// Whether the entry was joined as a group; the client then sets <see cref="MatchingQueueFlags.GroupIsQueued"/> in the entry's
+        /// flags.
+        /// </summary>
+        [UInt(1)] public bool AsGroup { get; set; }
+
+        /// <summary>
+        /// How long the entry has already waited, in milliseconds; the client counts its time in queue on from there.
+        /// </summary>
+        [UInt(32)] public uint TimeInQueueMs { get; set; }
+
+        /// <summary>
+        /// The queue's average wait, in milliseconds.
+        /// </summary>
+        [UInt(32)] public uint AverageWaitTimeMs { get; set; }
     }
 
-    public MatchingQueueRequest Unknown0 { get; set; } = new();
-    public MatchingQueueEntry Unknown1 { get; set; } = new();
-    [UInt(32)] public uint Unknown2 { get; set; }
+    /// <summary>
+    /// The queue joined: its maps, game type and flags. The client takes the entry's match type from <see cref="Entry"/>, not from this
+    /// record.
+    /// </summary>
+    public MatchingQueueRequest Request { get; set; } = new();
+
+    /// <summary>
+    /// The entry's match type, how it was joined, and its times.
+    /// </summary>
+    public MatchingQueueEntry Entry { get; set; } = new();
+
+    /// <summary>
+    /// The roles queued for, as a mask of <see cref="Role"/>.
+    /// </summary>
+    [UInt(32)] public Role Roles { get; set; }
 }
