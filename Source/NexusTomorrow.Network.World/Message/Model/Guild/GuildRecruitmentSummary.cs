@@ -2,10 +2,24 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
+/// <summary>
+/// A recruiting guild's size, perks and classification.
+/// </summary>
 [WireStruct]
 public sealed partial class GuildRecruitmentSummary
 {
-    [UInt(16)] public ushort Unknown0 { get; set; }
-    [UInt(16)] public ushort Unknown1 { get; set; }
-    [UInt(3)] public byte Unknown2 { get; set; }
+    /// <summary>
+    /// How many members the guild has.
+    /// </summary>
+    [UInt(16)] public ushort MemberCount { get; set; }
+
+    /// <summary>
+    /// How many perks the guild has.
+    /// </summary>
+    [UInt(16)] public ushort PerkCount { get; set; }
+
+    /// <summary>
+    /// The guild's classification, a GuildClassification value.
+    /// </summary>
+    [UInt(3)] public byte Classification { get; set; }
 }

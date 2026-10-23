@@ -2,59 +2,94 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
+/// <summary>
+/// A whole guild, as the client takes one on: the record the guild's own update messages and GuildTypeLib's getters work on.
+/// </summary>
 [WireStruct]
 public sealed partial class GuildRecord
 {
-    [WireStruct]
-    public sealed partial class GuildStatus
-    {
-        [WireStruct]
-        public sealed partial class GuildPvpRecord
-        {
-            [UInt(32)] public uint Unknown0 { get; set; }
-            [UInt(32)] public uint Unknown1 { get; set; }
-            [UInt(32)] public uint Unknown2 { get; set; }
-            [UInt(32)] public uint Unknown3 { get; set; }
-            [UInt(32)] public uint Unknown4 { get; set; }
-            [UInt(32)] public uint Unknown5 { get; set; }
-        }
+    /// <summary>
+    /// The guild, by its id within the realm.
+    /// </summary>
+    [UInt(64)] public ulong Id { get; set; }
 
-        [WideString] public string Unknown0 { get; set; } = "";
-        [WideString] public string Unknown1 { get; set; } = "";
-        [UInt(3)] public byte Unknown2 { get; set; }
-        public GuildPvpRecord Unknown3 { get; set; } = new();
-        [Float32] public float Unknown4 { get; set; }
-    }
+    /// <summary>
+    /// The guild's name.
+    /// </summary>
+    [WideString] public string Name { get; set; } = "";
 
-    [WireStruct]
-    public sealed partial class GuildActivePerk
-    {
-        [UInt(14)] public ushort Unknown0 { get; set; }
-        [Float32] public float Unknown1 { get; set; }
-    }
+    /// <summary>
+    /// The guild's flags, a bit each as GuildTypeLib's SetFlags sets them.
+    /// </summary>
+    [UInt(32)] public uint Flags { get; set; }
 
-    [UInt(64)] public ulong Unknown0 { get; set; }
-    [WideString] public string Unknown1 { get; set; } = "";
-    [UInt(32)] public uint Unknown2 { get; set; }
-    [UInt(4)] public byte Unknown3 { get; set; }
+    /// <summary>
+    /// The kind of guild, a GuildType value.
+    /// </summary>
+    [UInt(4)] public byte Type { get; set; }
 
-    [FixedArray(10)] public GuildRank[] Unknown4 { get; set; } = [.. Enumerable.Range(0, 10).Select(_ => new GuildRank())];
+    /// <summary>
+    /// The guild's ten ranks, in rank order.
+    /// </summary>
+    [FixedArray(10)] public GuildRank[] Ranks { get; set; } = [.. Enumerable.Range(0, 10).Select(_ => new GuildRank())];
 
-    public GuildHolomark Unknown5 { get; set; } = new();
+    /// <summary>
+    /// The guild's standard, laid out as a holomark.
+    /// </summary>
+    public GuildHolomark Standard { get; set; } = new();
 
-    [UInt(32)] public uint Unknown6 { get; set; }
-    [UInt(32)] public uint Unknown7 { get; set; }
-    [UInt(32)] public uint Unknown8 { get; set; }
-    [UInt(32)] public uint Unknown9 { get; set; }
+    /// <summary>
+    /// How many members the guild has.
+    /// </summary>
+    [UInt(32)] public uint MemberCount { get; set; }
 
-    [UInt(64)] public ulong Unknown10 { get; set; }
-    [UInt(32)] public uint Unknown11 { get; set; }
-    [UInt(32)] public uint Unknown12 { get; set; }
-    [FixedArray(10), WideString] public string[] Unknown13 { get; set; } = [.. Enumerable.Repeat(string.Empty, 10)];
+    /// <summary>
+    /// How many of them are online.
+    /// </summary>
+    [UInt(32)] public uint OnlineMemberCount { get; set; }
 
-    [FixedArray(16), UInt(8)] public byte[] Unknown14 { get; set; } = new byte[16];
+    /// <summary>
+    /// The guild's influence.
+    /// </summary>
+    [UInt(32)] public uint Influence { get; set; }
 
-    [Array(CountBits = 32)] public List<GuildActivePerk> Unknown15 { get; set; } = [];
+    /// <summary>
+    /// The bonus influence the guild can still earn.
+    /// </summary>
+    [UInt(32)] public uint BonusInfluenceRemaining { get; set; }
 
-    public GuildStatus Unknown16 { get; set; } = new();
+    /// <summary>
+    /// The money in the guild's bank.
+    /// </summary>
+    [UInt(64)] public ulong Money { get; set; }
+
+    /// <summary>
+    /// The guild's war coins.
+    /// </summary>
+    [UInt(32)] public uint WarCoins { get; set; }
+
+    /// <summary>
+    /// How many bank tabs the guild has.
+    /// </summary>
+    [UInt(32)] public uint BankTabCount { get; set; }
+
+    /// <summary>
+    /// Each bank tab's name, in tab order.
+    /// </summary>
+    [FixedArray(10), WideString] public string[] BankTabNames { get; set; } = [.. Enumerable.Repeat(string.Empty, 10)];
+
+    /// <summary>
+    /// The perks the guild has unlocked, a bit per perk id.
+    /// </summary>
+    [FixedArray(16), UInt(8)] public byte[] UnlockedPerks { get; set; } = new byte[16];
+
+    /// <summary>
+    /// The perks active now.
+    /// </summary>
+    [Array(CountBits = 32)] public List<GuildActivePerk> ActivePerks { get; set; } = [];
+
+    /// <summary>
+    /// The guild's messages, queue state, PvP record and creation date.
+    /// </summary>
+    public GuildStatus Status { get; set; } = new();
 }
