@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Microsoft.Extensions.Logging.Abstractions;
+using NexusTomorrow.Game.Static.Entity;
 using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Entity;
@@ -75,33 +76,33 @@ public sealed class WorldEntryTests : IDisposable
         Assert.Equal(new Vector3(10, 20, 30), enter.Position);
 
         UnitCreate create = session.Single<UnitCreate>();
-        Assert.Equal((byte)20, create.Unknown1);
-        Server0262Union0Arm14 arm = Assert.IsType<Server0262Union0Arm14>(create.Unknown2);
-        Assert.Equal(1001UL, arm.Unknown0);
-        Assert.Equal((ushort)11, arm.Unknown1);
-        Assert.Equal("Rebaser Head", arm.Unknown2);
-        Assert.Equal((byte)2, arm.Unknown3);
-        Assert.Equal((byte)4, arm.Unknown4);
-        Assert.Equal((byte)1, arm.Unknown5);
-        Assert.Equal((ushort)166, create.Unknown11);
-        Assert.Equal((ushort)166, create.Unknown12);
+        Assert.Equal((byte)20, create.UnitType);
+        Server0262Union0Arm14 arm = Assert.IsType<Server0262Union0Arm14>(create.TypeData);
+        Assert.Equal(1001UL, arm.CharacterId);
+        Assert.Equal((ushort)11, arm.RealmId);
+        Assert.Equal("Rebaser Head", arm.Name);
+        Assert.Equal((byte)2, arm.RaceId);
+        Assert.Equal((byte)4, arm.ClassId);
+        Assert.Equal(Sex.Female, arm.Gender);
+        Assert.Equal((ushort)166, create.FactionId);
+        Assert.Equal((ushort)166, create.BaseFactionId);
 
-        Assert.Equal(2, create.Unknown4.Count);
-        Assert.Equal((byte)0, create.Unknown4[0].Unknown0);
-        Assert.Equal(1000U, StatValue(create.Unknown4[0]));
-        Assert.Equal(WorldEntry.PlayerHealth, StatValue(create.Unknown4[0]));
-        Assert.Equal((byte)10, create.Unknown4[1].Unknown0);
-        Assert.Equal(7U, StatValue(create.Unknown4[1]));
+        Assert.Equal(2, create.Stats.Count);
+        Assert.Equal((byte)0, create.Stats[0].Unknown0);
+        Assert.Equal(1000U, StatValue(create.Stats[0]));
+        Assert.Equal(WorldEntry.PlayerHealth, StatValue(create.Stats[0]));
+        Assert.Equal((byte)10, create.Stats[1].Unknown0);
+        Assert.Equal(7U, StatValue(create.Stats[1]));
 
-        Assert.Equal(2, create.Unknown6.Count);
-        Assert.Equal((byte)2, create.Unknown6[0].Unknown0);
-        Assert.Equal(new Vector3(10, 20, 30), Assert.IsType<Server0262Union2Arm02>(create.Unknown6[0].Unknown1).Unknown0);
-        Assert.Equal((byte)14, create.Unknown6[1].Unknown0);
-        Assert.Equal(new Vector3(1.5f, 0, 0), Assert.IsType<Server0262Union2Arm0E>(create.Unknown6[1].Unknown1).Unknown0);
+        Assert.Equal(2, create.Commands.Count);
+        Assert.Equal((byte)2, create.Commands[0].Unknown0);
+        Assert.Equal(new Vector3(10, 20, 30), Assert.IsType<Server0262Union2Arm02>(create.Commands[0].Unknown1).Unknown0);
+        Assert.Equal((byte)14, create.Commands[1].Unknown0);
+        Assert.Equal(new Vector3(1.5f, 0, 0), Assert.IsType<Server0262Union2Arm0E>(create.Commands[1].Unknown1).Unknown0);
 
-        Assert.Equal(create.Unknown0, session.Single<PlayerUnit>().UnitId);
+        Assert.Equal(create.UnitId, session.Single<PlayerUnit>().UnitId);
         MovementControl control = session.Single<MovementControl>();
-        Assert.Equal(create.Unknown0, control.UnitId);
+        Assert.Equal(create.UnitId, control.UnitId);
         Assert.True(control.RebuildMovement);
         Assert.Equal(125U, session.Single<WorldSettings>().MovementInterval);
 

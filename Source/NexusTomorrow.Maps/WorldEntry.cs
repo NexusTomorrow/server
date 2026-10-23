@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using NexusTomorrow.Game.Static.Entity;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Entity.Command;
 using NexusTomorrow.Network.World.Entity.Model;
@@ -59,26 +60,26 @@ internal static class WorldEntry
         CharacterLocation location = player.Location;
         return new UnitCreate
         {
-            Unknown0 = player.UnitId,
-            Unknown1 = PlayerUnitType,
-            Unknown2 = new Server0262Union0Arm14
+            UnitId = player.UnitId,
+            UnitType = PlayerUnitType,
+            TypeData = new Server0262Union0Arm14
             {
                 // The client refuses a 0 in either id; together they are unique to the character.
-                Unknown0 = character.Id,
-                Unknown1 = realmId,
-                Unknown2 = character.Name,
-                Unknown3 = character.Race,
-                Unknown4 = character.Class,
-                Unknown5 = character.Sex,
+                CharacterId = character.Id,
+                RealmId = realmId,
+                Name = character.Name,
+                RaceId = character.Race,
+                ClassId = character.Class,
+                Gender = (Sex)character.Sex,
             },
-            Unknown4 = [Stat(HealthStat, PlayerHealth), Stat(LevelStat, character.Level)],
-            Unknown6 =
+            Stats = [Stat(HealthStat, PlayerHealth), Stat(LevelStat, character.Level)],
+            Commands =
             [
                 new Server0262Part5 { Unknown0 = PositionCommand, Unknown1 = new Server0262Union2Arm02 { Unknown0 = location.Position } },
                 new Server0262Part5 { Unknown0 = FacingCommand, Unknown1 = new Server0262Union2Arm0E { Unknown0 = new Vector3(location.Facing, 0, 0) } },
             ],
-            Unknown11 = (ushort)character.FactionId,
-            Unknown12 = (ushort)character.FactionId,
+            FactionId = (ushort)character.FactionId,
+            BaseFactionId = (ushort)character.FactionId,
         };
     }
 
