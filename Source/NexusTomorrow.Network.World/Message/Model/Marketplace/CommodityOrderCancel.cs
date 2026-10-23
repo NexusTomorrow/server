@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
 /// <summary>
-/// Cancels one of the player's commodity orders.
+/// Cancels a commodity order.
 /// </summary>
 /// <remarks>
 /// The client refuses to send it for an order that is not posted, and copies each field from the order.

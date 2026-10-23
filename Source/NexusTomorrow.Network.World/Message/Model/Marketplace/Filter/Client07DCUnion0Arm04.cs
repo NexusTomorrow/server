@@ -16,7 +16,7 @@ public sealed partial class Client07DCUnion0Arm04 : IClient07DCUnion0
     [UInt(5)] public byte MicrochipType { get; private set; }
 
     /// <summary>
-    /// The minimum, 1 to 8; the client sends 1 when none is given.
+    /// At most 8; the client sends 1 when none is given.
     /// </summary>
     [UInt(32)] public uint Min { get; private set; }
 }

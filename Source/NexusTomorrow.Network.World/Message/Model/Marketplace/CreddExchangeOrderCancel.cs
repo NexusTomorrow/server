@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
 /// <summary>
-/// Cancels one of the player's CREDD exchange orders.
+/// Cancels a CREDD exchange order.
 /// </summary>
 [WireMessage(GameMessageOpcode.Client0267, Direction.ClientToServer)]
 [Verified(Rung.Purpose)]

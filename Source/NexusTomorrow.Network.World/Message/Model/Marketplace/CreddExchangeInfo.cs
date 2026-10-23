@@ -33,12 +33,14 @@ public sealed partial class CreddExchangeInfo
         [UInt(1)] public bool IsBuy { get; set; }
 
         /// <summary>
-        /// The order's list time, as its GetListTime getter returns it; the client converts it to seconds since 1970 for add-ons.
+        /// The order's list time, as its GetListTime getter returns it: a Windows FILETIME, 100-nanosecond intervals since 1601-01-01
+        /// UTC, which the client keeps as is.
         /// </summary>
         [UInt(64)] public ulong ListTime { get; set; }
 
         /// <summary>
-        /// When the order expires; the client converts it to seconds since 1970 for add-ons.
+        /// When the order expires: a Windows FILETIME, 100-nanosecond intervals since 1601-01-01 UTC, which the client keeps as is and
+        /// hands to add-ons as a Time.
         /// </summary>
         [UInt(64)] public ulong ExpirationTime { get; set; }
     }

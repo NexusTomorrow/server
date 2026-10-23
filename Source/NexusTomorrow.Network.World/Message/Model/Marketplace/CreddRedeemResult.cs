@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 public sealed partial class CreddRedeemResult
 {
     /// <summary>
-    /// The result, a PreGameLib.CodeEnumCharacterModifyResults code; the client takes RedeemCREDDOk as success.
+    /// The result, a PreGameLib.CodeEnumCharacterModifyResults code; its add-ons compare it with RedeemCREDDOk.
     /// </summary>
     [UInt(6)] public byte Result { get; set; }
 }

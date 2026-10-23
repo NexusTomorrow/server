@@ -455,7 +455,6 @@ internal static class RegistryVerification
         "0x063B",
         "0x063E",
         "0x063F",
-        "0x0640",
         "0x0642",
         "0x064C",
         "0x064D",

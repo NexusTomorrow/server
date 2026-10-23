@@ -1,14 +1,23 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Game.Static.Marketplace;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 
 /// <summary>
-/// The marketplace status, which the client keeps, raising CommodityAuctionsDisabled or ItemAuctionsDisabled as it changes.
+/// Which marketplaces are disabled; the client keeps the status, raising ItemAuctionsDisabled or CommodityAuctionsDisabled as a bit
+/// changes.
 /// </summary>
+/// <remarks>
+/// While a bit is set the client offers no interaction with that kind of terminal, and moves a player at one away from it.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Server0640, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class MarketplaceStatusChanged
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
+    /// <summary>
+    /// The marketplaces disabled: <see cref="MarketplaceStatus.AuctionsDisabled"/> the auction house,
+    /// <see cref="MarketplaceStatus.CommoditiesDisabled"/> the commodities exchange.
+    /// </summary>
+    [UInt(32)] public MarketplaceStatus Status { get; set; }
 }
