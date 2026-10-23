@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Chat;
 
 [WireMessage(GameMessageOpcode.Server01BC, Direction.ServerToClient)]
-public sealed partial class Server01BC
+public sealed partial class ChatChannelJoined
 {
     public ChatChannelKey Unknown0 { get; set; } = new();
     [WideString] public string Unknown1 { get; set; } = "";
