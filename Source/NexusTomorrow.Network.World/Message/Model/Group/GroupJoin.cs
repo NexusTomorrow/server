@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Group;
 /// Asks to join a player's group: the request GroupLib.Join sends.
 /// </summary>
 /// <remarks>
-/// The shipped add-ons call it as GroupLib.Join(strDisplayName, strRealmName).
+/// The shipped add-ons call GroupLib.Join with the player's display name and the realm name.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client0422, Direction.ClientToServer)]
 [Verified(Rung.Fields)]

@@ -107,6 +107,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   ("Gateway:Sts:Port must be 1 to 65535."), and a section reports all its failing settings at once.
 - The Host-settings page says it lists the settings a Release build reads: a Debug build also reads
   the developer tools' settings, which the page leaves out.
+- Comments restated in our own words.
 
 ### Fixed
 

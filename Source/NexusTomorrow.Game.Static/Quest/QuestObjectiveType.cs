@@ -3,8 +3,8 @@
 // TODO: name more of these
 public enum QuestObjectiveType
 {
-    KillCreature = 2,  // data = CreatureId, ObjectiveText describes killing creature (Count: 598) (e.g. http://wildstar.mmorpg-life.com/quests/the-mother-of-all-spiders/)
-    TalkTo = 3,  // data = CreatureId, ObjeciveText describes interacting with creature (Count: 350) (e.g. http://wildstar.mmorpg-life.com/quests/search-party/)
+    KillCreature = 2,  // data = CreatureId, ObjectiveText describes killing creature (Count: 598)
+    TalkTo = 3,  // data = CreatureId, ObjeciveText describes interacting with creature (Count: 350)
     CollectItem = 4,  // data = Item2Id, ObjectiveText describes collecting items (Count: 327)
     ActivateEntity = 5,  // data = CreatureId, ObjectiveText describes interacting with creature (Count: 1556)
     KillTargetGroups = 8,  // data = TargetGroupId, ObjectiveText describes killing creatures of a type, TargetGroups contain other TargetGroup IDs that contain creature IDs (Count: 498)
@@ -24,7 +24,7 @@ public enum QuestObjectiveType
     EnterArea = 22, // data = unknown, ObjectiveText describes finding creatures or areas in locations (Count: 511)
     ActivateTargetGroup = 23, // data = TargetGroupId, ObjectiveText describes interacting with objects (Count: 96)
     CompleteQuest = 24, // data = QuestId, ObjectiveText describes either completing quests by name, or completing objectives of other quests (Count: 39)
-    CompleteEvent = 25, // data = unknown, ObjectiveText describes completing a mini event (killing a bunch of zombies like in http://wildstar.mmorpg-life.com/quests/here-they-come-exile/) (Count: 152)
+    CompleteEvent = 25, // data = unknown, ObjectiveText describes completing a mini event, such as killing a bunch of zombies (Count: 152)
     Unknown27 = 27, // data = unknown, ObjectiveText not in localisation files (Count: 1)
     Unknown28 = 28, // data = unknown, ObjectiveText describes rescuing creatures (Count: 5)
     Unknown29 = 29, // data = unknown, ObjectiveText not in localisation files (Count: 2)
@@ -45,4 +45,4 @@ public enum QuestObjectiveType
     BeginMatrix = 48, // data = 0 on all entries, ObjectiveText describes starting to use the Primal Matrix (Count: 2)
 }
 
-// Observations: When data = 0, it appears to be completed by script or use the targetGroupIdRewardPane Value which is a TargetGroup. Touring Tremor Ridge (Quest ID: 9164) has 2 objectives which have data values of 0 - Interacting with Taxi Stand, and Interacting with Mailbox.
+// Observations: When data = 0, it appears to be completed by script or use the targetGroupIdRewardPane Value which is a TargetGroup. Quest 9164 has 2 objectives with data values of 0: interacting with a taxi stand and with a mailbox.

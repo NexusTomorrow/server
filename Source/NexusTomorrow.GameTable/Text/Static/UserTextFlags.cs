@@ -1,7 +1,7 @@
 ﻿namespace NexusTomorrow.GameTable.Text.Static;
 
 /// <remarks>
-/// This values come from the client user text parse function, see sub_72C0E0 for more information.
+/// The rules the client applies when it checks text a player types, one flag each.
 /// </remarks>
 [Flags]
 public enum UserTextFlags

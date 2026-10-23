@@ -14,7 +14,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Inventory;
 public sealed partial class BuybackItemFromVendor
 {
     /// <summary>
-    /// The script call's idItem, documented as the unique id of the item being bought back.
+    /// The item to buy back, by its unique id: the script call's idItem.
     /// </summary>
     [UInt(32)] public uint BuybackItemId { get; private set; }
 }

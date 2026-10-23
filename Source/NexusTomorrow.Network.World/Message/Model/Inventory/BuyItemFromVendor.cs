@@ -14,7 +14,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Inventory;
 public sealed partial class BuyItemFromVendor
 {
     /// <summary>
-    /// The script call's idUnique, documented as the item's unique id number.
+    /// The item to buy, by its unique id: the script call's idUnique.
     /// </summary>
     [UInt(32)] public uint ItemId { get; set; }
 

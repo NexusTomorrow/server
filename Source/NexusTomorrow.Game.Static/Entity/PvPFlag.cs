@@ -8,5 +8,5 @@ public enum PvPFlag
 {
     Disabled = 0x00,
     Enabled = 0x01,
-    Forced = 0x02  // Disables "Turn On/Off PvP" in Portrait.
+    Forced = 0x02  // The player cannot turn PvP on or off from the portrait menu.
 }
