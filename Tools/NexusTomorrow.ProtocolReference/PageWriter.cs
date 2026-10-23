@@ -39,7 +39,7 @@ public static class PageWriter
 
     // HostTests.AFailedSettingStopsTheServerBeforeItListens holds "before it listens": a failed setting's start binds no port.
     private const string SettingsScope =
-        "Every setting the server reads: its default, what the host checks at start-up, and what it sets. A setting that fails its check stops the server before it listens, naming the setting, never its value ([Host lifecycle](Host-lifecycle#settings)).";
+        "Every setting a Release build reads: its default, what the host checks at start-up, and what it sets. A setting that fails its check stops the server before it listens, naming the setting, never its value ([Host lifecycle](Host-lifecycle#settings)).";
 
     private const string DiagnosticsScope =
         "Every diagnostic the codec's source generator reports: when it fires and how severe it is. How a declaration is written is on [Codec declarations](Codec-declarations).";

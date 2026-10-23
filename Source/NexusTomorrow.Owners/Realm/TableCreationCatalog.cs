@@ -7,7 +7,7 @@ using NexusTomorrow.GameTable.Model;
 namespace NexusTomorrow.Owners.Realm;
 
 /// <summary>
-/// A catalog read once, at construction, from the player's own extracted client tables (<c>CharacterCreation.tbl</c> and
+/// A catalog read once, at construction, from the operator's own extracted client tables (<c>CharacterCreation.tbl</c> and
 /// <c>XpPerLevel.tbl</c> under <see cref="ContentOptions.ClientDataPath"/>). With no path, or a table missing or unreadable, it logs
 /// a warning and holds no options, so every create is refused.
 /// </summary>

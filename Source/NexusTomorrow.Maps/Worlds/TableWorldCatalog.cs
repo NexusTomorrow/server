@@ -8,7 +8,7 @@ using WorldRow = NexusTomorrow.GameTable.Model.WorldEntry;
 namespace NexusTomorrow.Maps.Worlds;
 
 /// <summary>
-/// A catalog read once, at construction, from the player's own extracted <c>World.tbl</c> under
+/// A catalog read once, at construction, from the operator's own extracted <c>World.tbl</c> under
 /// <see cref="ContentOptions.ClientDataPath"/>. With no path, or a table missing or unreadable, it logs a warning and holds no
 /// world, so no map is hosted.
 /// </summary>
