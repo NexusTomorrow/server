@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 /// Adds units to a scavenger hunt clue.
 /// </summary>
 /// <remarks>
-/// For a clue of type 1, PathMission.GetExplorerClueRatio averages the positions of the clue's units.
+/// For a clue of type 1, PathMission:GetExplorerClueRatio averages the positions of the clue's units.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server06B9, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

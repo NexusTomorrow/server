@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 /// Reports the explorer power map the player is inside.
 /// </summary>
 /// <remarks>
-/// The client sends it while the mission is marked inside (<see cref="ExplorerPowerMapEntered"/>).
+/// The client sends it while the mission's inside mark is set (<see cref="ExplorerPowerMapEntered"/>).
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client00F9, Direction.ClientToServer)]
 [Verified(Rung.Fields)]

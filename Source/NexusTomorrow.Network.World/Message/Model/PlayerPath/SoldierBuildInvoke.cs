@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Game.Static.PlayerPath;
+﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Game.Static.PlayerPath;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
@@ -8,8 +9,9 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 /// Invokes the soldier build for an event at a unit, with the improvements already built.
 /// </summary>
 /// <remarks>
-/// The client takes it only while the event is in <see cref="PlayerPathSoldierEventMode.Setup"/>. It adds the ids to the event's built
-/// improvements, which SoldierImprovement.IsBuilt reads, and raises InvokeSoldierBuild with the unit and the event.
+/// The client takes it only while the player is interacting as <see cref="InteractionType.SoldierBuild"/> and the event is in
+/// <see cref="PlayerPathSoldierEventMode.Setup"/>. It adds the ids to the event's built improvements, which SoldierImprovement:IsBuilt
+/// reads, and raises InvokeSoldierBuild with the unit and the event.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0676, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

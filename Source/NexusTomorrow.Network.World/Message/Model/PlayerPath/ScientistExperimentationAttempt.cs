@@ -4,12 +4,12 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 /// <summary>
-/// Makes an attempt at a scientist experimentation.
+/// Makes a matching attempt at a scientist experimentation.
 /// </summary>
 /// <remarks>
-/// PathMission.AttemptScientistExperimentation sends it. The client scores the attempt against
-/// <see cref="ScientistExperimentationStarted.Pattern"/> place by place: 2 for a value in its place, 1 for a value elsewhere in the
-/// pattern, 0 for none.
+/// PathMission:AttemptScientistExperimentation sends it only when all four values match
+/// <see cref="ScientistExperimentationStarted.Pattern"/> in place. On a mismatch the client scores the attempt itself, place by place (2
+/// for a value in its place, 1 for a value elsewhere in the pattern, 0 for none), and sends nothing.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client066A, Direction.ClientToServer)]
 [Verified(Rung.Fields)]

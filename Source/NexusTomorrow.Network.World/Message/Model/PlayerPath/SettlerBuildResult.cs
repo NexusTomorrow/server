@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
@@ -7,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 /// Reports the result of a settler build.
 /// </summary>
 /// <remarks>
-/// The client takes it only while the player is using a settler hub. It raises SettlerBuildResult with <see cref="Unknown0"/> and, when
+/// The client takes it only while the player is interacting as <see cref="InteractionType.SettlerImprovement"/>. It raises SettlerBuildResult with <see cref="Unknown0"/> and, when
 /// <see cref="Unknown1"/> is not 0, the name of the improvement <see cref="ImprovementId"/> finds.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server066C, Direction.ServerToClient)]

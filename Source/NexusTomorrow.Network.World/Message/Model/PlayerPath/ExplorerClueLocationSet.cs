@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 /// Sets a scavenger hunt clue's location.
 /// </summary>
 /// <remarks>
-/// PathMission.GetExplorerClueRatio uses the location for a clue of type 0 or 2, and the clue's units (<see cref="ExplorerClueUnitsAdded"/>)
+/// PathMission:GetExplorerClueRatio uses the location for a clue of type 0 or 2, and the clue's units (<see cref="ExplorerClueUnitsAdded"/>)
 /// for type 1.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server06B8, Direction.ServerToClient)]

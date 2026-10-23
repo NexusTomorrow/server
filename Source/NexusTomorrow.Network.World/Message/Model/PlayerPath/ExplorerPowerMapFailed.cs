@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 /// <summary>
-/// Clears an explorer power map mission's unit to follow and its wait.
+/// Clears an explorer power map mission's unit to follow and its wait, and resets its step count (<see cref="ExplorerPowerMapAdvanced"/>).
 /// </summary>
 [WireMessage(GameMessageOpcode.Server00F8, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

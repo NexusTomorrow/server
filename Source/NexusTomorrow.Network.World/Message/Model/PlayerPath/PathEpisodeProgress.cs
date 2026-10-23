@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 /// The client keeps the episode under its id, where <see cref="PathCurrentEpisodeSet"/> and <see cref="PathMissionUpdate"/> find it.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server06B5, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class PathEpisodeProgress
 {
     /// <summary>

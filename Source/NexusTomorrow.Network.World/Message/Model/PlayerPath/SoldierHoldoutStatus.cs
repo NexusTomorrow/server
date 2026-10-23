@@ -10,9 +10,9 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 /// <remarks>
 /// The client replaces the event's units with <see cref="Units"/> and clears its built improvements and build credits. When it holds no
 /// start for the event it takes the start as <see cref="EventElapsedMs"/> before now, and it sets the phase clock so that
-/// SoldierEvent.GetElapsedTime reads <see cref="PhaseElapsedMs"/> on arrival. In <see cref="PlayerPathSoldierEventMode.Active"/> the
-/// speaker says a line picked by the event's type. It then sets the sound zone kit the wave's PathSoldierEventWave row names and raises
-/// SoldierHoldoutStatus.
+/// SoldierEvent:GetElapsedTime reads <see cref="PhaseElapsedMs"/> on arrival. In <see cref="PlayerPathSoldierEventMode.Active"/>, and in
+/// <see cref="PlayerPathSoldierEventMode.Setup"/> for a tower defense event (PathSoldierEvent type 4), the speaker says a line picked by
+/// the event's type. It then sets the sound zone kit the wave's PathSoldierEventWave row names and raises SoldierHoldoutStatus.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server067B, Direction.ServerToClient)]
 [Verified(Rung.Fields)]
@@ -34,18 +34,18 @@ public sealed partial class SoldierHoldoutStatus
     [UInt(32)] public uint SpeakerUnitId { get; set; }
 
     /// <summary>
-    /// Whether the current wave is a boss wave, which SoldierEvent.IsBoss returns.
+    /// Whether the current wave is a boss wave, which SoldierEvent:IsBoss returns.
     /// </summary>
     [UInt(1)] public bool IsBoss { get; set; }
 
     /// <summary>
-    /// The event's mode, which SoldierEvent.GetState returns. SoldierEvent.GetMaxTime gives the tower defense build time in
+    /// The event's mode, which SoldierEvent:GetState returns. SoldierEvent:GetMaxTime gives the tower defense build time in
     /// <see cref="PlayerPathSoldierEventMode.Setup"/> and the initial spawn time in <see cref="PlayerPathSoldierEventMode.InitialDelay"/>.
     /// </summary>
     [UInt(32)] public PlayerPathSoldierEventMode Mode { get; set; }
 
     /// <summary>
-    /// The time spent in the current phase in milliseconds, which SoldierEvent.GetElapsedTime returns on arrival.
+    /// The time spent in the current phase in milliseconds, which SoldierEvent:GetElapsedTime returns on arrival.
     /// </summary>
     [UInt(32)] public uint PhaseElapsedMs { get; set; }
 
@@ -55,12 +55,12 @@ public sealed partial class SoldierHoldoutStatus
     [UInt(32)] public uint WaveIndex { get; set; }
 
     /// <summary>
-    /// The maximum health of the event's defend units, which SoldierEvent.GetMaxDefendHealth returns.
+    /// The maximum health of the event's defend units, which SoldierEvent:GetMaxDefendHealth returns.
     /// </summary>
     [Float32] public float MaxDefendHealth { get; set; }
 
     /// <summary>
-    /// The maximum health of the event's auxiliary units, which SoldierEvent.GetMaxAuxiliaryHealth returns.
+    /// The maximum health of the event's auxiliary units, which SoldierEvent:GetMaxAuxiliaryHealth returns.
     /// </summary>
     [Float32] public float MaxAuxiliaryHealth { get; set; }
 

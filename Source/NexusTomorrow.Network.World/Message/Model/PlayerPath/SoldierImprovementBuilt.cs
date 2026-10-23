@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 /// </summary>
 /// <remarks>
 /// The client takes it only while the event is in <see cref="PlayerPathSoldierEventMode.Setup"/>. It adds the id to the event's built
-/// improvements, which SoldierImprovement.IsBuilt reads, and raises UpdateSoldierBuild.
+/// improvements, which SoldierImprovement:IsBuilt reads, and raises UpdateSoldierBuild.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0681, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

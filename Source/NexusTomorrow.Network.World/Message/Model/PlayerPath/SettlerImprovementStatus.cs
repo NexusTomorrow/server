@@ -13,9 +13,15 @@ public sealed partial class SettlerImprovementStatus
     /// </summary>
     [UInt(14)] public ushort ImprovementId { get; set; }
 
-    [UInt(32)] public uint Unknown1 { get; set; }
+    /// <summary>
+    /// The improvement's current tier, which SettlerImprovement:GetCurrentTier returns.
+    /// </summary>
+    [UInt(32)] public uint CurrentTier { get; set; }
 
-    [UInt(32)] public uint Unknown2 { get; set; }
+    /// <summary>
+    /// The improvement's remaining time, which SettlerImprovement:GetRemainingTime returns.
+    /// </summary>
+    [UInt(32)] public uint RemainingTime { get; set; }
 
     [UInt(32)] public uint Unknown3 { get; set; }
 }

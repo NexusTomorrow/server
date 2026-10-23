@@ -20,7 +20,7 @@ public sealed partial class SoldierBuildCredits
     [UInt(14)] public ushort SoldierEventId { get; set; }
 
     /// <summary>
-    /// The build credits, which SoldierEvent.GetBuildCredits returns.
+    /// The build credits, which SoldierEvent:GetBuildCredits returns.
     /// </summary>
     [UInt(32)] public uint Credits { get; set; }
 }

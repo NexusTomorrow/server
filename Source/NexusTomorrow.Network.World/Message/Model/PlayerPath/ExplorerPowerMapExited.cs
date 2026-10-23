@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 /// <summary>
-/// Marks the player outside an explorer power map: PathMission.IsExplorerPowerMapReady reads false.
+/// Clears an explorer power map mission's inside mark, which PathMission:IsExplorerPowerMapReady reads.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server00F7, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

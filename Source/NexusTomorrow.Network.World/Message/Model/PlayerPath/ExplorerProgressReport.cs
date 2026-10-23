@@ -4,10 +4,10 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 
 /// <summary>
-/// Reports an explorer mission whose location the player stands in.
+/// Reports a mission of type 3, 15 or 27 whose world location the player stands in.
 /// </summary>
 /// <remarks>
-/// The client sends it for a PathMission row of type 3, 15 or 27 while the player stands in the mission's world location.
+/// The client sends it for a PathMission row of one of those types while the player stands in the mission's world location.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client00F3, Direction.ClientToServer)]
 [Verified(Rung.Purpose)]

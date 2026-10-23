@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 /// the mission in it.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server06BB, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class PathMissionUpdate
 {
     /// <summary>

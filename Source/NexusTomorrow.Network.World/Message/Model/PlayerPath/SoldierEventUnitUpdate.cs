@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 /// Adds a unit to a soldier event under its type, with that type's maximum health.
 /// </summary>
 /// <remarks>
-/// The client adds the unit and type to the event's units, which SoldierEvent.GetDefendUnits, GetAuxiliaryUnits and GetEscapingUnits list
+/// The client adds the unit and type to the event's units, which SoldierEvent:GetDefendUnits, GetAuxiliaryUnits and GetEscapingUnits list
 /// by type, and raises UpdateSoldierBuild. <see cref="SoldierEventUnitRemove"/> takes the pair out.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0678, Direction.ServerToClient)]
@@ -31,7 +31,7 @@ public sealed partial class SoldierEventUnitUpdate
     [UInt(32)] public SoldierEventUnitType UnitType { get; set; }
 
     /// <summary>
-    /// The maximum health of the event's units of this type: SoldierEvent.GetMaxDefendHealth returns it for defend units and
+    /// The maximum health of the event's units of this type: SoldierEvent:GetMaxDefendHealth returns it for defend units and
     /// GetMaxAuxiliaryHealth for auxiliary ones. The client keeps none for escaping units.
     /// </summary>
     [Float32] public float MaxHealth { get; set; }

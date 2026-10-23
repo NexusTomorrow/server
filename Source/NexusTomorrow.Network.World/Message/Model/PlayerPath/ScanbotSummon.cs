@@ -15,7 +15,7 @@ namespace NexusTomorrow.Network.World.Message.Model.PlayerPath;
 public sealed partial class ScanbotSummon
 {
     /// <summary>
-    /// The scanbot profile, as PlayerPathLib.ScientistGetScanBotProfile returns it.
+    /// The scanbot profile, the one PlayerPathLib.ScientistGetScanBotProfile reads.
     /// </summary>
     [UInt(32)] public uint Profile { get; private set; }
 
