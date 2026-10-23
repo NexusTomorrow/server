@@ -85,6 +85,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Friends, rivals and ignores, account friends and their invites, presence and the friends list's
   status messages carry their real names and field meanings. The group's target markers message
   sits with the group messages.
+- A unit's scan rewards, its settler improvement and its minimap marker updates carry their real
+  names, and a type-23 unit names its group, guild and title as a player's does.
 
 ### Changed
 
