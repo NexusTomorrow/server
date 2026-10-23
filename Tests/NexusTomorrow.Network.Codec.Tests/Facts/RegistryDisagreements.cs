@@ -27,13 +27,13 @@ internal static class RegistryDisagreements
         ["0x035F server to client [5].element[5]"] = new(TreeDiffers, "the client has a union, the declaration an array"), // Server035F
         ["0x0598 server to client [3]"] = new(StringAsCountAndUnits, "the client has 16, the declaration a terminated wide string"), // Server0598
         ["0x0599 server to client [3]"] = new(StringAsCountAndUnits, "the client has 16, the declaration a terminated wide string"), // Server0599
-        ["0x07DC client to server [6].element[1].arm 0x04[1]"] = new(TreeDiffers, "the client has 32, the declaration 8"), // Client07DC
+        ["0x07DC client to server [6].element[1].arm 0x04[1]"] = new(TreeDiffers, "the client has 32, the declaration 8"), // ItemAuctionSearch
         ["0x0823 client to server [1]"] = new(PartMissing, "the client has 32, the declaration a blob"), // Client0823
         ["0x082A client to server [0]"] = new(BitsDiffer, "the client has 32, the declaration 20"), // Client082A
         ["0x084C server to client [1].element"] = new(TreeDiffers, "the declaration's sequence goes on for 1 nodes after the client's ends"), // Server084C
         ["0x092C server to client [1].element[3]"] = new(TreeDiffers, "the client has 32, the declaration a union"), // Server092C
         ["0x0967 server to client"] = new(BitsDiffer, "the declaration's sequence goes on for 1 nodes after the client's ends"), // Server0967
-        ["0x0978 server to client [1].element[1]"] = new(TreeDiffers, "the client has 1, the declaration 32"), // Server0978
+        ["0x0978 server to client [1].element[1]"] = new(TreeDiffers, "the client has 1, the declaration 32"), // CreddOperationHistory
         ["0x098B server to client [1].element[6].element[11].element[1]"] = new(TreeDiffers, "the client accepts selector 3 and the declaration has no arm"), // Server098B
         ["0x098B server to client [1].element[6].element[11].element[1].arm 0x01"] = new(TreeDiffers, "the client's sequence goes on for 1 nodes after the declaration's ends"), // Server098B
         ["0x098B server to client [1].element[6].element[11].element[1].arm 0x02"] = new(TreeDiffers, "the client's sequence goes on for 1 nodes after the declaration's ends"), // Server098B
