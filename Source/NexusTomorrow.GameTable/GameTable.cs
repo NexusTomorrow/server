@@ -238,19 +238,9 @@ public class GameTable<T> where T : class, new()
                                 break;
                             case DataType.String:
                                 {
-                                    uint offset1 = reader.ReadUInt32();
-                                    uint offset2 = reader.ReadUInt32();
-                                    uint offset3 = Math.Max(offset1, offset2);
-
-                                    string @string = stringTable.GetEntry(offset3 - recordSize);
-                                    modelField.SetValue(entry, @string);
-
-                                    if (fieldIndex < typeFields.Length - 1)
-                                    {
-                                        if (offset1 == 0 && fields[fieldIndex].Type != DataType.String)
-                                            reader.BaseStream.Position += 4;
-                                    }
-
+                                    SkipToEightByteBoundary(reader, recordStartPosition);
+                                    ulong offset = reader.ReadUInt64();
+                                    modelField.SetValue(entry, stringTable.GetEntry((uint)(offset - recordSize)));
                                     break;
                                 }
                         }
@@ -269,8 +259,8 @@ public class GameTable<T> where T : class, new()
     }
 
     /// <summary>
-    /// A 64-bit column starts on an 8-byte boundary within its record, so one that follows an odd number of 4-byte columns
-    /// has 4 bytes of padding before it (TradeskillTier's RelearnCost, after eleven uints).
+    /// A 64-bit column, a ulong or a string's offset, starts on an 8-byte boundary within its record, so one that follows an
+    /// odd number of 4-byte columns has 4 bytes of padding before it (TradeskillTier's RelearnCost, after eleven uints).
     /// </summary>
     private static void SkipToEightByteBoundary(BinaryReader reader, long recordStart)
     {
