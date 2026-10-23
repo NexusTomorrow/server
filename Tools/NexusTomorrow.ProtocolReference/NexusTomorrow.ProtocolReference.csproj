@@ -19,6 +19,13 @@
     <ProjectReference Include="..\..\Source\NexusTomorrow.Settings\NexusTomorrow.Settings.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Maps\NexusTomorrow.Maps.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Server\NexusTomorrow.Server.csproj" />
+    <!-- The codec generator's diagnostics, for their page; the reference to its output assembly is what lets the page read the descriptors. -->
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Network.Codec.Generator\NexusTomorrow.Network.Codec.Generator.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The generator keeps Roslyn private to itself, so the page names the descriptor type and loads the library on its own. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
   </ItemGroup>
 
 </Project>

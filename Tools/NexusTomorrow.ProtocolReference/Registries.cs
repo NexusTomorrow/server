@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Commands;
@@ -38,6 +39,15 @@ public static class Registries
             .Where(type => type.IsDefined(typeof(SettingsSectionAttribute), inherit: false))
             .Select(SettingsSection.Of)
             .OrderBy(section => section.Order),
+    ];
+
+    /// <summary>
+    /// Every diagnostic the codec's source generator reports, in id order.
+    /// </summary>
+    public static IReadOnlyList<CodecDiagnostic> CodecDiagnostics() =>
+    [
+        .. NexusTomorrow.Network.Codec.Generator.Diagnostics.All
+            .Select(descriptor => new CodecDiagnostic(descriptor.Id, descriptor.DefaultSeverity, descriptor.Description.ToString(CultureInfo.InvariantCulture))),
     ];
 
     /// <summary>
