@@ -233,7 +233,6 @@ internal static class RegistryVerification
         "0x01B2",
         "0x01B3",
         "0x01B4",
-        "0x01B6",
         "0x01B8",
         "0x01C1",
         "0x01C2",

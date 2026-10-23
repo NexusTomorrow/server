@@ -22,12 +22,6 @@ internal static class RegistryDisagreements
         ["0x0152 server to client [1].element[0]"] = new(TreeDiffers, "the client has 8, the declaration 3"), // Server0152
         ["0x015A client to server [1]"] = new(BitsDiffer, "the client has 7, the declaration 32"), // Client015A
         ["0x01B4 server to client [1]"] = new(TreeDiffers, "the client has 32, the declaration a blob"), // Server01B4
-        ["0x01C3 client to server [4].element[3].arm 0x01[0]"] = new(TreeDiffers, "the client has 32, the declaration 14"), // Client01C3
-        ["0x01C3 client to server [4].element[3].arm 0x07[0]"] = new(TreeDiffers, "the client has 32, the declaration 14"), // Client01C3
-        ["0x01C8 server to client [12].element[3].arm 0x01[0]"] = new(TreeDiffers, "the client has 32, the declaration 14"), // Server01C8
-        ["0x01C8 server to client [12].element[3].arm 0x07[0]"] = new(TreeDiffers, "the client has 32, the declaration 14"), // Server01C8
-        ["0x01D4 client to server [4].element[3].arm 0x01[0]"] = new(TreeDiffers, "the client has 32, the declaration 14"), // Client01D4
-        ["0x01D4 client to server [4].element[3].arm 0x07[0]"] = new(TreeDiffers, "the client has 32, the declaration 14"), // Client01D4
         ["0x0247 server to client [1]"] = new(TreeDiffers, "the client accepts selector 34 and the declaration has no arm"), // Server0247
         ["0x0247 server to client [1].arm 0x05[5]"] = new(TreeDiffers, "the client has 32, the declaration 1"), // Server0247
         ["0x0247 server to client [1].arm 0x0B"] = new(TreeDiffers, "the client's sequence goes on for 4 nodes after the declaration's ends"), // Server0247
