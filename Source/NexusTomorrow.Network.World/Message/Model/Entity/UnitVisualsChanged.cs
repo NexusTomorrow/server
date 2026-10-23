@@ -25,7 +25,7 @@ public sealed partial class UnitVisualsChanged
     /// <summary>
     /// The unit's gender.
     /// </summary>
-    [UInt(2)] public byte Gender { get; set; }
+    [UInt(2)] public Sex Gender { get; set; }
 
     /// <summary>
     /// The creature, a Creature2 table id.
