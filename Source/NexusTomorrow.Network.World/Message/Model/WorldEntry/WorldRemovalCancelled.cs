@@ -1,9 +1,9 @@
 ﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
 
-namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
+namespace NexusTomorrow.Network.World.Message.Model.WorldEntry;
 
 [WireMessage(GameMessageOpcode.Server0688, Direction.ServerToClient)]
-public sealed partial class Server0688
+public sealed partial class WorldRemovalCancelled
 {
 }

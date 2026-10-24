@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.WorldEntry;
 public sealed partial class LogoutCountdown
 {
     [WireStruct]
-    public sealed partial class Server0092Part0
+    public sealed partial class LogoutSignatureBonuses
     {
         [UInt(32)] public uint Unknown0 { get; set; }
         [UInt(32)] public uint Unknown1 { get; set; }
@@ -29,5 +29,5 @@ public sealed partial class LogoutCountdown
     /// </summary>
     [UInt(1)] public bool Cancel { get; set; }
 
-    public Server0092Part0 Unknown2 { get; set; } = new();
+    public LogoutSignatureBonuses Unknown2 { get; set; } = new();
 }
