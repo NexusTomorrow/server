@@ -83,7 +83,8 @@ public sealed partial class Server0262Part10
     [VerifiedMember, UInt(1)] public bool TargetKilled { get; set; }
 
     /// <summary>
-    /// How the effect landed, which the combat log reports as eCombatResult. The client reports no combat log entry for 0.
+    /// How the effect landed, which the combat log reports as eCombatResult. The client reports no damage or heal entry for the effect
+    /// when it is 0.
     /// </summary>
     [VerifiedMember, UInt(4)] public CombatResult CombatResult { get; set; }
 
@@ -93,7 +94,7 @@ public sealed partial class Server0262Part10
     [VerifiedMember, UInt(3)] public DamageType DamageType { get; set; }
 
     /// <summary>
-    /// The effect's further hits. The client reads only the first, which the combat log reports as a multi-hit entry.
+    /// The effect's further hits. The client reads only the first.
     /// </summary>
     [VerifiedMember, Array(CountBits = 8)] public List<Server0262Part11> MultiHits { get; set; } = [];
 }

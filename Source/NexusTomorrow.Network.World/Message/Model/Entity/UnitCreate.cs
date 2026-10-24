@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Entity;
 
 /// <summary>
 /// Creates a unit in the client's world under an id the client then knows it by: its type and the data that type carries, its stats and
-/// other values set by id, the commands applied to it, the spells created on it, its faction, and its display and outfit.
+/// other values set by id, the commands applied to it, its faction, and its display and outfit.
 /// </summary>
 /// <remarks>
 /// The client ignores a create for an id it already has, and that unit keeps what it had. Among the units it refuses are a unit whose type
