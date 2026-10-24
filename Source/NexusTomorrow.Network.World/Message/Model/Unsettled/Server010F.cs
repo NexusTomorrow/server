@@ -49,6 +49,6 @@ public sealed partial class Server010F
     [UInt(4), Count] public byte Unknown21 { get; set; }
     [Array(CountFrom = nameof(Unknown21)), UInt(32)] public List<uint> Unknown22 { get; } = [];
     [Array(CountFrom = nameof(Unknown21)), UInt(32)] public List<uint> Unknown23 { get; } = [];
-    [Array(CountBits = 32), UInt(32)] public List<uint> Unknown24 { get; } = [];
+    [Array(CountBits = 32), Float32] public List<float> Unknown24 { get; } = [];
     [Float32] public float Unknown25 { get; set; }
 }
