@@ -4,6 +4,7 @@ using NexusTomorrow.Harness;
 using NexusTomorrow.Maps;
 using NexusTomorrow.Network.World.Entity.Command;
 using NexusTomorrow.Network.World.Entity.Model;
+using NexusTomorrow.Network.World.Message.Model.Entity;
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
@@ -232,6 +233,150 @@ public sealed class WorldScenarios
         Assert.True(logout.ToCharacterSelect);
         Assert.Equal((byte)0, logout.Unknown1);
         Assert.Equal((ushort)1, again.Enter.WorldId);
+    }
+
+    [Fact]
+    public async Task TwoPlayersEnteringTheSameWorldSeeEachOther()
+    {
+        await using Scenario scenario = await Scenario.StartAsync();
+        await using Walkers walkers = await Walkers.EnterAsync(scenario);
+
+        Assert.Equal(walkers.SecondUnit, walkers.FirstSaw.UnitId);
+        Assert.Equal((byte)20, walkers.FirstSaw.UnitType);
+        Assert.Equal(Walkers.SecondName, Assert.IsType<Server0262Union0Arm14>(walkers.FirstSaw.TypeData).Name);
+        Assert.Equal(walkers.SecondUnit, walkers.FirstSawPath.UnitId);
+        Assert.Equal(walkers.FirstUnit, walkers.SecondSaw.UnitId);
+        Assert.Equal(CharacterName, Assert.IsType<Server0262Union0Arm14>(walkers.SecondSaw.TypeData).Name);
+        Assert.Equal(walkers.FirstUnit, walkers.SecondSawPath.UnitId);
+    }
+
+    [Fact]
+    public async Task AMoveReachesTheOtherPlayer()
+    {
+        await using Scenario scenario = await Scenario.StartAsync();
+        await using Walkers walkers = await Walkers.EnterAsync(scenario);
+        Vector3 to = HarnessServer.Start + new Vector3(2, 0, 0);
+
+        await walkers.First.MoveAsync(to, 0.5f, 7000);
+
+        UnitMovement moved = await walkers.Second.ExpectAsync<UnitMovement>();
+        Assert.Equal(walkers.FirstUnit, moved.UnitId);
+        Assert.Equal(7000u, moved.Time);
+        Assert.True(moved.Reset);
+        byte[] arms = [0, 2, 14];
+        Assert.Equal(arms, moved.Commands.Select(command => command.Unknown0));
+        Assert.Equal(to, Assert.IsType<SetPositionCommand>(moved.Commands[1].Unknown1).Position);
+        Assert.Equal(new Vector3(0.5f, 0, 0), Assert.IsType<SetRotationCommand>(moved.Commands[2].Unknown1).Rotation);
+    }
+
+    [Fact]
+    public async Task ALogoutRemovesThePlayerFromTheOthersWorld()
+    {
+        await using Scenario scenario = await Scenario.StartAsync();
+        await using Walkers walkers = await Walkers.EnterAsync(scenario);
+
+        await walkers.First.LogOutAsync();
+
+        Assert.Equal(walkers.FirstUnit, (await walkers.Second.ExpectAsync<UnitDestroyed>()).UnitId);
+    }
+
+    [Fact]
+    public async Task WalkingOutOfRangeRemovesAndWalkingBackRestores()
+    {
+        await using Scenario scenario = await Scenario.StartAsync();
+        await using Walkers walkers = await Walkers.EnterAsync(scenario);
+
+        // The drop radius is 160 and the admit radius 128 (the Maps defaults).
+        await walkers.First.MoveAsync(HarnessServer.Start + new Vector3(200, 0, 0), 0, 7000);
+        Assert.Equal(walkers.FirstUnit, (await walkers.Second.ExpectAsync<UnitDestroyed>()).UnitId);
+
+        await walkers.First.MoveAsync(HarnessServer.Start + new Vector3(50, 0, 0), 0, 7125);
+        Assert.Equal(walkers.FirstUnit, (await walkers.Second.ExpectAsync<UnitCreate>()).UnitId);
+        Assert.Equal(walkers.FirstUnit, (await walkers.Second.ExpectAsync<UnitPathTypeChanged>()).UnitId);
+        UnitMovement moved = await walkers.Second.ExpectAsync<UnitMovement>();
+        Assert.Equal(7125u, moved.Time);
+        Assert.True(moved.Reset);
+    }
+
+    [Fact]
+    public async Task ASteadyStateTickWithTwoPlayersMovingAllocatesNothing()
+    {
+        await using Scenario scenario = await Scenario.StartAsync();
+        await using Walkers walkers = await Walkers.EnterAsync(scenario);
+        MapOwner map = scenario.Server.Map(1);
+        await scenario.Server.Maps.PauseAsync();
+
+        // Ten seconds of 125 ms intervals; the first ten warm the pools and the queues. Each moves the host's clock too, since the
+        // movement row's rate limit refills on it, and it is the fake one here.
+        uint clock = 7000;
+        for (int interval = 0; interval < 80; interval++)
+        {
+            clock += 125;
+            scenario.Server.Time.Advance(TimeSpan.FromMilliseconds(125));
+            await walkers.First.MoveAsync(HarnessServer.Start + new Vector3(interval % 5, 0, 0), 0, clock);
+            await walkers.Second.MoveAsync(HarnessServer.Start + new Vector3(0, 0, interval % 5), 0, clock);
+            await Eventually.TrueAsync(() => map.QueueLength == 2, s_bound);
+            for (int tick = 0; tick < 5; tick++)
+            {
+                await scenario.Server.Maps.TickAsync();
+                if (interval >= 10)
+                    Assert.Equal(0L, map.LastTickAllocatedBytes);
+            }
+        }
+
+        Assert.True(map.RelayedBatches >= 160);
+    }
+
+    // Two accounts, each with a character entered at the start: a second character on one account would replace the first's login.
+    // Each has taken the other's create and path.
+    private sealed class Walkers : IAsyncDisposable
+    {
+        public const string SecondName = "Other Walker";
+        private const string SecondEmail = "bob@example.com";
+
+        private HeadlessClient? _firstClient;
+        private HeadlessClient? _secondClient;
+
+        public WorldSession First { get; private set; } = null!;
+
+        public WorldSession Second { get; private set; } = null!;
+
+        public uint FirstUnit { get; private set; }
+
+        public uint SecondUnit { get; private set; }
+
+        public UnitCreate FirstSaw { get; private set; } = null!;
+
+        public UnitPathTypeChanged FirstSawPath { get; private set; } = null!;
+
+        public UnitCreate SecondSaw { get; private set; } = null!;
+
+        public UnitPathTypeChanged SecondSawPath { get; private set; } = null!;
+
+        public static async Task<Walkers> EnterAsync(Scenario scenario)
+        {
+            Assert.Equal(CommandOutcome.Done, (await scenario.Server.RunAsync($"account create {SecondEmail} \"{Password}\"")).Outcome);
+            var walkers = new Walkers { _firstClient = scenario.Server.NewClient(), _secondClient = scenario.Server.NewClient() };
+            walkers.First = await walkers._firstClient.ScriptedLoginAsync(Email, Password);
+            walkers.FirstUnit = (await walkers.First.EnterWorldAsync((await walkers.First.CreateAsync(CharacterName)).CharacterId)).Unit.UnitId;
+            walkers.Second = await walkers._secondClient.ScriptedLoginAsync(SecondEmail, Password);
+            walkers.SecondUnit = (await walkers.Second.EnterWorldAsync((await walkers.Second.CreateAsync(SecondName)).CharacterId)).Unit.UnitId;
+            walkers.FirstSaw = await walkers.First.ExpectAsync<UnitCreate>();
+            walkers.FirstSawPath = await walkers.First.ExpectAsync<UnitPathTypeChanged>();
+            walkers.SecondSaw = await walkers.Second.ExpectAsync<UnitCreate>();
+            walkers.SecondSawPath = await walkers.Second.ExpectAsync<UnitPathTypeChanged>();
+            return walkers;
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await First.DisposeAsync();
+            await Second.DisposeAsync();
+            if (_firstClient is not null)
+                await _firstClient.DisposeAsync();
+            if (_secondClient is not null)
+                await _secondClient.DisposeAsync();
+        }
     }
 
     private sealed class Scenario : IAsyncDisposable

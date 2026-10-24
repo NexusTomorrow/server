@@ -53,13 +53,14 @@ internal sealed class MovementRelay
 
     public long Dropped(RelayDrop reason) => Volatile.Read(ref _dropped[(int)reason]);
 
-    // A batch past the limit is lost, so the next relay resets every viewer's fit rather than play on across the gap.
+    // A batch past the limit is lost, so the relay after the pending batches resets every viewer's fit rather than play on across the
+    // gap; the pending batches came before it and relay as they would have.
     public void Queue(Player mover, RelayBatch batch, long nowMs)
     {
         if (mover.PendingCount == PendingLimit)
         {
             Drop(RelayDrop.RingFull);
-            mover.ResetNext = true;
+            mover.LostAfterPending = true;
             return;
         }
 
@@ -80,6 +81,11 @@ internal sealed class MovementRelay
             }
 
             mover.PendingCount = 0;
+            if (mover.LostAfterPending)
+            {
+                mover.LostAfterPending = false;
+                mover.ResetNext = true;
+            }
         }
     }
 
