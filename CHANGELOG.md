@@ -116,6 +116,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   groups, destination markers, taxi nodes, group members' positions, tracked units, phases and
   planes, the generic map and its nodes, and datacube progress. Hiding the story panel sits with the
   story messages.
+- Costume messages carry their real names and field meanings: the costume list and updates, wearing a
+  costume, saving one and its result, unlocking and forgetting costume items, and the appearance
+  change.
 
 ### Changed
 
