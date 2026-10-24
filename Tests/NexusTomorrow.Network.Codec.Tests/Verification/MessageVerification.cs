@@ -88,7 +88,8 @@ internal static partial class MessageVerification
         }
     }
 
-    [GeneratedRegex("^Unknown[0-9]+$")]
+    // A neutral member, or one bit of a neutral field the declaration takes bit by bit (UnitCreate.Unknown3Bit0).
+    [GeneratedRegex("^Unknown[0-9]+(Bit[0-9]+)?$")]
     private static partial Regex NeutralName();
 
     [GeneratedRegex("^(Client|Server|Message)[0-9A-F]{4}$")]

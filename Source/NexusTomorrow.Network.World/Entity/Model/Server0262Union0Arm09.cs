@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Entity.Model;
 public sealed partial class Server0262Union0Arm09 : IServer0262Union0
 {
     /// <summary>
-    /// A unit the client records this unit on, with two values.
+    /// A unit that takes this unit as its vehicle, with two values.
     /// </summary>
     [WireStruct]
     public sealed partial class Server0262Part1
@@ -19,24 +19,24 @@ public sealed partial class Server0262Union0Arm09 : IServer0262Union0
         [UInt(3)] public byte Unknown1 { get; set; }
 
         /// <summary>
-        /// A unit's id. If the client has that unit, it records this unit on it, with the two values before this one.
+        /// A unit, by unit id. If the client has that unit, that unit takes this one as its vehicle, with the two values before this one.
         /// </summary>
-        [UInt(32)] public uint Unknown2 { get; set; }
+        [VerifiedMember, UInt(32)] public uint UnitId { get; set; }
     }
 
     /// <summary>
     /// The unit's creature, as an id in the client's Creature2 table, or 0 for none. The client refuses the unit when it has no creature
     /// for a non-zero id.
     /// </summary>
-    [UInt(18)] public uint Unknown0 { get; set; }
+    [VerifiedMember, UInt(18)] public uint CreatureId { get; set; }
 
     /// <summary>
-    /// An id in the client's UnitVehicle table.
+    /// The vehicle the unit is, as an id in the client's UnitVehicle table.
     /// </summary>
-    [UInt(14)] public ushort Unknown1 { get; set; }
+    [VerifiedMember, UInt(14)] public ushort UnitVehicleId { get; set; }
 
     /// <summary>
-    /// Other units: the client records this unit on each one it has.
+    /// Other units: each one the client has takes this unit as its vehicle.
     /// </summary>
-    [Array(CountBits = 3)] public List<Server0262Part1> Unknown2 { get; set; } = [];
+    [VerifiedMember, Array(CountBits = 3)] public List<Server0262Part1> Unknown2 { get; set; } = [];
 }

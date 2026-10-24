@@ -13,7 +13,7 @@ public sealed partial class Server0262Union0Arm12 : IServer0262Union0
     /// The unit's creature, as an id in the client's Creature2 table, or 0 for none. The client refuses the unit when it has no creature
     /// for a non-zero id.
     /// </summary>
-    [UInt(18)] public uint Unknown0 { get; set; }
+    [VerifiedMember, UInt(18)] public uint CreatureId { get; set; }
 
     /// <summary>
     /// An id the client looks up, in the way <see cref="Unknown3"/> selects, for the unit's name. When that finds nothing, the unit takes

@@ -25,6 +25,9 @@ namespace NexusTomorrow.Network.World.Message.Model.Entity;
 [Verified(Rung.Purpose)]
 public sealed partial class UnitCreate
 {
+    /// <summary>
+    /// The prerequisite the player must pass for the unit to offer its vendor.
+    /// </summary>
     [WireStruct]
     public sealed partial class Server0262Part14
     {
@@ -32,22 +35,42 @@ public sealed partial class UnitCreate
         {
         }
 
+        /// <summary>
+        /// No prerequisite.
+        /// </summary>
         [WireStruct]
         [UnionCase(0)]
         public sealed partial class Server0262Union4Arm00 : IServer0262Union4
         {
+            /// <summary>
+            /// The client gives this value no meaning.
+            /// </summary>
             [UInt(1)] public bool Unknown0 { get; set; }
         }
 
+        /// <summary>
+        /// A prerequisite, by id.
+        /// </summary>
         [WireStruct]
         [UnionCase(1)]
         public sealed partial class Server0262Union4Arm01 : IServer0262Union4
         {
-            [UInt(17)] public uint Unknown0 { get; set; }
+            /// <summary>
+            /// The prerequisite the player must pass, by id, for the unit to offer its vendor; with 0 the unit offers it always.
+            /// </summary>
+            [VerifiedMember, UInt(17)] public uint PrerequisiteId { get; set; }
         }
 
-        [UInt(2)] public byte Unknown0 { get; set; }
-        [Union(nameof(Unknown0))] public IServer0262Union4 Unknown1 { get; set; } = new Server0262Union4Arm00();
+        /// <summary>
+        /// Whether the unit names a prerequisite: 1 names one in <see cref="Server0262Union4Arm01.PrerequisiteId"/>, and 0 names none. It
+        /// selects <see cref="Unknown1"/>.
+        /// </summary>
+        [VerifiedMember, UInt(2)] public byte Unknown0 { get; set; }
+
+        /// <summary>
+        /// The prerequisite, in the form <see cref="Unknown0"/> selects.
+        /// </summary>
+        [VerifiedMember, Union(nameof(Unknown0))] public IServer0262Union4 Unknown1 { get; set; } = new Server0262Union4Arm00();
     }
 
     [WireStruct]
@@ -117,7 +140,20 @@ public sealed partial class UnitCreate
     /// </summary>
     [VerifiedMember, Union(nameof(UnitType))] public IServer0262Union0 TypeData { get; set; } = new Server0262Union0Arm00();
 
-    [UInt(8)] public byte Unknown3 { get; set; }
+    [UInt(1)] public bool Unknown3Bit0 { get; set; }
+    [UInt(1)] public bool Unknown3Bit1 { get; set; }
+
+    /// <summary>
+    /// Whether the unit is a vendor: when set, the client gives the unit the Vendor activation that Unit:GetActivationState reports, as
+    /// long as the player passes <see cref="VendorPrerequisite"/>.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool IsVendor { get; set; }
+
+    [UInt(1)] public bool Unknown3Bit3 { get; set; }
+    [UInt(1)] public bool Unknown3Bit4 { get; set; }
+    [UInt(1)] public bool Unknown3Bit5 { get; set; }
+    [UInt(1)] public bool Unknown3Bit6 { get; set; }
+    [UInt(1)] public bool Unknown3Bit7 { get; set; }
 
     /// <summary>
     /// The unit's stats, each under its stat id, sent as an integer, a float or a pair of integers. The unit's health is 0 unless stat 0
@@ -126,9 +162,10 @@ public sealed partial class UnitCreate
     [VerifiedMember, Array(CountBits = 5)] public List<Server0262Part4> Stats { get; set; } = [];
 
     /// <summary>
-    /// A value the client pairs with its own clock when it creates the unit.
+    /// The time of the create, in milliseconds on the sender's clock. The client adds it, with its own clock, to its fit of the sender's
+    /// clock for the unit, the fit <see cref="UnitMovement.Unknown1"/> feeds and through which it maps the times of the unit's commands.
     /// </summary>
-    [UInt(32)] public uint Unknown5 { get; set; }
+    [VerifiedMember, UInt(32)] public uint SenderTime { get; set; }
 
     /// <summary>
     /// Commands the client applies to the unit as it creates it. If it cannot apply one, it refuses the unit.
@@ -156,7 +193,7 @@ public sealed partial class UnitCreate
     /// <summary>
     /// A spell, as an id the client looks up among the spells it holds.
     /// </summary>
-    [UInt(32)] public uint SpellId { get; set; }
+    [VerifiedMember, UInt(32)] public uint SpellId { get; set; }
 
     /// <summary>
     /// The unit's faction, as an id in the client's Faction2 table. It may differ from the base faction, <see cref="BaseFactionId"/>.
@@ -182,7 +219,11 @@ public sealed partial class UnitCreate
     /// </summary>
     [VerifiedMember, UInt(64)] public ulong TaggedByGroupId { get; set; }
 
-    public Server0262Part14 Unknown15 { get; set; } = new();
+    /// <summary>
+    /// The prerequisite the player must pass for the unit to offer its vendor (<see cref="IsVendor"/>).
+    /// </summary>
+    [VerifiedMember] public Server0262Part14 VendorPrerequisite { get; set; } = new();
+
     public Server0262Part15 Unknown16 { get; set; } = new();
     public Server0262Part16 Unknown17 { get; set; } = new();
 
@@ -195,10 +236,10 @@ public sealed partial class UnitCreate
     /// <summary>
     /// The unit's display, as an id in the client's Creature2DisplayInfo table, or 0 for none. The client ignores an id the table lacks.
     /// </summary>
-    [UInt(17)] public uint DisplayInfoId { get; set; }
+    [VerifiedMember, UInt(17)] public uint DisplayInfoId { get; set; }
 
     /// <summary>
     /// The unit's outfit, as an id in the client's Creature2OutfitInfo table, or 0 for none. The client ignores an id the table lacks.
     /// </summary>
-    [UInt(15)] public ushort OutfitInfoId { get; set; }
+    [VerifiedMember, UInt(15)] public ushort OutfitInfoId { get; set; }
 }

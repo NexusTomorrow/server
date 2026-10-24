@@ -50,6 +50,13 @@ public sealed partial class UnreadFixture
 
 [WireStruct]
 [Verified(Rung.Fields)]
+public sealed partial class BitFieldFixture
+{
+    [UInt(1)] public bool Unknown0Bit0 { get; set; }
+}
+
+[WireStruct]
+[Verified(Rung.Fields)]
 public sealed partial class PrivateMemberFixture
 {
     [UInt(8)] public byte Shown { get; set; }
