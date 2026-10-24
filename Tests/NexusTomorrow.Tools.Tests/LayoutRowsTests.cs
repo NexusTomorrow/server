@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Message.Model.Entity;
+using NexusTomorrow.Network.World.Message.Model.Spell;
 
 namespace NexusTomorrow.Tools.Tests;
 
@@ -17,6 +18,22 @@ public sealed class LayoutRowsTests
         Assert.Equal(
             [("Unknown0", "32", "unsigned"), ("Unknown1", "", "array, counted on the wire"), ("Unknown1[]", "32", "float")],
             LayoutRows.Of(typeof(Server0931)));
+    }
+
+    [Fact]
+    public void AUnionIsItsOwnRowThenEachArmsRowsInCaseOrder()
+    {
+        List<(string Path, string Bits, string Encoding)> rows = LayoutRows.Of(typeof(CombatLog));
+
+        Assert.Equal(("Type", "6", "unsigned"), rows[0]);
+        Assert.Equal(("Payload", "", "union of ICombatLogPayload, selected by `Type`"), rows[1]);
+        Assert.Equal(
+            [("Payload{0}", "", "the fields below"), ("Payload{0}.Amount", "32", "unsigned"), ("Payload{0}.Action", "", "the fields below"),
+             ("Payload{0}.Action.CasterId", "32", "unsigned")],
+            rows[2..6]);
+        List<string> arms = [.. rows.Where(row => row.Encoding == "the fields below" && !row.Path.Contains('.', StringComparison.Ordinal))
+            .Select(row => row.Path)];
+        Assert.Equal([.. arms.OrderBy(path => int.Parse(path[8..^1], CultureInfo.InvariantCulture))], arms);
     }
 
     [Fact]
