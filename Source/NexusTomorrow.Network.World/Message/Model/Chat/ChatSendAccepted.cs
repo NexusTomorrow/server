@@ -16,7 +16,7 @@ public sealed partial class ChatSendAccepted
     /// <summary>
     /// The line, by the slot the client files it under until the server answers.
     /// </summary>
-    [UInt(16)] public ushort ChatId { get; set; }
+    [VerifiedMember, UInt(16)] public ushort ChatId { get; set; }
 
     /// <summary>
     /// True when the player is a game master.

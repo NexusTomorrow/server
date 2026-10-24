@@ -18,7 +18,7 @@ public sealed partial class ChatMessageReceived
     /// <summary>
     /// The channel.
     /// </summary>
-    public ChatChannelKey Channel { get; set; } = new();
+    [VerifiedMember] public ChatChannelKey Channel { get; set; } = new();
 
     /// <summary>
     /// True when the sender is a game master.
@@ -43,7 +43,7 @@ public sealed partial class ChatMessageReceived
     /// <summary>
     /// The sender, by name.
     /// </summary>
-    [WideString] public string SenderName { get; set; } = "";
+    [VerifiedMember, WideString] public string SenderName { get; set; } = "";
 
     /// <summary>
     /// The sender's realm, by name.
@@ -58,7 +58,7 @@ public sealed partial class ChatMessageReceived
     /// <summary>
     /// The line's text.
     /// </summary>
-    [WideString] public string Text { get; set; } = "";
+    [VerifiedMember, WideString] public string Text { get; set; } = "";
 
     /// <summary>
     /// The links in the text.
