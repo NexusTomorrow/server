@@ -25,9 +25,10 @@ public sealed partial class MovementControl
     [UInt(32)] public uint Ticket { get; set; }
 
     /// <summary>
-    /// When set, the client rebuilds the movement state of the unit it moves from that unit's current state, at the current time.
+    /// When set, the client restarts the movement of the unit it moves from that unit's current values, at the current time: a motion the
+    /// server was playing on the unit, such as a turn, stops where it stood when the message arrived. When clear, such a motion carries on.
     /// </summary>
-    [UInt(1)] public bool RebuildMovement { get; set; }
+    [VerifiedMember, UInt(1)] public bool RebuildMovement { get; set; }
 
     /// <summary>
     /// The unit to move. If it is not the unit the client moves, the client switches to it, or waits for that unit's <see cref="UnitCreate"/>.
