@@ -7,7 +7,8 @@ namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 /// Sets abilities' tiers in the player's ability book, each for one action set.
 /// </summary>
 /// <remarks>
-/// The client adds an entry for an ability the book lacks, then raises AbilityBookChange.
+/// The client adds an entry for an ability the book lacks, then raises AbilityBookChange; AbilityBook.GetAbilitiesList lists the abilities
+/// the book holds.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server01A0, Direction.ServerToClient)]
 [Verified(Rung.Fields)]
@@ -31,7 +32,7 @@ public sealed partial class AbilityBookChanged
         [VerifiedMember, UInt(4)] public byte Tier { get; set; }
 
         /// <summary>
-        /// Which action set the tier is for, counted from 0. The client drops an entry whose index is at or above the ability's own count
+        /// Which action set the tier is for, counted from 0. The client ignores a record whose index is at or above the ability's own count
         /// of action sets, which is 1 for some spells.
         /// </summary>
         [VerifiedMember, UInt(3)] public byte ActionSetIndex { get; set; }

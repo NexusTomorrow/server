@@ -7,7 +7,9 @@ namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 /// Sets the player's ability points.
 /// </summary>
 /// <remarks>
-/// The client raises AbilityBookChange.
+/// GameLib.GetTotalAbilityPoints reports <see cref="TotalAbilityPoints"/>, and GameLib.GetAbilityPoints reports
+/// <see cref="AbilityPoints"/>, or a working copy while tier changes are pending. AbilityBook.UpdateSpellTier limits a raise to what
+/// <see cref="AbilityPoints"/> pays for. The client raises AbilityBookChange.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0169, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

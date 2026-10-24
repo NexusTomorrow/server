@@ -52,7 +52,8 @@ public sealed partial class ActionSetChanged
     [VerifiedMember, UInt(3)] public byte ActionSetIndex { get; set; }
 
     /// <summary>
-    /// The action set's flags. The client never tests 0x02.
+    /// The action set's flags: bit 0 is <see cref="ActionSetFlags.Unlocked"/>, and the client gives bit 1 (0x02) no meaning, since every
+    /// reader tests bit 0 only.
     /// </summary>
     [VerifiedMember, UInt(2)] public ActionSetFlags Flags { get; set; }
 

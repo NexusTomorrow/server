@@ -1,7 +1,7 @@
 ﻿namespace NexusTomorrow.Game.Static.Abilities;
 
 /// <summary>
-/// The flags an action set carries, which the client tests bit by bit.
+/// The flags an action set carries. The client tests only bit 0 and gives bit 1 (0x02) no meaning.
 /// </summary>
 [Flags]
 public enum ActionSetFlags
