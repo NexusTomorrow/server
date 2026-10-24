@@ -3,15 +3,32 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
+/// <summary>
+/// Sets the account's entitlements; the client raises AccountEntitlementUpdate for each.
+/// </summary>
 [WireMessage(GameMessageOpcode.Server0968, Direction.ServerToClient)]
+[Verified(Rung.Fields)]
 public sealed partial class AccountEntitlements
 {
+    /// <summary>
+    /// One account entitlement and its count.
+    /// </summary>
     [WireStruct]
     public sealed partial class AccountEntitlement
     {
-        [UInt(32)] public uint Unknown0 { get; set; }
-        [UInt(32)] public uint Unknown1 { get; set; }
+        /// <summary>
+        /// The entitlement, an Entitlement table id.
+        /// </summary>
+        [UInt(32)] public uint EntitlementId { get; set; }
+
+        /// <summary>
+        /// How many of the entitlement the account holds.
+        /// </summary>
+        [UInt(32)] public uint Count { get; set; }
     }
 
-    [Array(CountBits = 32)] public List<AccountEntitlement> Unknown0 { get; set; } = [];
+    /// <summary>
+    /// The entitlements.
+    /// </summary>
+    [Array(CountBits = 32)] public List<AccountEntitlement> Entitlements { get; set; } = [];
 }

@@ -4,8 +4,15 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
+/// <summary>
+/// Sets the amounts of the account's currencies; the client raises AccountCurrencyChanged.
+/// </summary>
 [WireMessage(GameMessageOpcode.Server0966, Direction.ServerToClient)]
+[Verified(Rung.Fields)]
 public sealed partial class AccountCurrencies
 {
-    [Array(CountBits = 32)] public List<AccountCurrency> Unknown0 { get; set; } = [];
+    /// <summary>
+    /// The currencies, each with the amount the account holds.
+    /// </summary>
+    [Array(CountBits = 32)] public List<AccountCurrency> Currencies { get; set; } = [];
 }
