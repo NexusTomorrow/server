@@ -20,7 +20,7 @@ internal static class RegistryDisagreements
         ["0x0134 server to client [7].arm 0x03"] = new(TreeDiffers, "the declaration's sequence goes on for 1 nodes after the client's ends"), // Server0134
         ["0x013C server to client [1].element[1]"] = new(TreeDiffers, "the client has 32, the declaration 3"), // Server013C
         ["0x0152 server to client [1].element[0]"] = new(TreeDiffers, "the client has 8, the declaration 3"), // Server0152
-        ["0x01B4 server to client [1]"] = new(TreeDiffers, "the client has 32, the declaration a blob"), // Server01B4
+        ["0x01B4 server to client [1]"] = new(TreeDiffers, "the client has 32, the declaration a blob"), // ZoneMapExplored
         ["0x033F client to server [1]"] = new("unsettled: the declaration puts a different number of bits on the wire than the client takes, and lacks the client's wide string", "the client has 32, the declaration a union"), // Client033F
         ["0x0359 server to client [2].element[1]"] = new(TreeDiffers, "the client accepts selector 2 and the declaration has no arm"), // Server0359
         ["0x0359 server to client [2].element[1].arm 0x01[0]"] = new(TreeDiffers, "the client has a narrow string, the declaration a wide string"), // Server0359

@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Map;
 
 [WireMessage(GameMessageOpcode.Server0965, Direction.ServerToClient)]
-public sealed partial class Server0965
+public sealed partial class ZoneMapHexGroupUpdated
 {
     [UInt(14)] public uint Unknown0 { get; set; }
     [UInt(21)] public uint Unknown1 { get; set; }

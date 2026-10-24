@@ -5,8 +5,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Map;
 
 [WireMessage(GameMessageOpcode.Server00E0, Direction.ServerToClient)]
-public sealed partial class Server00E0
+public sealed partial class DatacubeProgressList
 {
-    [Array(CountBits = 32)] public List<Server00E0Part0> Unknown0 { get; set; } = [];
-    [Array(CountBits = 32)] public List<Server00E0Part0> Unknown1 { get; set; } = [];
+    [Array(CountBits = 32)] public List<DatacubeProgress> Unknown0 { get; set; } = [];
+    [Array(CountBits = 32)] public List<DatacubeProgress> Unknown1 { get; set; } = [];
 }
