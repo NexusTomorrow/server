@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Reward;
 
 [WireMessage(GameMessageOpcode.Server092C, Direction.ServerToClient)]
-public sealed partial class Server092C
+public sealed partial class RewardPropertiesChanged
 {
     public interface IServer092CUnion0 : IWireStruct
     {
