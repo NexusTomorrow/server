@@ -14,5 +14,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Inventory;
 [Verified(Rung.Purpose)]
 public sealed partial class ItemAdded
 {
-    public Server0111Part0 Unknown0 { get; set; } = new();
+    public ItemUpdate Unknown0 { get; set; } = new();
 }

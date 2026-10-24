@@ -3,8 +3,8 @@
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class Server0111Part0
+public sealed partial class ItemUpdate
 {
-    public Server0111Part1 Unknown0 { get; set; } = new();
+    public ItemInstance Unknown0 { get; set; } = new();
     [UInt(6)] public byte Unknown1 { get; set; }
 }

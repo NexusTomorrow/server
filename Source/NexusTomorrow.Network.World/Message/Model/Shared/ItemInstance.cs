@@ -3,10 +3,10 @@
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class Server0111Part1
+public sealed partial class ItemInstance
 {
     [WireStruct]
-    public sealed partial class Server0111Part3
+    public sealed partial class ReturnPrice
     {
         [UInt(3)] public byte Unknown0 { get; set; }
         [UInt(32)] public uint Unknown1 { get; set; }
@@ -49,7 +49,7 @@ public sealed partial class Server0111Part1
     [UInt(32)] public uint Unknown12 { get; set; }
     [UInt(32)] public uint Unknown13 { get; set; }
     [UInt(32)] public uint Unknown14 { get; set; }
-    [FixedArray(2)] public Server0111Part3[] Unknown15 { get; set; } = [new(), new()];
+    [FixedArray(2)] public ReturnPrice[] Unknown15 { get; set; } = [new(), new()];
 
     /// <summary>
     /// The power core applied to the item, as an id in the client's Item2 table. When that item is a power core, the client applies its
