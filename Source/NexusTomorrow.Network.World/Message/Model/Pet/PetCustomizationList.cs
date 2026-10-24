@@ -18,7 +18,7 @@ public sealed partial class PetCustomizationList
     [FixedArray(64), UInt(8)] public byte[] UnlockedFlair { get; set; } = new byte[64];
 
     /// <summary>
-    /// Every pet customization the player has. The client drops the customizations it held and keeps these.
+    /// Every pet customization the player has.
     /// </summary>
     [Array(CountBits = 32)] public List<PetCustomization> Customizations { get; set; } = [];
 }

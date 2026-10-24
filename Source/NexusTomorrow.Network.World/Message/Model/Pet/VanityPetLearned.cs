@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Pet;
 
 /// <summary>
-/// Tells the client the player unlocked a vanity pet; it shows a chat line naming the pet's spell and raises VanityPetUnlocked.
+/// Tells the client the player learned a vanity pet; it shows a chat line naming the pet's spell.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server01AE, Direction.ServerToClient)]
 [Verified(Rung.Fields)]
