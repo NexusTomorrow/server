@@ -28,7 +28,7 @@ public sealed class GatedSerializer : IMessageSerializer
             throw new InvalidOperationException($"{refusal}, so the server may not send it.");
 
         int length = FrameWriter.BodyBytes(message);
-        SerializedMessage serialized = SerializedMessage.Rent(T.Opcode, message.GetType(), length, out Span<byte> body);
+        var serialized = SerializedMessage.Rent(T.Opcode, message.GetType(), length, out Span<byte> body);
         try
         {
             FrameWriter.WriteBody(body, message, length);
