@@ -69,6 +69,14 @@ internal sealed class MovementRelay
         mover.PendingCount++;
     }
 
+    // The mover's batches since the last flush came before a correction placed the unit, so relaying them would step it back.
+    public static void Discard(Player mover)
+    {
+        Array.Clear(mover.Pending, 0, mover.PendingCount);
+        mover.PendingCount = 0;
+        mover.LostAfterPending = false;
+    }
+
     public void Flush(Dictionary<ulong, Player>.ValueCollection players)
     {
         foreach (Player mover in players)

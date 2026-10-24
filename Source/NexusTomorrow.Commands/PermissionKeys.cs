@@ -26,6 +26,11 @@ public static class PermissionKeys
     public const string AccountUnsuspend = "account.unsuspend";
 
     /// <summary>
+    /// Move a character in the world.
+    /// </summary>
+    public const string CharacterRelocate = "character.relocate";
+
+    /// <summary>
     /// Read the server's status.
     /// </summary>
     public const string ServerStatus = "server.status";

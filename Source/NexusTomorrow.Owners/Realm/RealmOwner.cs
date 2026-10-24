@@ -16,7 +16,7 @@ namespace NexusTomorrow.Owners.Realm;
 /// handoff (P6): select loads the character in full and hands it to its world's map, which hands it back when it leaves. An answer that
 /// depends on a write is sent only from the write's completion message. A character away from rest is never loaded again until its
 /// map hands it back. A chat line from the world is checked here (its channel, the client's chat rule and the word filter) and passed
-/// to the map holding the speaker's character.
+/// to the map holding the speaker's character, and a command's relocate goes to the map holding its character.
 /// </summary>
 public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
 {
@@ -138,6 +138,9 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
             case ChatSaid said:
                 Say(said);
                 break;
+            case RelocateRequested relocate:
+                Relocate(relocate);
+                break;
         }
 
         if (_ids.WantsRefill)
@@ -195,6 +198,9 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
                     waiting.Session.Send(new CharacterSelectFailed { Unknown0 = SelectReasons.General });
                 }
 
+                break;
+            case RelocateRequested { Reply: var reply }:
+                reply.TrySetResult(false);
                 break;
         }
     }
@@ -473,6 +479,14 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
 
         RealmLog.ChatDropped(_log, said.Session.Id, said.Text.Length, refusal);
         Volatile.Write(ref _droppedChatLines, _droppedChatLines + 1);
+    }
+
+    // The map holding the character answers; a character loading, at rest, or on a map that has stopped is answered false here.
+    private void Relocate(RelocateRequested request)
+    {
+        IMapInbox? map = _presences.TryGetValue(request.CharacterId, out Presence? presence) ? presence.Map : null;
+        if (map is null || !map.Post(new RelocateCharacter(request.CharacterId, request.Position, request.Facing, request.Reply)))
+            request.Reply.TrySetResult(false);
     }
 
     // The map holding the session's character from its arrival on; null while the character loads, waits behind another session's

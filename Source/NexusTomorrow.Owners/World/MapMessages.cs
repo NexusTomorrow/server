@@ -71,6 +71,13 @@ public sealed record ClientLogoutRequested(IWorldSession Session, bool Begin) : 
 public sealed record ClientLogoutConfirmed(IWorldSession Session) : SessionMessage(Session);
 
 /// <summary>
+/// Move a character the map holds in the world to <paramref name="Position"/>, facing <paramref name="Facing"/> (the yaw in radians),
+/// by taking its movement back from the client, placing it and granting movement again. <paramref name="Reply"/> answers true once
+/// that is sent, and false when the map does not hold the character in the world.
+/// </summary>
+public sealed record RelocateCharacter(ulong CharacterId, Vector3 Position, float Facing, TaskCompletionSource<bool> Reply) : MapMessage;
+
+/// <summary>
 /// A line the realm checked and passed on for its speaker's map to say: the speaker's session and character, the client's own id
 /// for the line, and the line.
 /// </summary>

@@ -7,6 +7,7 @@ using NexusTomorrow.Maps.Movement;
 using NexusTomorrow.Maps.Scheduling;
 using NexusTomorrow.Maps.Timing;
 using NexusTomorrow.Maps.Visibility;
+using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 using NexusTomorrow.Owners;
@@ -25,7 +26,8 @@ namespace NexusTomorrow.Maps;
 /// locks. An arriving character gets the world entry (<c>WorldEntry</c>); the client's <c>WorldReady</c> is answered once with
 /// <c>WorldEntryComplete</c>, after which the character sees and is seen by the other players in range.
 /// A logout request is answered with a countdown of 0; its confirm hands the character back and returns the client to character select.
-/// A <c>/say</c> line the realm passed on is accepted to its speaker and heard by the players in range (<c>MapChat</c>).
+/// A <c>/say</c> line the realm passed on is accepted to its speaker and heard by the players in range (<c>MapChat</c>). A relocate
+/// takes a character's movement back, places it and grants movement again.
 /// </summary>
 public sealed class MapOwner : IMapInbox, IOwner, ITickable
 {
@@ -50,6 +52,8 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     private readonly AreaOfInterest _visibility;
     private readonly MovementRelay _relay;
     private readonly MapChat _chat;
+    private readonly IMessageSerializer _serializer;
+    private readonly MovementControlEnd _controlEnd = new();
 
     // Sent only in answer to a logout request with Begin set: at a countdown's deadline the client goes on with the logout
     // (LogoutCountdown.Duration), so an unasked countdown would log the player out. Duration 0 puts that deadline at now, so it
@@ -100,6 +104,7 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
         _visibility = new AreaOfInterest(settings, serializer, visibility, metrics, logger, worldId, _worldTag);
         _relay = new MovementRelay(serializer, metrics, logger, worldId, _worldTag);
         _chat = new MapChat(settings, _visibility, serializer);
+        _serializer = serializer;
         Name = $"map {worldId}";
     }
 
@@ -314,6 +319,9 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
                 case LocalChat line when _bySession.TryGetValue(line.Session, out Player? speaker):
                     _chat.Say(speaker, line);
                     break;
+                case RelocateCharacter relocate:
+                    relocate.Reply.TrySetResult(Relocate(relocate));
+                    break;
             }
         }
         catch (Exception exception)
@@ -378,6 +386,44 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
         IWorldSession session = player.Session;
         HandBack(player);
         session.Send(_logoutToCharacterSelect);
+    }
+
+    // A correction: the client stops moving the unit and drops the movement it gathered (MovementControlEnd), the unit is placed for
+    // its player and every viewer, and a new grant hands movement back. Until the client's receipt of the new ticket its movement is
+    // ignored, and its batches queued before the relocate are dropped, so no viewer sees the unit stepped back. The placement is
+    // serialised before anything is sent, so a refusal leaves the player in control.
+    private bool Relocate(RelocateCharacter relocate)
+    {
+        if (!_byCharacter.TryGetValue(relocate.CharacterId, out Player? player) || !player.InWorld)
+            return false;
+
+        SerializedMessage placed = _serializer.Serialize(new UnitMovement
+        {
+            UnitId = player.UnitId,
+            Time = (uint)_nowMs,
+            Reset = true,
+            ServerMoved = true,
+            Commands = [.. WorldEntry.Placement(relocate.Position, relocate.Facing)],
+        });
+        try
+        {
+            player.Session.Send(_controlEnd);
+            player.HasControl = false;
+            player.Session.Send(placed);
+            foreach (Player viewer in player.Viewers)
+                viewer.Session.Send(placed);
+        }
+        finally
+        {
+            placed.Release();
+        }
+
+        MovementRelay.Discard(player);
+        player.MoveTo(player.Location with { Position = relocate.Position, Facing = relocate.Facing });
+        player.ControlTicket = ++_lastControlTicket;
+        player.ResetNext = true;
+        player.Session.Send(new MovementControl { Ticket = player.ControlTicket, RebuildMovement = true, UnitId = player.UnitId });
+        return true;
     }
 
     private void Drop(IWorldSession session, string message, string reason)
@@ -502,6 +548,8 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
         var sessionMessage = message as SessionMessage;
         MapLog.HandlerFailed(_logger, _worldId, message.GetType().Name, sessionMessage?.Session.Id ?? 0, exception);
         _metrics.Fault(_worldTag);
+        if (message is RelocateCharacter relocate)
+            relocate.Reply.TrySetResult(false);
         if (sessionMessage is null)
             return;
 

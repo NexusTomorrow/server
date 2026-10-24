@@ -132,7 +132,8 @@ public static class CoreServices
         AccountOwner accounts = provider.GetRequiredService<AccountOwner>();
         TimeProvider time = provider.GetRequiredService<TimeProvider>();
         IWriteBehind persistence = provider.GetRequiredService<IWriteBehind>();
-        IReadOnlyList<CommandDefinition> commands = BuiltinCommands.Create(accounts, provider.GetServices<IOwner>(), persistence, time);
+        RealmOwner realm = provider.GetRequiredService<RealmOwner>();
+        IReadOnlyList<CommandDefinition> commands = BuiltinCommands.Create(accounts, realm, provider.GetServices<IOwner>(), persistence, time);
         return new CommandDispatcher(commands, persistence, time, provider.GetRequiredService<ILogger<CommandDispatcher>>());
     }
 }

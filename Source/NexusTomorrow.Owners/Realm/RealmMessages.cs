@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Numerics;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
@@ -56,6 +57,13 @@ public sealed record CharacterReturned(long AccountId, ulong CharacterId, Charac
 /// A block of character ids came off the database.
 /// </summary>
 public sealed record IdBlockTaken(IdBlock Block) : RealmMessage;
+
+/// <summary>
+/// A command asked to move a character in the world to <paramref name="Position"/>, facing <paramref name="Facing"/> (the yaw in
+/// radians). The realm passes it to the map holding the character, which answers <paramref name="Reply"/>; a character no map holds
+/// is answered false here.
+/// </summary>
+public sealed record RelocateRequested(ulong CharacterId, Vector3 Position, float Facing, TaskCompletionSource<bool> Reply) : RealmMessage;
 
 internal sealed record CharactersLoaded(long AccountId, IClientSession Session, ImmutableArray<CharacterSummary> Characters) : RealmMessage;
 

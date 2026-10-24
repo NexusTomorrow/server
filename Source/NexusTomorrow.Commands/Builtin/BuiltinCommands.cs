@@ -1,5 +1,6 @@
 ﻿using NexusTomorrow.Owners;
 using NexusTomorrow.Owners.Account;
+using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 
 namespace NexusTomorrow.Commands;
@@ -10,8 +11,9 @@ namespace NexusTomorrow.Commands;
 public static class BuiltinCommands
 {
     /// <summary>
-    /// The account and server commands, in registration order, over the owners and persistence they post to.
+    /// The account, character and server commands, in registration order, over the owners and persistence they post to.
     /// </summary>
-    public static IReadOnlyList<CommandDefinition> Create(AccountOwner accounts, IEnumerable<IOwner> owners, IWriteBehind persistence, TimeProvider time) =>
-        [.. AccountCommands.Create(accounts, time), .. ServerCommands.Create(accounts, owners, persistence)];
+    public static IReadOnlyList<CommandDefinition> Create(
+        AccountOwner accounts, IRealmInbox realm, IEnumerable<IOwner> owners, IWriteBehind persistence, TimeProvider time) =>
+        [.. AccountCommands.Create(accounts, time), .. CharacterCommands.Create(realm), .. ServerCommands.Create(accounts, owners, persistence)];
 }
