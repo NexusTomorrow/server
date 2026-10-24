@@ -6,10 +6,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 [UnionCase(22)]
 public sealed partial class Server0262Union2Arm16 : IServer0262Union2
 {
-    /// <summary>
-    /// The unit's scale.
-    /// </summary>
-    [VerifiedMember, PackedFloat] public float Scale { get; set; }
+    [PackedFloat] public float Unknown0 { get; set; }
 
     /// <summary>
     /// Whether the value blends into the unit's scale. When set and the newest segment on this command's channel is a keyed one that this

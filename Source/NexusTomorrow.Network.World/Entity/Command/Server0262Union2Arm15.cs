@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Entity.Command;
 
 /// <summary>
-/// Command 21: hands the unit's facing to its motion, so the unit faces the way it moves.
+/// Command 21: hands the unit's facing to its motion, so a unit moving along a path faces the way it travels.
 /// </summary>
 [WireStruct]
 [UnionCase(21)]

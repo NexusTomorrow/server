@@ -35,7 +35,7 @@ public sealed partial class ClientMovement
     [VerifiedMember, UInt(32)] public uint ClientTime { get; set; }
 
     /// <summary>
-    /// The commands, one batch after another; each batch opens with a <see cref="SetTimeCommand"/>.
+    /// The commands the client sends, one batch after another; each batch opens with a <see cref="SetTimeCommand"/>.
     /// </summary>
-    [VerifiedMember, Array(CountBits = 32)] public List<Server0262Part5> Unknown1 { get; } = [];
+    [VerifiedMember, Array(CountBits = 32)] public List<Server0262Part5> Commands { get; } = [];
 }

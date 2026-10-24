@@ -18,7 +18,7 @@ public static class MovementReads
     /// </summary>
     public static ImmutableArray<(Type Type, string Member)> Members { get; } =
     [
-        (typeof(ClientMovement), nameof(ClientMovement.Unknown1)),
+        (typeof(ClientMovement), nameof(ClientMovement.Commands)),
         (typeof(Server0262Part5), nameof(Server0262Part5.Unknown1)),
         (typeof(SetPlatformCommand), nameof(SetPlatformCommand.PlatformUnitId)),
         (typeof(SetPositionCommand), nameof(SetPositionCommand.Position)),
@@ -37,7 +37,7 @@ public static class MovementReads
     {
         Vector3? position = null;
         float? facing = null;
-        foreach (Server0262Part5 command in message.Unknown1)
+        foreach (Server0262Part5 command in message.Commands)
         {
             switch (command.Unknown1)
             {
