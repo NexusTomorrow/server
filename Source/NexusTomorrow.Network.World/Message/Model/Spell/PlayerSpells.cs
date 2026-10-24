@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 /// <summary>
-/// Sends the player's spell list.
+/// Sends a list of records for the player's unit.
 /// </summary>
 /// <remarks>
 /// The client hands the player's unit and the list to the routine it also runs for the records a
