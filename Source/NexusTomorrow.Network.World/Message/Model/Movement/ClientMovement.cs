@@ -11,7 +11,8 @@ namespace NexusTomorrow.Network.World.Message.Model.Movement;
 /// <see cref="SetTimeCommand"/>, and the client puts no command in it other than <see cref="SetTimeCommand"/>,
 /// <see cref="SetPlatformCommand"/>, <see cref="SetPositionCommand"/>, <see cref="SetVelocityCommand"/>, <see cref="SetMoveCommand"/>,
 /// <see cref="SetRotationCommand"/>, <see cref="SetStateCommand"/>, <see cref="SetModeCommand"/> and commands 10, 13, 18 and 20. Walking
-/// forward or back brings a <see cref="SetPositionCommand"/>, a <see cref="SetVelocityCommand"/>, a <see cref="SetMoveCommand"/> and a
+/// forward brings a <see cref="SetPositionCommand"/>, a <see cref="SetVelocityCommand"/>, a <see cref="SetMoveCommand"/> and a
+/// <see cref="SetStateCommand"/>; walking back brings a <see cref="SetVelocityCommand"/>, a <see cref="SetMoveCommand"/> and a
 /// <see cref="SetStateCommand"/>; turning in place brings a <see cref="SetRotationCommand"/>.
 /// </summary>
 /// <remarks>

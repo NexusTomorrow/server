@@ -18,9 +18,9 @@ public sealed partial class SetVelocityCommand : IServer0262Union2
     [VerifiedMember, PackedFloat] public Vector3 Velocity { get; set; }
 
     /// <summary>
-    /// Whether the value blends into the unit's motion. When set and the newest segment on this command's channel is a keyed one that this
-    /// command made, the value becomes that segment's next key; otherwise the value starts a new segment, and on a unit the client does not
-    /// move the client blends away the jump to it. When clear, the value starts a new segment and the unit snaps to it.
+    /// Whether the value extends a keyed segment. When set and the newest segment on this command's channel is a keyed one that this
+    /// command made, the value becomes that segment's next key; otherwise the value starts a new segment. The client keeps the bit with
+    /// the segment.
     /// </summary>
     [VerifiedMember, UInt(1)] public bool Blend { get; set; }
 }
