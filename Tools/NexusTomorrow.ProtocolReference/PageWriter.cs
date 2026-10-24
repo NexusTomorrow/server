@@ -129,13 +129,12 @@ public static class PageWriter
                 $"[{message.Type.Name}](Messages-{message.Area}#{Anchor(message)})",
                 DirectionText(message.Direction),
                 RungText(message.Rung),
-                MarkText(message.LayoutConfirmed),
-                MarkText(message.Dormant),
+                MarkText(message),
                 $"[{message.Area}](Messages-{message.Area})",
             ]);
         }
 
-        blocks.Add(Table(["Opcode", "Message", "Direction", "Verified to", "Layout confirmed", "Dormant", "Area"], index));
+        blocks.Add(Table(["Opcode", "Message", "Direction", "Verified to", "Mark", "Area"], index));
         MarkerSentences(blocks, messages);
 
         blocks.Add("## Areas");
@@ -310,8 +309,8 @@ public static class PageWriter
             blocks.Add(summary);
 
         blocks.Add(Table(
-            ["Opcode", "Direction", "Verified to", "Layout confirmed", "Dormant"],
-            [[Code(Hex(message.Opcode)), DirectionText(message.Direction), RungText(message.Rung), MarkText(message.LayoutConfirmed), MarkText(message.Dormant)]]));
+            ["Opcode", "Direction", "Verified to", "Mark"],
+            [[Code(Hex(message.Opcode)), DirectionText(message.Direction), RungText(message.Rung), MarkText(message)]]));
 
         string[] header = fields ? ["Field", "Bits", "Encoding", "Meaning"] : ["Field", "Bits", "Encoding"];
         var rows = new List<string[]>();
@@ -330,7 +329,7 @@ public static class PageWriter
             blocks.Add(remarks);
     }
 
-    // One block per marker some row of the page carries: layout confirmed first, then dormant, the order of their columns.
+    // One block per marker some row of the page carries: layout confirmed first, then dormant.
     private static void MarkerSentences(List<string> blocks, IReadOnlyList<ReferenceMessage> messages)
     {
         if (messages.Any(message => message.LayoutConfirmed))
@@ -410,8 +409,8 @@ public static class PageWriter
 
     private static string DirectionText(Direction direction) => direction switch
     {
-        Direction.ClientToServer => "client to server",
-        Direction.ServerToClient => "server to client",
+        Direction.ClientToServer => "to server",
+        Direction.ServerToClient => "to client",
         _ => "both ways",
     };
 
@@ -437,8 +436,9 @@ public static class PageWriter
         _ => throw new ArgumentOutOfRangeException(nameof(severity), severity, "The page has no word for this severity."),
     };
 
-    // A marked message's cell reads "yes"; an unmarked one is empty, which Row writes as "| |".
-    private static string MarkText(bool marked) => marked ? "yes" : "";
+    // The one Mark cell: an unmarked message's is empty, which Row writes as "| |". No message is both marked, which
+    // NoMessageIsBothLayoutConfirmedAndDormant holds.
+    private static string MarkText(ReferenceMessage message) => message.LayoutConfirmed ? "layout confirmed" : message.Dormant ? "dormant" : "";
 
     private static string RungText(Rung? rung) => rung switch
     {
