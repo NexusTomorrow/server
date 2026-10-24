@@ -87,6 +87,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   sits with the group messages.
 - A unit's scan rewards, its settler improvement and its minimap marker updates carry their real
   names, and a type-23 unit names its group, guild and title as a player's does.
+- Marketplace messages carry their real names and field meanings: commodity orders, item auctions,
+  bids and searches, CREDD exchange orders and their history, and the marketplace's status. Order
+  times are Windows file times.
 
 ### Changed
 
@@ -119,6 +122,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - In a Debug build, the developer tools can set a message's float values.
 - A game table column that follows a string reads its own value when the string sits after an odd
   number of 4-byte columns.
+- Marketplace messages match the client's layout: a CREDD history entry has no trailing 32-bit
+  value, and an auction search's rune slot filter takes a 32-bit minimum.
 - After logging in, the client no longer keeps reconnecting: the server answers its verified-address
   request.
 - Game data read correctly where a 64-bit number follows an odd count of 32-bit ones: tradeskill
