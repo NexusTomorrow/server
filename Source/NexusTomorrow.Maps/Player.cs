@@ -1,4 +1,6 @@
-﻿using NexusTomorrow.Maps.Timing;
+﻿using NexusTomorrow.Maps.Movement;
+using NexusTomorrow.Maps.Timing;
+using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence.Realm;
 
@@ -71,6 +73,27 @@ internal sealed class Player
     public uint LastBatchTime { get; set; }
 
     public long LastBatchAtMs { get; set; }
+
+    // The movement batches that arrived since the last flush, in order, each with the map's time it arrived at; at most the arrays'
+    // length.
+    public RelayBatch?[] Pending { get; } = new RelayBatch?[MovementRelay.PendingLimit];
+
+    public long[] PendingAtMs { get; } = new long[MovementRelay.PendingLimit];
+
+    public int PendingCount { get; set; }
+
+    // True when this player's next relay resets for every viewer: after a control grant, a lost batch or a refused relay.
+    public bool ResetNext { get; set; }
+
+    // The latest velocity, commanded velocity, state and mode commands relayed for this player, which a create for a new viewer
+    // carries so the unit moves as it does for everyone else.
+    public Server0262Part5? LatestVelocity { get; set; }
+
+    public Server0262Part5? LatestMove { get; set; }
+
+    public Server0262Part5? LatestState { get; set; }
+
+    public Server0262Part5? LatestMode { get; set; }
 
     public void MoveTo(CharacterLocation location)
     {

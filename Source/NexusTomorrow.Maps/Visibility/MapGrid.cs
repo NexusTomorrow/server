@@ -56,6 +56,31 @@ internal sealed class MapGrid
         }
     }
 
+    // Clears into, then adds every player on the grid whose kept position is within radius of center, in three dimensions and
+    // inclusive. A player is filed under its cell at each flush, so it can have moved up to a flush's worth from it: one ring past the
+    // radius covers that.
+    public void CollectWithin(Vector3 center, float radius, List<Player> into)
+    {
+        into.Clear();
+        (int x, int z) = CellOf(center);
+        int rings = (int)MathF.Ceiling(radius / _cellSize) + 1;
+        float radiusSquared = radius * radius;
+        for (int cellX = x - rings; cellX <= x + rings; cellX++)
+        {
+            for (int cellZ = z - rings; cellZ <= z + rings; cellZ++)
+            {
+                if (!_cells.TryGetValue((cellX, cellZ), out List<Player>? players))
+                    continue;
+
+                foreach (Player player in players)
+                {
+                    if (Vector3.DistanceSquared(center, player.Location.Position) <= radiusSquared)
+                        into.Add(player);
+                }
+            }
+        }
+    }
+
     private (int X, int Z) CellOf(Vector3 position) => ((int)MathF.Floor(position.X / _cellSize), (int)MathF.Floor(position.Z / _cellSize));
 
     private List<Player> CellAt((int X, int Z) cell)

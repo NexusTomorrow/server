@@ -85,16 +85,27 @@ internal static class WorldEntry
         };
     }
 
-    // Another player's create, as a viewer takes it: the player's own create, with the sender time its first relay is fitted from.
+    // Another player's create, as a viewer takes it: the player's own create, with the sender time its first relay is fitted from,
+    // and the latest velocity, commanded velocity, state and mode relayed for it, so it moves for the viewer as it does for the rest.
     public static UnitCreate RemoteCreate(Player target, ushort realmId, uint senderTime)
     {
         UnitCreate create = PlayerCreate(target, realmId);
         create.SenderTime = senderTime;
+        AddIfKept(create, target.LatestVelocity);
+        AddIfKept(create, target.LatestMove);
+        AddIfKept(create, target.LatestState);
+        AddIfKept(create, target.LatestMode);
         return create;
     }
 
     // The client keeps a unit's path only from this message, for any player's unit.
     public static UnitPathTypeChanged PathOf(Player player) => new() { UnitId = player.UnitId, PathType = player.Character.Path };
+
+    private static void AddIfKept(UnitCreate create, Server0262Part5? command)
+    {
+        if (command is not null)
+            create.Commands.Add(command);
+    }
 
     // How the value is sent: 0 is an integer.
     private static Server0262Part4 Stat(byte stat, uint value) => new()
