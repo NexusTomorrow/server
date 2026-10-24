@@ -3,7 +3,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Connection;
 
+/// <summary>
+/// Reports figures from the client's renderer: the client samples them every 15 seconds and sends one report every eighth sample.
+/// Nothing on the client reads them back, and the report needs no reply.
+/// </summary>
 [WireMessage(GameMessageOpcode.Client023E, Direction.ClientToServer)]
+[Verified(Rung.Purpose)]
 public sealed partial class GraphicsStatsReport
 {
     [Float32] public float Unknown0 { get; private set; }

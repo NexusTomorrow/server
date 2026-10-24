@@ -3,7 +3,12 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Connection;
 
+/// <summary>
+/// The client's report on its own integrity: a check of the player unit's properties and of the rate of the client's clock, sent on a
+/// timer of the client's own. Nothing on the client reads it back, and it needs no reply.
+/// </summary>
 [WireMessage(GameMessageOpcode.Client023C, Direction.ClientToServer)]
+[Verified(Rung.Purpose)]
 public sealed partial class ClientIntegrityReport
 {
     [UInt(64)] public ulong Unknown0 { get; private set; }
