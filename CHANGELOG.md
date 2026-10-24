@@ -193,6 +193,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   meanings, with the group's id, flags, size, loot rules, members, leader and marks.
 - A unit's changed look and bone values carry their real names and field meanings, including the
   unit's outfit and whether a look is laid over its own.
+- The wire facts check also names each field the client reads as a signed integer or a packed float
+  that a declaration reads otherwise. Three signed fields wait on a ruling.
 
 ### Changed
 

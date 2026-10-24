@@ -242,7 +242,7 @@
 {"op":414,"dir":"s2c","s2c":{"kind":"fixed","bits":32,"widths":[32],"tree":"32"}}
 {"op":415,"dir":"s2c","s2c":{"kind":"fixed","bits":2,"widths":[2],"tree":"2"}}
 {"op":416,"dir":"s2c","s2c":{"kind":"computed","bits":32,"widths":[32],"tree":"32 [0:18 4 3]"}}
-{"op":417,"dir":"s2c","s2c":{"kind":"fixed","bits":16,"widths":[16],"tree":"16"}}
+{"op":417,"dir":"s2c","s2c":{"kind":"fixed","bits":16,"widths":[16],"tree":"16s"}}
 {"op":418,"dir":"c2s","c2s":{"kind":"computed","class":"array","bits":7,"widths":[7],"parts":[{"shape":"array","elem_bits":16}],"tree":"7 [0:16]"}}
 {"op":419,"dir":"s2c","s2c":{"kind":"computed","bits":10,"widths":[3,7],"tree":"3 7 [1:16]"}}
 {"op":420,"dir":"s2c","s2c":{"kind":"fixed","bits":160,"widths":[32,32,32,32,32],"tree":"32 32 32 32 32"}}
@@ -313,7 +313,7 @@
 {"op":549,"dir":"s2c","s2c":{"kind":"fixed","bits":64,"widths":[32,32],"tree":"32 32"}}
 {"op":550,"dir":"s2c","s2c":{"kind":"fixed","bits":32,"widths":[32],"tree":"32"}}
 {"op":551,"dir":"s2c","s2c":{"kind":"fixed","bits":64,"widths":[32,32],"tree":"32 32"}}
-{"op":552,"dir":"s2c","s2c":{"kind":"fixed","bits":352,"widths":[32,16,16,32,32,32,32,32,32,64,32],"tree":"32 16 16 32 32 32 32f 32f 32f 64 32"}}
+{"op":552,"dir":"s2c","s2c":{"kind":"fixed","bits":352,"widths":[32,16,16,32,32,32,32,32,32,64,32],"tree":"32 16 16s 32 32 32 32f 32f 32f 64 32"}}
 {"op":553,"dir":"s2c","s2c":{"kind":"fixed","bits":32,"widths":[32],"tree":"32"}}
 {"op":554,"dir":"s2c","s2c":{"kind":"fixed","bits":54,"widths":[32,21,1],"tree":"32 21 1"}}
 {"op":555,"dir":"s2c","s2c":{"kind":"fixed","bits":33,"widths":[32,1],"tree":"32 1"}}
@@ -346,7 +346,7 @@
 {"op":597,"dir":"c2s","c2s":{"kind":"fixed","bits":929,"widths":[32,2,64,18,8,8,8,8,8,8,8,8,8,8,8,8,18,8,8,8,8,8,8,8,8,8,8,8,8,18,8,8,8,8,8,8,8,8,8,8,8,8,18,8,8,8,8,8,8,8,8,8,8,8,8,18,8,8,8,8,8,8,8,8,8,8,8,8,18,8,8,8,8,8,8,8,8,8,8,8,8,18,8,8,8,8,8,8,8,8,8,8,8,8,32,1],"tree":"32 2 64 18 8 8 8 8 8 8 8 8 8 8 8 8 18 8 8 8 8 8 8 8 8 8 8 8 8 18 8 8 8 8 8 8 8 8 8 8 8 8 18 8 8 8 8 8 8 8 8 8 8 8 8 18 8 8 8 8 8 8 8 8 8 8 8 8 18 8 8 8 8 8 8 8 8 8 8 8 8 18 8 8 8 8 8 8 8 8 8 8 8 8 32 1"}}
 {"op":598,"dir":"c2s","c2s":{"kind":"fixed","bits":32,"widths":[32],"tree":"32"}}
 {"op":599,"dir":"s2c","s2c":{"kind":"fixed","bits":38,"widths":[32,2,4],"tree":"32 2 4"}}
-{"op":600,"dir":"s2c","s2c":{"kind":"computed","bits":64,"widths":[32,32],"tree":"32 32 [1:32]"}}
+{"op":600,"dir":"s2c","s2c":{"kind":"computed","bits":64,"widths":[32,32],"tree":"32s 32 [1:32]"}}
 {"op":601,"dir":"s2c","s2c":{"kind":"fixed","bits":50,"widths":[18,32],"tree":"18 32"}}
 {"op":602,"dir":"s2c","s2c":{"kind":"computed","bits":32,"widths":[32],"tree":"32 [0:32]"}}
 {"op":603,"dir":"c2s","c2s":{"kind":"computed","class":"array","bits":107,"widths":[32,1,7,3,32,32],"parts":[{"shape":"wide-string"},{"shape":"array","elem_bits":64},{"shape":"array","elem_bits":32}],"tree":"32 w 3 32 [3:32] [3:32] 32 [6:32]"}}
@@ -935,7 +935,7 @@
 {"op":2068,"dir":"s2c","s2c":{"kind":"fixed","bits":19,"widths":[18,1],"tree":"18 1"}}
 {"op":2069,"dir":"s2c","s2c":{"kind":"fixed","bits":18,"widths":[18],"tree":"18"}}
 {"op":2070,"dir":"s2c","s2c":{"kind":"fixed","bits":86,"widths":[18,18,18,32],"tree":"18 18 18 32"}}
-{"op":2071,"dir":"s2c","s2c":{"kind":"fixed","bits":26,"widths":[18,8],"tree":"18 8"}}
+{"op":2071,"dir":"s2c","s2c":{"kind":"fixed","bits":26,"widths":[18,8],"tree":"18 8s"}}
 {"op":2072,"dir":"s2c","s2c":{"kind":"computed","bits":108,"widths":[32,32,8,8,16,4,8],"tree":"32 32 8 8 16 4 8 [6:19 32 32 32 2 {4:0=(1),1=(32 32 32 32 32 32 32 1 4 3 8 [10:32 32 32 32 32 32 32 3])}]"}}
 {"op":2073,"dir":"s2c","s2c":{"kind":"fixed","bits":64,"widths":[32,32],"tree":"32 32"}}
 {"op":2074,"dir":"both","c2s":{"kind":"computed","class":"array","bits":81,"widths":[32,15,2,32],"parts":[{"shape":"array","elem_bits":320}],"tree":"32 15 2 32 [3:32f 32f 32f 32f 32f 32f 32f 32f 32f 32]"},"s2c":{"kind":"computed","bits":81,"widths":[32,15,2,32],"tree":"32 15 2 32 [3:32f 32f 32f 32f 32f 32f 32f 32f 32f 32]"}}
