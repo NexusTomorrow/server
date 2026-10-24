@@ -33,7 +33,7 @@ public sealed partial class Server0262Union2Arm03 : IServer0262Union2
     /// Time already elapsed on the command's keys, in milliseconds: the client adds it to the time since the command's start, so it sets
     /// where along its keys the unit is.
     /// </summary>
-    [VerifiedMember, UInt(32)] public uint TimeOffset { get; set; }
+    [VerifiedMember, UInt(32)] public uint Offset { get; set; }
 
     /// <summary>
     /// Whether the segment blends in: when set, on a unit the client does not move, the client blends away the jump to the segment; when

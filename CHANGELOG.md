@@ -185,6 +185,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   and the player's spell list are named for the spell records they hold.
 - A new unit's shown flag, the spell record's raw damage and five movement tracks' key times keep
   neutral names while each rests on a single reader.
+- The player's movement message names its command list, and every movement command's start offset is
+  named Offset. The scale commands' values keep neutral names while they rest on a single reader, and
+  the dash's remarks say which of its refusals apply only in the normal dash state.
 - A cinematic camera flag and a matchmaking queue flag the client never names keep neutral names.
 - A group member's order, interrupt armor and healing absorb maximum, the request ids of group
   referrals and join requests, and the character list's reservations keep neutral names while each

@@ -178,7 +178,7 @@ public sealed class InboundDecoderTests
     public void AClientMovementIsReadAtPurposeUnderItsRow()
     {
         var movement = new ClientMovement { ClientTime = 1000 };
-        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new SetPositionCommand { Position = new Vector3(1, 2, 3) } });
+        movement.Commands.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new SetPositionCommand { Position = new Vector3(1, 2, 3) } });
         byte[] body = ClientFrames.TaggedEnvelopeBody(0x03, 0x0637, movement, s_cipher);
 
         Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
@@ -265,7 +265,7 @@ public sealed class InboundDecoderTests
         Inbound inbound = LimitedDecoder(16).Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
 
         Assert.Equal(InboundResult.Message, inbound.Result);
-        Assert.Equal(10, Assert.IsType<ClientMovement>(inbound.Message).Unknown1.Count);
+        Assert.Equal(10, Assert.IsType<ClientMovement>(inbound.Message).Commands.Count);
     }
 
     [Fact]
@@ -277,7 +277,7 @@ public sealed class InboundDecoderTests
         Inbound inbound = LimitedDecoder(null).Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
 
         Assert.Equal(InboundResult.Message, inbound.Result);
-        Assert.Equal(3000, Assert.IsType<ClientMovement>(inbound.Message).Unknown1.Count);
+        Assert.Equal(3000, Assert.IsType<ClientMovement>(inbound.Message).Commands.Count);
     }
 
     // A decoder whose only row is the movement's, under tag 0x03, with the given body limit.
@@ -295,7 +295,7 @@ public sealed class InboundDecoderTests
     {
         var movement = new ClientMovement { ClientTime = 1000 };
         for (int i = 0; i < commands; i++)
-            movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 10, Unknown1 = new Server0262Union2Arm0A { Blend = true } });
+            movement.Commands.Add(new Server0262Part5 { Unknown0 = 10, Unknown1 = new Server0262Union2Arm0A { Blend = true } });
 
         return movement;
     }

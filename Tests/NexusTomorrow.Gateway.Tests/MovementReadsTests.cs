@@ -108,7 +108,7 @@ public sealed class MovementReadsTests
     private static ClientMovement Movement(params Server0262Part5[] commands)
     {
         var message = new ClientMovement();
-        message.Unknown1.AddRange(commands);
+        message.Commands.AddRange(commands);
         return message;
     }
 
