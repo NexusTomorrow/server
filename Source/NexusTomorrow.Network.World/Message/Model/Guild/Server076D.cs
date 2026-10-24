@@ -3,16 +3,9 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-/// <summary>
-/// Changes what is listed for recruiting guilds.
-/// </summary>
 [WireMessage(GameMessageOpcode.Server076D, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
 public sealed partial class Server076D
 {
-    /// <summary>
-    /// The change to one guild's listing.
-    /// </summary>
     [WireStruct]
     public sealed partial class Server076DPart0
     {
@@ -29,8 +22,5 @@ public sealed partial class Server076D
         [Array(CountFrom = nameof(Unknown2)), UInt(1)] public List<bool> Unknown4 { get; set; } = [];
     }
 
-    /// <summary>
-    /// The changes, a guild each.
-    /// </summary>
     [Array(CountBits = 32)] public List<Server076DPart0> Changes { get; set; } = [];
 }
