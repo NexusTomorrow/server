@@ -75,6 +75,7 @@ public static class CoreServices
             WatchedOwners(provider), provider.GetRequiredService<TimeProvider>(), s_ownerStallTime, provider.GetRequiredService<ILogger<OwnerWatchdog>>()));
 
         services.AddSingleton(MessageCatalog.Default);
+        services.AddSingleton<IMessageSerializer>(provider => new GatedSerializer(provider.GetRequiredService<MessageCatalog>()));
         services.AddSingleton(provider => new InboundDecoder(
             provider.GetRequiredService<MessageCatalog>(), OpcodeTable.All, provider.GetRequiredService<IOptions<GatewayOptions>>().Value.DisabledOpcodes));
         services.AddSingleton<GatewayMetrics>();

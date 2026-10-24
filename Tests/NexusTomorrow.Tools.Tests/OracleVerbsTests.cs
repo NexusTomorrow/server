@@ -438,6 +438,10 @@ public sealed class OracleVerbsTests : IAsyncLifetime
         {
         }
 
+        public void Send(SerializedMessage message)
+        {
+        }
+
         public void Disconnect(string reason)
         {
         }

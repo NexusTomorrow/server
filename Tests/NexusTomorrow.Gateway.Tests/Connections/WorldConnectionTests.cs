@@ -239,6 +239,67 @@ public sealed class WorldConnectionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AClientMovementCarriesItsRelayBatchToTheMap()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+        var movement = new ClientMovement { ClientTime = 5000 };
+        movement.Commands.Add(new Server0262Part5 { Unknown0 = 0, Unknown1 = new SetTimeCommand { Time = 5250 } });
+        movement.Commands.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new SetPositionCommand { Position = new Vector3(1, 2, 3) } });
+
+        await Client.SendTaggedAsync(0x03, movement);
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+
+        RelayBatch batch = Assert.IsType<RelayBatch>(Assert.IsType<ClientMoved>(map.Posted[0]).Batch);
+        Assert.Equal(5000u, batch.Time);
+        byte[] arms = [0, 2];
+        Assert.Equal(arms, batch.Commands.Select(command => command.Unknown0));
+    }
+
+    [Fact]
+    public async Task AnArmOutsideTheConfirmedListDropsTheMessageAndTheSessionGoesOn()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+        var refused = new ClientMovement { ClientTime = 1 };
+        refused.Commands.Add(new Server0262Part5 { Unknown0 = 0, Unknown1 = new SetTimeCommand { Time = 1 } });
+        refused.Commands.Add(new Server0262Part5 { Unknown0 = 9, Unknown1 = new Server0262Union2Arm09() });
+        refused.Commands.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new SetPositionCommand { Position = new Vector3(1, 2, 3) } });
+        var accepted = new ClientMovement { ClientTime = 2 };
+        accepted.Commands.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new SetPositionCommand { Position = new Vector3(4, 5, 6) } });
+
+        await Client.SendTaggedAsync(0x03, refused);
+        await Client.SendTaggedAsync(0x03, accepted);
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+
+        Assert.Contains(_log.Lines, line => line.Contains("an unconfirmed command arm", StringComparison.Ordinal));
+        Assert.Equal(new Vector3(4, 5, 6), Assert.IsType<ClientMoved>(Assert.Single(map.Posted)).Sample.Position);
+    }
+
+    [Fact]
+    public async Task ForcedMoveArmsAreLoggedOnceAndTheRestIsRouted()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+        var movement = new ClientMovement { ClientTime = 3 };
+        movement.Commands.Add(new Server0262Part5 { Unknown0 = 3, Unknown1 = new Server0262Union2Arm03() });
+        movement.Commands.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new SetPositionCommand { Position = new Vector3(1, 2, 3) } });
+        movement.Commands.Add(new Server0262Part5 { Unknown0 = 25, Unknown1 = new Server0262Union2Arm19() });
+
+        await Client.SendTaggedAsync(0x03, movement);
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+
+        string forced = Assert.Single(_log.Lines, line => line.Contains("forced-move", StringComparison.Ordinal));
+        Assert.Contains("Arm3", forced, StringComparison.Ordinal);
+        Assert.Contains("Arm25", forced, StringComparison.Ordinal);
+        byte[] arms = [2];
+        Assert.Equal(arms, Assert.IsType<ClientMoved>(map.Posted[0]).Batch!.Commands.Select(command => command.Unknown0));
+    }
+
+    [Fact]
     public async Task AnOversizedClientMovementEndsTheSessionBeforeItIsRead()
     {
         await GreetAsync();

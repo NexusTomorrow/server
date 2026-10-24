@@ -203,7 +203,7 @@ public sealed class WorldEntryTests : IDisposable
         var session = new FakeClientSession();
         Arrive(map, session);
         uint ticket = session.Single<MovementControl>().Ticket;
-        var movement = new ClientMoved(session, new MovementSample(new Vector3(7, 8, 9), 0.5f));
+        var movement = new ClientMoved(session, new MovementSample(new Vector3(7, 8, 9), 0.5f), null);
 
         map.PostHigh(movement);
         Tick(map);
@@ -229,13 +229,13 @@ public sealed class WorldEntryTests : IDisposable
 
         for (int i = 0; i < 20; i++)
         {
-            map.PostHigh(new ClientMoved(session, new MovementSample(new Vector3(i, 0, 0), i)));
+            map.PostHigh(new ClientMoved(session, new MovementSample(new Vector3(i, 0, 0), i), null));
             Tick(map);
         }
 
         for (int i = 0; i < 100; i++)
         {
-            map.PostHigh(new ClientMoved(session, new MovementSample(new Vector3(i, 1, 0), i)));
+            map.PostHigh(new ClientMoved(session, new MovementSample(new Vector3(i, 1, 0), i), null));
             Tick(map);
             Assert.Equal(0L, map.LastTickAllocatedBytes);
         }
