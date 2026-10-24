@@ -3,9 +3,20 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Map;
 
+/// <summary>
+/// Sets which hexes of a zone's map the player has explored.
+/// </summary>
 [WireMessage(GameMessageOpcode.Server01B4, Direction.ServerToClient)]
+[Verified(Rung.Fields)]
 public sealed partial class ZoneMapExplored
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
-    [Blob(32)] public byte[] Unknown1 { get; set; } = [];
+    /// <summary>
+    /// The zone, as a MapZone id.
+    /// </summary>
+    [UInt(32)] public uint MapZoneId { get; set; }
+
+    /// <summary>
+    /// One bit per hex of the zone's hex rectangle; the client refuses a length other than the rectangle's bit count rounded up to bytes.
+    /// </summary>
+    [Blob(32)] public byte[] ExploredHexes { get; set; } = [];
 }

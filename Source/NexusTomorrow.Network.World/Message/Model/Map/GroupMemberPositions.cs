@@ -5,15 +5,46 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Map;
 
+/// <summary>
+/// Gives the positions of the player's group members; the client raises Group_UpdatePosition.
+/// </summary>
 [WireMessage(GameMessageOpcode.Server0469, Direction.ServerToClient)]
+[Verified(Rung.Purpose)]
 public sealed partial class GroupMemberPositions
 {
-    [UInt(64)] public ulong Unknown0 { get; set; }
-    [UInt(15)] public uint Unknown1 { get; set; }
+    /// <summary>
+    /// The group, which the client compares with the player's own; it ignores the message for another group.
+    /// </summary>
+    [UInt(64)] public ulong GroupId { get; set; }
 
-    [UInt(32), Count] public uint Unknown2 { get; set; }
-    [Array(CountFrom = nameof(Unknown2))] public List<RealmScopedId> Unknown3 { get; set; } = [];
-    [Array(CountFrom = nameof(Unknown2))] public List<Client0096Part0> Unknown4 { get; set; } = [];
-    [Array(CountFrom = nameof(Unknown2)), UInt(32)] public List<uint> Unknown5 { get; set; } = [];
-    [Array(CountFrom = nameof(Unknown2)), UInt(32)] public List<uint> Unknown6 { get; set; } = [];
+    /// <summary>
+    /// The members' world, as a World id.
+    /// </summary>
+    [UInt(15)] public uint WorldId { get; set; }
+
+    /// <summary>
+    /// How many members the four lists hold.
+    /// </summary>
+    [UInt(32), Count] public uint MemberCount { get; set; }
+
+    /// <summary>
+    /// The members, by realm-scoped character id.
+    /// </summary>
+    [Array(CountFrom = nameof(MemberCount))] public List<RealmScopedId> MemberIds { get; set; } = [];
+
+    /// <summary>
+    /// Each member's position.
+    /// </summary>
+    [Array(CountFrom = nameof(MemberCount))] public List<Client0096Part0> Positions { get; set; } = [];
+
+    /// <summary>
+    /// Each member's zone, which the client uses for a member with no unit in view.
+    /// </summary>
+    [Array(CountFrom = nameof(MemberCount)), UInt(32)] public List<uint> ZoneIds { get; set; } = [];
+
+    /// <summary>
+    /// Each member's combat state, as a number: bit 0 is set while the member is in PvP combat, the client passes bit 1 on as PvE
+    /// combat, and the client never reads bits 2 to 31.
+    /// </summary>
+    [Array(CountFrom = nameof(MemberCount)), UInt(32)] public List<uint> CombatFlags { get; set; } = [];
 }
