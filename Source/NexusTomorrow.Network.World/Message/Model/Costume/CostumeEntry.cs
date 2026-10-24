@@ -31,7 +31,8 @@ public sealed partial class CostumeEntry
     [FixedArray(7), UInt(32)] public uint[] ItemIds { get; set; } = new uint[7];
 
     /// <summary>
-    /// Each slot's dyes as one packed word: bit 31 is set when the slot has dyes, and bits 0 to 9, 10 to 19 and 20 to 29 are three ramp indices, which the client maps to DyeColorRamp rows by the table's ramp index.
+    /// Each slot's dyes as one packed word: bit 31 is set when the slot has dyes, and bits 0 to 9, 10 to 19 and 20 to 29 are
+    /// three ramp indices, which the client maps to DyeColorRamp rows by the table's ramp index.
     /// </summary>
     [FixedArray(7), UInt(32)] public uint[] Dyes { get; set; } = new uint[7];
 }

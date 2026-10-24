@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Costume;
 
 /// <summary>
-/// Sets the player's costumes.
+/// Files a list of the player's costumes.
 /// </summary>
 /// <remarks>
 /// The client files each by its type and index and raises no event.
