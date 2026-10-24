@@ -18,10 +18,10 @@ namespace NexusTomorrow.Network.World.Message.Model.WorldEntry;
 public sealed partial class PlayerState
 {
     [WireStruct]
-    public sealed partial class Server025EPart0
+    public sealed partial class PlayerReputations
     {
         [WireStruct]
-        public sealed partial class Server025EPart1
+        public sealed partial class FactionReputation
         {
             /// <summary>
             /// The faction, as an id in the client's Faction2 table.
@@ -39,11 +39,11 @@ public sealed partial class PlayerState
         /// <summary>
         /// The factions, each with its value.
         /// </summary>
-        [Array(CountBits = 16)] public List<Server025EPart1> Unknown1 { get; set; } = [];
+        [Array(CountBits = 16)] public List<FactionReputation> Unknown1 { get; set; } = [];
     }
 
     [WireStruct]
-    public sealed partial class Server025EPart3
+    public sealed partial class CharacterEntitlement
     {
         /// <summary>
         /// The entitlement's id.
@@ -96,7 +96,7 @@ public sealed partial class PlayerState
     /// <summary>
     /// Values the client keeps for the player, one for each faction listed.
     /// </summary>
-    public Server025EPart0 Unknown10 { get; set; } = new();
+    public PlayerReputations Unknown10 { get; set; } = new();
 
     /// <summary>
     /// The pets the player has summoned, which the client keeps as it keeps the one <see cref="Pet.PetSpawned"/> adds.
@@ -143,5 +143,5 @@ public sealed partial class PlayerState
     /// <summary>
     /// The character's entitlements, each an id and a count, as the client's interface shows them.
     /// </summary>
-    [Array(CountBits = 32)] public List<Server025EPart3> Unknown22 { set; get; } = [];
+    [Array(CountBits = 32)] public List<CharacterEntitlement> Unknown22 { set; get; } = [];
 }
