@@ -5,13 +5,13 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 /// <summary>
-/// Sets a recruiting guild's description.
+/// Sends a value for a recruiting guild.
 /// </summary>
 /// <remarks>
-/// GuildTypeLib's GetRecruitmentDescription returns it; the client raises RecruitmentDescription.
+/// The client raises RecruitmentDescription.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0769, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class GuildRecruitmentDescriptionChanged
 {
     /// <summary>
@@ -19,8 +19,5 @@ public sealed partial class GuildRecruitmentDescriptionChanged
     /// </summary>
     public RealmScopedId GuildId { get; set; } = new();
 
-    /// <summary>
-    /// The guild's recruitment description.
-    /// </summary>
-    [WideString] public string Description { get; set; } = "";
+    [WideString] public string Unknown1 { get; set; } = "";
 }

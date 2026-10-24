@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 /// <summary>
-/// One recruiting guild, as RecruitmentGetActiveGuilds reports it.
+/// One recruiting guild.
 /// </summary>
 [WireStruct]
 public sealed partial class GuildRecruitmentListing
@@ -13,23 +13,14 @@ public sealed partial class GuildRecruitmentListing
     /// </summary>
     [UInt(64)] public ulong GuildId { get; set; }
 
-    /// <summary>
-    /// The guild's name.
-    /// </summary>
-    [WideString] public string GuildName { get; set; } = "";
+    [WideString] public string Unknown1 { get; set; } = "";
+
+    [WideString] public string Unknown2 { get; set; } = "";
 
     /// <summary>
-    /// The guild master, by name.
-    /// </summary>
-    [WideString] public string LeaderName { get; set; } = "";
-
-    /// <summary>
-    /// The guild's size, perks and classification.
+    /// The guild's summary record.
     /// </summary>
     public GuildRecruitmentSummary Summary { get; set; } = new();
 
-    /// <summary>
-    /// The guild's recruiters, by name.
-    /// </summary>
-    [Array(CountBits = 32), WideString] public List<string> Recruiters { get; set; } = [];
+    [Array(CountBits = 32), WideString] public List<string> Unknown4 { get; set; } = [];
 }

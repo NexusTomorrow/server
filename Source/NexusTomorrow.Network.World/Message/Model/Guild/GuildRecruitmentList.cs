@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 /// The client replaces its list and raises RecruitmentGuildsList.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0767, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class GuildRecruitmentList
 {
     /// <summary>

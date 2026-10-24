@@ -22,7 +22,7 @@ public sealed partial class Resurrect
     [UInt(7)] public ResurrectionType RezType { get; private set; }
 
     /// <summary>
-    /// The value the resurrection takes; the client sends 0 with <see cref="ResurrectionType.WakeHereServiceToken"/>.
+    /// The client gives this value no meaning. Every caller the client ships passes 0, and the wake-here sender writes 0.
     /// </summary>
-    [UInt(32)] public uint RezData { get; private set; }
+    [VerifiedMember, UInt(32)] public uint Unknown2 { get; private set; }
 }

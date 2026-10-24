@@ -70,10 +70,7 @@ public sealed partial class GuildMember
     /// </summary>
     [WideString] public string Note { get; set; } = "";
 
-    /// <summary>
-    /// The member's flags; bit 1 marks the member available for recruitment.
-    /// </summary>
-    [UInt(32)] public uint Flags { get; set; }
+    [UInt(32)] public uint Unknown12 { get; set; }
 
     /// <summary>
     /// The community plot the member has reserved, from 0.

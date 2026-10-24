@@ -197,6 +197,10 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   log's absorption, shield, excess, glance and overkill values, and a few result and reason codes.
   Twelve messages that held them go back below Fields; the world settings' movement interval and the
   delete result are marked, since the server sends them.
+- Guild members that rest on a single reader keep neutral names: among them a guild member's flags,
+  the recruiting guilds' details and recruiters, the guild's classification and minimum recruiting
+  level, and an operation result's rank. Twelve guild messages go back below Fields. A resurrection
+  request's last value is shown to carry no meaning, and a unit's removal names the unit it removes.
 - A group member's order, interrupt armor and healing absorb maximum, the request ids of group
   referrals and join requests, and the character list's reservations keep neutral names while each
   rests on a single reader; the group order change, the group request answer and the character list

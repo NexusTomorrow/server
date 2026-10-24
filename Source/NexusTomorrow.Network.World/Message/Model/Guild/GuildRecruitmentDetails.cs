@@ -8,10 +8,10 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 /// Sends a recruiting guild's details.
 /// </summary>
 /// <remarks>
-/// The client raises RecruitmentDetailedGuildInfo; RecruitmentGetDetailedGuildInfo reports the details.
+/// The client raises RecruitmentDetailedGuildInfo.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server076A, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class GuildRecruitmentDetails
 {
     /// <summary>
@@ -19,25 +19,13 @@ public sealed partial class GuildRecruitmentDetails
     /// </summary>
     public RealmScopedId GuildId { get; set; } = new();
 
-    /// <summary>
-    /// The guild's recruitment description.
-    /// </summary>
-    [WideString] public string Description { get; set; } = "";
+    [WideString] public string Unknown1 { get; set; } = "";
 
-    /// <summary>
-    /// When the guild was created, in days from now.
-    /// </summary>
-    [Float32] public float CreationDate { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 
-    /// <summary>
-    /// Whether the guild taxes its members.
-    /// </summary>
-    [UInt(1)] public bool Tax { get; set; }
+    [UInt(1)] public bool Unknown3 { get; set; }
 
-    /// <summary>
-    /// The lowest level the guild recruits.
-    /// </summary>
-    [UInt(32)] public uint MinLevel { get; set; }
+    [UInt(32)] public uint Unknown4 { get; set; }
 
     /// <summary>
     /// What the guild asks for.

@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 /// guild with a message of the day.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0497, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class GuildMemberships
 {
     /// <summary>
