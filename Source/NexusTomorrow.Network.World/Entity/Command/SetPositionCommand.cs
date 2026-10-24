@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 /// </summary>
 [WireStruct]
 [UnionCase(2)]
-public sealed partial class Server0262Union2Arm02 : IServer0262Union2
+public sealed partial class SetPositionCommand : IServer0262Union2
 {
     /// <summary>
     /// The position, in world coordinates while command 1 is 0.

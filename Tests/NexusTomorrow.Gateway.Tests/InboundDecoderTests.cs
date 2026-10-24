@@ -117,7 +117,7 @@ public sealed class InboundDecoderTests
     public void AClientMovementIsReadAtPurposeUnderItsRow()
     {
         var movement = new ClientMovement { Unknown0 = 1000 };
-        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new Server0262Union2Arm02 { Unknown0 = new Vector3(1, 2, 3) } });
+        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new SetPositionCommand { Unknown0 = new Vector3(1, 2, 3) } });
         byte[] body = ClientFrames.TaggedEnvelopeBody(0x03, 0x0637, movement, s_cipher);
 
         Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);

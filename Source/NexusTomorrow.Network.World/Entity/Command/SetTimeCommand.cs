@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 /// </summary>
 [WireStruct]
 [UnionCase(0)]
-public sealed partial class Server0262Union2Arm00 : IServer0262Union2
+public sealed partial class SetTimeCommand : IServer0262Union2
 {
     /// <summary>
     /// The time, on the sender's clock.

@@ -75,8 +75,8 @@ internal static class WorldEntry
             Stats = [Stat(HealthStat, PlayerHealth), Stat(LevelStat, character.Level)],
             Commands =
             [
-                new Server0262Part5 { Unknown0 = PositionCommand, Unknown1 = new Server0262Union2Arm02 { Unknown0 = location.Position } },
-                new Server0262Part5 { Unknown0 = FacingCommand, Unknown1 = new Server0262Union2Arm0E { Unknown0 = new Vector3(location.Facing, 0, 0) } },
+                new Server0262Part5 { Unknown0 = PositionCommand, Unknown1 = new SetPositionCommand { Unknown0 = location.Position } },
+                new Server0262Part5 { Unknown0 = FacingCommand, Unknown1 = new SetRotationCommand { Unknown0 = new Vector3(location.Facing, 0, 0) } },
             ],
             FactionId = (ushort)character.FactionId,
             BaseFactionId = (ushort)character.FactionId,
