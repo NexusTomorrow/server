@@ -50,7 +50,7 @@ internal static class WorldEntry
         session.Send(new PlayerUnit { UnitId = player.UnitId });
         session.Send(new WorldSettings { MovementInterval = settings.MovementInterval });
         session.Send(new MovementControl { Ticket = player.ControlTicket, RebuildMovement = true, UnitId = player.UnitId });
-        session.Send(new PlayerState { Unknown2 = player.Character.TotalXp, Unknown12 = PlayerStateMode, Unknown14 = PlayerStateNoValue });
+        session.Send(new PlayerState { Experience = player.Character.TotalXp, InputKeySet = PlayerStateMode, CostumeIndex = PlayerStateNoValue });
         session.Send(new PathState { ActivePath = player.Character.Path, UnlockedPaths = (byte)(1 << player.Character.Path) });
     }
 

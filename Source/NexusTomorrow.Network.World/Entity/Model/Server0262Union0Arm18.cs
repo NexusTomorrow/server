@@ -21,6 +21,13 @@ public sealed partial class Server0262Union0Arm18 : IServer0262Union0
     /// </summary>
     [VerifiedMember, UInt(32)] public uint OwnerUnitId { get; set; }
 
-    [UInt(15)] public ushort Unknown2 { get; set; }
-    [WideString] public string Unknown3 { get; set; } = "";
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
+    [VerifiedMember, UInt(15)] public ushort Unknown2 { get; set; }
+
+    /// <summary>
+    /// The unit's name, which the client gives the unit when its creature gives it none.
+    /// </summary>
+    [VerifiedMember, WideString] public string Name { get; set; } = "";
 }

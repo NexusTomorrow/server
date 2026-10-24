@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Entity;
 /// Sets a unit's minimap marker.
 /// </summary>
 /// <remarks>
-/// The client keeps the marker where it keeps <see cref="UnitCreate.MiniMapMarkerId"/> and raises UnitMiniMapMarkerChanged.
+/// The client keeps the marker where it keeps <see cref="UnitCreate.Unknown18"/> and raises UnitMiniMapMarkerChanged.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server088A, Direction.ServerToClient)]
 [Verified(Rung.Fields)]
