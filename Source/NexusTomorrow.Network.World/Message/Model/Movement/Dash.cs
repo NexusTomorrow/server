@@ -1,5 +1,7 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Game.Static.Entity.Movement;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
+using NexusTomorrow.Network.World.Entity.Command;
 
 namespace NexusTomorrow.Network.World.Message.Model.Movement;
 
@@ -7,15 +9,17 @@ namespace NexusTomorrow.Network.World.Message.Model.Movement;
 /// Tells the server the player has dashed.
 /// </summary>
 /// <remarks>
-/// The client sends it once, when the dash starts, and moves the unit itself. It sends nothing when it refuses the dash for want of
-/// energy. While the unit is knocked down it sends <see cref="KnockdownDash"/> instead.
+/// The client sends it once, when the dash starts, and moves the unit itself. It sends nothing when the dash spell's cast check fails,
+/// while a dash it sent is still running, while the unit's <see cref="SetModeCommand.Mode"/> is not 0 or bit 0x100 of its
+/// <see cref="SetStateCommand.State"/> is clear, or for any unit but the one it moves. While the unit has a crowd-control state whose
+/// CCStates flags include 0x2 it sends <see cref="KnockdownDash"/> instead.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client00DE, global::NexusTomorrow.Network.Codec.Direction.ClientToServer)]
 [Verified(Rung.Fields)]
 public sealed partial class Dash
 {
     /// <summary>
-    /// The direction of the dash: 1 forward, 2 backward, 3 left, 4 right.
+    /// The direction of the dash.
     /// </summary>
-    [UInt(3)] public byte Direction { get; set; }
+    [VerifiedMember, UInt(3)] public DashDirection Direction { get; set; }
 }

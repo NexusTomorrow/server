@@ -9,13 +9,16 @@ namespace NexusTomorrow.Network.World.Message.Model.Support;
 /// recall can be cast.
 /// </summary>
 [WireMessage(GameMessageOpcode.Client0831, Direction.ClientToServer)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class SupportStuck
 {
     /// <summary>
     /// The recall the player chose.
     /// </summary>
-    [UInt(3)] public SupportStuckAction Action { get; private set; }
+    [VerifiedMember, UInt(3)] public SupportStuckAction Action { get; private set; }
 
-    [UInt(32)] public uint Unknown1 { get; private set; }
+    /// <summary>
+    /// The recall's cast, by the client's own id for it.
+    /// </summary>
+    [VerifiedMember, UInt(32)] public uint ClientCastId { get; private set; }
 }

@@ -23,7 +23,11 @@ public sealed partial class Server0262Union2Arm03 : IServer0262Union2
     /// </summary>
     [VerifiedMember, Array(CountFrom = nameof(Count)), Float32] public List<Vector3> Positions { get; set; } = [];
 
-    [UInt(2)] public byte Unknown3 { get; set; }
+    /// <summary>
+    /// How the unit moves between its keys. With 0 it moves evenly from one key to the next. A value above 1 fails the command, as 1 does
+    /// when the command carries fewer than three keys.
+    /// </summary>
+    [VerifiedMember, UInt(2)] public byte Interpolation { get; set; }
 
     /// <summary>
     /// Time already elapsed on the command's keys, in milliseconds: the client adds it to the time since the command's start, so it sets

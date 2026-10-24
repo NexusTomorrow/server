@@ -12,7 +12,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Movement;
 /// <remarks>
 /// The client checks for a change each time its movement timer runs while it moves a unit; the timer's period is
 /// <see cref="WorldSettings.MovementInterval"/>. It also sends one at once, with both values the same, when a <see cref="MovementControl"/>
-/// names the player's own unit while the unit the client moves, or last moved, carries the mark <see cref="UnitMovement.Unknown3"/>
+/// names the player's own unit while the unit the client moves, or last moved, carries the mark <see cref="UnitMovement.ServerMoved"/>
 /// describes, as on the client's first takeover of that unit and after a <see cref="MovementControlEnd"/>.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Message063A, Direction.ClientToServer)]

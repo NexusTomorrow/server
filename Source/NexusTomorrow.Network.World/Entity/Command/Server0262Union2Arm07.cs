@@ -29,7 +29,11 @@ public sealed partial class Server0262Union2Arm07 : IServer0262Union2
     /// </summary>
     [VerifiedMember, Float32] public float Gravity { get; set; }
 
-    [UInt(32)] public uint Unknown4 { get; set; }
+    /// <summary>
+    /// Time already elapsed in the flight, in milliseconds: the client adds it to the time since the command's start, so the flight starts
+    /// that far into it.
+    /// </summary>
+    [VerifiedMember, UInt(32)] public uint Offset { get; set; }
 
     /// <summary>
     /// Whether the segment blends in: when set, on a unit the client does not move, the client blends away the jump to the segment; when

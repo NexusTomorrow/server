@@ -38,7 +38,7 @@ public sealed class LayoutRowsTests
     {
         List<(string Path, string Bits, string Encoding)> rows = LayoutRows.Of(typeof(UnitMovement));
 
-        Assert.Contains(("Unknown4[].Unknown1{3}.Positions", "", "array, counted by `Unknown4[].Unknown1{3}.Count`"), rows);
+        Assert.Contains(("Commands[].Unknown1{3}.Positions", "", "array, counted by `Commands[].Unknown1{3}.Count`"), rows);
     }
 
     [Fact]

@@ -140,6 +140,11 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   values, and a player's attribute points. The movement commands name their spline ids, positions,
   velocities, rotations, scales, states and modes, the jump's start, flight time and gravity, and the
   key times of two tracks. An item names its second power core and its charges.
+- Movement messages carry their real names and field meanings: the movement interval, leaving a
+  vehicle, the rapid transport cast and the falling damage report. The stuck request and the rapid
+  transport cast name the cast they answer. The movement commands name their playback mode, offsets,
+  interpolation, the facing point, the spin's rate, start, duration and offset, and command 21 says it
+  hands the facing to the unit's motion; the dash directions have their names.
 - Support messages carry their real names and field meanings: bug reports, player reports, support
   tickets, suggestions, customer surveys and their responses, and the stuck window's recall actions.
 - Hazard messages carry their real names and field meanings: each hazard's state and meter, the

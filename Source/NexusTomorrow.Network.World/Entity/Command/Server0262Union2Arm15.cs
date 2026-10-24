@@ -2,6 +2,9 @@
 
 namespace NexusTomorrow.Network.World.Entity.Command;
 
+/// <summary>
+/// Command 21: hands the unit's facing to its motion, so the unit faces the way it moves.
+/// </summary>
 [WireStruct]
 [UnionCase(21)]
 public sealed partial class Server0262Union2Arm15 : IServer0262Union2
