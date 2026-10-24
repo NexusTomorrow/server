@@ -14,5 +14,5 @@ public enum CameraAddFlags
     /// </summary>
     AwaitContinue = 0x4,
 
-    NotifyCancelCurrentCamera = 0x8
+    Unknown08 = 0x8
 }
