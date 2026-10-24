@@ -303,12 +303,12 @@ public sealed class VisibilityTests : IDisposable
         while (_ticks % TicksPerFlush != 0);
     }
 
+    // Posts only, so players entered together are handled in one tick and no flush runs between them.
     private FakeClientSession Arrive(MapOwner map, ulong id, Vector3 at)
     {
         var session = new FakeClientSession();
         CharacterRecord record = MapOwnerTests.Record(id) with { Name = $"Player {id}", Location = new CharacterLocation(1, 3, at, 0) };
         map.Post(new CharacterArrived(session, 7, record, _realm));
-        Tick(map);
         return session;
     }
 
@@ -316,7 +316,6 @@ public sealed class VisibilityTests : IDisposable
     {
         FakeClientSession session = Arrive(map, id, at);
         map.Post(new ClientWorldReady(session, 3));
-        Tick(map);
         return session;
     }
 
