@@ -1,1 +1,1 @@
-{"schema": 2, "build": 16042, "rows": 1119, "sides_without_tree": 3, "float_fields": {"s2c": 417, "c2s": 224}, "half_fields": {"s2c": 0}, "signed_fields": {"s2c": 4}}
+{"schema": 2, "build": 16042, "rows": 1119, "sides_without_tree": 3, "float_fields": {"s2c": 417, "c2s": 224}, "half_fields": {"s2c": 0}, "signed_fields": {"s2c": 3}}

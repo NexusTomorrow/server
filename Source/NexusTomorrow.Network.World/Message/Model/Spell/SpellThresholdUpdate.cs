@@ -21,5 +21,5 @@ public sealed partial class SpellThresholdUpdate
     /// <summary>
     /// The tier, from 0.
     /// </summary>
-    [UInt(8)] public byte Tier { get; set; }
+    [SInt(8)] public sbyte Tier { get; set; }
 }

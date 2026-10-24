@@ -6,5 +6,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Abilities;
 [WireMessage(GameMessageOpcode.Server01A1, Direction.ServerToClient)]
 public sealed partial class Server01A1
 {
-    [UInt(16)] public ushort Unknown0 { get; set; }
+    [SInt(16)] public short Unknown0 { get; set; }
 }
