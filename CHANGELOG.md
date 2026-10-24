@@ -163,8 +163,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   maximum modifiers, and hazard actions. Showing a tutorial has its own Tutorial area and reaches
   Fields.
 - The reward properties message carries its real name and field meanings: each property, its
-  sub-key, how its value counts and the value. A chat line's id, and the speaker's name, realm and
-  unit on the accepted line, carry theirs.
+  sub-key, how its value counts and the value; each property's modifier list stays unread. A chat
+  line's id, and the speaker's name, realm and unit on the accepted line, carry theirs.
 
 ### Changed
 

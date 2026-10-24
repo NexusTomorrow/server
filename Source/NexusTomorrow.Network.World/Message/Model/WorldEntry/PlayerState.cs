@@ -71,9 +71,9 @@ public sealed partial class PlayerState
 
     /// <summary>
     /// A limit on the credits the player may move, which GameLib.GetMoneyTradeLimit reports. The limit applies only while the client
-    /// holds an entry from <see cref="Reward.RewardPropertiesChanged"/> for reward property 20 of kind 1 with a non-zero value; with no such entry,
-    /// or with a kind 0 entry or a value of 0, the getter answers nothing. While it applies, the client refuses credits above it in a
-    /// trade or a guild bank deposit.
+    /// holds an entry from <see cref="Reward.RewardPropertiesChanged"/> for reward property 20 of kind 1 with a non-zero value; with no
+    /// such entry, or with a kind 0 entry or a value of 0, the getter answers nothing. While it applies, the client refuses credits above
+    /// it in a trade or a guild bank deposit.
     /// </summary>
     [VerifiedMember, UInt(64)] public ulong MoneyTradeLimit { get; set; }
 

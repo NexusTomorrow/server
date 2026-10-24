@@ -55,6 +55,31 @@ public sealed partial class RewardPropertiesChanged
         [VerifiedMember, Float32] public float Value { get; set; }
     }
 
+    public interface IServer092CUnion1 : IWireStruct
+    {
+    }
+
+    [WireStruct]
+    [UnionCase(0)]
+    public sealed partial class Server092CUnion1Arm00 : IServer092CUnion1
+    {
+        [Float32] public float Unknown0 { get; set; }
+    }
+
+    [WireStruct]
+    [UnionCase(1)]
+    public sealed partial class Server092CUnion1Arm01 : IServer092CUnion1
+    {
+        [UInt(32)] public uint Unknown0 { get; set; }
+    }
+
+    [WireStruct]
+    [UnionCase(2)]
+    public sealed partial class Server092CUnion1Arm02 : IServer092CUnion1
+    {
+        [Float32] public float Unknown0 { get; set; }
+    }
+
     /// <summary>
     /// One reward property's entry. The client finds or inserts it by <see cref="Property"/> and <see cref="Data"/>.
     /// </summary>
@@ -67,7 +92,7 @@ public sealed partial class RewardPropertiesChanged
             [UInt(4)] public byte Unknown0 { get; set; }
             [UInt(32)] public uint Unknown1 { get; set; }
             [UInt(2)] public byte Unknown2 { get; set; }
-            [Union(nameof(Unknown2))] public IServer092CUnion0 Unknown3 { get; set; } = new Server092CUnion0Arm00();
+            [Union(nameof(Unknown2))] public IServer092CUnion1 Unknown3 { get; set; } = new Server092CUnion1Arm00();
         }
 
         /// <summary>
