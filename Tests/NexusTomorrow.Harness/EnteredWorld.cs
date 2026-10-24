@@ -2,11 +2,12 @@
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.PlayerPath;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Network.World.Message.Model.Reward;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 
 namespace NexusTomorrow.Harness;
 
-// The eight messages the server sent to bring a character into the world, in the order they arrived.
+// The nine messages the server sent to bring a character into the world, in the order they arrived.
 public sealed record EnteredWorld(
     EnterWorld Enter,
     UnitCreate Unit,
@@ -15,4 +16,5 @@ public sealed record EnteredWorld(
     WorldSettings Settings,
     MovementControl Control,
     PlayerState State,
-    PathState Path);
+    PathState Path,
+    RewardPropertiesChanged Rewards);

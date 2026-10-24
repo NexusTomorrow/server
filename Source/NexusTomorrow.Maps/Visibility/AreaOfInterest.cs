@@ -194,7 +194,7 @@ internal sealed class AreaOfInterest
         SerializedMessage? create = null;
         try
         {
-            create = _serializer.Serialize(WorldEntry.RemoteCreate(target, _settings.RealmId, SenderTime(target, nowMs)));
+            create = _serializer.Serialize(WorldEntry.RemoteCreate(target, _settings, SenderTime(target, nowMs)));
             SerializedMessage path = _serializer.Serialize(WorldEntry.PathOf(target));
             return new Serialized(create, path, null);
         }

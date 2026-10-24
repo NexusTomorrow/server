@@ -4,6 +4,7 @@ using NexusTomorrow.Maps.Scheduling;
 using NexusTomorrow.Maps.Visibility;
 using NexusTomorrow.Maps.Worlds;
 using NexusTomorrow.Owners;
+using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
@@ -37,12 +38,16 @@ public sealed class MapDirectory : IMapDirectory
     public MapDirectory(
         IWorldCatalog worlds, IMapScheduler scheduler, IWriteBehind persistence, IOptions<MapOptions> options,
         IOptions<RealmOptions> realm, Random random, MapMetrics metrics, IMessageSerializer serializer, IVisibilityPredicate visibility,
-        ILoggerFactory loggers)
+        IRewardProperties rewards, ILoggerFactory loggers)
     {
         _worlds = worlds;
         _scheduler = scheduler;
         _persistence = persistence;
-        _settings = MapSettings.From(options.Value, realm.Value.Id, realm.Value.Name);
+        _settings = MapSettings.From(options.Value, realm.Value.Id, realm.Value.Name) with
+        {
+            PremiumTier = rewards.Tier,
+            RewardProperties = rewards.Values,
+        };
         _random = random;
         _metrics = metrics;
         _serializer = serializer;

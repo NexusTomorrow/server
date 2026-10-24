@@ -1,7 +1,11 @@
-﻿namespace NexusTomorrow.Maps;
+﻿using System.Collections.Immutable;
+using NexusTomorrow.Owners.Account;
+
+namespace NexusTomorrow.Maps;
 
 /// <summary>
-/// What a map reads from <see cref="MapOptions"/>, plus the realm it belongs to: its id and its name.
+/// What a map reads from <see cref="MapOptions"/>, plus the realm it belongs to (its id and its name) and what every account enters
+/// the world with (<see cref="PremiumTier"/>, <see cref="RewardProperties"/>).
 /// </summary>
 /// <param name="TickMs">The map's tick period in milliseconds.</param>
 /// <param name="ReplicationEveryTicks">How many ticks make one replication interval.</param>
@@ -23,6 +27,16 @@ public sealed record MapSettings(
     /// The interval the client is told to send its movement at, a whole number of ticks.
     /// </summary>
     public uint MovementInterval => (uint)(TickMs * ReplicationEveryTicks);
+
+    /// <summary>
+    /// The premium tier every account holds, carried on every player's unit.
+    /// </summary>
+    public byte PremiumTier { get; init; }
+
+    /// <summary>
+    /// The reward properties that tier gives, which world entry ends with; none sends none.
+    /// </summary>
+    public ImmutableArray<RewardPropertyValue> RewardProperties { get; init; } = [];
 
     /// <summary>
     /// Copy the options a map reads, and the realm's id and name.

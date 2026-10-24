@@ -94,6 +94,7 @@ public sealed class WorldConnectionTests : IAsyncLifetime
         LoadCharactersWork load = _db.Take<LoadCharactersWork>();
         load.Complete(WorkResult.Committed);
         await Client.ExpectAsync<AccountEntitlements>();
+        await Client.ExpectAsync<AccountPremiumTier>();
         await Client.ExpectAsync<CreationLevelLimit>();
         Assert.Empty((await Client.ExpectAsync<CharacterList>()).Characters);
     }
@@ -465,6 +466,7 @@ public sealed class WorldConnectionTests : IAsyncLifetime
 
         // The account owner's grant sends these before the session reads anything else.
         await Client.ExpectAsync<AccountEntitlements>();
+        await Client.ExpectAsync<AccountPremiumTier>();
         await Client.ExpectAsync<CreationLevelLimit>();
     }
 

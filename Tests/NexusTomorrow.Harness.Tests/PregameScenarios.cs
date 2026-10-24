@@ -35,8 +35,10 @@ public sealed class PregameScenarios
         // The login takes the frames after the greeting strictly in order, so a session here received them in this order.
         await using WorldSession session = await client.ScriptedLoginAsync(Email, Password);
 
-        uint[] ids = [4, 10, 14, 15, 16, 17, 18, 19, 20, 21, 61, 62];
+        // The harness reads no client tables, so the licenses, which take their counts from the Entitlement table, are not sent.
+        uint[] ids = [4, 10, 14, 15, 16, 17, 18, 19, 20, 21, 22, 61, 62];
         Assert.Equal(ids, session.Entitlements.Entitlements.Select(entitlement => entitlement.EntitlementId));
+        Assert.Equal((byte)1, session.PremiumTier.Tier);
         Assert.Equal(3u, session.CreationLimit.Level);
         Assert.Empty(session.FirstList.Characters);
     }

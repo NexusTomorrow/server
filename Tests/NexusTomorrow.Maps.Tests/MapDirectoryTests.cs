@@ -118,6 +118,7 @@ public sealed class MapDirectoryTests : IDisposable
         _metrics,
         new FakeMessageSerializer(),
         AllowAllVisibility.Instance,
+        new FixedRewardProperties(1),
         NullLoggerFactory.Instance);
 
     private sealed class RecordingScheduler : IMapScheduler

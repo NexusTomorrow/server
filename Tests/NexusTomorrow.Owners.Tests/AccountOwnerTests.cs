@@ -29,19 +29,32 @@ public sealed class AccountOwnerTests : IAsyncLifetime
     public async ValueTask DisposeAsync() => await _owner.StopAsync().WaitAsync(TimeSpan.FromSeconds(10));
 
     [Fact]
-    public async Task AGrantSendsTheEntitlementsThenTheCreationLimit()
+    public async Task AGrantSendsTheTierBetweenTheEntitlementsAndTheLimit()
     {
-        LoginGranted grant = Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
-        var session = new FakeClientSession();
+        // Every license capped at 5, a fixture figure.
+        uint[] licenses = [12, 3, 27, 23, 25, 26, 36, 71, 74, 75, 42, 43];
+        var caps = new FixedEntitlementCaps(licenses.ToDictionary(id => id, _ => 5u));
 
-        Assert.IsType<WorldGranted>(await GreetAsync(grant.SessionKey, grant.Echo, "alice@example.com", session));
+        FakeClientSession session = await GrantUnderAsync(FixedEntitlementCaps.Defaults(caps: caps));
 
-        Assert.Equal(2, session.Sent.Count);
+        Assert.Equal(3, session.Sent.Count);
         AccountEntitlements entitlements = Assert.IsType<AccountEntitlements>(session.Sent[0]);
-        uint[] ids = [4, 10, 14, 15, 16, 17, 18, 19, 20, 21, 61, 62];
-        Assert.Equal(ids, entitlements.Entitlements.Select(entitlement => entitlement.EntitlementId));
-        Assert.All(entitlements.Entitlements, entitlement => Assert.Equal(1u, entitlement.Count));
-        Assert.Equal(3u, Assert.IsType<CreationLevelLimit>(session.Sent[1]).Level);
+        (uint Id, uint Count)[] expected =
+        [
+            .. new uint[] { 4, 10, 14, 15, 16, 17, 18, 19, 20, 21, 22, 61, 62 }.Select(id => (id, 1u)),
+            .. licenses.Select(id => (id, 5u)),
+        ];
+        Assert.Equal(expected, entitlements.Entitlements.Select(entitlement => (entitlement.EntitlementId, entitlement.Count)));
+        Assert.Equal((byte)1, Assert.IsType<AccountPremiumTier>(session.Sent[1]).Tier);
+        Assert.Equal(3u, Assert.IsType<CreationLevelLimit>(session.Sent[2]).Level);
+    }
+
+    [Fact]
+    public async Task AFreeTierValueComesOnlyFromATestThatSetsIt()
+    {
+        FakeClientSession session = await GrantUnderAsync(FixedEntitlementCaps.Defaults(new AccountDefaultsOptions { PremiumTier = 0 }));
+
+        Assert.Equal((byte)0, session.Single<AccountPremiumTier>().Tier);
     }
 
     [Fact]
@@ -391,6 +404,31 @@ public sealed class AccountOwnerTests : IAsyncLifetime
         var reply = new TaskCompletionSource<LoginDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
         Assert.True(_owner.Post(new RedeemGameToken(token, name, reply)));
         return await reply.Task.WaitAsync(TimeSpan.FromSeconds(10));
+    }
+
+    // Logs alice in to the world under an owner of its own holding defaults; the session the grant was sent to.
+    private async Task<FakeClientSession> GrantUnderAsync(AccountDefaults defaults)
+    {
+        var owner = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind(), defaults);
+        owner.Start();
+        try
+        {
+            var issued = new TaskCompletionSource<Guid>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Assert.True(owner.Post(new IssueGameToken(s_alice, issued)));
+            var redeemed = new TaskCompletionSource<LoginDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Assert.True(owner.Post(new RedeemGameToken(await issued.Task.WaitAsync(TimeSpan.FromSeconds(10)), "alice@example.com", redeemed)));
+            LoginGranted grant = Assert.IsType<LoginGranted>(await redeemed.Task.WaitAsync(TimeSpan.FromSeconds(10)));
+
+            var session = new FakeClientSession();
+            var greeted = new TaskCompletionSource<WorldDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Assert.True(owner.Post(new RedeemSessionKey(grant.SessionKey, grant.Echo, "alice@example.com", session, greeted)));
+            Assert.IsType<WorldGranted>(await greeted.Task.WaitAsync(TimeSpan.FromSeconds(10)));
+            return session;
+        }
+        finally
+        {
+            await owner.StopAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        }
     }
 
     private async Task<WorldDecision> GreetAsync(byte[] key, uint echo, string name, FakeClientSession session)

@@ -75,9 +75,10 @@ public sealed class HeadlessClient : IAsyncDisposable
 
             // The grant's account block comes first: the server sends it before it reads the list request.
             AccountEntitlements entitlements = await game.ExpectAsync<AccountEntitlements>();
+            AccountPremiumTier tier = await game.ExpectAsync<AccountPremiumTier>();
             CreationLevelLimit creationLimit = await game.ExpectAsync<CreationLevelLimit>();
             await game.SendAsync(new CharacterListRequest());
-            return new WorldSession(pipe, game, entitlements, creationLimit, await game.ExpectAsync<CharacterList>());
+            return new WorldSession(pipe, game, entitlements, tier, creationLimit, await game.ExpectAsync<CharacterList>());
         }
         catch
         {

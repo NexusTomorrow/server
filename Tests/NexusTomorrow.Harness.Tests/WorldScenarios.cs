@@ -41,6 +41,8 @@ public sealed class WorldScenarios
         Assert.Equal((byte)2, world.UnitPath.PathType);
         Assert.Equal(unitId, world.Control.UnitId);
         Assert.Equal(CharacterName, Assert.IsType<Server0262Union0Arm14>(world.Unit.TypeData).Name);
+        Assert.Equal(HarnessServer.Rewards.Tier, Assert.IsType<Server0262Union0Arm14>(world.Unit.TypeData).PremiumTier);
+        Assert.Equal(HarnessServer.Rewards.Values[0].Property, Assert.Single(world.Rewards.Properties).Property);
         Assert.Equal((ushort)166, world.Unit.BaseFactionId);
         Assert.Equal(HarnessServer.Start, Assert.IsType<SetPositionCommand>(world.Unit.Commands[0].Unknown1).Position);
         Assert.Equal(125u, world.Settings.MovementInterval);

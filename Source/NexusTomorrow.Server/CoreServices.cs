@@ -38,8 +38,8 @@ public static class CoreServices
 
     /// <summary>
     /// Register the core against <paramref name="configuration"/>. The clock, the creation catalog, the word filter, the entitlement
-    /// caps, the world catalog, the map scheduler and the random source are registered only when the caller has not, so a harness that
-    /// registers its own first wins.
+    /// caps, the reward properties, the world catalog, the map scheduler and the random source are registered only when the caller has
+    /// not, so a harness that registers its own first wins.
     /// </summary>
     public static IServiceCollection AddNexusTomorrowCore(this IServiceCollection services, IConfiguration configuration)
     {
@@ -57,6 +57,7 @@ public static class CoreServices
         services.TryAddSingleton<IWordFilter, TableWordFilter>();
         services.TryAddSingleton<IEntitlementCaps, TableEntitlementCaps>();
         services.AddSingleton<AccountDefaults>();
+        services.TryAddSingleton<IRewardProperties, TableRewardProperties>();
 
         // Random.Shared is safe from any thread; a harness registers its own seeded one first.
         services.TryAddSingleton(Random.Shared);

@@ -32,6 +32,7 @@ public sealed class AccountDefaults
         _counts = Entitlements.ToFrozenDictionary(entitlement => entitlement.Id, entitlement => entitlement.Count);
         EntitlementIds = _counts.Keys.ToFrozenSet();
         CreationLevelLimit = value.CreationLevelLimit;
+        PremiumTier = value.PremiumTier;
     }
 
     /// <summary>
@@ -48,6 +49,11 @@ public sealed class AccountDefaults
     /// The creation level limit every account is sent.
     /// </summary>
     public uint CreationLevelLimit { get; }
+
+    /// <summary>
+    /// The premium tier every account holds.
+    /// </summary>
+    public byte PremiumTier { get; }
 
     /// <summary>
     /// How many of <paramref name="entitlementId"/> an account holds; 0 when it holds none.

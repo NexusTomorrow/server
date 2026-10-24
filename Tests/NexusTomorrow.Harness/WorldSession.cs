@@ -7,6 +7,7 @@ using NexusTomorrow.Network.World.Message.Model.Entity;
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.PlayerPath;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Network.World.Message.Model.Reward;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 using NexusTomorrow.Testing;
 
@@ -29,17 +30,21 @@ public sealed class WorldSession : IAsyncDisposable
     private readonly SocketPipe _pipe;
 
     internal WorldSession(
-        SocketPipe pipe, GameTestClient connection, AccountEntitlements entitlements, CreationLevelLimit creationLimit, CharacterList firstList)
+        SocketPipe pipe, GameTestClient connection, AccountEntitlements entitlements, AccountPremiumTier premiumTier,
+        CreationLevelLimit creationLimit, CharacterList firstList)
     {
         _pipe = pipe;
         Connection = connection;
         Entitlements = entitlements;
+        PremiumTier = premiumTier;
         CreationLimit = creationLimit;
         FirstList = firstList;
     }
 
-    // The account's entitlements and the creation level limit the server sent with the grant, before the first list.
+    // The account's entitlements, premium tier and creation level limit the server sent with the grant, before the first list.
     public AccountEntitlements Entitlements { get; }
+
+    public AccountPremiumTier PremiumTier { get; }
 
     public CreationLevelLimit CreationLimit { get; }
 
@@ -73,8 +78,9 @@ public sealed class WorldSession : IAsyncDisposable
         return await Connection.ExpectAsync<CharacterSelectFailed>();
     }
 
-    // As the client does: select, take the eight entry messages in order, answer the control grant, report the first takeover's zone
-    // change and the world loaded, and wait for the end of the entry.
+    // As the client does: select, take the nine entry messages in order (the harness server holds reward properties, so the entry
+    // ends with them), answer the control grant, report the first takeover's zone change and the world loaded, and wait for the end of
+    // the entry.
     public async Task<EnteredWorld> EnterWorldAsync(ulong characterId, ushort zoneId = 7)
     {
         await Connection.SendAsync(new CharacterSelect { CharacterId = characterId });
@@ -86,7 +92,8 @@ public sealed class WorldSession : IAsyncDisposable
             await Connection.ExpectAsync<WorldSettings>(),
             await Connection.ExpectAsync<MovementControl>(),
             await Connection.ExpectAsync<PlayerState>(),
-            await Connection.ExpectAsync<PathState>());
+            await Connection.ExpectAsync<PathState>(),
+            await Connection.ExpectAsync<RewardPropertiesChanged>());
 
         await Connection.SendTaggedAsync(WorldTag, ClientMessage.With(new MovementControlReceipt(), nameof(MovementControlReceipt.Ticket), entered.Control.Ticket));
         await Connection.SendTaggedAsync(WorldTag, new ZoneChange());
