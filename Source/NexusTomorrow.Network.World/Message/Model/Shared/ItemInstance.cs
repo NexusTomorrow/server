@@ -5,7 +5,8 @@ namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 /// <summary>
 /// One item. The client files it in the player's inventory (<see cref="ItemUpdate"/>), in an inspected unit's equipment
-/// (<see cref="Entity.InspectResponse"/>) and in a guild bank tab (<see cref="Guild.GuildBankItemAdded"/>, <see cref="Guild.GuildBankTabItems"/>).
+/// (<see cref="Entity.InspectResponse"/>) and in a guild bank tab (<see cref="Guild.GuildBankItemAdded"/>,
+/// <see cref="Guild.GuildBankTabItems"/>).
 /// </summary>
 [WireStruct]
 public sealed partial class ItemInstance
@@ -27,8 +28,9 @@ public sealed partial class ItemInstance
     }
 
     /// <summary>
-    /// The item's unique id. Later messages name the item by it (<see cref="Inventory.ItemRemoved"/>, <see cref="Inventory.ItemStackCountChanged"/>,
-    /// <see cref="Entity.ItemMoved"/>, <see cref="Entity.ItemsSwapped"/> and others), and the guild bank keys its items by it.
+    /// The item's unique id. Later messages name the item by it (<see cref="Inventory.ItemRemoved"/>,
+    /// <see cref="Inventory.ItemStackCountChanged"/>, <see cref="Entity.ItemMoved"/>, <see cref="Entity.ItemsSwapped"/> and others), and
+    /// the guild bank keys its items by it.
     /// </summary>
     [VerifiedMember, UInt(64)] public ulong ItemId { get; set; }
 
@@ -113,7 +115,8 @@ public sealed partial class ItemInstance
     [VerifiedMember, UInt(8)] public ItemInstanceFlags Flags { get; set; }
 
     /// <summary>
-    /// Milliseconds left in the item's vendor return window, 0 for none. The client keeps <see cref="ReturnPrices"/> only while it is not 0.
+    /// Milliseconds left in the item's vendor return window, 0 for none. The client keeps <see cref="ReturnPrices"/> only while it is
+    /// not 0.
     /// </summary>
     [VerifiedMember, UInt(32)] public uint ReturnTimeRemainingMs { get; set; }
 
@@ -140,6 +143,7 @@ public sealed partial class ItemInstance
     [VerifiedMember, UInt(18)] public uint PowerCoreItem2Id { get; set; }
 
     [Array(CountBits = 3), UInt(32)] public List<uint> Unknown17 { get; } = [];
+
     /// <summary>
     /// One rune item id per slot, in slot order. The client applies each one its slot accepts, up to the item's rune slot count.
     /// </summary>

@@ -26,7 +26,7 @@ public enum ItemInstanceFlags
     NotSellable = 0x20,
 
     /// <summary>
-    /// The item may be traded within the account, as Item:IsAccountTradeable reports.
+    /// The item is account tradeable, as Item:IsAccountTradeable reports.
     /// </summary>
     AccountTradeable = 0x40,
 
