@@ -1,6 +1,6 @@
 ﻿namespace NexusTomorrow.Game.Static.Option;
 
-public enum InputSets
+public enum InputKeySet
 {
     Default1 = 0,
     Default2 = 1,

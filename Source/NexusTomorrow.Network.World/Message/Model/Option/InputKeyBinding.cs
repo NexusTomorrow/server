@@ -1,9 +1,9 @@
 ﻿using NexusTomorrow.Network.Codec;
 
-namespace NexusTomorrow.Network.World.Message.Model.Shared;
+namespace NexusTomorrow.Network.World.Message.Model.Option;
 
 [WireStruct]
-public sealed partial class Message056FPart0
+public sealed partial class InputKeyBinding
 {
     [UInt(14)] public ushort Unknown0 { get; set; }
     [UInt(32)] public uint Unknown1 { get; set; }

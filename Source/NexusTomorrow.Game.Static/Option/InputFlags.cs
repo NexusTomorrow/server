@@ -1,7 +1,7 @@
 ﻿namespace NexusTomorrow.Game.Static.Option;
 
 [Flags]
-public enum CastingOptionFlags
+public enum InputFlags
 {
     Unknown = 1,
     ButtonDownForAbilities = 2,

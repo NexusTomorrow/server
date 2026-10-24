@@ -1,7 +1,7 @@
 ﻿namespace NexusTomorrow.Game.Static.Option;
 
 [Flags]
-public enum CombatLogOptions
+public enum CombatLogType
 {
     DisableAbsorption = 0x0001,
     DisableCCState = 0x0002,
