@@ -26,7 +26,7 @@ public sealed class LayoutTreeTests
     [Fact]
     public void AnArrayNamesItsCountAndNestsItsElement()
     {
-        Assert.Equal("3 [0:18] 4 [2:32] [2:32] 8 8 8 2 [8:8 8]", LayoutOf<CollectionsFixture>().TreeText);
+        Assert.Equal("3 [0:18] 4 [2:32] [2:32f] 8 8 8 2 [8:8 8]", LayoutOf<CollectionsFixture>().TreeText);
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public sealed class LayoutTreeTests
     {
         WireLayout layout = global::NexusTomorrow.Network.Auth.WireMessages.Layouts.Single(candidate => candidate.Opcode == 0x0592);
 
-        Assert.StartsWith("32 64 t 32 16 16 8 8 8 8 8 8 8 8 32 16 16 8 8 8 8 8 8 8 8 32 32 32 32 w w w", layout.TreeText, StringComparison.Ordinal);
+        Assert.StartsWith("32 64 t 32s 16s 16s 8 8 8 8 8 8 8 8 32s 16s 16s 8 8 8 8 8 8 8 8 32 32 32 32 w w w", layout.TreeText, StringComparison.Ordinal);
     }
 
     [Fact]

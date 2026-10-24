@@ -196,7 +196,7 @@ internal sealed class LayoutCalculator
         switch (value.Kind)
         {
             case ValueKind.Scalar when value.Scalar is not null:
-                return [.. Enumerable.Repeat(Number(value.Scalar.Bits), value.Scalar.Components)];
+                return [.. Enumerable.Repeat(Number(value.Scalar.Bits) + MarkOf(value.Scalar.Encoding), value.Scalar.Components)];
             case ValueKind.String:
                 return [value.String switch { StringEncoding.Wide => "w", StringEncoding.Narrow => "n", _ => "t" }];
             case ValueKind.Struct when value.StructType is not null:
@@ -272,6 +272,15 @@ internal sealed class LayoutCalculator
     {
         return selector is null || selector.Bits >= 64 ? value : value & ((1UL << selector.Bits) - 1);
     }
+
+    // The field's encoding in the tree's text form (WireTree): nothing for an unsigned integer.
+    private static string MarkOf(ScalarEncoding encoding) => encoding switch
+    {
+        ScalarEncoding.SInt => "s",
+        ScalarEncoding.Float32 or ScalarEncoding.Float64 => "f",
+        ScalarEncoding.PackedFloat => "h",
+        _ => "",
+    };
 
     private static string Number(int value)
     {

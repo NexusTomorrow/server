@@ -12,9 +12,21 @@ public sealed class WireTreeTests
     [InlineData("14 64 w 5 [3:4 16 16 {0:0=(1),2=(18)}] 16")]
     [InlineData("5 b32a")]
     [InlineData("8 {0:0=(),255=(? 7)}")]
+    [InlineData("32f 16h 8s 4 [3:32f 64f]")]
     public void FormatGivesBackTheTextParseRead(string text)
     {
         Assert.Equal(text, WireTree.Format(WireTree.Parse(text)));
+    }
+
+    [Fact]
+    public void AFieldsMarkGivesItsEncoding()
+    {
+        ImmutableArray<WireNode> nodes = WireTree.Parse("32f 16h 8s 4");
+
+        WireEncoding[] expected = [WireEncoding.Ieee, WireEncoding.PackedFloat, WireEncoding.TwosComplement, WireEncoding.Plain];
+        Assert.Equal(expected, nodes.Select(node => node.Encoding));
+        int[] widths = [32, 16, 8, 4];
+        Assert.Equal(widths, nodes.Select(node => node.Bits));
     }
 
     [Fact]

@@ -6,7 +6,8 @@ namespace NexusTomorrow.Network.Codec;
 
 /// <summary>
 /// The text form of a layout tree, which the generated code and the client facts table both carry. A sequence is nodes separated by one
-/// space: a width from 1 to 64 is a field; <c>w</c>, <c>n</c> and <c>t</c> are a wide, a narrow and a terminated wide string; <c>b32</c> is
+/// space: a width from 1 to 64 is a field, read as an integer, or as a signed integer, an IEEE float or the client's packed float when
+/// <c>s</c>, <c>f</c> or <c>h</c> follows it (<c>32f</c>); <c>w</c>, <c>n</c> and <c>t</c> are a wide, a narrow and a terminated wide string; <c>b32</c> is
 /// a blob with a 32-bit length and <c>b32a</c> one that starts on a byte; <c>[3:...]</c> is an array counted by the field at index 3 of the
 /// same sequence, its element's sequence after the colon; <c>{3:0=(...),2=(...)}</c> is a union selected by the field at index 3, one arm
 /// per selector value in ascending order; <c>?</c> is a layout that contains itself.
@@ -116,9 +117,31 @@ public static class WireTree
                 }
 
             default:
-                return WireNode.Field(ParseWidth(text, ref position));
+                {
+                    int bits = ParseWidth(text, ref position);
+                    WireEncoding encoding = position < text.Length ? EncodingOf(text[position]) : WireEncoding.Plain;
+                    if (encoding != WireEncoding.Plain)
+                        position++;
+                    return WireNode.Field(bits, encoding);
+                }
         }
     }
+
+    private static WireEncoding EncodingOf(char mark) => mark switch
+    {
+        's' => WireEncoding.TwosComplement,
+        'f' => WireEncoding.Ieee,
+        'h' => WireEncoding.PackedFloat,
+        _ => WireEncoding.Plain,
+    };
+
+    private static string MarkOf(WireEncoding encoding) => encoding switch
+    {
+        WireEncoding.TwosComplement => "s",
+        WireEncoding.Ieee => "f",
+        WireEncoding.PackedFloat => "h",
+        _ => "",
+    };
 
     private static int ParseWidth(string text, ref int position)
     {
@@ -184,7 +207,7 @@ public static class WireTree
         switch (node.Kind)
         {
             case WireNodeKind.Field:
-                builder.Append(node.Bits.ToString(CultureInfo.InvariantCulture));
+                builder.Append(node.Bits.ToString(CultureInfo.InvariantCulture)).Append(MarkOf(node.Encoding));
                 break;
             case WireNodeKind.WideString:
                 builder.Append('w');
