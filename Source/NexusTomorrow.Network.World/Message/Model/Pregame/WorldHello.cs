@@ -15,9 +15,11 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 public sealed partial class WorldHello
 {
     /// <summary>
-    /// The value <c>RealmHandoff</c> (0x03DB) gave the client to send back, unchanged.
+    /// The player's account id, as <c>RealmHandoff</c> (0x03DB) gave it to the client, sent back unchanged. The client compares the account
+    /// id of <see cref="Friendship.FriendshipAccountDisplayName"/>, <see cref="Friendship.FriendshipAccountPresence"/> and
+    /// <see cref="Friendship.FriendshipAccountPublicNote"/> with it to recognize the player's own account.
     /// </summary>
-    [UInt(32)] public uint Echo { get; set; }
+    [UInt(32)] public uint AccountId { get; set; }
 
     /// <summary>
     /// The session key the client was handed, sent back unchanged, in the GUID layout.

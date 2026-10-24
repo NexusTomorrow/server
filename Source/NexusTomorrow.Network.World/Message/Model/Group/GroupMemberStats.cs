@@ -60,15 +60,8 @@ public sealed partial class GroupMemberStats
     /// </summary>
     [PackedFloat] public float ShieldMax { get; set; }
 
-    /// <summary>
-    /// The member's interrupt armor, GetGroupMember's nInterruptArmor.
-    /// </summary>
-    [PackedFloat] public float InterruptArmor { get; set; }
-
-    /// <summary>
-    /// The member's maximum interrupt armor, GetGroupMember's nInterruptArmorMax.
-    /// </summary>
-    [PackedFloat] public float InterruptArmorMax { get; set; }
+    [PackedFloat] public float Unknown11 { get; set; }
+    [PackedFloat] public float Unknown12 { get; set; }
 
     /// <summary>
     /// The member's absorption, GetGroupMember's nAbsorption.
@@ -95,11 +88,7 @@ public sealed partial class GroupMemberStats
     /// </summary>
     [PackedFloat] public float HealingAbsorb { get; set; }
 
-    /// <summary>
-    /// The member's maximum healing absorption, GetGroupMember's nHealingAbsorbMax.
-    /// </summary>
-    [PackedFloat] public float HealingAbsorbMax { get; set; }
-
+    [PackedFloat] public float Unknown18 { get; set; }
     [UInt(32)] public uint Unknown19 { get; set; }
     [UInt(32)] public uint Unknown20 { get; set; }
 

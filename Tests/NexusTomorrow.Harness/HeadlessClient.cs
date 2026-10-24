@@ -63,7 +63,7 @@ public sealed class HeadlessClient : IAsyncDisposable
             var game = new GameTestClient(pipe);
             await game.ExpectAsync<ServerHello>();
 
-            var hello = new WorldHello { Echo = handoff.Echo, AccountName = email };
+            var hello = new WorldHello { AccountId = handoff.Echo, AccountName = email };
             Assign(hello.SessionKey, handoff.SessionKey);
             await game.SendAsync(hello);
 

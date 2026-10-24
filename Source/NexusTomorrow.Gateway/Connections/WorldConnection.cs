@@ -302,7 +302,7 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
     private Task<WorldDecision>? RedeemThroughOwner(WorldConnection connection, WorldHello hello, byte[] sessionKey)
     {
         var reply = new TaskCompletionSource<WorldDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
-        return _accounts.Post(new RedeemSessionKey(sessionKey, hello.Echo, hello.AccountName, connection, reply)) ? reply.Task : null;
+        return _accounts.Post(new RedeemSessionKey(sessionKey, hello.AccountId, hello.AccountName, connection, reply)) ? reply.Task : null;
     }
 
     private void CloseSession(long accountId)

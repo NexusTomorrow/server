@@ -170,6 +170,10 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   names, and the eight messages that held one go back below Fields.
 - A new unit's spell list and minimap marker keep neutral names while each rests on a single reader.
 - A cinematic camera flag and a matchmaking queue flag the client never names keep neutral names.
+- A group member's order, interrupt armor and healing absorb maximum, the request ids of group
+  referrals and join requests, and the character list's reservations keep neutral names while each
+  rests on a single reader; the group order change, the group request answer and the character list
+  go back below Fields. The world greeting's echoed value is named for what it is, the account id.
 
 ### Fixed
 
