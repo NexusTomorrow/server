@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 /// Sends members of a guild's roster.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server04A0, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class GuildRoster
 {
     /// <summary>

@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 /// The client raises GuildChange, and GuildMessageOfTheDay when the guild has a message of the day.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0493, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class GuildJoined
 {
     /// <summary>

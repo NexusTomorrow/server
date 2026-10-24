@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 /// The client then raises GuildMemberChange.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server04A3, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class GuildMemberChange
 {
     /// <summary>

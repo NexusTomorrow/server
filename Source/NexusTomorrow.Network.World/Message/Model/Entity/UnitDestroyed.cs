@@ -11,9 +11,10 @@ namespace NexusTomorrow.Network.World.Message.Model.Entity;
 public sealed partial class UnitDestroyed
 {
     /// <summary>
-    /// The unit, by unit id.
+    /// The unit the client removes, by unit id: once this names the id of a unit the client holds, the unit is gone from its
+    /// unit lookup, and it stays when this names another id. An id the client does not hold is ignored.
     /// </summary>
-    [UInt(32)] public uint UnitId { get; set; }
+    [VerifiedMember, UInt(32)] public uint UnitId { get; set; }
 
     [UInt(1)] public bool Unknown1 { get; set; }
 }

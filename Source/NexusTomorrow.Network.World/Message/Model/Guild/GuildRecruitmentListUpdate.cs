@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 /// The client raises RecruitmentGuildsUpdated.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server076B, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class GuildRecruitmentListUpdate
 {
     /// <summary>
@@ -24,18 +24,12 @@ public sealed partial class GuildRecruitmentListUpdate
         /// </summary>
         [UInt(64)] public ulong GuildId { get; set; }
 
-        /// <summary>
-        /// The guild's name.
-        /// </summary>
-        [WideString] public string GuildName { get; set; } = "";
+        [WideString] public string Unknown1 { get; set; } = "";
+
+        [WideString] public string Unknown2 { get; set; } = "";
 
         /// <summary>
-        /// The guild master, by name.
-        /// </summary>
-        [WideString] public string LeaderName { get; set; } = "";
-
-        /// <summary>
-        /// The guild's size, perks and classification.
+        /// The guild's summary record.
         /// </summary>
         public GuildRecruitmentSummary Summary { get; set; } = new();
     }

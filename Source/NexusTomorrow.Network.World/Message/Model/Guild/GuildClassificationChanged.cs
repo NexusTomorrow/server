@@ -5,13 +5,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
 /// <summary>
-/// Sets a guild's classification.
+/// Sends a value for a guild.
 /// </summary>
-/// <remarks>
-/// GuildTypeLib's GetGuildClassification returns it.
-/// </remarks>
 [WireMessage(GameMessageOpcode.Server0480, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class GuildClassificationChanged
 {
     /// <summary>
@@ -19,8 +16,5 @@ public sealed partial class GuildClassificationChanged
     /// </summary>
     public RealmScopedId GuildId { get; set; } = new();
 
-    /// <summary>
-    /// The guild's classification, a GuildClassification value.
-    /// </summary>
-    [UInt(3)] public byte Classification { get; set; }
+    [UInt(3)] public byte Unknown1 { get; set; }
 }
