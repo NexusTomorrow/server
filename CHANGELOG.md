@@ -185,6 +185,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - The protocol reference's layout trees mark how each field is encoded: signed, IEEE float or packed
   float. The check against the client's wire facts names every field the client reads as a float
   that a declaration reads otherwise.
+- The ability book carries its real names and field meanings: ability tiers per action set, ability
+  points, an action set's slots, unlock flag and request result, and the client's request to change
+  its action set.
 
 ### Changed
 
