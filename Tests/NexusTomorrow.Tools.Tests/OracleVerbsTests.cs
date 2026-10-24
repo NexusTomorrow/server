@@ -302,26 +302,43 @@ public sealed class OracleVerbsTests : IAsyncLifetime
         Assert.Equal(("oracle", "Cli", "test echo", "Done"), (audit.Actor, audit.FrontEnd, audit.Action, audit.Outcome));
     }
 
+    // An unknown command writes no audit row; a known one refused for its arguments writes one (CommandDispatcher.DispatchAsync).
     [Theory]
-    [InlineData("""{"line": "fly away"}""", "Refused", "Unknown command; try help.")]
-    [InlineData("""{"line": "test echo"}""", "Refused", "Usage: test echo <word>")]
-    public async Task ACommandTheDispatcherRefusesIsAnsweredWithItsOutcome(string request, string outcome, string text)
+    [InlineData("""{"line": "fly away"}""", "Refused", "Unknown command; try help.", 0)]
+    [InlineData("""{"line": "test echo"}""", "Refused", "Usage: test echo <word>", 1)]
+    public async Task ACommandTheDispatcherRefusesIsAnsweredWithItsOutcome(string request, string outcome, string text, int audited)
     {
         JsonObject reply = await RequestAsync("command", request);
 
         Assert.True((bool)reply["ok"]!);
         Assert.Equal((outcome, text), ((string)reply["outcome"]!, (string)reply["text"]!));
         Assert.Empty(_actors);
+        Assert.Equal(audited, _audit.Backlog);
     }
 
     [Fact]
-    public async Task CommandNamesItsLine()
+    public async Task ACommandStillRunningAfterItsTimeIsCancelledAndAnsweredAsFailed()
     {
-        JsonObject reply = await RequestAsync("command", """{"line": 5}""");
+        _verbs = new OracleVerbs(_accounts, Dispatcher(), TimeProvider.System) { CommandTime = TimeSpan.FromMilliseconds(50) };
+
+        JsonObject reply = await RequestAsync("command", """{"line": "test hang"}""").WaitAsync(s_wait);
+
+        Assert.True((bool)reply["ok"]!);
+        Assert.Equal(("Failed", "The command failed; see the server log."), ((string)reply["outcome"]!, (string)reply["text"]!));
+        Assert.Equal("Failed", _audit.Take<AuditWork>().Row.Outcome);
+    }
+
+    [Theory]
+    [InlineData("""{"line": 5}""")]
+    [InlineData("{}")]
+    public async Task CommandNamesItsLine(string request)
+    {
+        JsonObject reply = await RequestAsync("command", request);
 
         Assert.False((bool)reply["ok"]!);
         Assert.Equal("command names a line", (string)reply["error"]!);
         Assert.Empty(_actors);
+        Assert.Equal(0, _audit.Backlog);
     }
 
     private async Task<JsonObject> RequestAsync(string verb, string request)
@@ -332,7 +349,8 @@ public sealed class OracleVerbsTests : IAsyncLifetime
         return await _verbs.HandleAsync(body, _connection, TestContext.Current.CancellationToken);
     }
 
-    // One command that needs a permission of its own and answers with its word, keeping the actor that ran it.
+    // Two commands: one that needs a permission of its own and answers with its word, keeping the actor that ran it, and one that
+    // runs until it is cancelled.
     private CommandDispatcher Dispatcher() => new(
         [
             new CommandDefinition
@@ -345,6 +363,18 @@ public sealed class OracleVerbsTests : IAsyncLifetime
                 {
                     _actors.Enqueue(invocation.Actor);
                     return Task.FromResult(new CommandReply(CommandOutcome.Done, invocation.Arguments[0]));
+                },
+            },
+            new CommandDefinition
+            {
+                Name = "test hang",
+                Description = "Never answer.",
+                Permission = null,
+                Parameters = [],
+                ExecuteAsync = async (_, cancellationToken) =>
+                {
+                    await Task.Delay(Timeout.Infinite, cancellationToken);
+                    return new CommandReply(CommandOutcome.Done, "unreachable");
                 },
             },
         ],
