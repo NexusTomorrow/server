@@ -48,14 +48,14 @@ public sealed partial class CharacterList
         [VerifiedMember, UInt(5)] public byte ClassId { get; set; }
 
         /// <summary>
-        /// The character's faction id.
+        /// The client shows this value as the character's faction on character select.
         /// </summary>
-        [VerifiedMember, UInt(32)] public uint FactionId { get; set; }
+        [VerifiedMember, UInt(32)] public uint Unknown5 { get; set; }
 
         /// <summary>
-        /// The character's level.
+        /// The client shows this value as the character's level on character select.
         /// </summary>
-        [VerifiedMember, UInt(32)] public uint Level { get; set; }
+        [VerifiedMember, UInt(32)] public uint Unknown6 { get; set; }
 
         /// <summary>
         /// Items that set a slot's look only: the client reads each item's slot and display id here, and neither colour field.
@@ -100,19 +100,19 @@ public sealed partial class CharacterList
         [VerifiedMember, Float32] public float Unknown14 { get; set; }
 
         /// <summary>
-        /// The character's path id.
+        /// The client shows this value as the character's path on character select, counted from 0.
         /// </summary>
-        [VerifiedMember, UInt(3)] public byte PathId { get; set; }
+        [VerifiedMember, UInt(3)] public byte Unknown15 { get; set; }
 
         /// <summary>
-        /// Whether the character is disabled.
+        /// The client shows this flag as whether the character is disabled on character select.
         /// </summary>
-        [VerifiedMember, UInt(1)] public bool Disabled { get; set; }
+        [VerifiedMember, UInt(1)] public bool Unknown16 { get; set; }
 
         /// <summary>
-        /// Whether the character must be renamed; a successful rename clears it.
+        /// The client shows this flag as whether the character must be renamed on character select.
         /// </summary>
-        [VerifiedMember, UInt(1)] public bool RequiresRename { get; set; }
+        [VerifiedMember, UInt(1)] public bool Unknown17 { get; set; }
 
         /// <summary>
         /// Which costume entries the character shows: bit i set shows entry i of <see cref="CostumeItems"/>, clear empties its slot. Entries

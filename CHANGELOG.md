@@ -211,6 +211,11 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   the recruiting guilds' details and recruiters, the guild's classification and minimum recruiting
   level, and an operation result's rank. Twelve guild messages go back below Fields. A resurrection
   request's last value is shown to carry no meaning, and a unit's removal names the unit it removes.
+- Every member the server sends at milestone one is verified. A character's faction, level, path,
+  disabled and rename flags on character select, a property's base value and the character select
+  failure's reason keep neutral names but stay verified by what the client was seen to do with them;
+  the logout's return to character select keeps its name. The select failure, the logout and the
+  property change messages go to Purpose.
 - Four messages whose purpose rested on a single reader take neutral names and go back below Purpose:
   three guild messages and the character list's disabled update.
 - A group member's order, interrupt armor and healing absorb maximum, the request ids of group

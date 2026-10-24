@@ -55,7 +55,7 @@ public static class RenameResults
 }
 
 /// <summary>
-/// <c>CharacterSelectFailed.Reason</c> values (0x0162), as its declaration documents them.
+/// <c>CharacterSelectFailed.Unknown0</c> values (0x0162), as its declaration documents them.
 /// </summary>
 public static class SelectReasons
 {

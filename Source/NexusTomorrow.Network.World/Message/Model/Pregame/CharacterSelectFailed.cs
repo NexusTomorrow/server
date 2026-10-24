@@ -10,12 +10,12 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// Taken only while a selection is pending.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0162, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class CharacterSelectFailed
 {
     /// <summary>
-    /// Why the selection failed. The interface has a message of its own for 1 (the character must be renamed first), 3 (the character
-    /// is disabled) and 4 (another of the account's characters is still in the world), and a general message for 2 and any other value.
+    /// The client picks the interface's select error text by this value: 1 shows the rename-first text, 3 the disabled text and 2 the
+    /// general text.
     /// </summary>
-    [UInt(3)] public byte Reason { get; set; }
+    [VerifiedMember, UInt(3)] public byte Unknown0 { get; set; }
 }

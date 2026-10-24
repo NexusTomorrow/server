@@ -14,10 +14,9 @@ public sealed partial class UnitPropertyValue
     [VerifiedMember, UInt(8)] public byte Id { get; set; }
 
     /// <summary>
-    /// The property's base value. The client hands it to add-ons as the base and folds it into the property hash it reports; for property 38
-    /// the client's own rules read only the current value.
+    /// On a player's unit, the client reports this value as the property's base value.
     /// </summary>
-    [VerifiedMember, Float32] public float BaseValue { get; set; }
+    [VerifiedMember, Float32] public float Unknown1 { get; set; }
 
     /// <summary>
     /// The property's current value. For property 38 it is the dash maximum, so 200 gives two dashes.
