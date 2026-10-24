@@ -4,8 +4,9 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Hazard;
 
 /// <summary>
-/// Raises hazard events for the client's add-ons. Except for one value of <see cref="Unknown1"/>, which clears every hazard and ignores
-/// <see cref="HazardId"/>, the client needs the hazard's Hazard row and its <see cref="HazardState"/> first.
+/// For some values of <see cref="Unknown1"/>, raises hazard events for the client's add-ons. Except for one value of
+/// <see cref="Unknown1"/>, which clears every hazard and ignores <see cref="HazardId"/>, the client needs the hazard's Hazard row and
+/// its <see cref="HazardState"/> first.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0109, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]
