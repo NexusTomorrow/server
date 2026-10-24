@@ -90,6 +90,9 @@ jobs:
           PW=$(openssl rand -hex 32); echo "::add-mask::$PW"
           psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -v pw="$PW" <<'SQL'
           CREATE ROLE nt_test LOGIN CREATEDB NOSUPERUSER NOCREATEROLE PASSWORD :'pw';
+          -- A test database is dropped WITH (FORCE), which must end every backend on it. An autovacuum worker there carries no
+          -- role, so the test role may end it only through pg_signal_backend, which signals no superuser's backend.
+          GRANT pg_signal_backend TO nt_test;
           SQL
           umask 077; printf 'localhost:5432:*:nt_test:%s\n' "$PW" > ~/.pgpass; chmod 600 ~/.pgpass
           docker exec "$PG_CONTAINER" sh -c 'sed -i -E "/^host/ s/trust\$/scram-sha-256/" "$PGDATA/pg_hba.conf"'
