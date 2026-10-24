@@ -96,9 +96,9 @@ public sealed class WorldEntryTests : IDisposable
 
         Assert.Equal(2, create.Commands.Count);
         Assert.Equal((byte)2, create.Commands[0].Unknown0);
-        Assert.Equal(new Vector3(10, 20, 30), Assert.IsType<Server0262Union2Arm02>(create.Commands[0].Unknown1).Unknown0);
+        Assert.Equal(new Vector3(10, 20, 30), Assert.IsType<SetPositionCommand>(create.Commands[0].Unknown1).Position);
         Assert.Equal((byte)14, create.Commands[1].Unknown0);
-        Assert.Equal(new Vector3(1.5f, 0, 0), Assert.IsType<Server0262Union2Arm0E>(create.Commands[1].Unknown1).Unknown0);
+        Assert.Equal(new Vector3(1.5f, 0, 0), Assert.IsType<SetRotationCommand>(create.Commands[1].Unknown1).Rotation);
 
         Assert.Equal(create.UnitId, session.Single<PlayerUnit>().UnitId);
         MovementControl control = session.Single<MovementControl>();

@@ -225,8 +225,8 @@ public sealed class WorldConnectionTests : IAsyncLifetime
         await GreetAsync();
         var map = new FakeMapInbox(1);
         Assert.True(_connection.TryEnterMap(map));
-        var movement = new ClientMovement { Unknown0 = 1000 };
-        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new Server0262Union2Arm02 { Unknown0 = new Vector3(1, 2, 3) } });
+        var movement = new ClientMovement { ClientTime = 1000 };
+        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new SetPositionCommand { Position = new Vector3(1, 2, 3) } });
 
         await Client.SendTaggedAsync(0x03, movement);
         await Eventually.TrueAsync(() => map.Posted.Count == 1);

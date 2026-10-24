@@ -13,12 +13,13 @@ public sealed partial class Server0262Union0Arm18 : IServer0262Union0
     /// The unit's creature, as an id in the client's Creature2 table, or 0 for none. The client refuses the unit when it has no creature
     /// for a non-zero id.
     /// </summary>
-    [UInt(18)] public uint Unknown0 { get; set; }
+    [VerifiedMember, UInt(18)] public uint CreatureId { get; set; }
 
     /// <summary>
-    /// A unit's id, which the client looks up when it creates this unit.
+    /// The unit's owner, by unit id. Unit:GetUnitOwner finds the owner by it, and the client adds this unit to the owner's pets as it
+    /// creates it.
     /// </summary>
-    [UInt(32)] public uint Unknown1 { get; set; }
+    [VerifiedMember, UInt(32)] public uint OwnerUnitId { get; set; }
 
     [UInt(15)] public ushort Unknown2 { get; set; }
     [WideString] public string Unknown3 { get; set; } = "";

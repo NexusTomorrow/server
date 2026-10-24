@@ -89,4 +89,19 @@ public sealed class MessageVerificationTests
         summaries[$"P:{Fixtures}VerifiedArm.Unknown0"] = "The client gives this value no meaning. It is always zero on the wire.";
         Assert.Empty(MessageVerification.Problems(typeof(FieldsFixture), Key, summaries, s_fixtures));
     }
+
+    [Fact]
+    public void ANeutralBitAtFieldsNeedsTheNoMeaningSentence()
+    {
+        Dictionary<string, string> summaries = Summaries(
+            ($"T:{Fixtures}BitFieldFixture", "What it is for."),
+            ($"P:{Fixtures}BitFieldFixture.Unknown0Bit0", "Something."));
+
+        Assert.Equal(
+            ["0xFFFF: BitFieldFixture.Unknown0Bit0 keeps a neutral name, so its summary must begin with the no-meaning sentence"],
+            MessageVerification.Problems(typeof(BitFieldFixture), Key, summaries, s_fixtures));
+
+        summaries[$"P:{Fixtures}BitFieldFixture.Unknown0Bit0"] = "The client gives this value no meaning.";
+        Assert.Empty(MessageVerification.Problems(typeof(BitFieldFixture), Key, summaries, s_fixtures));
+    }
 }

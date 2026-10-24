@@ -116,8 +116,8 @@ public sealed class InboundDecoderTests
     [Fact]
     public void AClientMovementIsReadAtPurposeUnderItsRow()
     {
-        var movement = new ClientMovement { Unknown0 = 1000 };
-        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new Server0262Union2Arm02 { Unknown0 = new Vector3(1, 2, 3) } });
+        var movement = new ClientMovement { ClientTime = 1000 };
+        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new SetPositionCommand { Position = new Vector3(1, 2, 3) } });
         byte[] body = ClientFrames.TaggedEnvelopeBody(0x03, 0x0637, movement, s_cipher);
 
         Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
@@ -230,7 +230,7 @@ public sealed class InboundDecoderTests
     // A movement of one-bit commands (command 10, a 5-bit selector and a 1-bit value).
     private static ClientMovement MovementOf(int commands)
     {
-        var movement = new ClientMovement { Unknown0 = 1000 };
+        var movement = new ClientMovement { ClientTime = 1000 };
         for (int i = 0; i < commands; i++)
             movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 10, Unknown1 = new Server0262Union2Arm0A { Unknown0 = true } });
 

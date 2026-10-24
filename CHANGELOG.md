@@ -104,6 +104,10 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   destination marker sits with the map messages.
 - Account inventory messages carry their real names and field meanings: account currencies,
   entitlements, account items and their cooldowns, pending gifts, and account operations.
+- The movement commands a unit's movement is built from carry their real names where two readings
+  agree (time, platform, position, velocity, commanded velocity, rotation, state and mode), and the
+  player's movement message says which commands the client sends. A new unit names its creature,
+  vendor flag and prerequisite, owner, vehicle, warplot tier and plug, and the time it was created.
 
 ### Changed
 

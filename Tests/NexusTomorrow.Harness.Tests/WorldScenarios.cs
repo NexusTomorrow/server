@@ -39,7 +39,7 @@ public sealed class WorldScenarios
         Assert.Equal(unitId, world.Control.UnitId);
         Assert.Equal(CharacterName, Assert.IsType<Server0262Union0Arm14>(world.Unit.TypeData).Name);
         Assert.Equal((ushort)166, world.Unit.BaseFactionId);
-        Assert.Equal(HarnessServer.Start, Assert.IsType<Server0262Union2Arm02>(world.Unit.Commands[0].Unknown1).Unknown0);
+        Assert.Equal(HarnessServer.Start, Assert.IsType<SetPositionCommand>(world.Unit.Commands[0].Unknown1).Position);
         Assert.Equal(125u, world.Settings.MovementInterval);
         Assert.Equal((byte)2, world.Path.ActivePath);
     }
@@ -76,8 +76,8 @@ public sealed class WorldScenarios
         await using WorldSession later = await again.ScriptedLoginAsync(Email, Password);
         EnteredWorld world = await later.EnterWorldAsync(id);
         Assert.Equal(stood, world.Enter.Position);
-        Assert.Equal(stood, Assert.IsType<Server0262Union2Arm02>(world.Unit.Commands[0].Unknown1).Unknown0);
-        Assert.Equal(new Vector3(1.5f, 0, 0), Assert.IsType<Server0262Union2Arm0E>(world.Unit.Commands[1].Unknown1).Unknown0);
+        Assert.Equal(stood, Assert.IsType<SetPositionCommand>(world.Unit.Commands[0].Unknown1).Position);
+        Assert.Equal(new Vector3(1.5f, 0, 0), Assert.IsType<SetRotationCommand>(world.Unit.Commands[1].Unknown1).Rotation);
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public sealed class WorldScenarios
         EnteredWorld world = await entering;
 
         Assert.Equal(moved, world.Enter.Position);
-        Assert.Equal(moved, Assert.IsType<Server0262Union2Arm02>(world.Unit.Commands[0].Unknown1).Unknown0);
+        Assert.Equal(moved, Assert.IsType<SetPositionCommand>(world.Unit.Commands[0].Unknown1).Position);
         Assert.True(await firstSession.IsClosedAsync(s_bound));
     }
 
