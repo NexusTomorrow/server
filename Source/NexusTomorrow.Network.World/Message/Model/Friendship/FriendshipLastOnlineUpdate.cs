@@ -13,7 +13,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 /// this time must agree with what the server answers there.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server03CA, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class FriendshipLastOnlineUpdate
 {
     /// <summary>
@@ -22,7 +22,8 @@ public sealed partial class FriendshipLastOnlineUpdate
     public RealmScopedId CharacterId { get; set; } = new();
 
     /// <summary>
-    /// The friend's last-online time, which add-ons read as fLastOnline; 0 clears it.
+    /// When the friend was last online, in days from now, which add-ons read as fLastOnline: 0 clears it and a negative value is
+    /// that many days ago.
     /// </summary>
-    [Float32] public float LastOnline { get; set; }
+    [Float32] public float LastOnlineDays { get; set; }
 }
