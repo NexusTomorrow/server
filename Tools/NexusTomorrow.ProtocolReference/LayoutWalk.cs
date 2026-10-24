@@ -182,7 +182,7 @@ public sealed class LayoutWalk
         {
             if (scalar.Components == 1)
             {
-                nodes.Add(WireNode.Field(scalar.Bits));
+                nodes.Add(WireNode.Field(scalar.Bits, scalar.Wire));
                 rows.Add(new LayoutRow(path, Number(scalar.Bits), scalar.Encoding, id));
                 return;
             }
@@ -190,7 +190,7 @@ public sealed class LayoutWalk
             // The first component carries the member's meaning; the rest would only repeat it.
             for (int i = 0; i < scalar.Components; i++)
             {
-                nodes.Add(WireNode.Field(scalar.Bits));
+                nodes.Add(WireNode.Field(scalar.Bits, scalar.Wire));
                 rows.Add(new LayoutRow($"{path}.{s_components[i]}", Number(scalar.Bits), scalar.Encoding, i == 0 ? id : null));
             }
 
@@ -326,19 +326,19 @@ public sealed class LayoutWalk
     private static bool IsWireType(Type type) =>
         type.GetCustomAttribute<WireStructAttribute>() is not null || type.GetCustomAttribute<WireMessageAttribute>() is not null;
 
-    private static (int Bits, string Encoding, int Components)? Scalar(MemberInfo member, Type valueType)
+    private static (int Bits, string Encoding, int Components, WireEncoding Wire)? Scalar(MemberInfo member, Type valueType)
     {
         int components = valueType == typeof(Quaternion) ? 4 : valueType == typeof(Vector3) ? 3 : valueType == typeof(Vector2) ? 2 : 1;
         if (member.GetCustomAttribute<UIntAttribute>() is { } unsigned)
-            return (unsigned.Bits, "unsigned", 1);
+            return (unsigned.Bits, "unsigned", 1, WireEncoding.Plain);
         if (member.GetCustomAttribute<SIntAttribute>() is { } signed)
-            return (signed.Bits, "signed", 1);
+            return (signed.Bits, "signed", 1, WireEncoding.TwosComplement);
         if (member.GetCustomAttribute<Float32Attribute>() is not null)
-            return (32, "float", components);
+            return (32, "float", components, WireEncoding.Ieee);
         if (member.GetCustomAttribute<Float64Attribute>() is not null)
-            return (64, "double", components);
+            return (64, "double", components, WireEncoding.Ieee);
         if (member.GetCustomAttribute<PackedFloatAttribute>() is not null)
-            return (16, "packed float", components);
+            return (16, "packed float", components, WireEncoding.PackedFloat);
         return null;
     }
 

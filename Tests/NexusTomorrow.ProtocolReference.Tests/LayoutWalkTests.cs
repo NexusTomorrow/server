@@ -12,7 +12,7 @@ public sealed class LayoutWalkTests
     {
         LayoutWalkResult walk = new LayoutWalk([typeof(ServerFF21).Assembly]).Walk(typeof(ServerFF21));
 
-        Assert.Equal("4 [0:32 w] 3 {2:1=(),7=(16)}", WireTree.Format(walk.Nodes));
+        Assert.Equal("4 [0:32 w] 3s {2:1=(),7=(16)}", WireTree.Format(walk.Nodes));
     }
 
     [Fact]

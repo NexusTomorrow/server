@@ -20,6 +20,36 @@ public sealed class WireTreeComparisonTests
     }
 
     [Fact]
+    public void AClientFloatTheDeclarationReadsAsAnIntegerDisagrees()
+    {
+        Assert.Equal(["0xFFFF client to server [1]: the client reads a float, the declaration an integer"], Compare("8 32", "8 32f"));
+    }
+
+    [Fact]
+    public void AClientFloatTheDeclarationReadsAsAFloatAgrees()
+    {
+        Assert.Empty(Compare("8 32f 64f", "8 32f 64f"));
+    }
+
+    [Fact]
+    public void AnUnmarkedClientFieldTakesAnyEncoding()
+    {
+        Assert.Empty(Compare("32f 16h 8s 4", "32 16 8 4"));
+    }
+
+    [Fact]
+    public void AnEncodingDisagreementDoesNotStopTheSequence()
+    {
+        Assert.Equal(
+            [
+                "0xFFFF client to server [0]: the client reads a float, the declaration a signed integer",
+                "0xFFFF client to server [1].element[0]: the client reads a float, the declaration an integer",
+                "0xFFFF client to server [2]: the client has 8, the declaration 4",
+            ],
+            Compare("32s [0:32] 4", "32f [0:32f] 8"));
+    }
+
+    [Fact]
     public void AShorterSequenceIsReported()
     {
         Assert.Equal(["0xFFFF client to server: the client's sequence goes on for 1 nodes after the declaration's ends"], Compare("8 16", "8 16 4"));

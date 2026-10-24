@@ -182,6 +182,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - The item record the inventory, inspection and guild bank share carries its real field names: the
   item's id, maker, location, stack, durability, flags, return and expiry timers, imbuements and
   scaled level, quality and prime tier.
+- The protocol reference's layout trees mark how each field is encoded: signed, IEEE float or packed
+  float. The check against the client's wire facts names every field the client reads as a float
+  that a declaration reads otherwise.
 
 ### Changed
 

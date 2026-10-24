@@ -49,6 +49,32 @@ public enum WireNodeKind
 }
 
 /// <summary>
+/// How a field's bits are read (<see cref="WireNode.Encoding"/>).
+/// </summary>
+public enum WireEncoding
+{
+    /// <summary>
+    /// An integer, a bool or an enum, read unsigned; in the client facts, a field the client is not seen to read as a float.
+    /// </summary>
+    Plain = 0,
+
+    /// <summary>
+    /// A two's-complement signed integer.
+    /// </summary>
+    TwosComplement = 1,
+
+    /// <summary>
+    /// An IEEE float.
+    /// </summary>
+    Ieee = 2,
+
+    /// <summary>
+    /// The client's 16-bit packed float.
+    /// </summary>
+    PackedFloat = 3,
+}
+
+/// <summary>
 /// One arm of a union: the selector value that chooses it and the layout that follows.
 /// </summary>
 public sealed class WireArm
@@ -78,7 +104,9 @@ public sealed class WireArm
 /// </summary>
 public sealed class WireNode
 {
-    private WireNode(WireNodeKind kind, int bits, bool aligned, int reference, ImmutableArray<WireNode> element, ImmutableArray<WireArm> arms)
+    private WireNode(
+        WireNodeKind kind, int bits, bool aligned, int reference, ImmutableArray<WireNode> element, ImmutableArray<WireArm> arms,
+        WireEncoding encoding = WireEncoding.Plain)
     {
         Kind = kind;
         Bits = bits;
@@ -86,12 +114,18 @@ public sealed class WireNode
         Reference = reference;
         Element = element;
         Arms = arms;
+        Encoding = encoding;
     }
 
     /// <summary>
     /// The node that stands for a layout containing itself.
     /// </summary>
     public static WireNode Recursive { get; } = new(WireNodeKind.Recursive, 0, false, -1, [], []);
+
+    /// <summary>
+    /// How a field's bits are read; <see cref="WireEncoding.Plain"/> for every other kind.
+    /// </summary>
+    public WireEncoding Encoding { get; }
 
     /// <summary>
     /// What the node is.
@@ -124,13 +158,13 @@ public sealed class WireNode
     public ImmutableArray<WireArm> Arms { get; }
 
     /// <summary>
-    /// A field of <paramref name="bits"/> bits, 1 to 64.
+    /// A field of <paramref name="bits"/> bits, 1 to 64, read as <paramref name="encoding"/>.
     /// </summary>
-    public static WireNode Field(int bits)
+    public static WireNode Field(int bits, WireEncoding encoding = WireEncoding.Plain)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(bits, 1);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(bits, 64);
-        return new WireNode(WireNodeKind.Field, bits, false, -1, [], []);
+        return new WireNode(WireNodeKind.Field, bits, false, -1, [], [], encoding);
     }
 
     /// <summary>
