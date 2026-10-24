@@ -11,14 +11,7 @@ public sealed partial class GroupMemberInfo
     [WireStruct]
     public sealed partial class Server0405Part2
     {
-        /// <summary>
-        /// The client gives this value no meaning. Its member copy drops it, and the invite copy keeps it unread.
-        /// </summary>
         [UInt(16)] public ushort Unknown0 { get; set; }
-
-        /// <summary>
-        /// The client gives this value no meaning. Its member copy drops it, and the invite copy keeps it unread.
-        /// </summary>
         [UInt(8)] public byte Unknown1 { get; set; }
     }
 

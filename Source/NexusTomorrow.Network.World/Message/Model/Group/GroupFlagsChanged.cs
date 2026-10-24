@@ -27,7 +27,7 @@ public sealed partial class GroupFlagsChanged
     /// The group's flags, stored whole. 0x1 makes it an instance group (GroupLib.InInstance), and 0x2 a raid (GroupLib.InRaid). 0x8
     /// allows a vote to kick (MatchingGameLib.InitiateVoteToKick). 0x10 and 0x20 open and close join requests, and 0x40 and 0x80 open
     /// and close referrals, which GroupLib.GetJoinRequestMethod and GroupLib.GetReferralMethod report as a GroupLib.InvitationMethod.
-    /// The client gives 0x100 no meaning on the wire: it works the bit out again from the members' factions.
+    /// The client works 0x100 out again from the members' factions whenever a member is added.
     /// </summary>
     [UInt(32)] public uint Flags { get; set; }
 }
