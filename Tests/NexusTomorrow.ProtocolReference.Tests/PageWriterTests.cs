@@ -145,7 +145,7 @@ public sealed class PageWriterTests
 
             **Layout confirmed**: the client takes the message's layout as declared, every member's width and order, whatever rung its meaning has reached.
 
-            **Dormant**: the 16042 client registers the message but neither handles nor sends it, so the server neither sends nor handles it either.
+            **Dormant**: the 16042 client never acts on the message. It never sends the message and does nothing with it when it arrives, so the server never sends or handles it either.
 
             ## Areas
 

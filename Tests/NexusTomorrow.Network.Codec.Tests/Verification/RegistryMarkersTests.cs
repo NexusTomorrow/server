@@ -65,7 +65,7 @@ public sealed class RegistryMarkersTests
             Assert.Fail(string.Join(Environment.NewLine, problems));
     }
 
-    // A dormant message never travels by itself, so no opcode table row admits it, and it counts apart from the messages still to be read.
+    // The client never sends a dormant message, so no opcode table row admits it, and it counts apart from the messages still to be read.
     // Its rung is independent of the mark: the client may read it as a record inside other messages.
     [Fact]
     public void EveryDormantMessageIsUnadmittedAndOffTheUnverifiedList()
@@ -86,7 +86,8 @@ public sealed class RegistryMarkersTests
             Assert.Fail(string.Join(Environment.NewLine, problems));
     }
 
-    // The client never handles or sends a dormant message, so it never takes that message's layout, which is what a confirmed layout says it does.
+    // A dormant message never travels by itself, so the client never takes its layout as a message of its own, which is what a confirmed layout
+    // says it does.
     [Fact]
     public void NoMessageIsBothLayoutConfirmedAndDormant()
     {
