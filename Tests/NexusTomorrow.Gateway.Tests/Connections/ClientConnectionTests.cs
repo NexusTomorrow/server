@@ -276,7 +276,8 @@ public sealed class ClientConnectionTests : IAsyncLifetime
         var serializer = new GatedSerializer(MessageCatalog.Default);
         var message = new LoginAccepted();
 
-        // The warm-up grows the queue's ring and stocks both pools, so the measured rounds find a body and a holder to rent.
+        // The warm-up grows the queue's ring to the deepest backlog it has held, so the measured rounds find room in it; the serializer's
+        // pool is stocked from the start.
         for (uint i = 0; i < 200; i++)
         {
             message.DroppedForLag = i;
