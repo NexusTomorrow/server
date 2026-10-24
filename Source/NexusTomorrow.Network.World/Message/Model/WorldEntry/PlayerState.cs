@@ -61,7 +61,10 @@ public sealed partial class PlayerState
         [VerifiedMember, UInt(32)] public uint Count { get; set; }
     }
 
-    [Array(CountBits = 32)] public List<ItemUpdate> Unknown0 { get; } = [];
+    /// <summary>
+    /// The player's items, each with the reason it was added. The client files each at its location.
+    /// </summary>
+    [VerifiedMember, Array(CountBits = 32)] public List<ItemUpdate> Items { get; } = [];
 
     /// <summary>
     /// The amount of each currency the player holds: entry n is the amount of currency type n + 1. The client reads entries 0 to 13 only

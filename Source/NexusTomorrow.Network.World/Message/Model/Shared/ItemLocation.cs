@@ -12,10 +12,10 @@ public sealed partial class ItemLocation
     /// Which inventory holds the item, the public interface's EInventoryLocation: 0 the equipped items, 1 the bags. 300,
     /// with a slot of 0xFFFFFFFF, means no location.
     /// </summary>
-    [UInt(9)] public ushort Location { get; set; }
+    [VerifiedMember, UInt(9)] public ushort Location { get; set; }
 
     /// <summary>
     /// The slot in that inventory.
     /// </summary>
-    [UInt(32)] public uint Slot { get; set; }
+    [VerifiedMember, UInt(32)] public uint Slot { get; set; }
 }
