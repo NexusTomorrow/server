@@ -306,11 +306,13 @@ public sealed class WorldScenarios
         MapOwner map = scenario.Server.Map(1);
         await scenario.Server.Maps.PauseAsync();
 
-        // Ten seconds of 125 ms intervals; the first ten warm the pools and the queues.
+        // Ten seconds of 125 ms intervals; the first ten warm the pools and the queues. Each moves the host's clock too, since the
+        // movement row's rate limit refills on it, and it is the fake one here.
         uint clock = 7000;
         for (int interval = 0; interval < 80; interval++)
         {
             clock += 125;
+            scenario.Server.Time.Advance(TimeSpan.FromMilliseconds(125));
             await walkers.First.MoveAsync(HarnessServer.Start + new Vector3(interval % 5, 0, 0), 0, clock);
             await walkers.Second.MoveAsync(HarnessServer.Start + new Vector3(0, 0, interval % 5), 0, clock);
             await Eventually.TrueAsync(() => map.QueueLength == 2, s_bound);
