@@ -95,13 +95,18 @@ public sealed class MessageVerificationTests
     {
         Dictionary<string, string> summaries = Summaries(
             ($"T:{Fixtures}BitFieldFixture", "What it is for."),
-            ($"P:{Fixtures}BitFieldFixture.Unknown0Bit0", "Something."));
+            ($"P:{Fixtures}BitFieldFixture.Unknown0Bit0", "Something."),
+            ($"P:{Fixtures}BitFieldFixture.Unknown0Bits1To3", "Something."));
 
         Assert.Equal(
-            ["0xFFFF: BitFieldFixture.Unknown0Bit0 keeps a neutral name, so its summary must begin with the no-meaning sentence"],
-            MessageVerification.Problems(typeof(BitFieldFixture), Key, summaries, s_fixtures));
+            [
+                "0xFFFF: BitFieldFixture.Unknown0Bit0 keeps a neutral name, so its summary must begin with the no-meaning sentence",
+                "0xFFFF: BitFieldFixture.Unknown0Bits1To3 keeps a neutral name, so its summary must begin with the no-meaning sentence",
+            ],
+            MessageVerification.Problems(typeof(BitFieldFixture), Key, summaries, s_fixtures).Order(StringComparer.Ordinal));
 
         summaries[$"P:{Fixtures}BitFieldFixture.Unknown0Bit0"] = "The client gives this value no meaning.";
+        summaries[$"P:{Fixtures}BitFieldFixture.Unknown0Bits1To3"] = "The client gives this value no meaning.";
         Assert.Empty(MessageVerification.Problems(typeof(BitFieldFixture), Key, summaries, s_fixtures));
     }
 }

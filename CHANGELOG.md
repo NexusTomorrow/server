@@ -179,6 +179,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   reward properties come from the operator's own extracted client tables.
 - The `character relocate` command moves a character in the world, from the console or in game, for
   an operator with the `character.relocate` permission.
+- The item record the inventory, inspection and guild bank share carries its real field names: the
+  item's id, maker, location, stack, durability, flags, return and expiry timers, imbuements and
+  scaled level, quality and prime tier.
 
 ### Changed
 

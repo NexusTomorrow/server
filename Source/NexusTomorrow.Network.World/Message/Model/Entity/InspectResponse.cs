@@ -22,5 +22,5 @@ public sealed partial class InspectResponse
     /// <summary>
     /// The unit's equipped items.
     /// </summary>
-    [Array(CountBits = 5)] public List<Server0111Part1> Items { get; set; } = [];
+    [Array(CountBits = 5)] public List<ItemInstance> Items { get; set; } = [];
 }

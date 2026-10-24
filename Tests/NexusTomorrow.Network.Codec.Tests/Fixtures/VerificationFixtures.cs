@@ -53,6 +53,7 @@ public sealed partial class UnreadFixture
 public sealed partial class BitFieldFixture
 {
     [UInt(1)] public bool Unknown0Bit0 { get; set; }
+    [UInt(3)] public byte Unknown0Bits1To3 { get; set; }
 }
 
 [WireStruct]
