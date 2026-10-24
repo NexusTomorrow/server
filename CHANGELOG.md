@@ -140,6 +140,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   values, and a player's attribute points. The movement commands name their spline ids, positions,
   velocities, rotations, scales, states and modes, the jump's start, flight time and gravity, and the
   key times of two tracks. An item names its second power core and its charges.
+- An item names its rune slots' elements and its rune item ids, which the client uses only while the
+  item's own rune data is switched on.
 - Movement messages carry their real names and field meanings: the movement interval, leaving a
   vehicle, the rapid transport cast and the falling damage report. The stuck request and the rapid
   transport cast name the cast they answer. The movement commands name their playback mode, offsets,
