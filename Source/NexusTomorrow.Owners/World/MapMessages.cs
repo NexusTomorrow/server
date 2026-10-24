@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Persistence.Realm;
 
 namespace NexusTomorrow.Owners.World;
@@ -47,9 +48,17 @@ public sealed record ClientZoneChanged(IWorldSession Session, ushort ZoneId) : S
 public readonly record struct MovementSample(Vector3? Position, float? Facing);
 
 /// <summary>
-/// The client moved its unit.
+/// One client movement batch for the players who see the mover: the client's own time for it (<c>ClientMovement.ClientTime</c>) and
+/// the commands it sent in order, only the arms the relay carries and each with finite values. The commands are the decoded client
+/// objects, which nothing writes after the decode.
 /// </summary>
-public sealed record ClientMoved(IWorldSession Session, MovementSample Sample) : SessionMessage(Session);
+public sealed record RelayBatch(uint Time, Server0262Part5[] Commands);
+
+/// <summary>
+/// The client moved its unit: the newest position and facing for the map to keep, and the batch to relay, or null when the message
+/// carried no command the relay carries.
+/// </summary>
+public sealed record ClientMoved(IWorldSession Session, MovementSample Sample, RelayBatch? Batch) : SessionMessage(Session);
 
 /// <summary>
 /// The client asked to leave the world (<paramref name="Begin"/> true) or cancelled a request still counting down (<paramref name="Begin"/> false).
