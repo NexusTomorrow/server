@@ -94,8 +94,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Marketplace messages carry their real names and field meanings: commodity orders, item auctions,
   bids and searches, CREDD exchange orders and their history, and the marketplace's status. Order
   times are Windows file times.
-- The message pages mark each message whose layout the client takes as declared, and each message
-  the 16042 client never acts on, which the server neither sends nor handles.
+- The message pages mark, in one Mark column, each message whose layout the client takes as
+  declared, and each message the 16042 client never acts on, which the server neither sends nor
+  handles. Directions read "to server", "to client" and "both ways".
 - A chat link to a map point names its second coordinate Z.
 - The tether unit message (0x0881) has its name and meaning, and seven messages the client receives
   and ignores are marked dormant.
