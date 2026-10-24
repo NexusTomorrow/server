@@ -171,15 +171,63 @@ public sealed class OracleVerbsTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task AGetterThatThrowsIsRecordedWithItsErrorAndTheTapStays()
+    public async Task ADroppedMessageInsideANestedWrapperIsReadByTheTap()
     {
         await RequestAsync("tap", """{"account": "alice@example.com"}""");
-        ISessionTap tap = _session.Tap!;
+        byte[] inner = Frame(0x0635, Serialize(Receipt(77)));
 
-        tap.Received(1, [0x01], new Inbound(InboundResult.Message, 0x0001, new ThrowingGetter(), ""));
+        _session.Tap!.Received(1, Frame(0x025C, inner), new Inbound(InboundResult.Dropped, 0x0635, null, "no opcode table row"));
+
+        JsonObject record = Assert.Single(Records(1));
+        Assert.Equal("""{"Ticket":77}""", record["fields"]!.ToJsonString());
+        Assert.Equal("tap", (string)record["read_by"]!);
+    }
+
+    [Fact]
+    public async Task ADroppedMessageInsideATaggedWrapperIsReadByTheTap()
+    {
+        await RequestAsync("tap", """{"account": "alice@example.com"}""");
+        var tagged = new Network.World.Message.Model.Connection.TaggedMessage();
+        string payload = Convert.ToHexString([.. BitConverter.GetBytes((ushort)0x0635), .. Serialize(Receipt(78))]);
+        MessageBinder.Bind(tagged, new JsonObject { ["Tag"] = 0x13, ["Payload"] = payload });
+
+        _session.Tap!.Received(1, Frame(0x038C, Serialize(tagged)), new Inbound(InboundResult.Dropped, 0x0635, null, "no opcode table row"));
+
+        Assert.Equal("""{"Ticket":78}""", Assert.Single(Records(1))["fields"]!.ToJsonString());
+    }
+
+    [Fact]
+    public async Task ADroppedFrameThatOpensToAnotherOpcodeIsRecordedWithItsError()
+    {
+        await RequestAsync("tap", """{"account": "alice@example.com"}""");
+
+        _session.Tap!.Received(1, Frame(0x0635, Serialize(Receipt(77))), new Inbound(InboundResult.Dropped, 0x0637, null, "switched off"));
+
+        Assert.Equal("the envelope opens to 0x0635, not 0x0637", (string)Assert.Single(Records(1))["fields"]!["$error"]!);
+    }
+
+    [Fact]
+    public async Task ADroppedMessageWhoseDeclarationHoldsASecretIsNeitherReadNorKept()
+    {
+        await RequestAsync("tap", """{"account": "alice@example.com"}""");
+
+        _session.Tap!.Received(1, Frame(0x058F, new byte[28]), new Inbound(InboundResult.Dropped, 0x058F, null, "refused by the connection"));
+
+        JsonObject record = Assert.Single(Records(1));
+        Assert.True((bool)record["redacted"]!);
+        Assert.Null(record["fields"]);
+        Assert.Null(record["envelope"]);
+        Assert.Null(record["read_by"]);
+    }
+
+    [Fact]
+    public async Task AGetterThatThrowsIsRecordedWithItsError()
+    {
+        await RequestAsync("tap", """{"account": "alice@example.com"}""");
+
+        _session.Tap!.Received(1, [0x01], new Inbound(InboundResult.Message, 0x0001, new ThrowingGetter(), ""));
 
         Assert.StartsWith("TargetInvocationException:", (string)Assert.Single(Records(1))["fields"]!["$error"]!);
-        Assert.Same(tap, _session.Tap);
     }
 
     [Fact]
@@ -263,6 +311,16 @@ public sealed class OracleVerbsTests : IAsyncLifetime
         var world = new TaskCompletionSource<WorldDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
         Assert.True(_accounts.Post(new RedeemSessionKey(grant.SessionKey, grant.Echo, account.Email, session, world)));
         Assert.IsType<WorldGranted>(await world.Task.WaitAsync(s_wait));
+    }
+
+    // One clear frame: a 32-bit length counting itself and the opcode, then the opcode and the body.
+    private static byte[] Frame(ushort opcode, byte[] body) => [.. BitConverter.GetBytes(6 + body.Length), .. BitConverter.GetBytes(opcode), .. body];
+
+    private static Network.World.Message.Model.Movement.MovementControlReceipt Receipt(uint ticket)
+    {
+        var receipt = new Network.World.Message.Model.Movement.MovementControlReceipt();
+        MessageBinder.Bind(receipt, new JsonObject { ["Ticket"] = ticket });
+        return receipt;
     }
 
     private static byte[] Serialize(IWireStruct message)

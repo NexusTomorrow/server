@@ -42,7 +42,8 @@ public sealed class SessionRecorder : ISessionTap
         Type? type = inbound.Message?.GetType() ?? ClientMessageType(inbound.Opcode);
         bool secret = type is not null && HoldsSecret(type);
 
-        // A message the table dropped unread is read here with its declaration, so the oracle sees every client message.
+        // A declared message the table dropped unread is read here with its declaration, unless that declaration holds a secret; a
+        // malformed or undeclared frame is not read.
         bool readHere = !secret && inbound.Message is null && inbound.Result == InboundResult.Dropped && type is not null;
         Send(Line(new JsonObject
         {
@@ -55,14 +56,14 @@ public sealed class SessionRecorder : ISessionTap
             ["reason"] = inbound.Reason,
             ["type"] = (inbound.Message?.GetType() ?? (readHere ? type : null))?.Name,
             ["envelope"] = secret ? null : Convert.ToHexString(envelope),
-            ["fields"] = secret ? null : inbound.Message is not null ? Fields(inbound.Message) : readHere ? Unread(envelope) : null,
+            ["fields"] = secret ? null : inbound.Message is not null ? Fields(inbound.Message) : readHere ? Unread(envelope, inbound.Opcode) : null,
             ["read_by"] = secret ? null : inbound.Message is not null ? "server" : readHere ? "tap" : null,
             ["redacted"] = secret,
         }));
     }
 
-    // The message the server decoded, as MessageDump writes it and serialized here, so a value JSON cannot carry fails inside the
-    // catch too. Whatever fails is named in "$error" instead of thrown, since a tap that throws is detached.
+    // A decoded message (the server's, or one Unread read), as MessageDump writes it and serialized here, so a value JSON cannot carry
+    // fails inside the catch too. Whatever fails is named in "$error" instead of thrown, since a tap that throws is detached.
     private static JsonNode Fields(IWireMessage message)
     {
         try
@@ -76,12 +77,16 @@ public sealed class SessionRecorder : ISessionTap
         }
     }
 
-    // A dropped frame's message read with its declaration, the envelope opened as the decoder opens it; a frame that does not read,
-    // or leaves a whole byte over, is named in "$error".
-    private static JsonNode Unread(ReadOnlySpan<byte> envelope)
+    // A dropped frame's message read with the declaration of the opcode the decoder found, the envelope opened as the decoder opens
+    // it; an envelope that opens to another opcode, or a frame that does not read or leaves a whole byte over, is named in "$error".
+    private static JsonNode Unread(ReadOnlySpan<byte> envelope, ushort expected)
     {
-        if (!InboundDecoder.TryOpenClear(envelope.ToArray(), out ushort opcode, out byte[] body) || CreateClientMessage(opcode) is not { } message)
+        if (!InboundDecoder.TryOpenClear(envelope.ToArray(), out ushort opcode, out byte[] body))
             return new JsonObject { ["$error"] = "the envelope does not open" };
+        if (opcode != expected)
+            return new JsonObject { ["$error"] = $"the envelope opens to 0x{opcode:X4}, not 0x{expected:X4}" };
+        if (CreateClientMessage(opcode) is not { } message)
+            return new JsonObject { ["$error"] = $"0x{opcode:X4} has no declaration" };
 
         try
         {
