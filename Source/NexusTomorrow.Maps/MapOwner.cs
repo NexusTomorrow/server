@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
+using NexusTomorrow.Maps.Chat;
 using NexusTomorrow.Maps.Movement;
 using NexusTomorrow.Maps.Scheduling;
 using NexusTomorrow.Maps.Timing;
@@ -24,6 +25,7 @@ namespace NexusTomorrow.Maps;
 /// locks. An arriving character gets the world entry (<c>WorldEntry</c>); the client's <c>WorldReady</c> is answered once with
 /// <c>WorldEntryComplete</c>, after which the character sees and is seen by the other players in range.
 /// A logout request is answered with a countdown of 0; its confirm hands the character back and returns the client to character select.
+/// A <c>/say</c> line the realm passed on is accepted to its speaker and heard by the players in range (<c>MapChat</c>).
 /// </summary>
 public sealed class MapOwner : IMapInbox, IOwner, ITickable
 {
@@ -47,6 +49,7 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     private readonly WorldEntryComplete _entryComplete = new();
     private readonly AreaOfInterest _visibility;
     private readonly MovementRelay _relay;
+    private readonly MapChat _chat;
 
     // Sent only in answer to a logout request with Begin set: at a countdown's deadline the client goes on with the logout
     // (LogoutCountdown.Duration), so an unasked countdown would log the player out. Duration 0 puts that deadline at now, so it
@@ -96,6 +99,7 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
         _timers = new SaveTimerHandler(this);
         _visibility = new AreaOfInterest(settings, serializer, visibility, metrics, logger, worldId, _worldTag);
         _relay = new MovementRelay(serializer, metrics, logger, worldId, _worldTag);
+        _chat = new MapChat(settings, _visibility, serializer);
         Name = $"map {worldId}";
     }
 
@@ -306,6 +310,9 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
                 case CharacterSaved saved:
                     if (_byCharacter.TryGetValue(saved.CharacterId, out Player? savedPlayer) && savedPlayer.Serial == saved.Serial)
                         savedPlayer.Committed(saved.Version);
+                    break;
+                case LocalChat line when _bySession.TryGetValue(line.Session, out Player? speaker):
+                    _chat.Say(speaker, line);
                     break;
             }
         }

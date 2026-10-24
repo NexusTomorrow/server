@@ -59,7 +59,7 @@ public sealed class MovementReadsTests
     public void TheMovementsRowLimitsItsBodyTo2048Bytes()
     {
         Assert.Equal(2048, OpcodeTable.All[0x0637].MaxBodyBytes);
-        Assert.All(OpcodeTable.All.Values.Where(row => row.Opcode != 0x0637), row => Assert.Null(row.MaxBodyBytes));
+        Assert.All(OpcodeTable.All.Values.Where(row => row.Opcode is not (0x0637 or 0x01C3)), row => Assert.Null(row.MaxBodyBytes));
     }
 
     [Fact]

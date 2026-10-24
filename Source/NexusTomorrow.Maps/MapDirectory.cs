@@ -42,7 +42,7 @@ public sealed class MapDirectory : IMapDirectory
         _worlds = worlds;
         _scheduler = scheduler;
         _persistence = persistence;
-        _settings = MapSettings.From(options.Value, realm.Value.Id);
+        _settings = MapSettings.From(options.Value, realm.Value.Id, realm.Value.Name);
         _random = random;
         _metrics = metrics;
         _serializer = serializer;
