@@ -10,21 +10,10 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// Taken while character select is active; realm select drops it.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0717, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class LoginQueueStatus
 {
-    /// <summary>
-    /// The player's place in the queue, shown as a number.
-    /// </summary>
-    [UInt(32)] public uint Position { get; set; }
-
-    /// <summary>
-    /// The expected wait, in seconds.
-    /// </summary>
-    [UInt(32)] public uint WaitSeconds { get; set; }
-
-    /// <summary>
-    /// Whether the interface shows an extra notice in its queue window.
-    /// </summary>
-    [UInt(1)] public bool ShowNotice { get; set; }
+    [UInt(32)] public uint Unknown0 { get; set; }
+    [UInt(32)] public uint Unknown1 { get; set; }
+    [UInt(1)] public bool Unknown2 { get; set; }
 }

@@ -7,14 +7,11 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// The server ends the player's session.
 /// </summary>
 /// <remarks>
-/// Taken on character select, realm select and in the world: the client drops its connections and shows the reason's message.
+/// Taken on character select, realm select and in the world: the client drops its connections and shows a message.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server036A, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class Kicked
 {
-    /// <summary>
-    /// Why the session ended: 6, 7, 8, 12, 15, 16, 19 and 20 each have a message of their own, any other value a general message.
-    /// </summary>
-    [UInt(5)] public byte Reason { get; set; }
+    [UInt(5)] public byte Unknown0 { get; set; }
 }

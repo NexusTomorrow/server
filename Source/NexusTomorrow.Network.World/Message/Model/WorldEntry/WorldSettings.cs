@@ -14,7 +14,7 @@ namespace NexusTomorrow.Network.World.Message.Model.WorldEntry;
 /// <see cref="WorldReady"/> only after it.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server00F1, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class WorldSettings
 {
     /// <summary>
@@ -28,8 +28,8 @@ public sealed partial class WorldSettings
     [UInt(32)] public uint PrimeLevel { get; set; }
 
     /// <summary>
-    /// Flags. Bit 0: the world scales the player's level, as the client's interface shows it. Bits 2 and 3 each make the client run a
-    /// delayed effect once it has entered the world, when <see cref="WorldEntryComplete"/> arrives. The client reads no other bit.
+    /// Flags. Bit 0: the world scales the player's level, as the client's interface shows it. The client gives bits 1 and 4 to 7 no
+    /// meaning.
     /// </summary>
     [UInt(8)] public byte Flags { get; set; }
 
@@ -37,5 +37,5 @@ public sealed partial class WorldSettings
     /// The period, in milliseconds, of the client's movement timer, from which the client sends the movement of the unit it moves
     /// (<see cref="ClientMovement"/>). The client clamps it to 25 to 1,000.
     /// </summary>
-    [UInt(32)] public uint MovementInterval { get; set; }
+    [VerifiedMember, UInt(32)] public uint MovementInterval { get; set; }
 }

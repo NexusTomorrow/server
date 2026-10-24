@@ -4,31 +4,20 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 
 /// <summary>
-/// The server's answer to a <see cref="RealmChoice"/> of another realm: its world server, the session key and the realm's details.
+/// The server's answer to a <see cref="RealmChoice"/> of another realm: the session key and the realm's details.
 /// </summary>
 /// <remarks>
-/// Taken on the realm-select connection. The client connects to <see cref="Gateway"/> and waits there for
-/// <see cref="Network.Message.Model.ServerHello"/>.
+/// Taken on the realm-select connection.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server07A1, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class RealmRedirect
 {
-    /// <summary>
-    /// Where the realm's world server listens.
-    /// </summary>
     [WireStruct]
-    public sealed partial class RealmGateway
+    public sealed partial class Server07A1Part0
     {
-        /// <summary>
-        /// The IPv4 address as a host-order integer: a.b.c.d is (a &lt;&lt; 24) | (b &lt;&lt; 16) | (c &lt;&lt; 8) | d.
-        /// </summary>
-        [UInt(32)] public uint Address { get; set; }
-
-        /// <summary>
-        /// The TCP port.
-        /// </summary>
-        [UInt(16)] public ushort Port { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
+        [UInt(16)] public ushort Unknown1 { get; set; }
     }
 
     /// <summary>
@@ -42,10 +31,7 @@ public sealed partial class RealmRedirect
     /// </summary>
     [WireSecret] public NetworkGuid SessionKey { get; } = new();
 
-    /// <summary>
-    /// The realm's world server.
-    /// </summary>
-    public RealmGateway Gateway { get; set; } = new();
+    public Server07A1Part0 Unknown2 { get; set; } = new();
 
     /// <summary>
     /// The client gives this value no meaning.

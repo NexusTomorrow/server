@@ -105,7 +105,7 @@ public sealed partial class CharacterList
         [VerifiedMember, UInt(3)] public byte PathId { get; set; }
 
         /// <summary>
-        /// Whether the character is disabled; <see cref="CharacterDisabled"/> updates it.
+        /// Whether the character is disabled.
         /// </summary>
         [VerifiedMember, UInt(1)] public bool Disabled { get; set; }
 
@@ -140,11 +140,7 @@ public sealed partial class CharacterList
         /// </summary>
         [VerifiedMember, Array(CountBits = 32), Float32] public List<float> Bones { get; } = [];
 
-        /// <summary>
-        /// Days relative to when the list arrives, negative in the past; 0 hands nothing over. The client hands it to its interface as the
-        /// character's last logout, and the interface first selects the character with the largest value.
-        /// </summary>
-        [VerifiedMember, Float32] public float LastLoggedOutDays { get; set; }
+        [UInt(32)] public uint Unknown23 { get; set; }
     }
 
     /// <summary>
@@ -173,16 +169,12 @@ public sealed partial class CharacterList
     [VerifiedMember, UInt(14)] public ushort RealmId { get; set; }
 
     /// <summary>
-    /// A listed character, by its realm and its id as in <see cref="Characters"/>, that the client hands to its interface with
-    /// <see cref="RemovalTime"/>, when both parts are not 0 and the character is listed.
+    /// A listed character, by its realm and its id as in <see cref="Characters"/>, that the client hands to its interface when both parts
+    /// are not 0 and the character is listed.
     /// </summary>
     [VerifiedMember] public RealmScopedId Removal { get; set; } = new();
 
-    /// <summary>
-    /// Milliseconds left before the character in <see cref="Removal"/> is removed.
-    /// </summary>
-    [VerifiedMember, UInt(32)] public uint RemovalTime { get; set; }
-
+    [UInt(32)] public uint Unknown6 { get; set; }
     [UInt(32)] public uint Unknown7 { get; set; }
 
     /// <summary>

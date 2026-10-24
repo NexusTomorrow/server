@@ -185,8 +185,7 @@ public sealed class AccountOwner : Owner<AccountMessage>
 
         if (_online.TryGetValue(pending.AccountId, out OnlineSession? previous) && previous.Session != greet.Session)
         {
-            // Kicked.Reason 0 has no message of its own; the client shows its general one (Server036A's declaration).
-            previous.Session.Send(new Kicked { Reason = 0 });
+            previous.Session.Send(new Kicked());
             previous.Session.Disconnect("replaced by a new login");
         }
 
@@ -214,7 +213,7 @@ public sealed class AccountOwner : Owner<AccountMessage>
         _suspensions[accountId] = stored.Lifted ? new SuspensionOverride(null, false, true) : Combine(accountId, stored.Until);
         if (IsSuspended(accountId, null) && _online.Remove(accountId, out OnlineSession? online))
         {
-            online.Session.Send(new Kicked { Reason = 0 });
+            online.Session.Send(new Kicked());
             online.Session.Disconnect("the account was suspended");
             Volatile.Write(ref _onlineCount, _online.Count);
         }

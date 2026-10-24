@@ -13,36 +13,36 @@ public sealed class MessageBuildTests
     [Fact]
     public void AMessageBuildsFromEveryMemberAndReadsBackTheSame()
     {
-        (IWireStruct? message, byte[] body, string? refusal) = Build<Kicked>("""{"Reason": 7}""");
+        (IWireStruct? message, byte[] body, string? refusal) = Build<Kicked>("""{"Unknown0": 7}""");
 
         Assert.Null(refusal);
-        Assert.Equal(7, Assert.IsType<Kicked>(message).Reason);
+        Assert.Equal(7, Assert.IsType<Kicked>(message).Unknown0);
         Assert.Single(body);
     }
 
     [Fact]
     public void AMissingMemberIsRefusedByItsPath()
     {
-        Assert.Equal("Reason: no value given", Build<Kicked>("{}").Refusal);
+        Assert.Equal("Unknown0: no value given", Build<Kicked>("{}").Refusal);
     }
 
     [Fact]
     public void AMemberTheMessageDoesNotHaveIsRefused()
     {
-        Assert.Equal("Speed: Kicked has no such wire member", Build<Kicked>("""{"Reason": 1, "Speed": 2}""").Refusal);
+        Assert.Equal("Speed: Kicked has no such wire member", Build<Kicked>("""{"Unknown0": 1, "Speed": 2}""").Refusal);
     }
 
     [Fact]
     public void AValueOutsideItsMembersTypeIsRefused()
     {
-        Assert.Equal("Reason: 300 does not fit a Byte", Build<Kicked>("""{"Reason": 300}""").Refusal);
+        Assert.Equal("Unknown0: 300 does not fit a Byte", Build<Kicked>("""{"Unknown0": 300}""").Refusal);
     }
 
     [Fact]
     public void AValueWiderThanItsBitsIsRefused()
     {
-        // Reason is 5 bits wide, so 32 cannot travel.
-        (IWireStruct? message, _, string? refusal) = Build<Kicked>("""{"Reason": 32}""");
+        // Kicked.Unknown0 is 5 bits wide, so 32 cannot travel.
+        (IWireStruct? message, _, string? refusal) = Build<Kicked>("""{"Unknown0": 32}""");
 
         Assert.Null(message);
         Assert.NotNull(refusal);
@@ -55,7 +55,7 @@ public sealed class MessageBuildTests
             {
               "Unknown0": 1,
               "SessionKey": {"Data1": -5, "Data2": 2, "Data3": 3, "Data4": [1, 2, 3, 4, 5, 6, 7, 8]},
-              "Gateway": {"Address": 16777343, "Port": 24000},
+              "Unknown2": {"Unknown0": 16777343, "Unknown1": 24000},
               "Unknown3": true,
               "RealmName": "Nexus",
               "RealmFlags": 0,
@@ -70,7 +70,7 @@ public sealed class MessageBuildTests
         RealmRedirect redirect = Assert.IsType<RealmRedirect>(message);
         Assert.Equal(-5, redirect.SessionKey.Data1);
         Assert.Equal([1, 2, 3, 4, 5, 6, 7, 8], redirect.SessionKey.Data4);
-        Assert.Equal(24000, redirect.Gateway.Port);
+        Assert.Equal(24000, redirect.Unknown2.Unknown1);
         Assert.True(redirect.Unknown3);
         Assert.Equal("Nexus", redirect.RealmName);
         Assert.Equal(12345u, redirect.NoteTextId);

@@ -18,7 +18,7 @@ public sealed class MessageDumpTests
 {
     public static TheoryData<Type, string> Messages => new()
     {
-        { typeof(Kicked), """{"Reason": 7}""" },
+        { typeof(Kicked), """{"Unknown0": 7}""" },
         { typeof(GearScoreChanged), """{"GearScore": 412.5}""" },
         { typeof(Server0931), """{"Unknown0": 7, "Unknown1": [1.5, -2.25]}""" },
         { typeof(Server0252), """{"Unknown0": [1, 2, 3]}""" },
@@ -28,7 +28,7 @@ public sealed class MessageDumpTests
             typeof(RealmRedirect),
             """
             {"Unknown0": 1, "SessionKey": {"Data1": -5, "Data2": 2, "Data3": 3, "Data4": [1, 2, 3, 4, 5, 6, 7, 8]},
-             "Gateway": {"Address": 16777343, "Port": 24000}, "Unknown3": true, "RealmName": "Nexus", "RealmFlags": 0, "PvpType": 2,
+             "Unknown2": {"Unknown0": 16777343, "Unknown1": 24000}, "Unknown3": true, "RealmName": "Nexus", "RealmFlags": 0, "PvpType": 2,
              "NoteTextId": 12345}
             """
         },

@@ -50,11 +50,7 @@ public partial class RealmListEntry
     /// </summary>
     [UInt(32)] public uint NoteTextId { get; set; }
 
-    /// <summary>
-    /// The realm's flags. Bit 4 set means the realm keeps characters to one faction; bit 0 marks the realm the client picks when it selects
-    /// one on its own. The client tests no other bit.
-    /// </summary>
-    [UInt(32)] public uint Flags { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
 
     /// <summary>
     /// The realm's PvP type: 0 PvE, 1 PvP. The interface treats any other value as PvE.

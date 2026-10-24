@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// The account's subscription state.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server033D, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class SubscriptionState
 {
     /// <summary>
@@ -21,8 +21,5 @@ public sealed partial class SubscriptionState
     /// </summary>
     [UInt(1)] public bool Expired { get; set; }
 
-    /// <summary>
-    /// The game time left, in hours.
-    /// </summary>
-    [Float32] public float GameTimeHours { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }
