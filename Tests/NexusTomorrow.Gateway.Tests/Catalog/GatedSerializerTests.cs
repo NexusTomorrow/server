@@ -3,7 +3,7 @@ using NexusTomorrow.Network.World.Message.Model.Entity;
 using NexusTomorrow.Owners;
 using NexusTomorrow.Testing;
 
-namespace NexusTomorrow.Gateway.Tests.Catalog;
+namespace NexusTomorrow.Gateway.Tests;
 
 public sealed class GatedSerializerTests
 {
