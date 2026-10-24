@@ -7,7 +7,8 @@ namespace NexusTomorrow.Network.World.Message.Model.Instance;
 /// Opens the instance restricted window: the client raises ShowInstanceRestrictedDialog.
 /// </summary>
 /// <remarks>
-/// It leaves the client's kept portal as it was.
+/// It leaves the client's kept portal as it was, so closing the window sends <see cref="InstanceSettingsClosed"/> with
+/// whatever portal the client holds.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0158, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

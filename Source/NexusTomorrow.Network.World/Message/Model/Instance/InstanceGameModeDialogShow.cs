@@ -33,17 +33,17 @@ public sealed partial class InstanceGameModeDialogShow
     [UInt(11)] public ushort Flags { get; set; }
 
     /// <summary>
-    /// The difficulty of the player's existing instance, or Count when there is none.
+    /// The difficulty of the player's existing instance, or <see cref="WorldDifficulty.Count"/> when there is none.
     /// </summary>
     [UInt(2)] public WorldDifficulty ExistingDifficulty { get; set; }
 
     /// <summary>
-    /// The maximum prime level for the world, which the add-ons read as nMaxPrimeLevelWorld.
+    /// The maximum prime level for the world, which add-ons read as nMaxPrimeLevelWorld.
     /// </summary>
     [UInt(8)] public byte MaxPrimeLevelWorld { get; set; }
 
     /// <summary>
-    /// The maximum prime level for the group, which the add-ons read as nMaxPrimeLevelGroup.
+    /// The maximum prime level for the group, which add-ons read as nMaxPrimeLevelGroup.
     /// </summary>
     [UInt(8)] public byte MaxPrimeLevelGroup { get; set; }
 

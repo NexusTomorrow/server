@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Instance;
 
 /// <summary>
-/// Tells the server the player closed the instance settings window: the request GameLib.OnClosedInstanceSettings sends.
+/// Tells the server the instance settings window closed: the request GameLib.OnClosedInstanceSettings sends.
 /// </summary>
 /// <remarks>
 /// The client sends it only when the call's argument is true, and clears its kept portal either way. The shipped add-ons pass
