@@ -1,4 +1,6 @@
 ﻿using System.Buffers;
+using System.Globalization;
+using System.Reflection;
 using System.Text.Json.Nodes;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Message.Model.Chat;
@@ -100,9 +102,10 @@ public sealed class MessageDumpTests
                 if (message is null)
                     continue;
 
-                // A default that leaves a member null cannot be written at all, so it has no bytes to compare.
+                // A default that leaves a member null cannot be written at all, and one whose union holds an arm its selector does
+                // not name (a union with no case-0 arm) is no message a client sends; neither has bytes to compare.
                 JsonObject dump = MessageDump.Of(message);
-                if (HoldsNull(dump))
+                if (HoldsNull(dump) || !UnionsMatchTheirSelectors(message))
                 {
                     unwritable++;
                     continue;
@@ -122,9 +125,31 @@ public sealed class MessageDumpTests
             }
         }
 
-        TestContext.Current.TestOutputHelper?.WriteLine($"{dumped} declared messages bound back; {unwritable} have a default that cannot be written.");
+        TestContext.Current.TestOutputHelper?.WriteLine($"{dumped} declared messages bound back; {unwritable} have a default no client sends.");
         Assert.True(dumped > 200, $"only {dumped} messages were dumped");
         Assert.True(problems.Count == 0, string.Join(Environment.NewLine, problems));
+    }
+
+    private static bool UnionsMatchTheirSelectors(object value)
+    {
+        IReadOnlyList<MemberInfo> members = MessageBinder.WireMembers(value.GetType());
+        foreach (MemberInfo member in members)
+        {
+            object? held = MessageBinder.Read(member, value);
+            if (member.GetCustomAttribute<UnionAttribute>() is { } union && held is not null)
+            {
+                object? selector = MessageBinder.Read(members.Single(candidate => candidate.Name == union.Selector), value);
+                decimal armCase = Convert.ToDecimal(held.GetType().GetCustomAttribute<UnionCaseAttribute>()!.Value, CultureInfo.InvariantCulture);
+                if (Convert.ToDecimal(selector, CultureInfo.InvariantCulture) != armCase || !UnionsMatchTheirSelectors(held))
+                    return false;
+            }
+            else if (held is not null && MessageBinder.IsWireType(held.GetType()) && !UnionsMatchTheirSelectors(held))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static bool HoldsNull(JsonNode? node) => node switch
