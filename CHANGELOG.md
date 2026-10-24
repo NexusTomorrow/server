@@ -101,6 +101,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Cinematic messages carry their real names and field meanings: starting, continuing and skipping a
   cinematic, its cameras, actors, transitions and visual effects, and the white-out; clearing a map's
   destination marker sits with the map messages.
+- Account inventory messages carry their real names and field meanings: account currencies,
+  entitlements, account items and their cooldowns, pending gifts, and account operations.
 
 ### Changed
 
@@ -125,6 +127,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - The README's steps run the server as a Release build.
 
 ### Fixed
+
+- Two account inventory messages that carried each other's meanings carry their own.
 
 - The combat log matches the client's layout: a reflected hit's sixth value is 32 bits, the dispel,
   transference and one amount kind end with their caster, target, spell and result, and kind 34 is
