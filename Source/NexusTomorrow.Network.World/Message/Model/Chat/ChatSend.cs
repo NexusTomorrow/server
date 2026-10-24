@@ -16,12 +16,12 @@ public sealed partial class ChatSend
     /// <summary>
     /// The channel.
     /// </summary>
-    public ChatChannelKey Channel { get; private set; } = new();
+    [VerifiedMember] public ChatChannelKey Channel { get; private set; } = new();
 
     /// <summary>
     /// The line's text.
     /// </summary>
-    [WideString] public string Text { get; private set; } = "";
+    [VerifiedMember, WideString] public string Text { get; private set; } = "";
 
     /// <summary>
     /// The links in the text.

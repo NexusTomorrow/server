@@ -11,7 +11,7 @@ public sealed partial class ChatChannelKey
     /// <summary>
     /// The channel's type, an id in the ChatChannel table.
     /// </summary>
-    [UInt(14)] public ushort Type { get; set; }
+    [VerifiedMember, UInt(14)] public ushort Type { get; set; }
 
     /// <summary>
     /// The channel's id among the channels of its type.
