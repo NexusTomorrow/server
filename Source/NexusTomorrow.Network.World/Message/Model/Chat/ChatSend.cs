@@ -29,7 +29,7 @@ public sealed partial class ChatSend
     [Array(CountBits = 5)] public List<ChatLink> Links { get; } = [];
 
     /// <summary>
-    /// The line, by the slot the client files it under until the server answers.
+    /// The client's id for the pending line; <see cref="ChatSendAccepted"/> names the line it accepts by it.
     /// </summary>
-    [UInt(16)] public ushort ChatId { get; private set; }
+    [VerifiedMember, UInt(16)] public ushort ChatId { get; private set; }
 }
