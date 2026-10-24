@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Connection;
 
 [WireMessage(GameMessageOpcode.Client023E, Direction.ClientToServer)]
-public sealed partial class Client023E
+public sealed partial class GraphicsStatsReport
 {
     [Float32] public float Unknown0 { get; private set; }
     [Float32] public float Unknown1 { get; private set; }
