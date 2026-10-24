@@ -258,6 +258,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   client tables.
 - Fields the client reads as floats are declared as floats: 100 fields across 30 messages, among them
   the character list's and the unit visuals' and vitals' float fields.
+- The group flags message goes back below Fields while its bit 0x100 rests on a single reading.
 
 ### Fixed
 
@@ -268,6 +269,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   declaration to it.
 - A customer survey response matches the client's layout: the survey, the object, four answers and a
   comment in one record.
+- The group flag for bit 0 marks an instance group, as the client reads it.
 
 - The combat log matches the client's layout: a reflected hit's sixth value is 32 bits, the dispel,
   transference and one amount kind end with their caster, target, spell and result, and kind 34 is

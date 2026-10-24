@@ -239,6 +239,7 @@ internal static class RegistryVerification
         "0x03EE",
         "0x0400",
         "0x0405",
+        "0x0410",
         "0x041A",
         "0x041F",
         "0x0424",
