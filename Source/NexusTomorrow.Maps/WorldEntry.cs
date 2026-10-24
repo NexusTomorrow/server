@@ -49,7 +49,7 @@ internal static class WorldEntry
         session.Send(new EnterWorld { WorldId = location.WorldId, Position = location.Position });
         session.Send(PlayerCreate(player, settings.RealmId));
         session.Send(new PlayerUnit { UnitId = player.UnitId });
-        session.Send(new UnitPathTypeChanged { UnitId = player.UnitId, PathType = player.Character.Path });
+        session.Send(PathOf(player));
         session.Send(new WorldSettings { MovementInterval = settings.MovementInterval });
         session.Send(new MovementControl { Ticket = player.ControlTicket, RebuildMovement = true, UnitId = player.UnitId });
         session.Send(new PlayerState { Experience = player.Character.TotalXp, InputKeySet = PlayerStateMode, CostumeIndex = PlayerStateNoValue });
@@ -84,6 +84,17 @@ internal static class WorldEntry
             BaseFactionId = (ushort)character.FactionId,
         };
     }
+
+    // Another player's create, as a viewer takes it: the player's own create, with the sender time its first relay is fitted from.
+    public static UnitCreate RemoteCreate(Player target, ushort realmId, uint senderTime)
+    {
+        UnitCreate create = PlayerCreate(target, realmId);
+        create.SenderTime = senderTime;
+        return create;
+    }
+
+    // The client keeps a unit's path only from this message, for any player's unit.
+    public static UnitPathTypeChanged PathOf(Player player) => new() { UnitId = player.UnitId, PathType = player.Character.Path };
 
     // How the value is sent: 0 is an integer.
     private static Server0262Part4 Stat(byte stat, uint value) => new()

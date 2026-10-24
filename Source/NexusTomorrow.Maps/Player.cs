@@ -54,6 +54,24 @@ internal sealed class Player
     // True while a logout request waits for its confirm.
     public bool LogoutPending { get; set; }
 
+    // The players this player sees, each with whether its next relay to this player resets (true from the create on).
+    public Dictionary<Player, bool> Visible { get; } = new(ReferenceEqualityComparer.Instance);
+
+    // The players who see this one; the mirror of their Visible, kept with it.
+    public HashSet<Player> Viewers { get; } = new(ReferenceEqualityComparer.Instance);
+
+    // The grid cell the player was last filed under, while InGrid.
+    public (int X, int Z) Cell { get; set; }
+
+    public bool InGrid { get; set; }
+
+    // The time of the last batch relayed for this player, on its own clock, and the map's time when that batch arrived.
+    public bool HasRelayed { get; set; }
+
+    public uint LastBatchTime { get; set; }
+
+    public long LastBatchAtMs { get; set; }
+
     public void MoveTo(CharacterLocation location)
     {
         if (Location.Equals(location))

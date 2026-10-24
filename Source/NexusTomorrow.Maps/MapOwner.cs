@@ -4,6 +4,7 @@ using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using NexusTomorrow.Maps.Scheduling;
 using NexusTomorrow.Maps.Timing;
+using NexusTomorrow.Maps.Visibility;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 using NexusTomorrow.Owners;
@@ -17,9 +18,10 @@ namespace NexusTomorrow.Maps;
 /// <summary>
 /// One world's map: it holds the characters the realm hands it, saves a changed one on a jittered timer, and hands each back on
 /// leaving or stopping. A tick runs in this order: drain the high queue in full, drain the normal queue to its floor and budget,
-/// run the timers, hand the due saves to the write-behind queue, then stop when a stop was requested. Only <see cref="Tick"/>
-/// touches the map's state, so the state needs no locks. An arriving character gets the world entry (<c>WorldEntry</c>); the client's
-/// <c>WorldReady</c> is answered once with <c>WorldEntryComplete</c>.
+/// run the timers, every <see cref="MapSettings.ReplicationEveryTicks"/> ticks run the replication flush, hand the due saves to the
+/// write-behind queue, then stop when a stop was requested. Only <see cref="Tick"/> touches the map's state, so the state needs no
+/// locks. An arriving character gets the world entry (<c>WorldEntry</c>); the client's <c>WorldReady</c> is answered once with
+/// <c>WorldEntryComplete</c>, after which the character sees and is seen by the other players in range.
 /// A logout request is answered with a countdown of 0; its confirm hands the character back and returns the client to character select.
 /// </summary>
 public sealed class MapOwner : IMapInbox, IOwner, ITickable
@@ -42,6 +44,7 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     private readonly Dictionary<ulong, Player> _byCharacter = [];
     private readonly List<Player> _due = [];
     private readonly WorldEntryComplete _entryComplete = new();
+    private readonly AreaOfInterest _visibility;
 
     // Sent only in answer to a logout request with Begin set: at a countdown's deadline the client goes on with the logout
     // (LogoutCountdown.Duration), so an unasked countdown would log the player out. Duration 0 puts that deadline at now, so it
@@ -66,14 +69,18 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     private uint _lastUnitId;
     private uint _lastControlTicket;
     private long _lastSerial;
+    private int _ticksSinceFlush;
+    private bool _stopping;
     private bool _finished;
 
     /// <summary>
     /// Create the map for world <paramref name="worldId"/>. <paramref name="random"/> is read only on the tick, so a generator
-    /// shared with other maps must be safe to use from their threads.
+    /// shared with other maps must be safe to use from their threads. <paramref name="serializer"/> gates and serialises what the map
+    /// sends to many players at once, and <paramref name="visibility"/> decides who may see whom.
     /// </summary>
     public MapOwner(
-        ushort worldId, MapSettings settings, IWriteBehind persistence, Random random, MapMetrics metrics, ILogger<MapOwner> logger)
+        ushort worldId, MapSettings settings, IWriteBehind persistence, Random random, MapMetrics metrics, IMessageSerializer serializer,
+        IVisibilityPredicate visibility, ILogger<MapOwner> logger)
     {
         _worldId = worldId;
         _settings = settings;
@@ -85,6 +92,7 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
         _saveIntervalMs = (long)settings.SaveInterval.TotalMilliseconds;
         _drainBudgetTimestamps = (long)(settings.NormalDrainBudget.TotalSeconds * Stopwatch.Frequency);
         _timers = new SaveTimerHandler(this);
+        _visibility = new AreaOfInterest(settings, serializer, visibility, metrics, logger, worldId, _worldTag);
         Name = $"map {worldId}";
     }
 
@@ -178,6 +186,20 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
         catch (Exception exception)
         {
             TimersFailed(exception);
+        }
+
+        if (++_ticksSinceFlush >= _settings.ReplicationEveryTicks)
+        {
+            _ticksSinceFlush = 0;
+            try
+            {
+                _visibility.Check(_byCharacter.Values, nowMs);
+            }
+            catch (Exception exception)
+            {
+                MapLog.FlushFailed(_logger, _worldId, exception);
+                _metrics.Fault(_worldTag);
+            }
         }
 
         try
@@ -354,10 +376,22 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     }
 
     // The save is queued before the realm hears of the return, so a select's load queued after the return under the same key reads
-    // it (decisions.md D9 2a, 2c). LeaveMap comes last: a session that throws cannot keep the character from the realm.
+    // it (decisions.md D9 2a, 2c). LeaveMap comes last: a session that throws cannot keep the character from the realm. Every player
+    // who saw the character is sent its destroy, since the client never removes a unit by distance; in a stop every player is leaving,
+    // so none is sent. A destroy that fails is logged, and the character goes back all the same.
     private void HandBack(Player player)
     {
         ulong characterId = player.Character.Id;
+        try
+        {
+            _visibility.Forget(player, sendDestroys: !_stopping);
+        }
+        catch (Exception exception)
+        {
+            MapLog.HandlerFailed(_logger, _worldId, "Forget", player.Session.Id, exception);
+            _metrics.Fault(_worldTag);
+        }
+
         _bySession.Remove(player.Session);
         _byCharacter.Remove(characterId);
         Volatile.Write(ref _playerCount, _byCharacter.Count);
@@ -398,6 +432,7 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
 
     private void Stop()
     {
+        _stopping = true;
         Player[] held = [.. _byCharacter.Values];
         foreach (Player player in held)
         {

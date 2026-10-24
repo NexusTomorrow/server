@@ -12,6 +12,7 @@ using NexusTomorrow.Gateway.Limits;
 using NexusTomorrow.Gateway.Sts;
 using NexusTomorrow.Maps;
 using NexusTomorrow.Maps.Scheduling;
+using NexusTomorrow.Maps.Visibility;
 using NexusTomorrow.Maps.Worlds;
 using NexusTomorrow.Owners;
 using NexusTomorrow.Owners.Account;
@@ -59,6 +60,7 @@ public static class CoreServices
         services.TryAddSingleton<IWorldCatalog, TableWorldCatalog>();
         services.AddSingleton<MapMetrics>();
         services.TryAddSingleton<IMapScheduler, MapScheduler>();
+        services.TryAddSingleton<IVisibilityPredicate>(AllowAllVisibility.Instance);
         services.AddSingleton<MapDirectory>();
         services.AddSingleton<IMapDirectory>(provider => provider.GetRequiredService<MapDirectory>());
 

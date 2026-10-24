@@ -11,6 +11,7 @@ namespace NexusTomorrow.Maps;
 /// </remarks>
 [SettingsSection(Section, 4, "Map scheduler", "Map-scheduler#knobs", "Owners", "Owners#knobs")]
 [ProductBetween(nameof(TickMs), nameof(ReplicationEveryTicks), 25, 1000, "ms")]
+[NotAbove(nameof(AdmitRadius), nameof(DropRadius))]
 public sealed class MapOptions
 {
     /// <summary>
@@ -66,4 +67,30 @@ public sealed class MapOptions
     /// </summary>
     [AtLeast(1)]
     public int NormalDrainFloor { get; set; } = 32;
+
+    /// <summary>
+    /// How near, in world units, another player must come before a player sees it: the map creates it for the viewer at its next
+    /// replication flush.
+    /// </summary>
+    [AtLeast(1)]
+    public int AdmitRadius { get; set; } = 128;
+
+    /// <summary>
+    /// How far, in world units, a seen player may go before the map destroys it for the viewer; beyond <see cref="AdmitRadius"/>, so a
+    /// player near the edge is not created and destroyed over and over.
+    /// </summary>
+    [AtLeast(1)]
+    public int DropRadius { get; set; } = 160;
+
+    /// <summary>
+    /// The most other players one player sees at once; past it, the nearest are created first.
+    /// </summary>
+    [AtLeast(1)]
+    public int VisibleCap { get; set; } = 256;
+
+    /// <summary>
+    /// The most players created for one viewer at one replication flush, so a crowd fills in over a few flushes.
+    /// </summary>
+    [AtLeast(1)]
+    public int SwapsPerCheck { get; set; } = 32;
 }
