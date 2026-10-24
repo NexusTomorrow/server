@@ -112,6 +112,10 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Instance messages carry their real names and field meanings: the instance settings window, resets
   and their results, the restricted window, the busy flag, leaving a pending-removal instance and the
   raid info request.
+- Map messages carry their real names and field meanings: the zone map's explored hexes and hex
+  groups, destination markers, taxi nodes, group members' positions, tracked units, phases and
+  planes, the generic map and its nodes, and datacube progress. Hiding the story panel sits with the
+  story messages.
 
 ### Changed
 
