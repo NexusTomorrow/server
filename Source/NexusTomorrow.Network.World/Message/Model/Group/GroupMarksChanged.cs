@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Group;
 /// and raises Group_SetMark for a mark only when that group is the current one and the TargetMarker table holds the marker.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0431, Direction.ServerToClient)]
-public sealed partial class Server0431
+public sealed partial class GroupMarksChanged
 {
     [WireStruct]
     public sealed partial class Server0431Part0

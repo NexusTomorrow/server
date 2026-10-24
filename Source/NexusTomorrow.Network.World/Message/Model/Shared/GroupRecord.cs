@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 [WireStruct]
-public sealed partial class Server0427Part0
+public sealed partial class GroupRecord
 {
     [UInt(64)] public ulong Unknown0 { get; set; }
     [UInt(32)] public uint Unknown1 { get; set; }
@@ -19,5 +19,5 @@ public sealed partial class Server0427Part0
     public RealmScopedId Unknown9 { get; set; } = new();
     [UInt(14)] public ushort Unknown10 { get; set; }
 
-    public Server0427Part1 Unknown11 { get; set; } = new();
+    public GroupMarks Unknown11 { get; set; } = new();
 }
