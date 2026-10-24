@@ -171,6 +171,18 @@ public sealed class OracleVerbsTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AGetterThatThrowsIsRecordedWithItsErrorAndTheTapStays()
+    {
+        await RequestAsync("tap", """{"account": "alice@example.com"}""");
+        ISessionTap tap = _session.Tap!;
+
+        tap.Received(1, [0x01], new Inbound(InboundResult.Message, 0x0001, new ThrowingGetter(), ""));
+
+        Assert.StartsWith("TargetInvocationException:", (string)Assert.Single(Records(1))["fields"]!["$error"]!);
+        Assert.Same(tap, _session.Tap);
+    }
+
+    [Fact]
     public void ASecretInAUnionArmIsFoundThroughTheUnion()
     {
         Assert.True(SessionRecorder.HoldsSecret(typeof(ArmHolder)));
@@ -297,6 +309,35 @@ public sealed class OracleVerbsTests : IAsyncLifetime
         public static WireLayout Layout => throw new NotSupportedException();
 
         public DateTime When { get; set; } = DateTime.UnixEpoch;
+
+        public void Read(ref BitReader reader)
+        {
+        }
+
+        public void Write(ref BitWriter writer)
+        {
+        }
+
+        public int MeasureBits() => 0;
+
+        public string? FindUnverifiedValue() => null;
+
+        public bool IsDefault() => true;
+    }
+
+    // A message whose member's getter throws, which reflection reports as a TargetInvocationException.
+    private sealed class ThrowingGetter : IWireMessage
+    {
+        public static ushort Opcode => 0x0001;
+
+        public static Direction Direction => Direction.ClientToServer;
+
+        public static WireLayout Layout => throw new NotSupportedException();
+
+        [NotOnWire]
+        private readonly bool _broken = true;
+
+        public uint Value => _broken ? throw new InvalidDataException("a broken getter") : 0u;
 
         public void Read(ref BitReader reader)
         {

@@ -155,7 +155,8 @@ internal static class MessageBinder
 
     /// <summary>
     /// The arms of the union <paramref name="member"/> holds: every concrete type in its declaring assembly that implements
-    /// <paramref name="unionType"/> and carries a <see cref="UnionCaseAttribute"/>.
+    /// <paramref name="unionType"/> and carries a <see cref="UnionCaseAttribute"/>. An arm declared in another assembly is not
+    /// found; every union's arms today sit beside the type that holds it.
     /// </summary>
     internal static IEnumerable<Type> Arms(MemberInfo member, Type unionType) =>
         member.DeclaringType!.Assembly.GetTypes()
