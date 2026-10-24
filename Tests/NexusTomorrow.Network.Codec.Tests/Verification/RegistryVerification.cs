@@ -10,7 +10,6 @@ internal static class RegistryVerification
     public static IReadOnlySet<string> Unverified { get; } = new HashSet<string>(StringComparer.Ordinal)
     {
         "0x0068",
-        "0x0070",
         "0x0072",
         "0x007E",
         "0x0091",
@@ -87,7 +86,6 @@ internal static class RegistryVerification
         "0x013D",
         "0x013E",
         "0x0140",
-        "0x0141",
         "0x0142",
         "0x0143",
         "0x0144",
@@ -157,7 +155,6 @@ internal static class RegistryVerification
         "0x01A8",
         "0x01AC",
         "0x01AD",
-        "0x01AF",
         "0x01B0",
         "0x01B2",
         "0x01C2",
@@ -468,7 +465,6 @@ internal static class RegistryVerification
         "0x082D",
         "0x082E",
         "0x0830",
-        "0x0831",
         "0x0832",
         "0x0833",
         "0x083A",

@@ -19,8 +19,8 @@ namespace NexusTomorrow.Network.World.Message.Model.Movement;
 /// The client sends it while it moves a unit: <see cref="MovementControl"/> starts it and <see cref="MovementControlEnd"/> stops it. The
 /// first one after the client takes a unit over carries only a <see cref="SetTimeCommand"/> and a <see cref="SetPositionCommand"/> whose
 /// <see cref="SetPositionCommand.Blend"/> is clear. After that the client sends from its movement timer, whose period is
-/// <see cref="WorldSettings.MovementInterval"/>, and also at once at some moments, such as just before <c>0x00FB</c>. Each batch opens with a
-/// <see cref="SetTimeCommand"/> whose time is the client's clock when it gathered the batch, plus two periods of
+/// <see cref="WorldSettings.MovementInterval"/>, and also at once at some moments, such as just before <see cref="FallingDamage"/>. Each
+/// batch opens with a <see cref="SetTimeCommand"/> whose time is the client's clock when it gathered the batch, plus two periods of
 /// <see cref="WorldSettings.MovementInterval"/>. After a <see cref="MovementControlEnd"/> has taken control away and a
 /// <see cref="MovementControl"/> grants it back, the first batch the client sends from its movement timer for that grant carries one
 /// <see cref="SetPlatformCommand"/> and one <see cref="SetModeCommand"/>.

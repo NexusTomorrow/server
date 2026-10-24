@@ -19,8 +19,17 @@ public sealed partial class Server0262Union2Arm04 : IServer0262Union2
     [VerifiedMember, PackedFloat] public float Speed { get; set; }
 
     [UInt(2)] public byte Unknown2 { get; set; }
-    [UInt(4)] public byte Unknown3 { get; set; }
-    [UInt(32)] public uint Unknown4 { get; set; }
+
+    /// <summary>
+    /// How the unit plays the path: 0 once, stopping at its end; 1 back and forth; 2 in a loop; 3 once backward, ending at its start.
+    /// </summary>
+    [VerifiedMember, UInt(4)] public byte PlaybackMode { get; set; }
+
+    /// <summary>
+    /// Time already elapsed along the path, in milliseconds: the client adds it to the time since the command's start, so it sets where
+    /// along <see cref="Points"/> the unit starts.
+    /// </summary>
+    [VerifiedMember, UInt(32)] public uint Offset { get; set; }
 
     /// <summary>
     /// Whether the segment blends in: when set, on a unit the client does not move, the client blends away the jump to the segment; when

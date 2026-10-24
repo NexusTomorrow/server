@@ -11,7 +11,7 @@ public sealed partial class Server0262Union2Arm10 : IServer0262Union2
     /// </summary>
     [VerifiedMember, UInt(32)] public uint SplineId { get; set; }
 
-    [UInt(16)] public ushort Unknown1 { get; set; }
+    [PackedFloat] public float Unknown1 { get; set; }
     [Float32] public float Unknown2 { get; set; }
     [UInt(4)] public byte Unknown3 { get; set; }
     [UInt(32)] public uint Unknown4 { get; set; }

@@ -217,7 +217,7 @@ public sealed partial class UnitCreate
 
     /// <summary>
     /// The time of the create, in milliseconds on the sender's clock. The client adds it, with its own clock, to its fit of the sender's
-    /// clock for the unit, the fit <see cref="UnitMovement.Unknown1"/> feeds and through which it maps the times of the unit's commands.
+    /// clock for the unit, the fit <see cref="UnitMovement.Time"/> feeds and through which it maps the times of the unit's commands.
     /// </summary>
     [VerifiedMember, UInt(32)] public uint SenderTime { get; set; }
 
