@@ -154,9 +154,9 @@ public sealed partial class PlayerState
 
     /// <summary>
     /// The augmentations the client reports as cached, by id: AbilityBook.GetEldanAugmentationData sets bIsCached on each augmentation
-    /// whose id is listed.
+    /// whose id is listed. The client holds at most 54.
     /// </summary>
-    [VerifiedMember, Array(CountBits = 6), UInt(16)] public List<ushort> CachedAugments { get; } = [];
+    [VerifiedMember, Array(CountBits = 6, Capacity = 54), UInt(16)] public List<ushort> CachedAugments { get; } = [];
 
     /// <summary>
     /// The count of each item kind in the player's supply satchel, one entry for each satchel index from 0 to 511, as the client's

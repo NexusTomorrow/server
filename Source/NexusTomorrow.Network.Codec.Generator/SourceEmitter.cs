@@ -311,6 +311,12 @@ internal static class SourceEmitter
                     EmitWriteValue(writer, member.Value, name);
                     break;
                 case MemberShape.Array when member.Value is not null:
+                    if (member.Capacity > 0)
+                    {
+                        writer.Line($"if ({name}.{CountOf(member)} > {Num(member.Capacity)})");
+                        writer.Line($"    throw new {Codec}.CodecException(\"{type.Name}.{name} holds \" + {name}.{CountOf(member)} + \" elements; the client holds at most {member.Capacity}.\");");
+                    }
+
                     if (member.CountFrom is null)
                         writer.Line($"writer.WriteBits((ulong){name}.{CountOf(member)}, {Num(member.CountBits)});");
                     writer.Open($"foreach (var element{i} in {name})");

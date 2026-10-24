@@ -306,6 +306,22 @@ internal static class ModelBuilder
                 return null;
             }
 
+            int capacity = NamedInt(array, "Capacity");
+            if (capacity < 0)
+            {
+                Report("an [Array] Capacity is at least 1, or 0 for none");
+                return null;
+            }
+
+            // A count of n bits carries at most 2^n - 1, so a larger capacity could never be written.
+            long countMax = (1L << countBits) - 1;
+            if (countFrom is null && capacity > countMax)
+            {
+                diagnostics.Add(DiagnosticInfo.Create(
+                    Diagnostics.CapacityOverCount, location, name, typeName, Text(capacity), Text(countBits), countMax.ToString(CultureInfo.InvariantCulture)));
+                return null;
+            }
+
             if (!TryGetCollection(memberType, out CollectionKind collection, out ITypeSymbol? elementType))
             {
                 Report("an [Array] member must be a List<T> or a T[]");
@@ -331,6 +347,7 @@ internal static class ModelBuilder
                 Value = element,
                 CountBits = countBits,
                 CountFrom = countFrom,
+                Capacity = capacity,
                 Collection = collection,
                 ElementType = elementType.ToDisplayString(s_fullName),
             };
@@ -608,7 +625,7 @@ internal static class ModelBuilder
 
     private static MemberModel Member(string name, MemberShape shape, LocationInfo? location, bool settable)
     {
-        return new MemberModel(name, shape, null, 0, null, false, CollectionKind.None, null, 0, null, null, 0, false, false, 0, settable, location, false);
+        return new MemberModel(name, shape, null, 0, null, 0, false, CollectionKind.None, null, 0, null, null, 0, false, false, 0, settable, location, false);
     }
 
     private static bool TryGetCollection(ITypeSymbol type, out CollectionKind collection, out ITypeSymbol elementType)

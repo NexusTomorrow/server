@@ -13,9 +13,9 @@ public sealed partial class HazardMaxModifiers
 {
     /// <summary>
     /// The modifier for each hazard, by position: entry N is hazard N's. The client sizes its copy to the last id in the Hazard table
-    /// plus one and takes the list as sent, so the list must not be longer than that.
+    /// plus one and takes the list as sent, so the list must not be longer than that. The client holds at most 260.
     /// </summary>
-    [VerifiedMember, Array(CountBits = 32)] public List<HazardMaxModifier> HazardModifiers { get; set; } = [];
+    [VerifiedMember, Array(CountBits = 32, Capacity = 260)] public List<HazardMaxModifier> HazardModifiers { get; set; } = [];
 
-    [Array(CountBits = 32)] public List<HazardMaxModifier> Unknown1 { get; set; } = [];
+    [Array(CountBits = 32, Capacity = 5)] public List<HazardMaxModifier> Unknown1 { get; set; } = [];
 }

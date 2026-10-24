@@ -93,13 +93,19 @@ internal static class Diagnostics
         Category, DiagnosticSeverity.Error, isEnabledByDefault: true,
         description: "A `[UnionCase]` value its selector can't carry, so that arm could never be read back");
 
+    public static readonly DiagnosticDescriptor CapacityOverCount = new(
+        "NTC014", "Capacity does not fit its count",
+        "Member '{0}' of '{1}' declares a capacity of {2}, but its {3}-bit count holds at most {4}",
+        Category, DiagnosticSeverity.Error, isEnabledByDefault: true,
+        description: "An `[Array]` `Capacity` larger than its own count's width can carry, so the bound could never be reached");
+
     /// <summary>
     /// Every descriptor, in id order, for the reference page.
     /// </summary>
     public static IReadOnlyList<DiagnosticDescriptor> All { get; } =
     [
         MissingWidth, BadWidth, ValueTooWide, BadReference, Duplicate, NarrowSignedUInt, SplitAcrossParts,
-        NotPartial, BadAttribute, NoArms, AlignedBlobInStruct, BadType, CaseTooWide,
+        NotPartial, BadAttribute, NoArms, AlignedBlobInStruct, BadType, CaseTooWide, CapacityOverCount,
     ];
 
     public static DiagnosticDescriptor ById(string id)
