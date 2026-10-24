@@ -140,6 +140,14 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   values, and a player's attribute points. The movement commands name their spline ids, positions,
   velocities, rotations, scales, states and modes, the jump's start, flight time and gravity, and the
   key times of two tracks. An item names its second power core and its charges.
+- Option messages carry their real names and field meanings: the input options, the combat log's
+  filters, the options sync, and the key binding sets with their requests and selection.
+- Utility messages carry their real names and field meanings: the played time and its request, the
+  server command line, and the random roll's request and result.
+- World entry names the character flags update, the world removal warning and its two cancels, the
+  logout countdown's duration and signature bonuses, and the world settings' difficulty, prime level
+  and level-scaling bit.
+- The client's connection reports take their names, with every value kept neutral.
 - The members /say sends and receives are verified: the text and channel the client sends, the text,
   sender and channel of a received line, and the id the server accepts a line under.
 - An item names its rune slots' elements and its rune item ids, which the client uses only while the

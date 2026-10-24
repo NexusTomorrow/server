@@ -3,8 +3,13 @@ using NexusTomorrow.Network.Message;
 
 namespace NexusTomorrow.Network.World.Message.Model.Connection;
 
+/// <summary>
+/// Reports figures on the client's world connection, once a minute while it is connected to a world. Nothing on the client reads them
+/// back, and the report needs no reply.
+/// </summary>
 [WireMessage(GameMessageOpcode.Client023F, Direction.ClientToServer)]
-public sealed partial class Client023F
+[Verified(Rung.Purpose)]
+public sealed partial class ConnectionStatsReport
 {
     [UInt(32)] public uint Unknown0 { get; private set; }
     [UInt(32)] public uint Unknown1 { get; private set; }

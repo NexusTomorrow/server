@@ -253,7 +253,7 @@ public sealed class WorldEntryTests : IDisposable
 
         LogoutCountdown countdown = session.Single<LogoutCountdown>();
         Assert.Equal(0U, countdown.Duration);
-        Assert.False(countdown.Cancel);
+        Assert.False(countdown.Unknown1);
         Assert.Empty(session.Sent.OfType<WorldLogout>());
         Assert.Equal(1, map.PlayerCount);
         Assert.Empty(_realm.Posted);

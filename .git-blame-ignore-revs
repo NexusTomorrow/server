@@ -90,3 +90,11 @@ cd25cd14781c3635fd1a2b45043731de9034a2de
 6aa790d8071f82adf66706448035411c5996796b
 # Return four message types to neutral names
 6aba023091b9ff1512683d0f6068b605154ecc78
+# Rename the option messages to names of their own
+e46d33349e37aaf1d45c6e95be26066e4ae187e8
+# Rename the utility messages to names of their own
+86418a7e892eea6eba7a0fa7fd64b233c80f4429
+# Rename the world entry messages to names of their own
+588bb9e53602c3c16250116d050885d94ed75345
+# Rename the connection reports to names of their own
+abec0512b5b386c7c8c14ede43f105c0a23b3fd5
