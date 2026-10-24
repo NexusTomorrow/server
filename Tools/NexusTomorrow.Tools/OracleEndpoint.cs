@@ -15,8 +15,9 @@ namespace NexusTomorrow.Tools;
 /// The oracle's endpoint: loopback TCP, one JSON object per line each way. A connection's first line must carry the token written to
 /// <see cref="OracleOptions.TokenFile"/> at this start, within <see cref="FirstLineTime"/> and <see cref="FirstLineChars"/>; the
 /// connection closes on the first line that does not parse or authenticate. Each later line is a request (<see cref="OracleVerbs"/>),
-/// answered in order; a tap's records interleave with the answers. A connection with <see cref="OutboxLines"/> lines waiting, an answer
-/// or a tap record, is closed: its socket is closed and its taps detach.
+/// answered in order; a tap's records interleave with the answers. When the peer ends its side, the lines already waiting are written
+/// for up to <see cref="DrainTime"/> before the connection closes. A connection with <see cref="OutboxLines"/> lines waiting, an
+/// answer or a tap record, is closed at once: its socket is closed and its taps detach.
 /// </summary>
 public sealed partial class OracleEndpoint : BackgroundService
 {
@@ -39,6 +40,11 @@ public sealed partial class OracleEndpoint : BackgroundService
     /// The lines a connection may have waiting to be written to it.
     /// </summary>
     internal int OutboxLines { get; init; } = 1 << 16;
+
+    /// <summary>
+    /// How long the lines waiting when the peer ends its side may take to be written.
+    /// </summary>
+    internal TimeSpan DrainTime { get; init; } = TimeSpan.FromSeconds(5);
 
     /// <summary>
     /// Create the endpoint.
@@ -106,14 +112,17 @@ public sealed partial class OracleEndpoint : BackgroundService
             var outbox = Channel.CreateBounded<string>(new BoundedChannelOptions(OutboxLines) { SingleReader = true, FullMode = BoundedChannelFullMode.Wait });
 
             // The connection's life: the host stopping, a refusal, or a full outbox (a reply, or a tap record through
-            // OracleConnection.Send) ends it, and the socket is closed before the writer is awaited, so a peer that stops reading
-            // cannot hold it open.
+            // OracleConnection.Send) ends it at once, and the socket is closed before the writer is awaited, so a peer that stops
+            // reading cannot hold it open. A peer that ends its side gets what is waiting, for up to DrainTime.
             var lifetime = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
             bool overflowed = false;
+            bool peerEnded = false;
+
+            // A tap reports a full outbox on the game session's thread, so the cancellation's callbacks run on the thread pool.
             var connection = new OracleConnection(outbox.Writer, full: () =>
             {
                 overflowed = true;
-                Cancel(lifetime);
+                CancelSoon(lifetime);
             });
             Task writer = WriteLinesAsync(stream, outbox.Reader, lifetime.Token);
             try
@@ -136,6 +145,8 @@ public sealed partial class OracleEndpoint : BackgroundService
                     if (!connection.Send(reply.ToJsonString()))
                         return;
                 }
+
+                peerEnded = true;
             }
             catch (Exception exception) when (exception is IOException or OperationCanceledException or ObjectDisposedException)
             {
@@ -152,7 +163,9 @@ public sealed partial class OracleEndpoint : BackgroundService
                 // Taps first, so none writes to an outbox that has completed.
                 connection.Dispose();
                 outbox.Writer.TryComplete();
-                Cancel(lifetime);
+                if (peerEnded)
+                    await DrainAsync(writer);
+                lifetime.Cancel();
                 client.Close();
                 await writer;
                 lifetime.Dispose();
@@ -160,12 +173,23 @@ public sealed partial class OracleEndpoint : BackgroundService
         }
     }
 
-    // A tap can report a full outbox from another thread after the connection has ended and disposed its source.
-    private static void Cancel(CancellationTokenSource lifetime)
+    private async Task DrainAsync(Task writer)
     {
         try
         {
-            lifetime.Cancel();
+            await writer.WaitAsync(DrainTime);
+        }
+        catch (TimeoutException)
+        {
+        }
+    }
+
+    // A tap can report a full outbox from another thread after the connection has ended and disposed its source.
+    private static void CancelSoon(CancellationTokenSource lifetime)
+    {
+        try
+        {
+            _ = lifetime.CancelAsync();
         }
         catch (ObjectDisposedException)
         {

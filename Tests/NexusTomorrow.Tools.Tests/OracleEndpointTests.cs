@@ -112,6 +112,21 @@ public sealed class OracleEndpointTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task APeerThatEndsItsSideStillGetsTheAnswersWaiting()
+    {
+        int port = await StartAsync(enabled: true);
+        using LineClient client = await LineClient.ConnectAsync(port);
+
+        await client.SendAsync(new JsonObject { ["token"] = await TokenAsync() });
+        await client.SendAsync(new JsonObject { ["id"] = 3, ["verb"] = "status" });
+        client.EndSending();
+
+        JsonObject reply = Assert.IsType<JsonObject>(await client.ReadAsync());
+        Assert.Equal(3, (int)reply["id"]!);
+        Assert.Null(await client.ReadAsync());
+    }
+
+    [Fact]
     public async Task AConnectionThatStopsReadingItsAnswersIsClosed()
     {
         int port = await StartAsync(enabled: true, outboxLines: 4);
@@ -218,6 +233,8 @@ public sealed class OracleEndpointTests : IAsyncLifetime
         public Task SendAsync(JsonObject message) => SendLineAsync(message.ToJsonString());
 
         public Task SendLineAsync(string line) => SendRawAsync(line + "\n");
+
+        public void EndSending() => _client.Client.Shutdown(SocketShutdown.Send);
 
         // False once the endpoint has closed the connection.
         public async Task<bool> TrySendAsync(JsonObject message, CancellationToken cancellationToken)
