@@ -28,9 +28,10 @@ namespace NexusTomorrow.Tools;
 /// <item><c>layout</c>: <c>opcode</c>; the server message's members in wire order, each with its path, width and encoding
 /// (<see cref="LayoutRows"/>).</item>
 /// <item><c>command</c>: <c>line</c>, a command line as the server's console takes it, run through <see cref="CommandDispatcher"/> as
-/// the actor <c>oracle</c>, which holds every permission and is audited under that name whenever the line names a command. Answered
-/// with the command's outcome and its reply text; a command still running after <see cref="CommandTime"/> is cancelled, which the
-/// dispatcher answers as failed, so the requests after it on the connection are not held.</item>
+/// the actor <c>oracle</c>, which holds every permission and is audited under that name whenever the line names a registered command.
+/// Answered with the command's outcome and its reply text. A command still running after <see cref="CommandTime"/> is signalled to
+/// cancel, and one that honours the signal is answered as failed by the dispatcher, so the requests after it on the connection are
+/// not held.</item>
 /// </list>
 /// </remarks>
 public sealed class OracleVerbs
@@ -53,7 +54,7 @@ public sealed class OracleVerbs
     }
 
     /// <summary>
-    /// How long a <c>command</c> may run before it is cancelled.
+    /// How long a <c>command</c> may run before it is signalled to cancel.
     /// </summary>
     internal TimeSpan CommandTime { get; init; } = TimeSpan.FromSeconds(10);
 
