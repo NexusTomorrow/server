@@ -24,8 +24,7 @@ public sealed partial class CinematicCamera
     /// <summary>
     /// <see cref="CameraAddFlags.AddCamera"/> begins the camera, and without it the command ends the camera.
     /// <see cref="CameraAddFlags.AwaitContinue"/> holds the camera after a fade-out, reporting <see cref="CinematicState.AwaitingContinue"/>,
-    /// until <see cref="CinematicContinue"/>. The client echoes <see cref="CameraAddFlags.NotifyCancelCurrentCamera"/> in
-    /// <see cref="CinematicProgress"/> with <see cref="CinematicState.CameraStarted"/>.
+    /// until <see cref="CinematicContinue"/>.
     /// </summary>
     [UInt(32)] public CameraAddFlags Flags { get; set; }
 
@@ -39,10 +38,7 @@ public sealed partial class CinematicCamera
     /// </summary>
     [UInt(16)] public ushort EndDurationMs { get; set; }
 
-    /// <summary>
-    /// How long the end transition holds after its fade-out, in milliseconds.
-    /// </summary>
-    [UInt(16)] public ushort EndHoldMs { get; set; }
+    [UInt(16)] public ushort Unknown4 { get; set; }
 
     /// <summary>
     /// How long the end transition takes to fade back in, in milliseconds.

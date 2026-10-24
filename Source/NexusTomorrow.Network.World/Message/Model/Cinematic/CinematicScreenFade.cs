@@ -5,7 +5,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 /// <summary>
-/// Fades the screen out, holds the cinematic's commands until the fade-out and the hold have passed, and fades playback back in.
+/// Fades the screen out, holds the cinematic's commands during the fade, and fades playback back in.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0222, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]
@@ -21,10 +21,7 @@ public sealed partial class CinematicScreenFade
     /// </summary>
     [UInt(16)] public ushort FadeOutMs { get; set; }
 
-    /// <summary>
-    /// Added to <see cref="FadeOutMs"/>, the time in milliseconds after which the client runs the commands it held during the fade.
-    /// </summary>
-    [UInt(16)] public ushort HoldMs { get; set; }
+    [UInt(16)] public ushort Unknown2 { get; set; }
 
     /// <summary>
     /// How long playback takes to fade back in, in milliseconds.

@@ -22,10 +22,7 @@ public sealed partial class CreddOperationHistory
         /// </summary>
         [UInt(32)] public uint Operation { get; set; }
 
-        /// <summary>
-        /// The value the client hands to add-ons as the entry's bInitiator.
-        /// </summary>
-        [UInt(1)] public bool IsInitiator { get; set; }
+        [UInt(1)] public bool Unknown1 { get; set; }
 
         /// <summary>
         /// The entry's age, in minutes.

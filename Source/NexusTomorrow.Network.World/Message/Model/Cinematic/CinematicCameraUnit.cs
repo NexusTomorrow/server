@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 /// <summary>
-/// Puts the cinematic camera's position, or the point it looks at, on a unit, from the command's time.
+/// Puts the cinematic camera on a unit, from the command's time.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0217, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]
@@ -21,8 +21,5 @@ public sealed partial class CinematicCameraUnit
     /// </summary>
     [UInt(32)] public uint UnitId { get; set; }
 
-    /// <summary>
-    /// Sets the camera's look-at channel instead of its position channel.
-    /// </summary>
-    [UInt(1)] public bool LookAt { get; set; }
+    [UInt(1)] public bool Unknown2 { get; set; }
 }

@@ -37,8 +37,5 @@ public sealed partial class CinematicVisualEffectAdd
     /// </summary>
     public Client0096Part0 Position { get; set; } = new();
 
-    /// <summary>
-    /// Removes the effect when the cinematic camera ends.
-    /// </summary>
-    [UInt(1)] public bool EndsWithCamera { get; set; }
+    [UInt(1)] public bool Unknown5 { get; set; }
 }

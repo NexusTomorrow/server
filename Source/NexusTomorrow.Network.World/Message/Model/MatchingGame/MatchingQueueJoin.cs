@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 /// Joins a matching queue; MatchMakingLib.Queue sends it.
 /// </summary>
 [WireMessage(GameMessageOpcode.Client05EF, Direction.ClientToServer)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class MatchingQueueJoin
 {
     /// <summary>

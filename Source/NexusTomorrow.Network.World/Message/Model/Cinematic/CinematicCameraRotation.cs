@@ -21,8 +21,5 @@ public sealed partial class CinematicCameraRotation
     /// </summary>
     [Float32] public float Yaw { get; set; }
 
-    /// <summary>
-    /// The camera's pitch, in radians; the client clamps it to +-pi/2.
-    /// </summary>
-    [Float32] public float Pitch { get; set; }
+    [Float32] public float Unknown2 { get; set; }
 }

@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 /// <summary>
-/// Changes a cinematic actor's mode at the command's time.
+/// Has the client build an entity command for a cinematic actor at the command's time.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0231, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]
@@ -21,8 +21,5 @@ public sealed partial class CinematicActorMode
     /// </summary>
     [UInt(32)] public uint ActorUnitId { get; set; }
 
-    /// <summary>
-    /// The actor's new mode, the one <see cref="CinematicActorAdd.Mode"/> first sets.
-    /// </summary>
-    [UInt(32)] public uint Mode { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }

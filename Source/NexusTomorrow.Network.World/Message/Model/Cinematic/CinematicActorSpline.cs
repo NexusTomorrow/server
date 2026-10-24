@@ -26,11 +26,7 @@ public sealed partial class CinematicActorSpline
     /// </summary>
     [UInt(32)] public uint SplineId { get; set; }
 
-    /// <summary>
-    /// How fast the actor moves along the spline.
-    /// </summary>
-    [Float32] public float Speed { get; set; }
-
+    [Float32] public float Unknown3 { get; set; }
     [UInt(32)] public uint Unknown4 { get; set; }
     [UInt(1)] public bool Unknown5 { get; set; }
     [UInt(1)] public bool Unknown6 { get; set; }

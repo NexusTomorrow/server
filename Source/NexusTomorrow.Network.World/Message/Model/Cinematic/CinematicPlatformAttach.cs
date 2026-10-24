@@ -26,8 +26,5 @@ public sealed partial class CinematicPlatformAttach
     /// </summary>
     [UInt(32)] public uint PlatformUnitId { get; set; }
 
-    /// <summary>
-    /// The point on the platform's model the unit is put at.
-    /// </summary>
-    [UInt(32)] public uint AttachId { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
 }

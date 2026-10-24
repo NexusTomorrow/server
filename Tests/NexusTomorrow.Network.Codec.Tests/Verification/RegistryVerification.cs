@@ -1,8 +1,9 @@
 ﻿namespace NexusTomorrow.Network.Codec.Tests.Verification;
 
 /// <summary>
-/// Every declared message below <see cref="Message.Rung.Fields"/> that is not dormant, by opcode. A message read to fields or marked
-/// <see cref="Message.DormantAttribute"/> leaves this list, and the registry verification test fails on an entry that has, so the list only shrinks.
+/// Every declared message below <see cref="Message.Rung.Fields"/> that is not dormant, by opcode. The registry verification test fails on an
+/// entry that has reached fields or is marked <see cref="Message.DormantAttribute"/>, and on a message below fields, not dormant, that the list
+/// lacks.
 /// </summary>
 internal static class RegistryVerification
 {
@@ -181,10 +182,12 @@ internal static class RegistryVerification
         "0x0217",
         "0x0218",
         "0x021C",
+        "0x0220",
         "0x0221",
         "0x0222",
         "0x0227",
         "0x0228",
+        "0x022A",
         "0x022C",
         "0x022E",
         "0x022F",
@@ -352,6 +355,8 @@ internal static class RegistryVerification
         "0x05A1",
         "0x05A2",
         "0x05A3",
+        "0x05B2",
+        "0x05DF",
         "0x05E1",
         "0x05E3",
         "0x05E5",
@@ -360,6 +365,10 @@ internal static class RegistryVerification
         "0x05EA",
         "0x05ED",
         "0x05EE",
+        "0x05EF",
+        "0x05F3",
+        "0x05F8",
+        "0x05F9",
         "0x0600",
         "0x060A",
         "0x0614",

@@ -13,7 +13,7 @@ namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 /// raises MatchingJoinQueue, ends any role check, and stops the player's cast of one spell a GameFormula row names.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server05DF, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class MatchingQueueJoined
 {
     /// <summary>
@@ -55,8 +55,5 @@ public sealed partial class MatchingQueueJoined
     /// </summary>
     public MatchingQueueEntry Entry { get; set; } = new();
 
-    /// <summary>
-    /// The roles queued for, as a mask of <see cref="Role"/>.
-    /// </summary>
-    [UInt(32)] public Role Roles { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 }
