@@ -12,9 +12,10 @@ namespace NexusTomorrow.Tools;
 /// <c>{"tap": {...}}</c> lines. Each direction is numbered from 1 in the order the session handled it, so the n-th message sent is the
 /// n-th the client receives on this connection after the tap was attached. A message whose type has a member marked
 /// <see cref="WireSecretAttribute"/>, in itself, a wire type it holds, or an arm of a union it holds, is recorded without its bytes.
-/// A message the server read carries its decoded
-/// <c>fields</c> (<see cref="MessageDump"/>), which a secret one never does. A record the connection cannot take (it has ended,
-/// or left its outbox full) throws, so the session detaches the tap rather than record with gaps.
+/// A received message carries its decoded <c>fields</c> (<see cref="MessageDump"/>), which a secret one never does: the message the
+/// server read, or, for one the table dropped unread, the message read here with its declaration (<c>read_by</c> says which). A
+/// record the connection cannot take (it has ended, or left its outbox full) throws, so the session detaches the tap rather than
+/// record with gaps.
 /// </summary>
 public sealed class SessionRecorder : ISessionTap
 {
@@ -40,6 +41,9 @@ public sealed class SessionRecorder : ISessionTap
         // A frame whose decode failed has no message; the client's declaration for its opcode says whether it can carry a secret.
         Type? type = inbound.Message?.GetType() ?? ClientMessageType(inbound.Opcode);
         bool secret = type is not null && HoldsSecret(type);
+
+        // A message the table dropped unread is read here with its declaration, so the oracle sees every client message.
+        bool readHere = !secret && inbound.Message is null && inbound.Result == InboundResult.Dropped && type is not null;
         Send(Line(new JsonObject
         {
             ["dir"] = "c2s",
@@ -49,22 +53,43 @@ public sealed class SessionRecorder : ISessionTap
             ["opcode"] = $"0x{inbound.Opcode:X4}",
             ["result"] = inbound.Result.ToString(),
             ["reason"] = inbound.Reason,
-            ["type"] = inbound.Message?.GetType().Name,
+            ["type"] = (inbound.Message?.GetType() ?? (readHere ? type : null))?.Name,
             ["envelope"] = secret ? null : Convert.ToHexString(envelope),
-            ["fields"] = secret || inbound.Message is null ? null : Fields(inbound.Message),
+            ["fields"] = secret ? null : inbound.Message is not null ? Fields(inbound.Message) : readHere ? Unread(envelope) : null,
+            ["read_by"] = secret ? null : inbound.Message is not null ? "server" : readHere ? "tap" : null,
             ["redacted"] = secret,
         }));
     }
 
-    // The message the server decoded, as MessageDump writes it and serialized here, so a value JSON cannot carry (a lone surrogate
-    // a client sent) fails inside the catch too. Whatever fails is named in "$error" instead of thrown, since a tap that throws is
-    // detached.
+    // The message the server decoded, as MessageDump writes it and serialized here, so a value JSON cannot carry fails inside the
+    // catch too. Whatever fails is named in "$error" instead of thrown, since a tap that throws is detached.
     private static JsonNode Fields(IWireMessage message)
     {
         try
         {
             JsonObject fields = MessageDump.Of(message);
             return JsonNode.Parse(fields.ToJsonString())!;
+        }
+        catch (Exception exception)
+        {
+            return new JsonObject { ["$error"] = $"{exception.GetType().Name}: {exception.Message}" };
+        }
+    }
+
+    // A dropped frame's message read with its declaration, the envelope opened as the decoder opens it; a frame that does not read,
+    // or leaves a whole byte over, is named in "$error".
+    private static JsonNode Unread(ReadOnlySpan<byte> envelope)
+    {
+        if (!InboundDecoder.TryOpenClear(envelope.ToArray(), out ushort opcode, out byte[] body) || CreateClientMessage(opcode) is not { } message)
+            return new JsonObject { ["$error"] = "the envelope does not open" };
+
+        try
+        {
+            var reader = new BitReader(body);
+            message.Read(ref reader);
+            return reader.BitsRemaining >= 8
+                ? new JsonObject { ["$error"] = $"{reader.BitsRemaining} bits left after the message" }
+                : Fields(message);
         }
         catch (Exception exception)
         {
@@ -117,10 +142,12 @@ public sealed class SessionRecorder : ISessionTap
         return false;
     }
 
-    private static Type? ClientMessageType(ushort opcode) =>
-        (Network.World.WireMessages.CreateClientToServer(opcode)
+    private static Type? ClientMessageType(ushort opcode) => CreateClientMessage(opcode)?.GetType();
+
+    private static IWireMessage? CreateClientMessage(ushort opcode) =>
+        Network.World.WireMessages.CreateClientToServer(opcode)
             ?? Network.Auth.WireMessages.CreateClientToServer(opcode)
-            ?? Network.WireMessages.CreateClientToServer(opcode))?.GetType();
+            ?? Network.WireMessages.CreateClientToServer(opcode);
 
     private static string Line(JsonObject record) => new JsonObject { ["tap"] = record }.ToJsonString();
 

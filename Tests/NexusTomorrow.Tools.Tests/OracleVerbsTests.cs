@@ -143,6 +143,34 @@ public sealed class OracleVerbsTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AMessageTheTableDroppedIsReadWithItsDeclarationByTheTap()
+    {
+        await RequestAsync("tap", """{"account": "alice@example.com"}""");
+        var receipt = new Network.World.Message.Model.Movement.MovementControlReceipt();
+        MessageBinder.Bind(receipt, new JsonObject { ["Ticket"] = 77 });
+        byte[] body = Serialize(receipt);
+        byte[] envelope = [.. BitConverter.GetBytes(6 + body.Length), .. BitConverter.GetBytes((ushort)0x0635), .. body];
+
+        _session.Tap!.Received(1, envelope, new Inbound(InboundResult.Dropped, 0x0635, null, "no opcode table row"));
+
+        JsonObject record = Assert.Single(Records(1));
+        Assert.Equal("""{"Ticket":77}""", record["fields"]!.ToJsonString());
+        Assert.Equal("tap", (string)record["read_by"]!);
+        Assert.Equal("MovementControlReceipt", (string)record["type"]!);
+    }
+
+    [Fact]
+    public async Task ADroppedFrameThatDoesNotReadIsRecordedWithItsError()
+    {
+        await RequestAsync("tap", """{"account": "alice@example.com"}""");
+        byte[] envelope = [.. BitConverter.GetBytes(6 + 1), .. BitConverter.GetBytes((ushort)0x0635), 0x01];
+
+        _session.Tap!.Received(1, envelope, new Inbound(InboundResult.Dropped, 0x0635, null, "no opcode table row"));
+
+        Assert.NotNull(Assert.Single(Records(1))["fields"]!["$error"]);
+    }
+
+    [Fact]
     public void ASecretInAUnionArmIsFoundThroughTheUnion()
     {
         Assert.True(SessionRecorder.HoldsSecret(typeof(ArmHolder)));

@@ -95,8 +95,58 @@ public sealed class InboundDecoder
             return new Inbound(InboundResult.Malformed, frameOpcode, null, "not a client envelope");
         if (!EnvelopeReader.TryOpen(body, cipher, out ushort opcode, out Span<byte> inner))
             return new Inbound(InboundResult.Malformed, frameOpcode, null, "the envelope's length is not its own");
+        if (Unwrap(ref opcode, ref inner, out byte? tag) is { } malformed)
+            return malformed;
+        if (!_table.TryGetValue(opcode, out OpcodeRow? row))
+            return new Inbound(InboundResult.Dropped, opcode, null, "no opcode table row");
+        if (row.Tag != tag)
+            return new Inbound(InboundResult.Malformed, opcode, null, "a tag other than its row's");
+        if (_disabled.Contains(opcode))
+            return new Inbound(InboundResult.Dropped, opcode, null, "switched off");
+        if (row.MaxBodyBytes is int limit && inner.Length > limit)
+            return new Inbound(InboundResult.Malformed, opcode, null, "a body over its row's size limit");
+        if (!admit(row))
+            return new Inbound(InboundResult.Dropped, opcode, null, "refused by the connection");
 
-        byte? tag = null;
+        IWireMessage? message = _catalog.CreateInbound(opcode, row.ReadsVerifiedMembers, out InboundRefusal refusal);
+        if (message is null)
+            return new Inbound(InboundResult.Dropped, opcode, null, refusal.ToString());
+
+        try
+        {
+            var reader = new BitReader(inner);
+            message.Read(ref reader);
+            if (reader.BitsRemaining >= 8)
+                return new Inbound(InboundResult.Malformed, opcode, null, $"{reader.BitsRemaining} bits left after the message");
+        }
+        catch (CodecException exception)
+        {
+            return new Inbound(InboundResult.Malformed, opcode, null, exception.Message);
+        }
+
+        return new Inbound(InboundResult.Message, opcode, message, "");
+    }
+
+#if DEBUG
+    /// <summary>
+    /// The inner opcode and body of a clear client envelope, any wrapper opened as <see cref="Decode"/> opens it, for the Debug
+    /// tools' tap, which reads a message the table dropped. False for an envelope <see cref="Decode"/> calls malformed.
+    /// </summary>
+    public static bool TryOpenClear(byte[] envelope, out ushort opcode, out byte[] inner)
+    {
+        inner = [];
+        Span<byte> body = envelope;
+        if (!EnvelopeReader.TryOpen(body, cipher: null, out opcode, out Span<byte> open) || Unwrap(ref opcode, ref open, out _) is not null)
+            return false;
+        inner = open.ToArray();
+        return true;
+    }
+#endif
+
+    // Opens a 0x025C or 0x038C wrapper around the inner message, setting its opcode, tag and body; the malformed outcome otherwise.
+    private static Inbound? Unwrap(ref ushort opcode, ref Span<byte> inner, out byte? tag)
+    {
+        tag = null;
         if (opcode == Nested)
         {
             // The nested wrapper is itself a declared message: a 32-bit length counting itself, then one clear frame.
@@ -128,35 +178,8 @@ public sealed class InboundDecoder
             inner = tagged.Payload.AsSpan(sizeof(ushort));
         }
 
-        if (opcode is ClientEnvelope or Nested or Tagged)
-            return new Inbound(InboundResult.Malformed, opcode, null, "a wrapper nested past one level");
-        if (!_table.TryGetValue(opcode, out OpcodeRow? row))
-            return new Inbound(InboundResult.Dropped, opcode, null, "no opcode table row");
-        if (row.Tag != tag)
-            return new Inbound(InboundResult.Malformed, opcode, null, "a tag other than its row's");
-        if (_disabled.Contains(opcode))
-            return new Inbound(InboundResult.Dropped, opcode, null, "switched off");
-        if (row.MaxBodyBytes is int limit && inner.Length > limit)
-            return new Inbound(InboundResult.Malformed, opcode, null, "a body over its row's size limit");
-        if (!admit(row))
-            return new Inbound(InboundResult.Dropped, opcode, null, "refused by the connection");
-
-        IWireMessage? message = _catalog.CreateInbound(opcode, row.ReadsVerifiedMembers, out InboundRefusal refusal);
-        if (message is null)
-            return new Inbound(InboundResult.Dropped, opcode, null, refusal.ToString());
-
-        try
-        {
-            var reader = new BitReader(inner);
-            message.Read(ref reader);
-            if (reader.BitsRemaining >= 8)
-                return new Inbound(InboundResult.Malformed, opcode, null, $"{reader.BitsRemaining} bits left after the message");
-        }
-        catch (CodecException exception)
-        {
-            return new Inbound(InboundResult.Malformed, opcode, null, exception.Message);
-        }
-
-        return new Inbound(InboundResult.Message, opcode, message, "");
+        return opcode is ClientEnvelope or Nested or Tagged
+            ? new Inbound(InboundResult.Malformed, opcode, null, "a wrapper nested past one level")
+            : null;
     }
 }
