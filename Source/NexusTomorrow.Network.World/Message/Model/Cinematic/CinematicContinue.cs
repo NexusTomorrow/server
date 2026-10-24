@@ -8,7 +8,8 @@ namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 /// Continues a cinematic camera held after its fade-out by <see cref="CameraAddFlags.AwaitContinue"/>, which then fades back in.
 /// </summary>
 /// <remarks>
-/// After a <see cref="CinematicWhiteOut"/>, the client keeps the continue until <see cref="CinematicEnd"/>.
+/// When the client answered a <see cref="CinematicWhiteOut"/> at once because the camera was holding, it keeps the continue until
+/// <see cref="CinematicWhiteOutEnd"/>.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server021F, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

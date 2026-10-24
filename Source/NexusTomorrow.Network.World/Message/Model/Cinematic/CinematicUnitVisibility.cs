@@ -22,8 +22,9 @@ public sealed partial class CinematicUnitVisibility
     [UInt(32)] public uint UnitId { get; set; }
 
     /// <summary>
-    /// For a unit, set keeps the unit visible during the cinematic. With <see cref="UnitId"/> 0, it sets whether every unit not kept
-    /// visible is hidden.
+    /// Whether the units it names are shown during the cinematic. With <see cref="UnitId"/> 0 it applies to every unit, or to players only
+    /// when <see cref="PlayersOnly"/> is set: set shows them, and clear hides every unit not kept visible. With a unit, set keeps that unit
+    /// visible and clear stops keeping it; for a cinematic actor, it shows or hides the actor.
     /// </summary>
     [UInt(1)] public bool Visible { get; set; }
 

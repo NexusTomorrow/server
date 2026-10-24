@@ -22,7 +22,7 @@ public sealed partial class CinematicSubtitle
     [UInt(21)] public uint TextId { get; set; }
 
     /// <summary>
-    /// Shows the subtitle even when the player's subtitle display option is off.
+    /// Shows the subtitle even with its display option off.
     /// </summary>
     [UInt(1)] public bool AlwaysShown { get; set; }
 }

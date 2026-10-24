@@ -4,11 +4,13 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 /// <summary>
-/// Ends the white-out <see cref="CinematicWhiteOut"/> began, first setting the camera's rotation when asked.
+/// Ends the white-out <see cref="CinematicWhiteOut"/> began. When <see cref="ApplyRotation"/> is set it first sets the camera's rotation.
+/// After the white-out's time it fades the screen back in; if the client answered the white-out at once because the camera was holding,
+/// it instead releases a continue <see cref="CinematicContinue"/> deferred.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server022C, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]
-public sealed partial class CinematicEnd
+public sealed partial class CinematicWhiteOutEnd
 {
     /// <summary>
     /// Whether the client applies <see cref="Yaw"/> and <see cref="Pitch"/> to the camera.

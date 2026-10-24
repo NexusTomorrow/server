@@ -17,8 +17,7 @@ public sealed partial class CinematicSceneVisibility
     [UInt(32)] public uint TimeMs { get; set; }
 
     /// <summary>
-    /// The parts of the scene kept drawn, one bit each: the client stops drawing the part of each clear bit. Which part each bit stands for
-    /// is not yet named.
+    /// The parts of the scene kept drawn, one bit each: the client stops drawing the part of each clear bit.
     /// </summary>
     [UInt(32)] public uint SceneMask { get; set; }
 }
