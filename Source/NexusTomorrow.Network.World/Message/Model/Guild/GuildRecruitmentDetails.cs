@@ -21,7 +21,7 @@ public sealed partial class GuildRecruitmentDetails
 
     [WideString] public string Unknown1 { get; set; } = "";
 
-    [UInt(32)] public uint Unknown2 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
 
     [UInt(1)] public bool Unknown3 { get; set; }
 

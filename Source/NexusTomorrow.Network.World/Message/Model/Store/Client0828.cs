@@ -8,7 +8,7 @@ public sealed partial class Client0828
 {
     [UInt(32)] public uint Unknown0 { get; set; }
     [UInt(5)] public byte Unknown1 { get; set; }
-    [UInt(32)] public uint Unknown2 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
     [UInt(14)] public ushort Unknown3 { get; set; }
     [UInt(32)] public uint Unknown4 { get; set; }
     [UInt(14)] public ushort Unknown5 { get; set; }

@@ -7,11 +7,11 @@ namespace NexusTomorrow.Network.World.Message.Model.Unsettled;
 public sealed partial class Server0351
 {
     [UInt(32)] public uint Unknown0 { get; set; }
-    [UInt(32)] public uint Unknown1 { get; set; }
-    [UInt(32)] public uint Unknown2 { get; set; }
-    [UInt(32)] public uint Unknown3 { get; set; }
-    [UInt(32)] public uint Unknown4 { get; set; }
-    [UInt(32)] public uint Unknown5 { get; set; }
-    [UInt(32)] public uint Unknown6 { get; set; }
-    [UInt(32)] public uint Unknown7 { get; set; }
+    [Float32] public float Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
+    [Float32] public float Unknown3 { get; set; }
+    [Float32] public float Unknown4 { get; set; }
+    [Float32] public float Unknown5 { get; set; }
+    [Float32] public float Unknown6 { get; set; }
+    [Float32] public float Unknown7 { get; set; }
 }

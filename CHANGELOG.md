@@ -251,6 +251,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Character names and chat lines are held to the client's own rules for each kind of text, a name to
   at most 30 characters, and to the client's word filter, read from the operator's own extracted
   client tables.
+- Fields the client reads as floats are declared as floats: 100 fields across 30 messages, among them
+  the character list's and the unit visuals' and vitals' float fields.
 
 ### Fixed
 

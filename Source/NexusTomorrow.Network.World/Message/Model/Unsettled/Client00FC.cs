@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Unsettled;
 public sealed partial class Client00FC
 {
     [UInt(1)] public bool Unknown0 { get; set; }
-    [UInt(32)] public uint Unknown1 { get; set; }
-    [UInt(32)] public uint Unknown2 { get; set; }
-    [UInt(32)] public uint Unknown3 { get; set; }
+    [Float32] public float Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
+    [Float32] public float Unknown3 { get; set; }
 }

@@ -13,5 +13,5 @@ public sealed partial class Server0846
     /// <summary>
     /// The client gives this value no meaning.
     /// </summary>
-    [UInt(32)] public uint Unknown0 { get; set; }
+    [Float32] public float Unknown0 { get; set; }
 }

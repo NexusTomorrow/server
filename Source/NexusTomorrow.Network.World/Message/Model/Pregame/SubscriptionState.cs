@@ -21,5 +21,5 @@ public sealed partial class SubscriptionState
     /// </summary>
     [UInt(1)] public bool Expired { get; set; }
 
-    [UInt(32)] public uint Unknown2 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
 }
