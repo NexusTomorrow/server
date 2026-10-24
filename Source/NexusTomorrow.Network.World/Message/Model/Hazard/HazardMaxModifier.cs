@@ -9,12 +9,12 @@ namespace NexusTomorrow.Network.World.Message.Model.Hazard;
 public sealed partial class HazardMaxModifier
 {
     /// <summary>
-    /// The factor on the maximum. A hazard the server sends no modifier for keeps a multiplier of 1.
+    /// The factor on the maximum. Until the server sends one, the client holds 1.
     /// </summary>
     [VerifiedMember, Float32] public float Multiplier { get; set; }
 
     /// <summary>
-    /// The term added to the maximum. A hazard the server sends no modifier for keeps an offset of 0.
+    /// The term added to the maximum. Until the server sends one, the client holds 0.
     /// </summary>
     [VerifiedMember, Float32] public float Offset { get; set; }
 

@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Message.Model.Hazard;
 
 /// <summary>
-/// The live state of one hazard: its meter and the unit its minimap marker follows. The client keeps one for each hazard id.
+/// The live state of one hazard: its meter and the unit added and removed as its map icon. The client keeps one for each hazard id.
 /// </summary>
 [WireStruct]
 public sealed partial class HazardState
@@ -37,8 +37,9 @@ public sealed partial class HazardState
     [VerifiedMember, UInt(18)] public uint Unknown5 { get; set; }
 
     /// <summary>
-    /// The unit the hazard's minimap marker follows. The client hands it to the add-ons as unitMarker when the marker is shown and as
-    /// unitRemoved when it is removed, and MiniMap.lua and ZoneMap.lua add and remove it as a map icon.
+    /// The unit the client adds and removes as the hazard's map icon. When <see cref="Unknown8"/> is set and the hazard's row allows it, the
+    /// client hands it to the add-ons as unitMarker; it hands it as unitRemoved when the hazard is removed. MiniMap.lua and ZoneMap.lua add
+    /// and remove it as a map icon.
     /// </summary>
     [VerifiedMember, UInt(32)] public uint MarkerUnitId { get; set; }
 
