@@ -4,6 +4,6 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Movement;
 
 [WireMessage(GameMessageOpcode.Client01AF, Direction.ClientToServer)]
-public sealed partial class Client01AF
+public sealed partial class VehicleDisembark
 {
 }

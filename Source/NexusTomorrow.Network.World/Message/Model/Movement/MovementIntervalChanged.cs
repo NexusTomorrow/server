@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Movement;
 
 [WireMessage(GameMessageOpcode.Server0070, Direction.ServerToClient)]
-public sealed partial class Server0070
+public sealed partial class MovementIntervalChanged
 {
     [UInt(32)] public uint Unknown0 { get; set; }
 }
