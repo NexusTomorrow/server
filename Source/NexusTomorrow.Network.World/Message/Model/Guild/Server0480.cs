@@ -4,12 +4,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Guild;
 
-/// <summary>
-/// Sends a value for a guild.
-/// </summary>
 [WireMessage(GameMessageOpcode.Server0480, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
-public sealed partial class GuildClassificationChanged
+public sealed partial class Server0480
 {
     /// <summary>
     /// The guild, by id.
