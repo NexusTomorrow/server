@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Instance;
 public sealed partial class InstanceResetResult
 {
     /// <summary>
-    /// The client gives this value no meaning: its handler reads only <see cref="Success"/>.
+    /// The client gives this value no meaning. Its handler reads only <see cref="Success"/>.
     /// </summary>
     [UInt(15)] public uint Unknown0 { get; set; }
 

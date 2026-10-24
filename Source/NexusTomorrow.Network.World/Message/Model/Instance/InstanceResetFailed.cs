@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Instance;
 public sealed partial class InstanceResetFailed
 {
     /// <summary>
-    /// The client gives this value no meaning: its handler never reads it.
+    /// The client gives this value no meaning. Its handler never reads it.
     /// </summary>
     [UInt(32)] public uint Unknown0 { get; set; }
 }
