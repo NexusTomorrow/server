@@ -93,6 +93,8 @@ public sealed class WorldConnectionTests : IAsyncLifetime
         await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharactersWork>().Any());
         LoadCharactersWork load = _db.Take<LoadCharactersWork>();
         load.Complete(WorkResult.Committed);
+        await Client.ExpectAsync<AccountEntitlements>();
+        await Client.ExpectAsync<CreationLevelLimit>();
         Assert.Empty((await Client.ExpectAsync<CharacterList>()).Characters);
     }
 

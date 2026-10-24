@@ -89,6 +89,7 @@ public sealed class SettingsPageTests
             ("## Persistence", "[Persistence](Persistence#knobs) explains these.", "`Persistence:FirstRetryDelay` must not exceed `Persistence:MaxRetryDelay`."),
             ("## Cli", "[Command layer](Command-layer#knobs) explains these.", null),
             ("## Content", "[Owners](Owners#knobs) explains these.", null),
+            ("## AccountDefaults", "[Owners](Owners#knobs) explains these.", null),
         ];
         Assert.Equal(expected, sections);
     }
