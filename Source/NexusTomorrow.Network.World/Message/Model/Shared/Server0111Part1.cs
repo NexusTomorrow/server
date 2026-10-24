@@ -32,7 +32,16 @@ public sealed partial class Server0111Part1
     [VerifiedMember, UInt(32)] public uint Charges { get; set; }
 
     [UInt(64)] public ulong Unknown6 { get; set; }
-    [UInt(32)] public uint Unknown7 { get; set; }
+    [UInt(7)] public byte Unknown7 { get; set; }
+
+    /// <summary>
+    /// Each entry is the element of that rune slot, slot 1 first. The client uses it only while the top byte of <see cref="Unknown6"/>
+    /// (bits 56 to 63) is above 0; otherwise it shows the item row's own socket types.
+    /// </summary>
+    [VerifiedMember, FixedArray(8), UInt(3)] public byte[] RuneSlotElements { get; set; } = new byte[8];
+
+    [UInt(1)] public bool Unknown7Bit31 { get; set; }
+
     [UInt(64)] public ulong Unknown8 { get; set; }
     [Float32] public float Unknown9 { get; set; }
     [UInt(32)] public uint Unknown10 { get; set; }
@@ -49,7 +58,12 @@ public sealed partial class Server0111Part1
     [VerifiedMember, UInt(18)] public uint PowerCoreItem2Id { get; set; }
 
     [Array(CountBits = 3), UInt(32)] public List<uint> Unknown17 { get; } = [];
-    [Array(CountBits = 4), UInt(32)] public List<uint> Unknown18 { get; } = [];
+    /// <summary>
+    /// One rune item id per slot, in slot order. The client uses it only while the top byte of <see cref="Unknown6"/> (bits 56 to 63)
+    /// is above 0.
+    /// </summary>
+    [VerifiedMember, Array(CountBits = 4), UInt(32)] public List<uint> RuneItemIds { get; } = [];
+
     [Array(CountBits = 6)] public List<Server0111Part4> Unknown19 { get; } = [];
     [UInt(32)] public uint Unknown20 { get; set; }
 }
