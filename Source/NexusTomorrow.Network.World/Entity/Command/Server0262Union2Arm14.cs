@@ -11,5 +11,9 @@ public sealed partial class Server0262Union2Arm14 : IServer0262Union2
     [UInt(32)] public uint Unknown1 { get; set; }
     [PackedFloat] public float Unknown2 { get; set; }
     [UInt(32)] public uint Unknown3 { get; set; }
-    [UInt(1)] public bool Unknown4 { get; set; }
+
+    /// <summary>
+    /// Whether the segment blends in: when set, the client blends away the jump to the segment; when clear, the unit snaps to it.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool Blend { get; set; }
 }

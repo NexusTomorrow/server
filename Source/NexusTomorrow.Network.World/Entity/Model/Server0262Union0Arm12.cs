@@ -16,9 +16,10 @@ public sealed partial class Server0262Union0Arm12 : IServer0262Union0
     [VerifiedMember, UInt(18)] public uint CreatureId { get; set; }
 
     /// <summary>
-    /// The loot, as an id the client looks up in the table the arm's loot type picks. The record it finds gives the unit its name.
+    /// The looted object, as an id in one of the client's Item2, VirtualItem, LootSpell, AccountItem and AccountCurrencyType tables: the
+    /// client names the unit from the row it finds. For one kind of loot it gives the unit a fixed name instead and does not read this id.
     /// </summary>
-    [VerifiedMember, UInt(32)] public uint LootId { get; set; }
+    [VerifiedMember, UInt(32)] public uint LootObjectId { get; set; }
 
     /// <summary>
     /// The client gives this value no meaning.

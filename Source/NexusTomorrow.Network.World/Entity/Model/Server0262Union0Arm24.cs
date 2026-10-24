@@ -10,15 +10,15 @@ namespace NexusTomorrow.Network.World.Entity.Model;
 public sealed partial class Server0262Union0Arm24 : IServer0262Union0
 {
     /// <summary>
-    /// One unit in the list.
+    /// One unit that tagged this one.
     /// </summary>
     [WireStruct]
     public sealed partial class Server0262Part3
     {
         /// <summary>
-        /// A unit's id.
+        /// The tagger, by unit id. The client compares it with the player's unit.
         /// </summary>
-        [UInt(32)] public uint Unknown0 { get; set; }
+        [VerifiedMember, UInt(32)] public uint UnitId { get; set; }
     }
 
     /// <summary>
@@ -28,7 +28,8 @@ public sealed partial class Server0262Union0Arm24 : IServer0262Union0
     [VerifiedMember, UInt(18)] public uint CreatureId { get; set; }
 
     /// <summary>
-    /// Unit ids. The client marks the unit when the player's unit is among them.
+    /// The units that tagged this one. While the client has the player's unit, it sets this unit's tagged-by-me flag when the player's unit
+    /// is among them and clears it otherwise; Unit:IsTaggedByMe and the unit's nameplate colour read the flag.
     /// </summary>
-    [Array(CountBits = 16)] public List<Server0262Part3> Unknown1 { get; } = [];
+    [VerifiedMember, Array(CountBits = 16)] public List<Server0262Part3> TaggerUnitIds { get; } = [];
 }

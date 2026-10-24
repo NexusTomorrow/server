@@ -11,5 +11,5 @@ public sealed partial class Server0262Part13
     [UInt(8)] public byte Unknown2 { get; set; }
     public Client0096Part0 Unknown3 { get; set; } = new Client0096Part0();
     [Float32] public float Unknown4 { get; set; }
-    [Float32] public float Unknown5 { get; set; }
+    [UInt(32)] public uint Unknown5 { get; set; }
 }

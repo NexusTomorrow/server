@@ -29,5 +29,5 @@ public sealed partial class Server0262Union0Arm18 : IServer0262Union0
     /// <summary>
     /// The unit's name, which the client gives the unit when its creature gives it none.
     /// </summary>
-    [VerifiedMember, WideString] public string Name { get; set; } = "";
+    [VerifiedMember, WideString] public string FallbackName { get; set; } = "";
 }

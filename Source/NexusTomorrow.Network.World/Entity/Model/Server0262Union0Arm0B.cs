@@ -15,5 +15,9 @@ public sealed partial class Server0262Union0Arm0B : IServer0262Union0
     /// </summary>
     [VerifiedMember, UInt(18)] public uint CreatureId { get; set; }
 
-    [UInt(8)] public byte Unknown1 { get; set; }
+    /// <summary>
+    /// The objective the unit stands for, as an index: the client reads it for the unit's quest activation state, for whether an item used
+    /// on the unit serves a quest objective, for path mission objectives, and for Unit:GetRewardInfo.
+    /// </summary>
+    [VerifiedMember, UInt(8)] public byte ObjectiveIndex { get; set; }
 }

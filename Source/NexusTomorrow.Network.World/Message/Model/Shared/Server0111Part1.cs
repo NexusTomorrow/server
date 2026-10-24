@@ -25,7 +25,12 @@ public sealed partial class Server0111Part1
     [UInt(18)] public uint Unknown2 { get; set; }
     public ItemLocation Unknown3 { get; set; } = new();
     [UInt(32)] public uint Unknown4 { get; set; }
-    [UInt(32)] public uint Unknown5 { get; set; }
+
+    /// <summary>
+    /// The item's charges, which Item:GetCharges reports.
+    /// </summary>
+    [VerifiedMember, UInt(32)] public uint Charges { get; set; }
+
     [UInt(64)] public ulong Unknown6 { get; set; }
     [UInt(32)] public uint Unknown7 { get; set; }
     [UInt(64)] public ulong Unknown8 { get; set; }
@@ -36,7 +41,13 @@ public sealed partial class Server0111Part1
     [UInt(32)] public uint Unknown13 { get; set; }
     [UInt(32)] public uint Unknown14 { get; set; }
     [FixedArray(2)] public Server0111Part3[] Unknown15 { get; set; } = [new(), new()];
-    [UInt(18)] public uint Unknown16 { get; set; }
+
+    /// <summary>
+    /// The power core applied to the item, as an id in the client's Item2 table. When that item is a power core, the client applies its
+    /// level range to the stats it works out for this item.
+    /// </summary>
+    [VerifiedMember, UInt(18)] public uint PowerCoreItem2Id { get; set; }
+
     [Array(CountBits = 3), UInt(32)] public List<uint> Unknown17 { get; } = [];
     [Array(CountBits = 4), UInt(32)] public List<uint> Unknown18 { get; } = [];
     [Array(CountBits = 6)] public List<Server0111Part4> Unknown19 { get; } = [];

@@ -15,5 +15,9 @@ public sealed partial class Server0262Union0Arm1D : IServer0262Union0
     /// </summary>
     [VerifiedMember, UInt(18)] public uint CreatureId { get; set; }
 
-    [UInt(32)] public uint Unknown1 { get; set; }
+    /// <summary>
+    /// The unit's owner, by unit id. When the owner is a player, or a unit of type 23, the client takes the owner as this unit's controller
+    /// for its disposition, which Unit:GetDispositionTo reports.
+    /// </summary>
+    [VerifiedMember, UInt(32)] public uint OwnerUnitId { get; set; }
 }

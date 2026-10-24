@@ -9,10 +9,7 @@ public sealed partial class Server0262Part10
     [WireStruct]
     public sealed partial class Server0262Part11
     {
-        /// <summary>
-        /// The hit's raw damage, which the combat log reports as nRawDamage.
-        /// </summary>
-        [VerifiedMember, UInt(32)] public uint RawDamage { get; set; }
+        [UInt(32)] public uint Unknown0 { get; set; }
 
         /// <summary>
         /// The amount the hit dealt or healed, which the combat log reports as nDamageAmount or nHealAmount.
@@ -44,11 +41,7 @@ public sealed partial class Server0262Part10
         [UInt(3)] public byte Unknown7 { get; set; }
     }
 
-    /// <summary>
-    /// The raw damage, which the combat log reports as nRawDamage.
-    /// </summary>
-    [VerifiedMember, UInt(32)] public uint RawDamage { get; set; }
-
+    [UInt(32)] public uint Unknown0 { get; set; }
     [UInt(32)] public uint Unknown1 { get; set; }
 
     /// <summary>

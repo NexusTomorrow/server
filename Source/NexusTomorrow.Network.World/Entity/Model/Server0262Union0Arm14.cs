@@ -71,9 +71,9 @@ public sealed partial class Server0262Union0Arm14 : IServer0262Union0
     [VerifiedMember, Array(CountBits = 5), UInt(64)] public List<ulong> GuildIds { get; set; } = [];
 
     /// <summary>
-    /// Values the client applies to the unit's model.
+    /// The unit's bone values, which the client applies to the unit's model with the bone set of its race and gender.
     /// </summary>
-    [Array(CountBits = 6), Float32] public List<float> ModelValues { get; set; } = [];
+    [VerifiedMember, Array(CountBits = 6), Float32] public List<float> ModelValues { get; set; } = [];
 
     /// <summary>
     /// The unit's PvP flags, of which Unit:IsPvpFlagged reads bit 0.

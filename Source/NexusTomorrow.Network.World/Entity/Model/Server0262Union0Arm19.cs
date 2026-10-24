@@ -20,8 +20,5 @@ public sealed partial class Server0262Union0Arm19 : IServer0262Union0
     /// </summary>
     [VerifiedMember, UInt(32)] public uint OwnerUnitId { get; set; }
 
-    /// <summary>
-    /// The client gives this value no meaning.
-    /// </summary>
-    [VerifiedMember, UInt(15)] public ushort Unknown2 { get; set; }
+    [UInt(15)] public ushort Unknown2 { get; set; }
 }

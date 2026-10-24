@@ -137,7 +137,10 @@ public sealed partial class PlayerState
     /// </summary>
     [VerifiedMember, UInt(32)] public uint CostumeIndex { get; set; }
 
-    [UInt(32)] public uint Unknown15 { get; set; }
+    /// <summary>
+    /// The attribute points the player has to spend, which GameLib.GetAttributePoints reports.
+    /// </summary>
+    [VerifiedMember, UInt(32)] public uint AttributePoints { get; set; }
 
     /// <summary>
     /// The cooldown on the player's PvP flag, in milliseconds from when the client takes this message. GameLib.GetPvpFlagInfo reports

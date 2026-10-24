@@ -3,12 +3,17 @@
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 /// <summary>
-/// A unit that takes this unit as its vehicle, with two values.
+/// A unit that takes this unit as its vehicle, with its seat type and one other value.
 /// </summary>
 [WireStruct]
 public sealed partial class Server0262Part0
 {
-    [UInt(2)] public byte Unknown0 { get; set; }
+    /// <summary>
+    /// The kind of seat the unit takes on this vehicle: the client picks the unit's attachment point by it, and plays the passenger
+    /// animations only for seat types 0 to 2.
+    /// </summary>
+    [VerifiedMember, UInt(2)] public byte SeatType { get; set; }
+
     [UInt(3)] public byte Unknown1 { get; set; }
 
     /// <summary>

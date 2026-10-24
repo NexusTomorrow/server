@@ -135,6 +135,11 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   entitlements. A new unit names its loot, its world socket and world, two more unit types' names,
   and whether it is shown; its spell records name the caster, target, cast, spell, targets, stack
   counts, effects and the combat values an effect carries.
+- A new unit names more of what it carries: its type's names, owner, objective index, world sockets
+  and attachment display, its cluster, its passengers and their seats, who tagged it, its model
+  values, and a player's attribute points. The movement commands name their spline ids, positions,
+  velocities, rotations, scales, states and modes, the jump's start, flight time and gravity, and the
+  key times of two tracks. An item names its second power core and its charges.
 - Support messages carry their real names and field meanings: bug reports, player reports, support
   tickets, suggestions, customer surveys and their responses, and the stuck window's recall actions.
 - Hazard messages carry their real names and field meanings: each hazard's state and meter, the
@@ -168,7 +173,10 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   and its line counts both.
 - Cinematic, marketplace and matchmaking members whose meaning rests on a single reader keep neutral
   names, and the eight messages that held one go back below Fields.
-- A new unit's spell list and minimap marker keep neutral names while each rests on a single reader.
+- A new unit's minimap marker keeps a neutral name while it rests on a single reader; its spell list
+  and the player's spell list are named for the spell records they hold.
+- A new unit's shown flag, the spell record's raw damage and five movement tracks' key times keep
+  neutral names while each rests on a single reader.
 - A cinematic camera flag and a matchmaking queue flag the client never names keep neutral names.
 - A group member's order, interrupt armor and healing absorb maximum, the request ids of group
   referrals and join requests, and the character list's reservations keep neutral names while each

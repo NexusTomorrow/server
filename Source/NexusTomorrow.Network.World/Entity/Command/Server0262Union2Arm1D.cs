@@ -9,5 +9,5 @@ public sealed partial class Server0262Union2Arm1D : IServer0262Union2
     /// <summary>
     /// The client gives this value no meaning.
     /// </summary>
-    [UInt(1)] public bool Unknown0 { get; set; }
+    [VerifiedMember, UInt(1)] public bool Unknown0 { get; set; }
 }

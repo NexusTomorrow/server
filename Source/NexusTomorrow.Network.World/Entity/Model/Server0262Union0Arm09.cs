@@ -10,12 +10,17 @@ namespace NexusTomorrow.Network.World.Entity.Model;
 public sealed partial class Server0262Union0Arm09 : IServer0262Union0
 {
     /// <summary>
-    /// A unit that takes this unit as its vehicle, with two values.
+    /// A unit that takes this unit as its vehicle, with its seat type and one other value.
     /// </summary>
     [WireStruct]
     public sealed partial class Server0262Part1
     {
-        [UInt(2)] public byte Unknown0 { get; set; }
+        /// <summary>
+        /// The kind of seat the unit takes on this vehicle: the client picks the unit's attachment point by it, and plays the passenger
+        /// animations only for seat types 0 to 2.
+        /// </summary>
+        [VerifiedMember, UInt(2)] public byte SeatType { get; set; }
+
         [UInt(3)] public byte Unknown1 { get; set; }
 
         /// <summary>
@@ -36,7 +41,8 @@ public sealed partial class Server0262Union0Arm09 : IServer0262Union0
     [VerifiedMember, UInt(14)] public ushort UnitVehicleId { get; set; }
 
     /// <summary>
-    /// Other units: each one the client has takes this unit as its vehicle.
+    /// The unit's passengers, each a unit (<see cref="Server0262Part1.UnitId"/>) and the seat it takes
+    /// (<see cref="Server0262Part1.SeatType"/>): each one the client has takes this unit as its vehicle.
     /// </summary>
-    [VerifiedMember, Array(CountBits = 3)] public List<Server0262Part1> Unknown2 { get; set; } = [];
+    [VerifiedMember, Array(CountBits = 3)] public List<Server0262Part1> Passengers { get; set; } = [];
 }
