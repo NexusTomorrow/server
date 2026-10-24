@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// The client registers a writer for it as well.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Message0862, Direction.Both)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class TransferDestinationList
 {
     /// <summary>
@@ -20,10 +20,7 @@ public sealed partial class TransferDestinationList
     [WireStruct]
     public sealed partial class TransferDestination : RealmListEntry
     {
-        /// <summary>
-        /// Whether the transfer to this realm is free; the interface leaves such realms out of its paid-transfer list.
-        /// </summary>
-        [UInt(1)] public bool IsFree { get; set; }
+        [UInt(1)] public bool Unknown14 { get; set; }
     }
 
     /// <summary>

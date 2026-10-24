@@ -11,11 +11,8 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// <see cref="TransferDestinationList"/>.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client03EE, Direction.ClientToServer)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class TransferDestinationsRequest
 {
-    /// <summary>
-    /// True when the player asks from the interface's paid transfer, false from its free transfer.
-    /// </summary>
-    [UInt(1)] public bool Paid { get; private set; }
+    [UInt(1)] public bool Unknown0 { get; private set; }
 }

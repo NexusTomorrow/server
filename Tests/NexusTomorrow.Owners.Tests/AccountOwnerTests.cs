@@ -179,7 +179,7 @@ public sealed class AccountOwnerTests : IAsyncLifetime
 
         await StoreSuspensionAsync(s_alice.Email, until: null);
 
-        Assert.Equal(0, session.Single<Kicked>().Reason);
+        Assert.Equal(0, session.Single<Kicked>().Unknown0);
         Assert.NotNull(session.DisconnectReason);
         Assert.Equal(0, _owner.OnlineCount);
     }
@@ -260,7 +260,7 @@ public sealed class AccountOwnerTests : IAsyncLifetime
         grant = Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
         await GreetAsync(grant.SessionKey, grant.Echo, "alice@example.com", second);
 
-        Assert.Equal(0, first.Single<Kicked>().Reason);
+        Assert.Equal(0, first.Single<Kicked>().Unknown0);
         Assert.NotNull(first.DisconnectReason);
         Assert.Null(second.DisconnectReason);
         Assert.Equal(1, _owner.OnlineCount);

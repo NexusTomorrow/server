@@ -137,7 +137,7 @@ public sealed class PregameScenarios
         await using HeadlessClient second = scenario.Server.NewClient();
         await using WorldSession secondSession = await second.ScriptedLoginAsync(Email, Password);
 
-        Assert.Equal(0, (await firstSession.ExpectAsync<Kicked>()).Reason);
+        Assert.Equal(0, (await firstSession.ExpectAsync<Kicked>()).Unknown0);
         Assert.True(await firstSession.IsClosedAsync(TimeSpan.FromSeconds(10)));
         Assert.Empty((await secondSession.RequestListAsync()).Characters);
     }

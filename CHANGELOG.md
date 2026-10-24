@@ -191,6 +191,12 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   named Offset. The scale commands' values keep neutral names while they rest on a single reader, and
   the dash's remarks say which of its refusals apply only in the normal dash state.
 - A cinematic camera flag and a matchmaking queue flag the client never names keep neutral names.
+- Members that rest on a single reader and that the server never sends keep neutral names: a deleted
+  character's details, a realm's flags, the realm redirect's gateway, the login queue status, the
+  subscription's game time, transfer flags, a character's last logout and removal time, the combat
+  log's absorption, shield, excess, glance and overkill values, and a few result and reason codes.
+  Twelve messages that held them go back below Fields; the world settings' movement interval and the
+  delete result are marked, since the server sends them.
 - A group member's order, interrupt armor and healing absorb maximum, the request ids of group
   referrals and join requests, and the character list's reservations keep neutral names while each
   rests on a single reader; the group order change, the group request answer and the character list

@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// list up.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0116, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class DeletedCharacterList
 {
     /// <summary>
@@ -30,54 +30,15 @@ public sealed partial class DeletedCharacterList
         /// </summary>
         [UInt(32)] public uint Unknown1 { get; set; }
 
-        /// <summary>
-        /// The character's name.
-        /// </summary>
-        [WideString] public string Name { get; set; } = "";
-
-        /// <summary>
-        /// The character's level.
-        /// </summary>
-        [UInt(32)] public uint Level { get; set; }
-
-        /// <summary>
-        /// The character's class id.
-        /// </summary>
-        [UInt(14)] public ushort ClassId { get; set; }
-
-        /// <summary>
-        /// The character's race id.
-        /// </summary>
-        [UInt(14)] public ushort RaceId { get; set; }
-
-        /// <summary>
-        /// The character's gender id.
-        /// </summary>
-        [UInt(2)] public ushort GenderId { get; set; }
-
-        /// <summary>
-        /// The character's faction id.
-        /// </summary>
-        [UInt(14)] public ushort FactionId { get; set; }
-
-        /// <summary>
-        /// The character's path id.
-        /// </summary>
-        [UInt(3)] public ushort PathId { get; set; }
-
-        /// <summary>
-        /// The world the character was in.
-        /// </summary>
-        [UInt(15)] public ushort WorldId { get; set; }
-
-        /// <summary>
-        /// The zone the character was in, as a world zone id.
-        /// </summary>
-        [UInt(15)] public ushort WorldZoneId { get; set; }
-
-        /// <summary>
-        /// The client gives this value no meaning. It hands it to its interface as the character's purge date.
-        /// </summary>
+        [WideString] public string Unknown2 { get; set; } = "";
+        [UInt(32)] public uint Unknown3 { get; set; }
+        [UInt(14)] public ushort Unknown4 { get; set; }
+        [UInt(14)] public ushort Unknown5 { get; set; }
+        [UInt(2)] public ushort Unknown6 { get; set; }
+        [UInt(14)] public ushort Unknown7 { get; set; }
+        [UInt(3)] public ushort Unknown8 { get; set; }
+        [UInt(15)] public ushort Unknown9 { get; set; }
+        [UInt(15)] public ushort Unknown10 { get; set; }
         [Float32] public float Unknown11 { get; set; }
     }
 
