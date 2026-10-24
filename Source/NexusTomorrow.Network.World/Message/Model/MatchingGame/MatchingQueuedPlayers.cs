@@ -43,7 +43,7 @@ public sealed partial class MatchingQueuedPlayers
         [UInt(1)] public bool Unknown9 { get; set; }
         [UInt(32)] public uint Unknown10 { get; set; }
         [Float32] public float Unknown11 { get; set; }
-        [FixedArray(5)] public Server060APart1[] Unknown12 { get; set; } = new Server060APart1[5];
+        [FixedArray(5)] public Server060APart1[] Unknown12 { get; set; } = [.. Enumerable.Range(0, 5).Select(_ => new Server060APart1())];
         [Array(CountBits = 32)] public List<Server060APart2> Unknown13 { get; set; } = [];
     }
 

@@ -132,8 +132,8 @@ public sealed class MessageDumpTests
         Assert.True(dumped > 200, $"only {dumped} messages were dumped");
         Assert.True(problems.Count == 0, string.Join(Environment.NewLine, problems));
 
-        // Pinned, so a message whose default stops being one a client sends is seen rather than skipped.
-        Assert.Equal(["Client050D", "Client0510", "GuildBankTabNames"], unwritable.Order());
+        // Every declared message's default is one a client sends, so none is skipped above.
+        Assert.Empty(unwritable);
     }
 
     private static bool HoldsNullMember(object value)

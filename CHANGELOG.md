@@ -221,6 +221,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 ### Fixed
 
 - Two account inventory messages that carried each other's meanings carry their own.
+- Every declared message's default can be written: two housing requests, the matchmaking queue's
+  players and the guild bank's tab names default their fixed lists in full, and a test holds every
+  declaration to it.
 - A customer survey response matches the client's layout: the survey, the object, four answers and a
   comment in one record.
 

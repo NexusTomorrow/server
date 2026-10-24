@@ -23,5 +23,5 @@ public sealed partial class Client0510
     [UInt(32)] public uint Unknown3 { get; private set; }
     [UInt(32)] public uint Unknown4 { get; private set; }
     [UInt(3)] public byte Unknown5 { get; private set; }
-    [FixedArray(5)] public Client0510Part0[] Unknown6 { get; private set; } = new Client0510Part0[5];
+    [FixedArray(5)] public Client0510Part0[] Unknown6 { get; private set; } = [.. Enumerable.Range(0, 5).Select(_ => new Client0510Part0())];
 }

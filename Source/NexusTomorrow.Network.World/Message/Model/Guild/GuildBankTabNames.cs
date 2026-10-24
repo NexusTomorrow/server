@@ -22,5 +22,5 @@ public sealed partial class GuildBankTabNames
     /// <summary>
     /// Each bank tab's name, in tab order.
     /// </summary>
-    [FixedArray(10), WideString] public string[] TabNames { get; set; } = new string[10];
+    [FixedArray(10), WideString] public string[] TabNames { get; set; } = [.. Enumerable.Range(0, 10).Select(_ => "")];
 }
