@@ -85,6 +85,9 @@ internal sealed class Player
     // True when this player's next relay resets for every viewer: after a control grant, a lost batch or a refused relay.
     public bool ResetNext { get; set; }
 
+    // True when a batch was lost to a full queue: the gap follows every batch still pending, so the reset waits until they are relayed.
+    public bool LostAfterPending { get; set; }
+
     // The latest velocity, commanded velocity, state and mode commands relayed for this player, which a create for a new viewer
     // carries so the unit moves as it does for everyone else.
     public Server0262Part5? LatestVelocity { get; set; }
