@@ -103,13 +103,15 @@ public abstract partial class ClientConnection : IDebugSession
 
     private void TapSent(in Outbound item)
     {
-        if (item.Kind is not (OutboundKind.Bare or OutboundKind.Enveloped) || Tap is not { } tap)
+        if (item.Kind is not (OutboundKind.Bare or OutboundKind.Enveloped or OutboundKind.Shared) || Tap is not { } tap)
             return;
 
         try
         {
-            // Body and MessageType are set by every factory that makes a Bare or Enveloped item.
-            tap.Sent(Id, item.Opcode, item.Body.AsSpan(0, item.BodyLength), item.MessageType!);
+            // Body and MessageType are set by every factory that makes a Bare or Enveloped item, Shared and MessageType by SharedBody;
+            // the writer taps before it releases the item, so a shared body is still held here.
+            ReadOnlySpan<byte> body = item.Shared is { } shared ? shared.Body : item.Body.AsSpan(0, item.BodyLength);
+            tap.Sent(Id, item.Opcode, body, item.MessageType!);
         }
         catch (Exception exception)
         {
@@ -134,7 +136,7 @@ internal readonly partial record struct Outbound
     {
         byte[] rented = ArrayPool<byte>.Shared.Rent(Math.Max(body.Length, 1));
         body.CopyTo(rented);
-        return new Outbound(OutboundKind.Enveloped, opcode, rented, body.Length, typeof(InjectedBody), null, 0);
+        return new Outbound(OutboundKind.Enveloped, opcode, rented, body.Length, typeof(InjectedBody), null, 0, null);
     }
 }
 

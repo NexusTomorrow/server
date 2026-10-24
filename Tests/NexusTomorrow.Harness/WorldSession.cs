@@ -2,10 +2,13 @@
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Entity.Command;
+using NexusTomorrow.Network.World.Message.Model.AccountInventory;
+using NexusTomorrow.Network.World.Message.Model.Chat;
 using NexusTomorrow.Network.World.Message.Model.Entity;
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.PlayerPath;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Network.World.Message.Model.Reward;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 using NexusTomorrow.Testing;
 
@@ -18,6 +21,12 @@ public sealed class WorldSession : IAsyncDisposable
     // The tag the client sends every in-world message under.
     public const byte WorldTag = 0x03;
 
+    // The tag the client sends its realm requests under, chat among them.
+    public const byte RealmTag = 0x0B;
+
+    // The client's built-in Say channel.
+    private const ushort SayChannelType = 4;
+
     private const byte TimeCommand = 0;
     private const byte PositionCommand = 2;
     private const byte FacingCommand = 14;
@@ -27,12 +36,24 @@ public sealed class WorldSession : IAsyncDisposable
 
     private readonly SocketPipe _pipe;
 
-    internal WorldSession(SocketPipe pipe, GameTestClient connection, CharacterList firstList)
+    internal WorldSession(
+        SocketPipe pipe, GameTestClient connection, AccountEntitlements entitlements, AccountPremiumTier premiumTier,
+        CreationLevelLimit creationLimit, CharacterList firstList)
     {
         _pipe = pipe;
         Connection = connection;
+        Entitlements = entitlements;
+        PremiumTier = premiumTier;
+        CreationLimit = creationLimit;
         FirstList = firstList;
     }
+
+    // The account's entitlements, premium tier and creation level limit the server sent with the grant, before the first list.
+    public AccountEntitlements Entitlements { get; }
+
+    public AccountPremiumTier PremiumTier { get; }
+
+    public CreationLevelLimit CreationLimit { get; }
 
     // The list the server sent when the session reached character select.
     public CharacterList FirstList { get; }
@@ -64,8 +85,9 @@ public sealed class WorldSession : IAsyncDisposable
         return await Connection.ExpectAsync<CharacterSelectFailed>();
     }
 
-    // As the client does: select, take the seven entry messages in order, answer the control grant, report the first takeover's zone
-    // change and the world loaded, and wait for the end of the entry.
+    // As the client does: select, take the nine entry messages in order (the harness server holds reward properties, so the entry
+    // ends with them), answer the control grant, report the first takeover's zone change and the world loaded, and wait for the end of
+    // the entry.
     public async Task<EnteredWorld> EnterWorldAsync(ulong characterId, ushort zoneId = 7)
     {
         await Connection.SendAsync(new CharacterSelect { CharacterId = characterId });
@@ -73,10 +95,12 @@ public sealed class WorldSession : IAsyncDisposable
             await Connection.ExpectAsync<EnterWorld>(),
             await Connection.ExpectAsync<UnitCreate>(),
             await Connection.ExpectAsync<PlayerUnit>(),
+            await Connection.ExpectAsync<UnitPathTypeChanged>(),
             await Connection.ExpectAsync<WorldSettings>(),
             await Connection.ExpectAsync<MovementControl>(),
             await Connection.ExpectAsync<PlayerState>(),
-            await Connection.ExpectAsync<PathState>());
+            await Connection.ExpectAsync<PathState>(),
+            await Connection.ExpectAsync<RewardPropertiesChanged>());
 
         await Connection.SendTaggedAsync(WorldTag, ClientMessage.With(new MovementControlReceipt(), nameof(MovementControlReceipt.Ticket), entered.Control.Ticket));
         await Connection.SendTaggedAsync(WorldTag, new ZoneChange());
@@ -93,6 +117,14 @@ public sealed class WorldSession : IAsyncDisposable
         movement.Commands.Add(new Server0262Part5 { Unknown0 = PositionCommand, Unknown1 = new SetPositionCommand { Position = position, Blend = true } });
         movement.Commands.Add(new Server0262Part5 { Unknown0 = FacingCommand, Unknown1 = new SetRotationCommand { Rotation = new Vector3(yaw, 0, 0), Blend = true } });
         return Connection.SendTaggedAsync(WorldTag, movement);
+    }
+
+    // One line on the Say channel, as the chat input sends it, under the client's id for the line.
+    public Task SayAsync(string text, ushort chatId)
+    {
+        ChatSend say = ClientMessage.With(ClientMessage.With(new ChatSend(), nameof(ChatSend.Text), text), nameof(ChatSend.ChatId), chatId);
+        say.Channel.Type = SayChannelType;
+        return Connection.SendTaggedAsync(RealmTag, say);
     }
 
     // As the client does at the Escape menu's Log Out: ask, take the countdown, confirm, and take the logout to character select.

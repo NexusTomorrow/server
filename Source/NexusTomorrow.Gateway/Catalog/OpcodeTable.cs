@@ -115,7 +115,24 @@ public static class OpcodeTable
     }.ToFrozenDictionary(row => row.Opcode);
 
     /// <summary>
-    /// Every row: <see cref="Pregame"/> then <see cref="World"/>. Declared after both, so their initializers have run.
+    /// The tag the client sends every message of <see cref="Realm"/> under.
     /// </summary>
-    public static FrozenDictionary<ushort, OpcodeRow> All { get; } = Pregame.Concat(World).ToFrozenDictionary();
+    public const byte RealmTag = 0x0B;
+
+    /// <summary>
+    /// The realm rows the client sends from the world: each a message it sends under <see cref="RealmTag"/>, handled by the realm
+    /// owner.
+    /// </summary>
+    public static FrozenDictionary<ushort, OpcodeRow> Realm { get; } = new OpcodeRow[]
+    {
+        // ChatSend: admitted at Purpose since its handler reads only ChatReads.Members, each marked. A line of the client's longest,
+        // 499 units (UserTextRules' Chat), is under 1,000 bytes; 4096 is our own bound on the whole body.
+        new(0x01C3, MessageOwner.Realm, MessagePriority.Normal, 4, OverLimitAction.Drop, RealmTag, ReadsVerifiedMembers: true, MaxBodyBytes: 4096),
+    }.ToFrozenDictionary(row => row.Opcode);
+
+    /// <summary>
+    /// Every row: <see cref="Pregame"/>, <see cref="World"/> then <see cref="Realm"/>. Declared after all three, so their
+    /// initializers have run.
+    /// </summary>
+    public static FrozenDictionary<ushort, OpcodeRow> All { get; } = Pregame.Concat(World).Concat(Realm).ToFrozenDictionary();
 }

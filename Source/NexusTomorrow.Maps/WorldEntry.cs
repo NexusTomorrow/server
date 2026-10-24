@@ -1,5 +1,7 @@
-﻿using System.Numerics;
+﻿using System.Collections.Immutable;
+using System.Numerics;
 using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Game.Static.Reward;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Entity.Command;
 using NexusTomorrow.Network.World.Entity.Model;
@@ -7,17 +9,21 @@ using NexusTomorrow.Network.World.Message.Model.Entity;
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.PlayerPath;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Network.World.Message.Model.Reward;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
+using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence.Realm;
 
 namespace NexusTomorrow.Maps;
 
-// What a map sends a character on arrival, in the order the client takes it: PlayerUnit needs the unit its UnitCreate made,
+// What a map sends a character on arrival, in the order the client takes it: PlayerUnit needs the unit its UnitCreate made, and so
+// does UnitPathTypeChanged, the client's only store of a unit's path (Unit:GetPlayerPathType reads 2147483647 without it);
 // WorldSettings is needed before the client sends WorldReady, and MovementControl, PlayerState and PathState are taken only once
-// PlayerUnit has named the player. Every member not set goes as its default, and every member set is marked [VerifiedMember] or sits
-// in a message read to Fields.
+// PlayerUnit has named the player. RewardPropertiesChanged goes last: the client keeps its entries on the world and reads them only
+// when asked. Every member not set goes as its default, and every member set is marked [VerifiedMember] or sits in a message read to
+// Fields.
 internal static class WorldEntry
 {
     // The unit type whose data carries a character's name, race, class and sex.
@@ -46,15 +52,18 @@ internal static class WorldEntry
         IWorldSession session = player.Session;
 
         session.Send(new EnterWorld { WorldId = location.WorldId, Position = location.Position });
-        session.Send(PlayerCreate(player, settings.RealmId));
+        session.Send(PlayerCreate(player, settings));
         session.Send(new PlayerUnit { UnitId = player.UnitId });
+        session.Send(PathOf(player));
         session.Send(new WorldSettings { MovementInterval = settings.MovementInterval });
         session.Send(new MovementControl { Ticket = player.ControlTicket, RebuildMovement = true, UnitId = player.UnitId });
         session.Send(new PlayerState { Experience = player.Character.TotalXp, InputKeySet = PlayerStateMode, CostumeIndex = PlayerStateNoValue });
         session.Send(new PathState { ActivePath = player.Character.Path, UnlockedPaths = (byte)(1 << player.Character.Path) });
+        if (settings.RewardProperties.Length > 0)
+            session.Send(RewardProperties(settings.RewardProperties));
     }
 
-    public static UnitCreate PlayerCreate(Player player, ushort realmId)
+    public static UnitCreate PlayerCreate(Player player, MapSettings settings)
     {
         CharacterRecord character = player.Character;
         CharacterLocation location = player.Location;
@@ -66,21 +75,71 @@ internal static class WorldEntry
             {
                 // The client refuses a 0 in either id; together they are unique to the character.
                 CharacterId = character.Id,
-                RealmId = realmId,
+                RealmId = settings.RealmId,
                 Name = character.Name,
                 RaceId = character.Race,
                 ClassId = character.Class,
                 Gender = (Sex)character.Sex,
+                PremiumTier = settings.PremiumTier,
             },
             Stats = [Stat(HealthStat, PlayerHealth), Stat(LevelStat, character.Level)],
-            Commands =
-            [
-                new Server0262Part5 { Unknown0 = PositionCommand, Unknown1 = new SetPositionCommand { Position = location.Position } },
-                new Server0262Part5 { Unknown0 = FacingCommand, Unknown1 = new SetRotationCommand { Rotation = new Vector3(location.Facing, 0, 0) } },
-            ],
+            Commands = [.. Placement(location.Position, location.Facing)],
             FactionId = (ushort)character.FactionId,
             BaseFactionId = (ushort)character.FactionId,
         };
+    }
+
+    // Another player's create, as a viewer takes it: the player's own create, with the sender time its first relay is fitted from,
+    // and the latest velocity, commanded velocity, state and mode relayed for it, so it moves for the viewer as it does for the rest.
+    public static UnitCreate RemoteCreate(Player target, MapSettings settings, uint senderTime)
+    {
+        UnitCreate create = PlayerCreate(target, settings);
+        create.SenderTime = senderTime;
+        AddIfKept(create, target.LatestVelocity);
+        AddIfKept(create, target.LatestMove);
+        AddIfKept(create, target.LatestState);
+        AddIfKept(create, target.LatestMode);
+        return create;
+    }
+
+    // The commands that place a unit at position, facing the yaw in radians.
+    public static Server0262Part5[] Placement(Vector3 position, float facing) =>
+    [
+        new Server0262Part5 { Unknown0 = PositionCommand, Unknown1 = new SetPositionCommand { Position = position } },
+        new Server0262Part5 { Unknown0 = FacingCommand, Unknown1 = new SetRotationCommand { Rotation = new Vector3(facing, 0, 0) } },
+    ];
+
+    // The client keeps a unit's path only from this message, for any player's unit.
+    public static UnitPathTypeChanged PathOf(Player player) => new() { UnitId = player.UnitId, PathType = player.Character.Path };
+
+    // One entry per composed value, its value on the arm its type selects; the modifier sub-list, which only add-ons' displays read,
+    // goes empty.
+    private static RewardPropertiesChanged RewardProperties(ImmutableArray<RewardPropertyValue> values)
+    {
+        var message = new RewardPropertiesChanged();
+        foreach (RewardPropertyValue value in values)
+        {
+            message.Properties.Add(new RewardPropertiesChanged.Server092CPart0
+            {
+                Property = value.Property,
+                Data = value.Data,
+                ValueType = value.ValueType,
+                Value = value.ValueType switch
+                {
+                    RewardModifierValueType.Discrete => new RewardPropertiesChanged.Server092CUnion0Arm01 { Value = value.Discrete },
+                    RewardModifierValueType.MultiplicativeScalar => new RewardPropertiesChanged.Server092CUnion0Arm02 { Value = value.Scalar },
+                    _ => new RewardPropertiesChanged.Server092CUnion0Arm00 { Value = value.Scalar },
+                },
+            });
+        }
+
+        return message;
+    }
+
+    private static void AddIfKept(UnitCreate create, Server0262Part5? command)
+    {
+        if (command is not null)
+            create.Commands.Add(command);
     }
 
     // How the value is sent: 0 is an integer.

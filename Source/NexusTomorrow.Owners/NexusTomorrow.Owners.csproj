@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="NexusTomorrow.Owners.Tests" />
+    <!-- The gateway's serializer alone makes a SerializedMessage, so every shared send passes the send gate. -->
+    <InternalsVisibleTo Include="NexusTomorrow.Gateway" />
   </ItemGroup>
 
   <ItemGroup>

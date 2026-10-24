@@ -7,18 +7,20 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 using NexusTomorrow.Commands;
 using NexusTomorrow.Game.Static;
+using NexusTomorrow.Game.Static.Reward;
 using NexusTomorrow.Maps;
 using NexusTomorrow.Maps.Scheduling;
 using NexusTomorrow.Maps.Worlds;
 using NexusTomorrow.Owners;
+using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Server;
 using NexusTomorrow.Testing;
 
 namespace NexusTomorrow.Harness;
 
-// The real host, in this process, on free loopback ports with a fake clock, a fixture creation catalog, fixture worlds and maps on
-// virtual time.
+// The real host, in this process, on free loopback ports with a fake clock, a fixture creation catalog, fixture reward properties,
+// fixture worlds and maps on virtual time.
 public sealed class HarnessServer : IAsyncDisposable
 {
     private static readonly TimeSpan s_stopBound = TimeSpan.FromSeconds(30);
@@ -38,6 +40,10 @@ public sealed class HarnessServer : IAsyncDisposable
         new KeyValuePair<ushort, WorldKind>(1, WorldKind.OpenWorld),
         new KeyValuePair<ushort, WorldKind>(2, WorldKind.Held),
     ]);
+
+    // Our own fixture reward property, not a table row: the premium tier and one Discrete value, so the world entry ends with them.
+    public static readonly FixedRewardProperties Rewards =
+        new(1, new RewardPropertyValue((RewardPropertyType)60, 0, RewardModifierValueType.Discrete, 0, 7));
 
     private readonly WebApplication _app;
     private bool _disposed;
@@ -100,6 +106,7 @@ public sealed class HarnessServer : IAsyncDisposable
             builder.Configuration.AddInMemoryCollection(all);
             builder.Services.AddSingleton<TimeProvider>(time);
             builder.Services.AddSingleton<ICreationCatalog>(Catalog);
+            builder.Services.AddSingleton<IRewardProperties>(Rewards);
             builder.Services.AddSingleton<IWorldCatalog>(Worlds);
             builder.Services.AddSingleton(new Random(seed));
             builder.Services.AddSingleton(maps);

@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Maps.Scheduling;
+using NexusTomorrow.Maps.Visibility;
 using NexusTomorrow.Maps.Worlds;
+using NexusTomorrow.Owners;
+using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
@@ -20,6 +23,8 @@ public sealed class MapDirectory : IMapDirectory
     private readonly MapSettings _settings;
     private readonly Random _random;
     private readonly MapMetrics _metrics;
+    private readonly IMessageSerializer _serializer;
+    private readonly IVisibilityPredicate _visibility;
     private readonly ILoggerFactory _loggers;
     private readonly ILogger<MapDirectory> _logger;
     private readonly Lock _gate = new();
@@ -32,14 +37,21 @@ public sealed class MapDirectory : IMapDirectory
     /// </summary>
     public MapDirectory(
         IWorldCatalog worlds, IMapScheduler scheduler, IWriteBehind persistence, IOptions<MapOptions> options,
-        IOptions<RealmOptions> realm, Random random, MapMetrics metrics, ILoggerFactory loggers)
+        IOptions<RealmOptions> realm, Random random, MapMetrics metrics, IMessageSerializer serializer, IVisibilityPredicate visibility,
+        IRewardProperties rewards, ILoggerFactory loggers)
     {
         _worlds = worlds;
         _scheduler = scheduler;
         _persistence = persistence;
-        _settings = MapSettings.From(options.Value, realm.Value.Id);
+        _settings = MapSettings.From(options.Value, realm.Value.Id, realm.Value.Name) with
+        {
+            PremiumTier = rewards.Tier,
+            RewardProperties = rewards.Values,
+        };
         _random = random;
         _metrics = metrics;
+        _serializer = serializer;
+        _visibility = visibility;
         _loggers = loggers;
         _logger = loggers.CreateLogger<MapDirectory>();
 
@@ -75,7 +87,7 @@ public sealed class MapDirectory : IMapDirectory
             }
 
             var map = new MapOwner(
-                worldId, _settings, _persistence, new Random(_random.Next()), _metrics, _loggers.CreateLogger<MapOwner>());
+                worldId, _settings, _persistence, new Random(_random.Next()), _metrics, _serializer, _visibility, _loggers.CreateLogger<MapOwner>());
             // The scheduler refuses a registration only while it is stopping; a map it refused would never tick, so it is not kept.
             try
             {

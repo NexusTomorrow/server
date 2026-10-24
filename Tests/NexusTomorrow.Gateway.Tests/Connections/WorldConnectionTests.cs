@@ -10,11 +10,14 @@ using NexusTomorrow.Network;
 using NexusTomorrow.Network.Message.Model;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Entity.Command;
+using NexusTomorrow.Network.World.Message.Model.AccountInventory;
+using NexusTomorrow.Network.World.Message.Model.Chat;
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
+using NexusTomorrow.Owners.Text;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Account;
@@ -30,6 +33,7 @@ public sealed class WorldConnectionTests : IAsyncLifetime
 
     private readonly FakeTimeProvider _time = new();
     private readonly FakeWriteBehind _db = new();
+    private readonly FakeMapDirectory _maps = new();
     private readonly CapturingLogger _log = new();
     private readonly AccountOwner _accounts;
     private readonly RealmOwner _realm;
@@ -40,8 +44,8 @@ public sealed class WorldConnectionTests : IAsyncLifetime
 
     public WorldConnectionTests()
     {
-        _accounts = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind());
-        _realm = new RealmOwner(_db, new FixedCreationCatalog([]), new FakeMapDirectory(), _time, Options.Create(new RealmOptions { Id = 3 }), NullLogger<RealmOwner>.Instance);
+        _accounts = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind(), FixedEntitlementCaps.Defaults());
+        _realm = new RealmOwner(_db, new FixedCreationCatalog([]), new WordFilter([], NullLogger<WordFilter>.Instance), FixedEntitlementCaps.Defaults(), _maps, _time, Options.Create(new RealmOptions { Id = 3 }), NullLogger<RealmOwner>.Instance);
     }
 
     private GameTestClient Client { get; set; } = null!;
@@ -89,6 +93,9 @@ public sealed class WorldConnectionTests : IAsyncLifetime
         await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharactersWork>().Any());
         LoadCharactersWork load = _db.Take<LoadCharactersWork>();
         load.Complete(WorkResult.Committed);
+        await Client.ExpectAsync<AccountEntitlements>();
+        await Client.ExpectAsync<AccountPremiumTier>();
+        await Client.ExpectAsync<CreationLevelLimit>();
         Assert.Empty((await Client.ExpectAsync<CharacterList>()).Characters);
     }
 
@@ -238,6 +245,67 @@ public sealed class WorldConnectionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AClientMovementCarriesItsRelayBatchToTheMap()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+        var movement = new ClientMovement { ClientTime = 5000 };
+        movement.Commands.Add(new Server0262Part5 { Unknown0 = 0, Unknown1 = new SetTimeCommand { Time = 5250 } });
+        movement.Commands.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new SetPositionCommand { Position = new Vector3(1, 2, 3) } });
+
+        await Client.SendTaggedAsync(0x03, movement);
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+
+        RelayBatch batch = Assert.IsType<RelayBatch>(Assert.IsType<ClientMoved>(map.Posted[0]).Batch);
+        Assert.Equal(5000u, batch.Time);
+        byte[] arms = [0, 2];
+        Assert.Equal(arms, batch.Commands.Select(command => command.Unknown0));
+    }
+
+    [Fact]
+    public async Task AnArmOutsideTheConfirmedListDropsTheMessageAndTheSessionGoesOn()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+        var refused = new ClientMovement { ClientTime = 1 };
+        refused.Commands.Add(new Server0262Part5 { Unknown0 = 0, Unknown1 = new SetTimeCommand { Time = 1 } });
+        refused.Commands.Add(new Server0262Part5 { Unknown0 = 9, Unknown1 = new Server0262Union2Arm09() });
+        refused.Commands.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new SetPositionCommand { Position = new Vector3(1, 2, 3) } });
+        var accepted = new ClientMovement { ClientTime = 2 };
+        accepted.Commands.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new SetPositionCommand { Position = new Vector3(4, 5, 6) } });
+
+        await Client.SendTaggedAsync(0x03, refused);
+        await Client.SendTaggedAsync(0x03, accepted);
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+
+        Assert.Contains(_log.Lines, line => line.Contains("an unconfirmed command arm", StringComparison.Ordinal));
+        Assert.Equal(new Vector3(4, 5, 6), Assert.IsType<ClientMoved>(Assert.Single(map.Posted)).Sample.Position);
+    }
+
+    [Fact]
+    public async Task ForcedMoveArmsAreLoggedOnceAndTheRestIsRouted()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+        var movement = new ClientMovement { ClientTime = 3 };
+        movement.Commands.Add(new Server0262Part5 { Unknown0 = 3, Unknown1 = new Server0262Union2Arm03() });
+        movement.Commands.Add(new Server0262Part5 { Unknown0 = 2, Unknown1 = new SetPositionCommand { Position = new Vector3(1, 2, 3) } });
+        movement.Commands.Add(new Server0262Part5 { Unknown0 = 25, Unknown1 = new Server0262Union2Arm19() });
+
+        await Client.SendTaggedAsync(0x03, movement);
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+
+        string forced = Assert.Single(_log.Lines, line => line.Contains("forced-move", StringComparison.Ordinal));
+        Assert.Contains("Arm3", forced, StringComparison.Ordinal);
+        Assert.Contains("Arm25", forced, StringComparison.Ordinal);
+        byte[] arms = [2];
+        Assert.Equal(arms, Assert.IsType<ClientMoved>(map.Posted[0]).Batch!.Commands.Select(command => command.Unknown0));
+    }
+
+    [Fact]
     public async Task AnOversizedClientMovementEndsTheSessionBeforeItIsRead()
     {
         await GreetAsync();
@@ -337,6 +405,49 @@ public sealed class WorldConnectionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ASayRoutesToTheRealmAsChatSaid()
+    {
+        await GreetAsync();
+        FakeMapInbox map = await EnterThroughTheRealmAsync();
+
+        await Client.SendTaggedAsync(0x0B, Say(4, "hello", 3));
+
+        // The realm owner is the connection's own; what it was handed shows in what it passes to the speaker's map.
+        await Eventually.TrueAsync(() => map.Posted.Count == 2);
+        LocalChat chat = Assert.IsType<LocalChat>(map.Posted[1]);
+        Assert.Same(_connection, chat.Session);
+        Assert.Equal(5UL, chat.CharacterId);
+        Assert.Equal((ushort)3, chat.ChatId);
+        Assert.Equal("hello", chat.Text);
+    }
+
+    [Fact]
+    public async Task ASayUnderTheWorldTagEndsTheSession()
+    {
+        await GreetAsync();
+        var map = new FakeMapInbox(1);
+        Assert.True(_connection.TryEnterMap(map));
+
+        await Client.SendTaggedAsync(0x03, Say(4, "hello", 3));
+
+        await _run.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        Assert.Contains(_log.Lines, line => line.Contains("a tag other than its row's", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task ASayOutsideTheWorldIsDropped()
+    {
+        await GreetAsync();
+        await Client.SendTaggedAsync(0x0B, Say(4, "hello", 3));
+        await Client.SendAsync(new CharacterListRequest());
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharactersWork>().Any());
+        _db.Take<LoadCharactersWork>().Complete(WorkResult.Committed);
+
+        Assert.Empty((await Client.ExpectAsync<CharacterList>()).Characters);
+        Assert.Contains(_log.Lines, line => line.Contains("dropped message 0x01C3: chat outside the world", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task AnEndedConnectionEntersNoMap()
     {
         await Client.ExpectAsync<ServerHello>();
@@ -352,6 +463,46 @@ public sealed class WorldConnectionTests : IAsyncLifetime
         LoginGranted grant = await GrantAsync();
         await Client.SendAsync(Hello(grant));
         Client.Cipher = new PacketCipher(PacketCipher.SessionKey(grant.SessionKey));
+
+        // The account owner's grant sends these before the session reads anything else.
+        await Client.ExpectAsync<AccountEntitlements>();
+        await Client.ExpectAsync<AccountPremiumTier>();
+        await Client.ExpectAsync<CreationLevelLimit>();
+    }
+
+    // Enters character 5 as the client does, through the realm's list and select, and routes the session to the map it arrived at.
+    private async Task<FakeMapInbox> EnterThroughTheRealmAsync()
+    {
+        FakeMapInbox map = _maps.Add(1);
+        await Client.SendAsync(new CharacterListRequest());
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharactersWork>().Any());
+        LoadCharactersWork list = _db.Take<LoadCharactersWork>();
+        list.Characters =
+        [
+            new CharacterSummary(5, s_alice.Id, "Rebaser Head", Race: 1, Sex: 0, Class: 1, FactionId: 166, Path: 0, Level: 1, WorldId: 1,
+                ZoneId: 0, Position: default, Disabled: false, RequiresRename: false, Bones: []),
+        ];
+        list.Complete(WorkResult.Committed);
+        await Client.ExpectAsync<CharacterList>();
+
+        await Client.SendAsync(new CharacterSelect { CharacterId = 5 });
+        await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
+        LoadCharacterWork load = _db.Take<LoadCharacterWork>();
+        load.Character = new CharacterRecord(
+            5, s_alice.Id, "Rebaser Head", Race: 1, Sex: 0, Class: 1, FactionId: 166, Path: 0, Level: 1, TotalXp: 0,
+            new CharacterLocation(1, 0, Vector3.Zero, 0));
+        load.Complete(WorkResult.Committed);
+        await Eventually.TrueAsync(() => map.Posted.Count == 1);
+        Assert.IsType<CharacterArrived>(map.Posted[0]);
+        Assert.True(_connection.TryEnterMap(map));
+        return map;
+    }
+
+    private static ChatSend Say(ushort channelType, string text, ushort chatId)
+    {
+        ChatSend say = ClientMessage.With(ClientMessage.With(new ChatSend(), nameof(ChatSend.Text), text), nameof(ChatSend.ChatId), chatId);
+        say.Channel.Type = channelType;
+        return say;
     }
 
     private async Task<LoginGranted> GrantAsync()

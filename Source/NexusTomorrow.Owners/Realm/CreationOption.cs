@@ -10,10 +10,12 @@ public sealed record CreationOption(
     uint EntitlementRequired, uint CostAmount, bool CostumeOnly)
 {
     /// <summary>
-    /// True when a player may pick the option: it is on, is not costume-only, does not start at level 50 or as costume-only, and
-    /// needs no entitlement or currency (Stage 1 has neither).
+    /// True when a player holding <paramref name="accountEntitlements"/> may pick the option, as the client offers it under
+    /// <paramref name="creationLevelLimit"/>: it is on, is not costume-only, starts neither at level 50 nor as costume-only, and costs no
+    /// currency; and either it needs no entitlement and starts at the limit or below (at 1 or below when the limit is 0,
+    /// <c>CreationLevelLimit.Level</c>), or it needs an entitlement the account holds.
     /// </summary>
-    public bool IsOffered =>
-        Enabled && !CostumeOnly && Start is not (CharacterCreationStart.Level50 or CharacterCreationStart.CostumeOnly)
-        && EntitlementRequired == 0 && CostAmount == 0;
+    public bool IsOfferedTo(IReadOnlySet<uint> accountEntitlements, uint creationLevelLimit) =>
+        Enabled && !CostumeOnly && Start is not (CharacterCreationStart.Level50 or CharacterCreationStart.CostumeOnly) && CostAmount == 0
+        && (EntitlementRequired == 0 ? Level <= Math.Max(creationLevelLimit, 1) : accountEntitlements.Contains(EntitlementRequired));
 }

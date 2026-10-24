@@ -12,10 +12,12 @@ using NexusTomorrow.Gateway.Limits;
 using NexusTomorrow.Gateway.Sts;
 using NexusTomorrow.Maps;
 using NexusTomorrow.Maps.Scheduling;
+using NexusTomorrow.Maps.Visibility;
 using NexusTomorrow.Maps.Worlds;
 using NexusTomorrow.Owners;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
+using NexusTomorrow.Owners.Text;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Account;
@@ -35,8 +37,9 @@ public static class CoreServices
     private static readonly TimeSpan s_ownerStallTime = TimeSpan.FromSeconds(10);
 
     /// <summary>
-    /// Register the core against <paramref name="configuration"/>. The clock, the creation catalog, the world catalog, the map
-    /// scheduler and the random source are registered only when the caller has not, so a harness that registers its own first wins.
+    /// Register the core against <paramref name="configuration"/>. The clock, the creation catalog, the word filter, the entitlement
+    /// caps, the reward properties, the world catalog, the map scheduler and the random source are registered only when the caller has
+    /// not, so a harness that registers its own first wins.
     /// </summary>
     public static IServiceCollection AddNexusTomorrowCore(this IServiceCollection services, IConfiguration configuration)
     {
@@ -45,17 +48,23 @@ public static class CoreServices
         AddOptions<RealmOptions>(services, configuration, RealmOptions.Section);
         AddOptions<MapOptions>(services, configuration, MapOptions.Section);
         AddOptions<AccountOptions>(services, configuration, AccountOptions.Section);
+        AddOptions<AccountDefaultsOptions>(services, configuration, AccountDefaultsOptions.Section);
         AddOptions<ContentOptions>(services, configuration, ContentOptions.Section);
         AddOptions<CliOptions>(services, configuration, CliOptions.Section);
 
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<ICreationCatalog, TableCreationCatalog>();
+        services.TryAddSingleton<IWordFilter, TableWordFilter>();
+        services.TryAddSingleton<IEntitlementCaps, TableEntitlementCaps>();
+        services.AddSingleton<AccountDefaults>();
+        services.TryAddSingleton<IRewardProperties, TableRewardProperties>();
 
         // Random.Shared is safe from any thread; a harness registers its own seeded one first.
         services.TryAddSingleton(Random.Shared);
         services.TryAddSingleton<IWorldCatalog, TableWorldCatalog>();
         services.AddSingleton<MapMetrics>();
         services.TryAddSingleton<IMapScheduler, MapScheduler>();
+        services.TryAddSingleton<IVisibilityPredicate>(AllowAllVisibility.Instance);
         services.AddSingleton<MapDirectory>();
         services.AddSingleton<IMapDirectory>(provider => provider.GetRequiredService<MapDirectory>());
 
@@ -72,6 +81,7 @@ public static class CoreServices
             WatchedOwners(provider), provider.GetRequiredService<TimeProvider>(), s_ownerStallTime, provider.GetRequiredService<ILogger<OwnerWatchdog>>()));
 
         services.AddSingleton(MessageCatalog.Default);
+        services.AddSingleton<IMessageSerializer>(provider => new GatedSerializer(provider.GetRequiredService<MessageCatalog>()));
         services.AddSingleton(provider => new InboundDecoder(
             provider.GetRequiredService<MessageCatalog>(), OpcodeTable.All, provider.GetRequiredService<IOptions<GatewayOptions>>().Value.DisabledOpcodes));
         services.AddSingleton<GatewayMetrics>();
@@ -122,7 +132,8 @@ public static class CoreServices
         AccountOwner accounts = provider.GetRequiredService<AccountOwner>();
         TimeProvider time = provider.GetRequiredService<TimeProvider>();
         IWriteBehind persistence = provider.GetRequiredService<IWriteBehind>();
-        IReadOnlyList<CommandDefinition> commands = BuiltinCommands.Create(accounts, provider.GetServices<IOwner>(), persistence, time);
+        RealmOwner realm = provider.GetRequiredService<RealmOwner>();
+        IReadOnlyList<CommandDefinition> commands = BuiltinCommands.Create(accounts, realm, provider.GetServices<IOwner>(), persistence, time);
         return new CommandDispatcher(commands, persistence, time, provider.GetRequiredService<ILogger<CommandDispatcher>>());
     }
 }

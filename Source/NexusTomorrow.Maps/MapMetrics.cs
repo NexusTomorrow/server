@@ -14,12 +14,20 @@ public sealed class MapMetrics : IDisposable
     private readonly Counter<long> _skipped;
     private readonly Counter<long> _faults;
     private readonly Counter<long> _dropped;
+    private readonly Counter<long> _admittedUnits;
+    private readonly Counter<long> _droppedUnits;
+    private readonly Counter<long> _relayedBatches;
+    private readonly Counter<long> _droppedBatches;
 
     /// <summary>
     /// Create the instruments on a meter this object owns.
     /// </summary>
     public MapMetrics()
     {
+        _admittedUnits = _meter.CreateCounter<long>("nexustomorrow.map.units_admitted", description: "Players created for a viewer that came into range");
+        _droppedUnits = _meter.CreateCounter<long>("nexustomorrow.map.units_dropped", description: "Players destroyed for a viewer: out of range, hidden or gone");
+        _relayedBatches = _meter.CreateCounter<long>("nexustomorrow.map.batches_relayed", description: "Movement batches relayed to the players who see the mover");
+        _droppedBatches = _meter.CreateCounter<long>("nexustomorrow.map.batches_dropped", description: "Movement batches dropped, by reason");
         _ticks = _meter.CreateCounter<long>("nexustomorrow.map.ticks", description: "Map ticks completed");
         _duration = _meter.CreateHistogram<double>("nexustomorrow.map.tick.duration", unit: "ms", description: "How long a map tick ran");
         _allocated = _meter.CreateHistogram<long>("nexustomorrow.map.tick.allocated", unit: "By", description: "Bytes a map tick allocated");
@@ -63,6 +71,31 @@ public sealed class MapMetrics : IDisposable
     /// </summary>
     /// <param name="world">The tag naming the world the map belongs to.</param>
     public void Dropped(KeyValuePair<string, object?> world) => _dropped.Add(1, world);
+
+    /// <summary>
+    /// Count one player created for a viewer.
+    /// </summary>
+    /// <param name="world">The tag naming the world the map belongs to.</param>
+    public void UnitAdmitted(KeyValuePair<string, object?> world) => _admittedUnits.Add(1, world);
+
+    /// <summary>
+    /// Count one player destroyed for a viewer.
+    /// </summary>
+    /// <param name="world">The tag naming the world the map belongs to.</param>
+    public void UnitDropped(KeyValuePair<string, object?> world) => _droppedUnits.Add(1, world);
+
+    /// <summary>
+    /// Count one movement batch relayed.
+    /// </summary>
+    /// <param name="world">The tag naming the world the map belongs to.</param>
+    public void BatchRelayed(KeyValuePair<string, object?> world) => _relayedBatches.Add(1, world);
+
+    /// <summary>
+    /// Count one movement batch dropped.
+    /// </summary>
+    /// <param name="world">The tag naming the world the map belongs to.</param>
+    /// <param name="reason">The tag naming why.</param>
+    public void BatchDropped(KeyValuePair<string, object?> world, KeyValuePair<string, object?> reason) => _droppedBatches.Add(1, world, reason);
 
     /// <inheritdoc/>
     public void Dispose() => _meter.Dispose();

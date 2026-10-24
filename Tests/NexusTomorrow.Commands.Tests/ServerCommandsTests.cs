@@ -17,7 +17,7 @@ public sealed class ServerCommandsTests : IAsyncLifetime
     public ServerCommandsTests()
     {
         var time = new FakeTimeProvider(new DateTimeOffset(2026, 10, 16, 12, 0, 0, TimeSpan.Zero));
-        _accounts = new AccountOwner(time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, _db);
+        _accounts = new AccountOwner(time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, _db, FixedEntitlementCaps.Defaults());
         _dispatcher = new CommandDispatcher(ServerCommands.Create(_accounts, [_accounts], _db), _db, time, NullLogger<CommandDispatcher>.Instance);
     }
 

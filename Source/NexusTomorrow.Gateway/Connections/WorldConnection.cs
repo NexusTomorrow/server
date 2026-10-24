@@ -4,6 +4,7 @@ using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Gateway.World;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message.Model;
+using NexusTomorrow.Network.World.Message.Model.Chat;
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
@@ -16,8 +17,8 @@ namespace NexusTomorrow.Gateway.Connections;
 
 /// <summary>
 /// The world connection: greets inside the world envelope under the build key, redeems the session key through the account owner,
-/// switches both directions to the session cipher, hands character-select messages to the realm owner, and routes in-world messages
-/// to the map holding the session's character.
+/// switches both directions to the session cipher, hands character-select messages and, from the world, chat lines to the realm
+/// owner, and routes in-world messages to the map holding the session's character.
 /// </summary>
 public sealed class WorldConnection : ClientConnection, IWorldSession
 {
@@ -141,6 +142,15 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
                 }
 
                 return Post(new SelectCharacter(accountId, this, select.CharacterId));
+            case ChatSend say:
+                // Reads only ChatReads.Members.
+                if (!InMap())
+                {
+                    Drop(row.Opcode, "chat outside the world");
+                    return true;
+                }
+
+                return Post(new ChatSaid(accountId, this, say.Channel.Type, say.Text, say.ChatId));
             case PregameKeepAlive:
                 return true;
             default:
@@ -255,19 +265,18 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
     }
 
     // The map is read under _route and posted to outside it: a post never runs under the lock, and a map that has stopped refuses it,
-    // which is not a drop. A movement is reduced under the lock, which guards the platform state it carries; one that gives no position
-    // or facing is ignored, not dropped. A null map here is the guard behind Admits: the map can hand the character back after the
-    // admission.
+    // which is not a drop. A movement is read under the lock, which guards the platform state it carries. One with an arm the client
+    // never builds is dropped and the session goes on; one that gives no position, facing or relayed command is ignored, not dropped.
+    // A null map here is the guard behind Admits: the map can hand the character back after the admission.
     private bool RouteToMap(IWireMessage message, OpcodeRow row)
     {
         IMapInbox? map;
-        MovementSample sample = default;
-        bool moved = false;
+        MovementRead read = default;
         lock (_route)
         {
             map = _map;
             if (map is not null && message is ClientMovement movement)
-                moved = MovementReads.TryLatest(movement, ref _onPlatform, out sample);
+                read = MovementReads.Read(movement, ref _onPlatform);
         }
 
         if (map is null)
@@ -276,12 +285,23 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
             return true;
         }
 
-        if (message is ClientMovement && !moved)
-            return true;
+        if (message is ClientMovement)
+        {
+            if (read.Refusal == MovementRefusal.UnconfirmedArm)
+            {
+                Drop(row.Opcode, "an unconfirmed command arm");
+                return true;
+            }
+
+            if (read.Forced != ForcedMoveArms.None)
+                GatewayLog.ForcedMoveArrived(_logger, Id, read.Forced);
+            if (!read.Routes)
+                return true;
+        }
 
         MapMessage? routed = message switch
         {
-            ClientMovement => new ClientMoved(this, sample),
+            ClientMovement => new ClientMoved(this, read.Sample, read.Batch),
             WorldReady ready => new ClientWorldReady(this, ready.ZoneId),
             MovementControlReceipt receipt => new ClientControlReceipt(this, receipt.Ticket),
             ZoneChange change => new ClientZoneChanged(this, change.ZoneId),

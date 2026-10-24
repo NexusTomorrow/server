@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
+using NexusTomorrow.Network.World.Message.Model.AccountInventory;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Persistence;
@@ -19,13 +20,52 @@ public sealed class AccountOwnerTests : IAsyncLifetime
 
     public AccountOwnerTests()
     {
-        _owner = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, _db);
+        _owner = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, _db, FixedEntitlementCaps.Defaults());
         _owner.Start();
     }
 
     public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
     public async ValueTask DisposeAsync() => await _owner.StopAsync().WaitAsync(TimeSpan.FromSeconds(10));
+
+    [Fact]
+    public async Task AGrantSendsTheTierBetweenTheEntitlementsAndTheLimit()
+    {
+        // Every license capped at 5, a fixture figure.
+        uint[] licenses = [12, 3, 27, 23, 25, 26, 36, 71, 74, 75, 42, 43];
+        var caps = new FixedEntitlementCaps(licenses.ToDictionary(id => id, _ => 5u));
+
+        FakeClientSession session = await GrantUnderAsync(FixedEntitlementCaps.Defaults(caps: caps));
+
+        Assert.Equal(3, session.Sent.Count);
+        AccountEntitlements entitlements = Assert.IsType<AccountEntitlements>(session.Sent[0]);
+        (uint Id, uint Count)[] expected =
+        [
+            .. new uint[] { 4, 10, 14, 15, 16, 17, 18, 19, 20, 21, 22, 61, 62 }.Select(id => (id, 1u)),
+            .. licenses.Select(id => (id, 5u)),
+        ];
+        Assert.Equal(expected, entitlements.Entitlements.Select(entitlement => (entitlement.EntitlementId, entitlement.Count)));
+        Assert.Equal((byte)1, Assert.IsType<AccountPremiumTier>(session.Sent[1]).Tier);
+        Assert.Equal(3u, Assert.IsType<CreationLevelLimit>(session.Sent[2]).Level);
+    }
+
+    [Fact]
+    public async Task AFreeTierValueComesOnlyFromATestThatSetsIt()
+    {
+        FakeClientSession session = await GrantUnderAsync(FixedEntitlementCaps.Defaults(new AccountDefaultsOptions { PremiumTier = 0 }));
+
+        Assert.Equal((byte)0, session.Single<AccountPremiumTier>().Tier);
+    }
+
+    [Fact]
+    public async Task ARefusedGreetingSendsNeither()
+    {
+        var session = new FakeClientSession();
+
+        Assert.IsType<WorldRefused>(await GreetAsync(new byte[16], 1, "alice@example.com", session));
+
+        Assert.Empty(session.Sent);
+    }
 
     [Fact]
     public async Task AGameTokenWorksOnce()
@@ -364,6 +404,31 @@ public sealed class AccountOwnerTests : IAsyncLifetime
         var reply = new TaskCompletionSource<LoginDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
         Assert.True(_owner.Post(new RedeemGameToken(token, name, reply)));
         return await reply.Task.WaitAsync(TimeSpan.FromSeconds(10));
+    }
+
+    // Logs alice in to the world under an owner of its own holding defaults; the session the grant was sent to.
+    private async Task<FakeClientSession> GrantUnderAsync(AccountDefaults defaults)
+    {
+        var owner = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind(), defaults);
+        owner.Start();
+        try
+        {
+            var issued = new TaskCompletionSource<Guid>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Assert.True(owner.Post(new IssueGameToken(s_alice, issued)));
+            var redeemed = new TaskCompletionSource<LoginDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Assert.True(owner.Post(new RedeemGameToken(await issued.Task.WaitAsync(TimeSpan.FromSeconds(10)), "alice@example.com", redeemed)));
+            LoginGranted grant = Assert.IsType<LoginGranted>(await redeemed.Task.WaitAsync(TimeSpan.FromSeconds(10)));
+
+            var session = new FakeClientSession();
+            var greeted = new TaskCompletionSource<WorldDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Assert.True(owner.Post(new RedeemSessionKey(grant.SessionKey, grant.Echo, "alice@example.com", session, greeted)));
+            Assert.IsType<WorldGranted>(await greeted.Task.WaitAsync(TimeSpan.FromSeconds(10)));
+            return session;
+        }
+        finally
+        {
+            await owner.StopAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        }
     }
 
     private async Task<WorldDecision> GreetAsync(byte[] key, uint echo, string name, FakeClientSession session)

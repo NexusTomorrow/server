@@ -1,7 +1,9 @@
 ﻿using System.Numerics;
 using Microsoft.Extensions.Logging.Abstractions;
 using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Game.Static.Reward;
 using NexusTomorrow.Gateway.Catalog;
+using NexusTomorrow.Maps.Visibility;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Entity.Command;
@@ -10,8 +12,10 @@ using NexusTomorrow.Network.World.Message.Model.Entity;
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.PlayerPath;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Network.World.Message.Model.Reward;
 using NexusTomorrow.Network.World.Message.Model.Shared;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
+using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
@@ -30,7 +34,7 @@ public sealed class WorldEntryTests : IDisposable
     public void Dispose() => _metrics.Dispose();
 
     [Fact]
-    public void ArrivalSendsTheEntryInTheClientsOrder()
+    public void EntrySendsThePathAfterThePlayersUnit()
     {
         MapOwner map = NewMap();
         var session = new FakeClientSession();
@@ -39,10 +43,13 @@ public sealed class WorldEntryTests : IDisposable
 
         Type[] expected =
         [
-            typeof(EnterWorld), typeof(UnitCreate), typeof(PlayerUnit), typeof(WorldSettings), typeof(MovementControl),
-            typeof(PlayerState), typeof(PathState),
+            typeof(EnterWorld), typeof(UnitCreate), typeof(PlayerUnit), typeof(UnitPathTypeChanged), typeof(WorldSettings),
+            typeof(MovementControl), typeof(PlayerState), typeof(PathState),
         ];
         Assert.Equal(expected, [.. session.Sent.Select(sent => sent.GetType())]);
+        UnitPathTypeChanged path = session.Single<UnitPathTypeChanged>();
+        Assert.Equal(session.Single<UnitCreate>().UnitId, path.UnitId);
+        Assert.Equal((byte)2, path.PathType);
         Assert.Null(session.DisconnectReason);
     }
 
@@ -54,7 +61,7 @@ public sealed class WorldEntryTests : IDisposable
 
         Arrive(map, session);
 
-        Assert.Equal(7, session.Sent.Count);
+        Assert.Equal(8, session.Sent.Count);
         Assert.Null(session.DisconnectReason);
         foreach (object sent in session.Sent)
         {
@@ -200,7 +207,7 @@ public sealed class WorldEntryTests : IDisposable
         var session = new FakeClientSession();
         Arrive(map, session);
         uint ticket = session.Single<MovementControl>().Ticket;
-        var movement = new ClientMoved(session, new MovementSample(new Vector3(7, 8, 9), 0.5f));
+        var movement = new ClientMoved(session, new MovementSample(new Vector3(7, 8, 9), 0.5f), null);
 
         map.PostHigh(movement);
         Tick(map);
@@ -226,13 +233,13 @@ public sealed class WorldEntryTests : IDisposable
 
         for (int i = 0; i < 20; i++)
         {
-            map.PostHigh(new ClientMoved(session, new MovementSample(new Vector3(i, 0, 0), i)));
+            map.PostHigh(new ClientMoved(session, new MovementSample(new Vector3(i, 0, 0), i), null));
             Tick(map);
         }
 
         for (int i = 0; i < 100; i++)
         {
-            map.PostHigh(new ClientMoved(session, new MovementSample(new Vector3(i, 1, 0), i)));
+            map.PostHigh(new ClientMoved(session, new MovementSample(new Vector3(i, 1, 0), i), null));
             Tick(map);
             Assert.Equal(0L, map.LastTickAllocatedBytes);
         }
@@ -242,11 +249,16 @@ public sealed class WorldEntryTests : IDisposable
     }
 
     [Fact]
-    public void ALogoutRequestIsAnsweredWithACountdownOfZero()
+    public void ACountdownGoesOutOnlyAnsweringARequest()
     {
         MapOwner map = NewMap();
         var session = new FakeClientSession();
         Arrive(map, session);
+        map.Post(new ClientControlReceipt(session, session.Single<MovementControl>().Ticket));
+        map.Post(new ClientWorldReady(session, 6));
+        for (int i = 0; i < 30; i++)
+            Tick(map);
+        Assert.Empty(session.Sent.OfType<LogoutCountdown>());
 
         map.Post(new ClientLogoutRequested(session, true));
         Tick(map);
@@ -257,6 +269,20 @@ public sealed class WorldEntryTests : IDisposable
         Assert.Empty(session.Sent.OfType<WorldLogout>());
         Assert.Equal(1, map.PlayerCount);
         Assert.Empty(_realm.Posted);
+    }
+
+    [Fact]
+    public void ARequestWithoutBeginSendsNoCountdown()
+    {
+        MapOwner map = NewMap();
+        var session = new FakeClientSession();
+        Arrive(map, session);
+
+        map.Post(new ClientLogoutRequested(session, false));
+        Tick(map);
+
+        Assert.Empty(session.Sent.OfType<LogoutCountdown>());
+        Assert.Equal(1, map.PlayerCount);
     }
 
     [Fact]
@@ -331,8 +357,62 @@ public sealed class WorldEntryTests : IDisposable
 
     private static uint StatValue(Server0262Part4 stat) => Assert.IsType<Server0262Part4.Server0262Union1Arm00>(stat.Unknown2).Unknown0;
 
-    private MapOwner NewMap() =>
-        new(1, MapOwnerTests.Settings(), _persistence, new Random(1), _metrics, NullLogger<MapOwner>.Instance);
+    [Fact]
+    public void TheEntryEndsWithTheRewardProperties()
+    {
+        // Our own fixture values, never the client's: property 60, Discrete, data 0; property 61, AdditiveScalar, data 4.
+        MapOwner map = NewMap(MapOwnerTests.Settings() with
+        {
+            RewardProperties =
+            [
+                new RewardPropertyValue((RewardPropertyType)60, 0, RewardModifierValueType.Discrete, 0, 7),
+                new RewardPropertyValue((RewardPropertyType)61, 4, RewardModifierValueType.AdditiveScalar, 1.25f, 0),
+            ],
+        });
+        var session = new FakeClientSession();
+
+        Arrive(map, session);
+
+        Assert.Equal(9, session.Sent.Count);
+        Assert.IsType<PathState>(session.Sent[^2]);
+        RewardPropertiesChanged rewards = Assert.IsType<RewardPropertiesChanged>(session.Sent[^1]);
+        Assert.True(MessageCatalog.Default.MaySend(rewards, out string? refusal), refusal);
+        Assert.Equal(2, rewards.Properties.Count);
+        Assert.Equal((RewardPropertyType)60, rewards.Properties[0].Property);
+        Assert.Equal(0u, rewards.Properties[0].Data);
+        Assert.Equal(RewardModifierValueType.Discrete, rewards.Properties[0].ValueType);
+        Assert.Equal(7u, Assert.IsType<RewardPropertiesChanged.Server092CUnion0Arm01>(rewards.Properties[0].Value).Value);
+        Assert.Equal((RewardPropertyType)61, rewards.Properties[1].Property);
+        Assert.Equal(4u, rewards.Properties[1].Data);
+        Assert.Equal(RewardModifierValueType.AdditiveScalar, rewards.Properties[1].ValueType);
+        Assert.Equal(1.25f, Assert.IsType<RewardPropertiesChanged.Server092CUnion0Arm00>(rewards.Properties[1].Value).Value);
+        Assert.All(rewards.Properties, entry => Assert.Empty(entry.Unknown4));
+    }
+
+    [Fact]
+    public void EveryPlayerCreateCarriesTheTier()
+    {
+        MapOwner map = NewMap(MapOwnerTests.Settings() with { PremiumTier = 1 });
+        var a = new FakeClientSession();
+        var b = new FakeClientSession();
+        map.Post(new CharacterArrived(a, 7, MapOwnerTests.Record(1001), _realm));
+        map.Post(new ClientWorldReady(a, 3));
+        map.Post(new CharacterArrived(b, 7, MapOwnerTests.Record(1002), _realm));
+        map.Post(new ClientWorldReady(b, 3));
+
+        // Enough ticks for a replication flush, which creates each player for the other.
+        for (int i = 0; i < 5; i++)
+            Tick(map);
+
+        UnitCreate[] creates = [.. a.Sent.OfType<UnitCreate>()];
+        Assert.Equal(2, creates.Length);
+        Assert.All(creates, create => Assert.Equal((byte)1, Assert.IsType<Server0262Union0Arm14>(create.TypeData).PremiumTier));
+    }
+
+    private MapOwner NewMap() => NewMap(MapOwnerTests.Settings());
+
+    private MapOwner NewMap(MapSettings settings) =>
+        new(1, settings, _persistence, new Random(1), _metrics, new FakeMessageSerializer(), AllowAllVisibility.Instance, NullLogger<MapOwner>.Instance);
 
     private void Tick(MapOwner map)
     {

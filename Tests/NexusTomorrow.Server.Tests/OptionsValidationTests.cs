@@ -61,6 +61,10 @@ public sealed class OptionsValidationTests
     [InlineData(typeof(MapOptions), "Maps:ReplicationEveryTicks", "50", "Maps:ReplicationEveryTicks times Maps:TickMs must be 25 to 1000 ms.")]
     [InlineData(typeof(MapOptions), "Maps:ReplicationEveryTicks", "0", "Maps:ReplicationEveryTicks times Maps:TickMs must be 25 to 1000 ms.")]
     [InlineData(typeof(MapOptions), "Maps:PoolThreads", "0", "Maps:PoolThreads must be at least 1.")]
+    [InlineData(typeof(MapOptions), "Maps:AdmitRadius", "0", "Maps:AdmitRadius must be at least 1.")]
+    [InlineData(typeof(MapOptions), "Maps:AdmitRadius", "200", "AdmitRadius must not exceed Maps:DropRadius.")]
+    [InlineData(typeof(MapOptions), "Maps:VisibleCap", "0", "Maps:VisibleCap must be at least 1.")]
+    [InlineData(typeof(MapOptions), "Maps:SwapsPerCheck", "0", "Maps:SwapsPerCheck must be at least 1.")]
     [InlineData(typeof(MapOptions), "Maps:DedicatedThreads", "-1", "Maps:DedicatedThreads must not be negative.")]
     [InlineData(typeof(MapOptions), "Maps:SaveInterval", "00:00:00", "Maps:SaveInterval must be at least one second.")]
     [InlineData(typeof(MapOptions), "Maps:NormalDrainFloor", "0", "Maps:NormalDrainFloor must be at least 1.")]
@@ -92,6 +96,14 @@ public sealed class OptionsValidationTests
     {
         using WebApplication app = Build(new() { [key] = value });
         Resolve(app.Services, options);
+    }
+
+    [Fact]
+    public void AccountDefaultsRefuseARepeatedId()
+    {
+        using WebApplication app = Build(new() { ["AccountDefaults:Entitlements:0:Id"] = "10", ["AccountDefaults:Entitlements:1:Id"] = "10" });
+        OptionsValidationException failure = Assert.Throws<OptionsValidationException>(() => Resolve(app.Services, typeof(AccountDefaultsOptions)));
+        Assert.Contains(failure.Failures, line => line.StartsWith("AccountDefaults:Entitlements ", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -150,6 +162,8 @@ public sealed class OptionsValidationTests
             _ = services.GetRequiredService<IOptions<MapOptions>>().Value;
         else if (options == typeof(AccountOptions))
             _ = services.GetRequiredService<IOptions<AccountOptions>>().Value;
+        else if (options == typeof(AccountDefaultsOptions))
+            _ = services.GetRequiredService<IOptions<AccountDefaultsOptions>>().Value;
         else
             throw new ArgumentOutOfRangeException(nameof(options));
     }

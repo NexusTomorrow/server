@@ -72,6 +72,25 @@ public sealed class FakeClientSession : IWorldSession
             _sent.Add(recorded);
     }
 
+    // Takes its reference as a connection does and releases it once the message is recorded, as a connection's writer does once it has
+    // written it. The gate ran when the message was serialized.
+    public void Send(SerializedMessage message)
+    {
+        message.AddReference();
+        try
+        {
+            var recorded = (IWireMessage)Activator.CreateInstance(message.MessageType)!;
+            var reader = new BitReader(message.Body);
+            recorded.Read(ref reader);
+            lock (_gate)
+                _sent.Add(recorded);
+        }
+        finally
+        {
+            message.Release();
+        }
+    }
+
     public void Disconnect(string reason)
     {
         lock (_gate)

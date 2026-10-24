@@ -2,6 +2,7 @@
 using System.Numerics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using NexusTomorrow.Maps.Visibility;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
@@ -272,7 +273,7 @@ public sealed class MapOwnerTests : IDisposable
     public void AHeldArrivalThatFaultsIsHandedBackOnce()
     {
         var logger = new ThrowingLogger(7005);
-        var map = new MapOwner(1, Settings(), _persistence, new Random(1), _metrics, logger);
+        var map = new MapOwner(1, Settings(), _persistence, new Random(1), _metrics, new FakeMessageSerializer(), AllowAllVisibility.Instance, logger);
         var session = new FakeClientSession();
 
         Arrive(map, session, 1001);
@@ -301,7 +302,7 @@ public sealed class MapOwnerTests : IDisposable
     }
 
     private MapOwner NewMap(MapSettings? settings = null) =>
-        new(1, settings ?? Settings(), _persistence, new Random(1), _metrics, NullLogger<MapOwner>.Instance);
+        new(1, settings ?? Settings(), _persistence, new Random(1), _metrics, new FakeMessageSerializer(), AllowAllVisibility.Instance, NullLogger<MapOwner>.Instance);
 
     private sealed class ThrowingLogger : ILogger<MapOwner>
     {

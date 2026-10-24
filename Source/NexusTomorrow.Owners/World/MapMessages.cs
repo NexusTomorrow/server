@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Persistence.Realm;
 
 namespace NexusTomorrow.Owners.World;
@@ -47,9 +48,17 @@ public sealed record ClientZoneChanged(IWorldSession Session, ushort ZoneId) : S
 public readonly record struct MovementSample(Vector3? Position, float? Facing);
 
 /// <summary>
-/// The client moved its unit.
+/// One client movement batch for the players who see the mover: the client's own time for it (<c>ClientMovement.ClientTime</c>) and
+/// the commands it sent in order, only the arms the relay carries and each with finite values. The commands are the decoded client
+/// objects, which nothing writes after the decode.
 /// </summary>
-public sealed record ClientMoved(IWorldSession Session, MovementSample Sample) : SessionMessage(Session);
+public sealed record RelayBatch(uint Time, Server0262Part5[] Commands);
+
+/// <summary>
+/// The client moved its unit: the newest position and facing for the map to keep, and the batch to relay, or null when the message
+/// carried no command the relay carries.
+/// </summary>
+public sealed record ClientMoved(IWorldSession Session, MovementSample Sample, RelayBatch? Batch) : SessionMessage(Session);
 
 /// <summary>
 /// The client asked to leave the world (<paramref name="Begin"/> true) or cancelled a request still counting down (<paramref name="Begin"/> false).
@@ -60,3 +69,16 @@ public sealed record ClientLogoutRequested(IWorldSession Session, bool Begin) : 
 /// The client confirmed its logout request; on an exit it then quits.
 /// </summary>
 public sealed record ClientLogoutConfirmed(IWorldSession Session) : SessionMessage(Session);
+
+/// <summary>
+/// Move a character the map holds in the world to <paramref name="Position"/>, facing <paramref name="Facing"/> (the yaw in radians),
+/// by taking its movement back from the client, placing it and granting movement again. <paramref name="Reply"/> answers true once
+/// that is sent, and false when the map does not hold the character in the world.
+/// </summary>
+public sealed record RelocateCharacter(ulong CharacterId, Vector3 Position, float Facing, TaskCompletionSource<bool> Reply) : MapMessage;
+
+/// <summary>
+/// A line the realm checked and passed on for its speaker's map to say: the speaker's session and character, the client's own id
+/// for the line, and the line.
+/// </summary>
+public sealed record LocalChat(IWorldSession Session, ulong CharacterId, ushort ChatId, string Text) : SessionMessage(Session);

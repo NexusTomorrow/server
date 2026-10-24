@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.Maps.Scheduling;
+using NexusTomorrow.Maps.Visibility;
 using NexusTomorrow.Maps.Worlds;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Owners.World;
@@ -115,6 +116,9 @@ public sealed class MapDirectoryTests : IDisposable
         Options.Create(new RealmOptions { Id = 3 }),
         new Random(1),
         _metrics,
+        new FakeMessageSerializer(),
+        AllowAllVisibility.Instance,
+        new FixedRewardProperties(1),
         NullLoggerFactory.Instance);
 
     private sealed class RecordingScheduler : IMapScheduler

@@ -16,4 +16,10 @@ public sealed class ArrayAttribute : Attribute
     /// The name of an earlier [Count] member that holds the element count; null when <see cref="CountBits"/> is set.
     /// </summary>
     public string? CountFrom { get; set; }
+
+    /// <summary>
+    /// The most elements the client holds, or 0 when the count's width is the only bound. Writing more throws; reading is unchanged,
+    /// since what the client sends is bounded by the frame.
+    /// </summary>
+    public int Capacity { get; set; }
 }

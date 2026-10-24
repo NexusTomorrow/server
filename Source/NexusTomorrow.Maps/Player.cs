@@ -1,4 +1,6 @@
-﻿using NexusTomorrow.Maps.Timing;
+﻿using NexusTomorrow.Maps.Movement;
+using NexusTomorrow.Maps.Timing;
+using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence.Realm;
 
@@ -53,6 +55,48 @@ internal sealed class Player
 
     // True while a logout request waits for its confirm.
     public bool LogoutPending { get; set; }
+
+    // The players this player sees, each with whether its next relay to this player resets (true from the create on).
+    public Dictionary<Player, bool> Visible { get; } = new(ReferenceEqualityComparer.Instance);
+
+    // The players who see this one; the mirror of their Visible, kept with it.
+    public HashSet<Player> Viewers { get; } = new(ReferenceEqualityComparer.Instance);
+
+    // The grid cell the player was last filed under, while InGrid.
+    public (int X, int Z) Cell { get; set; }
+
+    public bool InGrid { get; set; }
+
+    // The time of the last batch relayed for this player, on its own clock, and the map's time when that batch arrived.
+    public bool HasRelayed { get; set; }
+
+    public uint LastBatchTime { get; set; }
+
+    public long LastBatchAtMs { get; set; }
+
+    // The movement batches that arrived since the last flush, in order, each with the map's time it arrived at; at most the arrays'
+    // length.
+    public RelayBatch?[] Pending { get; } = new RelayBatch?[MovementRelay.PendingLimit];
+
+    public long[] PendingAtMs { get; } = new long[MovementRelay.PendingLimit];
+
+    public int PendingCount { get; set; }
+
+    // True when this player's next relay resets for every viewer: after a control grant, a lost batch or a refused relay.
+    public bool ResetNext { get; set; }
+
+    // True when a batch was lost to a full queue: the gap follows every batch still pending, so the reset waits until they are relayed.
+    public bool LostAfterPending { get; set; }
+
+    // The latest velocity, commanded velocity, state and mode commands relayed for this player, which a create for a new viewer
+    // carries so the unit moves as it does for everyone else.
+    public Server0262Part5? LatestVelocity { get; set; }
+
+    public Server0262Part5? LatestMove { get; set; }
+
+    public Server0262Part5? LatestState { get; set; }
+
+    public Server0262Part5? LatestMode { get; set; }
 
     public void MoveTo(CharacterLocation location)
     {

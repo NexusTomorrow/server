@@ -167,6 +167,18 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   line's id, and the speaker's name, realm and unit on the accepted line, carry theirs.
 - A chat line names its sender for the client's ignore list, and the unit its speech bubble rises
   over.
+- Players in the same world see each other: another player appears, with its name and path, once it
+  comes within 128 units and goes once it is beyond 160, and its movement reaches everyone who sees
+  it. `Maps:AdmitRadius`, `DropRadius`, `VisibleCap` and `SwapsPerCheck` set the two radii, the most
+  players one player sees and how many appear for it per update.
+- `/say` reaches every player within 155 units (`Maps:SayRange`), and the speaker's own chat shows
+  the line.
+- Every account holds the full game until accounts store their own: every character slot, the Chua
+  Warrior and Aurin Engineer, the Expert start, the full bank, costume and marketplace limits, and the
+  top premium tier with its reward properties. The `AccountDefaults` section holds the defaults; the
+  reward properties come from the operator's own extracted client tables.
+- The `character relocate` command moves a character in the world, from the console or in game, for
+  an operator with the `character.relocate` permission.
 
 ### Changed
 
@@ -227,6 +239,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   referrals and join requests, and the character list's reservations keep neutral names while each
   rests on a single reader; the group order change, the group request answer and the character list
   go back below Fields. The world greeting's echoed value is named for what it is, the account id.
+- Character names and chat lines are held to the client's own rules for each kind of text, a name to
+  at most 30 characters, and to the client's word filter, read from the operator's own extracted
+  client tables.
 
 ### Fixed
 

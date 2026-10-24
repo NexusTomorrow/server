@@ -63,6 +63,7 @@ internal sealed record MemberModel(
     ValueModel? Value,
     int CountBits,
     string? CountFrom,
+    int Capacity,
     bool IsCount,
     CollectionKind Collection,
     string? ElementType,

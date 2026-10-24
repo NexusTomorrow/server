@@ -161,6 +161,45 @@ public sealed class DiagnosticTests
     }
 
     [Fact]
+    public void ACapacityOverTheCountsWidthRaisesNtc014()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using System.Collections.Generic;
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            [WireStruct]
+            public partial class Sample
+            {
+                [Array(CountBits = 2, Capacity = 4), UInt(8)] public List<byte> Values { get; set; } = [];
+            }
+            """);
+
+        Diagnostic diagnostic = AssertSingle(run, "NTC014", DiagnosticSeverity.Error, "List<byte> Values");
+        Assert.Contains("holds at most 3", MessageOf(diagnostic));
+    }
+
+    [Fact]
+    public void ACapacityTheCountCanCarryRaisesNothing()
+    {
+        GeneratorRun run = GeneratorHarness.Run("""
+            using System.Collections.Generic;
+            using NexusTomorrow.Network.Codec;
+
+            namespace Tests;
+
+            [WireStruct]
+            public partial class Sample
+            {
+                [Array(CountBits = 2, Capacity = 3), UInt(8)] public List<byte> Values { get; set; } = [];
+            }
+            """);
+
+        AssertClean(run);
+    }
+
+    [Fact]
     public void CountNoArrayNamesRaisesNtc009()
     {
         GeneratorRun run = GeneratorHarness.Run("""

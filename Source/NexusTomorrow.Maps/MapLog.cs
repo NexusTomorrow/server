@@ -40,4 +40,16 @@ internal static partial class MapLog
 
     [LoggerMessage(EventId = 7012, Level = LogLevel.Debug, Message = "Map {World} dropped {Message} for connection {ConnectionId}: {Reason}")]
     public static partial void MessageDropped(ILogger logger, ushort world, string message, long connectionId, string reason);
+
+    [LoggerMessage(EventId = 7013, Level = LogLevel.Warning, Message = "Map {World} could not serialise character {CharacterId}'s create, so no viewer was sent it")]
+    public static partial void ArrivalRefused(ILogger logger, ushort world, ulong characterId, Exception exception);
+
+    [LoggerMessage(EventId = 7014, Level = LogLevel.Error, Message = "Map {World} failed its replication flush")]
+    public static partial void FlushFailed(ILogger logger, ushort world, Exception exception);
+
+    [LoggerMessage(EventId = 7015, Level = LogLevel.Warning, Message = "Map {World} could not relay character {CharacterId}'s movement, so the batch is dropped")]
+    public static partial void RelayRefused(ILogger logger, ushort world, ulong characterId, Exception exception);
+
+    [LoggerMessage(EventId = 7016, Level = LogLevel.Warning, Message = "Map {World} could not send character {CharacterId}'s chat line, so it is dropped")]
+    public static partial void ChatRefused(ILogger logger, ushort world, ulong characterId, Exception exception);
 }

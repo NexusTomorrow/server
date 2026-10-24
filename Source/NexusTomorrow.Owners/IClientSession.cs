@@ -29,6 +29,13 @@ public interface IClientSession
         where T : class, IWireMessage;
 
     /// <summary>
+    /// Queue a message already serialized for many sessions (<see cref="IMessageSerializer"/>). The session takes a reference of its
+    /// own and releases it once the message is written or dropped, so the caller still releases its own. The send gate ran when the
+    /// message was serialized.
+    /// </summary>
+    void Send(SerializedMessage message);
+
+    /// <summary>
     /// End the connection after the messages already queued, logging <paramref name="reason"/>.
     /// </summary>
     void Disconnect(string reason);

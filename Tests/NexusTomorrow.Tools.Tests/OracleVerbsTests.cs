@@ -22,7 +22,7 @@ public sealed class OracleVerbsTests : IAsyncLifetime
     private static readonly AccountCredentials s_alice = new(7, "alice@example.com", [1], [2], SuspendedUntil: null, SuspendedIndefinitely: false);
 
     private readonly AccountOwner _accounts =
-        new(new FakeTimeProvider(), Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind());
+        new(new FakeTimeProvider(), Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind(), FixedEntitlementCaps.Defaults());
     private readonly SessionDouble _session = new();
     private readonly Channel<string> _lines = Channel.CreateUnbounded<string>();
     private readonly OracleConnection _connection;
@@ -435,6 +435,10 @@ public sealed class OracleVerbsTests : IAsyncLifetime
 
         public void Send<T>(T message)
             where T : class, IWireMessage
+        {
+        }
+
+        public void Send(SerializedMessage message)
         {
         }
 

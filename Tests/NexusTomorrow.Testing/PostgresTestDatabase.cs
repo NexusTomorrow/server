@@ -50,6 +50,8 @@ public sealed class PostgresTestDatabase : IAsyncDisposable
         return database;
     }
 
+    // FORCE ends every other backend on the database first, an autovacuum worker among them; that worker carries no role, so the
+    // server's role needs pg_signal_backend to end it (test.yml grants it), or the drop fails whenever autovacuum is at work there.
     public async ValueTask DisposeAsync()
     {
         NpgsqlConnection.ClearAllPools();

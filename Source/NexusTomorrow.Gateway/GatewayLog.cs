@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Logging;
+using NexusTomorrow.Gateway.World;
 
 namespace NexusTomorrow.Gateway;
 
@@ -38,4 +39,7 @@ internal static partial class GatewayLog
 
     [LoggerMessage(EventId = 4011, Level = LogLevel.Debug, Message = "Connection {ConnectionId} sent 0x{Opcode:X4} {MessageType}")]
     public static partial void MessageSent(ILogger logger, long connectionId, ushort opcode, string messageType);
+
+    [LoggerMessage(EventId = 4013, Level = LogLevel.Information, Message = "Connection {ConnectionId} sent a forced-move command: {Arms}; it is logged and not relayed")]
+    public static partial void ForcedMoveArrived(ILogger logger, long connectionId, ForcedMoveArms arms);
 }

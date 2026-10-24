@@ -27,7 +27,7 @@ public sealed class AccountCommandsTests : IAsyncLifetime
 
     public AccountCommandsTests()
     {
-        _accounts = new AccountOwner(_time, Options.Create(new AccountOptions()), _ownerLog, _db);
+        _accounts = new AccountOwner(_time, Options.Create(new AccountOptions()), _ownerLog, _db, FixedEntitlementCaps.Defaults());
         _dispatcher = new CommandDispatcher(AccountCommands.Create(_accounts, _time), _db, _time, _dispatcherLog);
     }
 

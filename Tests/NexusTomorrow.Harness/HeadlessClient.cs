@@ -4,6 +4,7 @@ using System.Net;
 using NexusTomorrow.Network;
 using NexusTomorrow.Network.Auth.Message.Model;
 using NexusTomorrow.Network.Message.Model;
+using NexusTomorrow.Network.World.Message.Model.AccountInventory;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Testing;
 using NexusTomorrow.Transport;
@@ -72,8 +73,12 @@ public sealed class HeadlessClient : IAsyncDisposable
             handoff.SessionKey.CopyTo(key);
             game.Cipher = new PacketCipher(PacketCipher.SessionKey(key));
 
+            // The grant's account block comes first: the server sends it before it reads the list request.
+            AccountEntitlements entitlements = await game.ExpectAsync<AccountEntitlements>();
+            AccountPremiumTier tier = await game.ExpectAsync<AccountPremiumTier>();
+            CreationLevelLimit creationLimit = await game.ExpectAsync<CreationLevelLimit>();
             await game.SendAsync(new CharacterListRequest());
-            return new WorldSession(pipe, game, await game.ExpectAsync<CharacterList>());
+            return new WorldSession(pipe, game, entitlements, tier, creationLimit, await game.ExpectAsync<CharacterList>());
         }
         catch
         {

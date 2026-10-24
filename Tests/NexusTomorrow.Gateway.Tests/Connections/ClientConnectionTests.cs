@@ -12,6 +12,7 @@ using NexusTomorrow.Gateway.Tests.Sts;
 using NexusTomorrow.Network.Auth.Message.Model;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Owners;
 using NexusTomorrow.Testing;
 using NexusTomorrow.Transport;
 
@@ -190,6 +191,114 @@ public sealed class ClientConnectionTests : IAsyncLifetime
                 message.DroppedForLag = (batch * 4) + i;
                 long before = GC.GetAllocatedBytesForCurrentThread();
                 _connection.Send(message);
+                allocated += GC.GetAllocatedBytesForCurrentThread() - before;
+            }
+
+            for (uint i = 0; i < 4; i++)
+                Assert.Equal((batch * 4) + i, (await Client.ExpectAsync<LoginAccepted>()).DroppedForLag);
+        }
+
+        Assert.Equal(0L, allocated);
+    }
+
+    [Fact]
+    public async Task ASharedSendWritesTheSameBytesAsASend()
+    {
+        Start();
+        await Eventually.TrueAsync(() => _connection.Started);
+        var serializer = new GatedSerializer(MessageCatalog.Default);
+
+        _connection.Send(new LoginAccepted { DroppedForLag = 7 });
+        SerializedMessage shared = serializer.Serialize(new LoginAccepted { DroppedForLag = 7 });
+        _connection.Send(shared);
+        shared.Release();
+
+        Received sent = await Client.ReceiveAsync();
+        Received sharedSent = await Client.ReceiveAsync();
+        Assert.Equal(sent.Opcode, sharedSent.Opcode);
+        Assert.Equal(sent.Body, sharedSent.Body);
+        Assert.Equal(7u, ((LoginAccepted)sharedSent.Message!).DroppedForLag);
+    }
+
+    [Fact]
+    public async Task TheBodyGoesBackOnceEveryWriterIsDone()
+    {
+        Start();
+        await Eventually.TrueAsync(() => _connection.Started);
+        var serializer = new GatedSerializer(MessageCatalog.Default);
+        var first = new FakeClientSession();
+        var second = new FakeClientSession();
+
+        SerializedMessage shared = serializer.Serialize(new LoginAccepted { DroppedForLag = 1 });
+        _connection.Send(shared);
+        first.Send(shared);
+        second.Send(shared);
+        shared.Release();
+        await Client.ExpectAsync<LoginAccepted>();
+
+        await Eventually.TrueAsync(() => shared.References == 0);
+        Assert.Throws<InvalidOperationException>(() => shared.Release());
+
+        // Back in its pool exactly once: the next two serializations take it once and a fresh one besides.
+        SerializedMessage reused = serializer.Serialize(new LoginAccepted());
+        SerializedMessage other = serializer.Serialize(new LoginAccepted());
+        Assert.True(ReferenceEquals(reused, shared) ^ ReferenceEquals(other, shared));
+        Assert.False(ReferenceEquals(reused, other));
+        reused.Release();
+        other.Release();
+    }
+
+    [Fact]
+    public async Task ARefusedEnqueueReleasesItsReference()
+    {
+        var log = new RecordingLogger<ClientConnectionTests>();
+        _connection = new RecordingConnection(_time, Small(2), OpcodeTable.Pregame, MessageCatalog.Default, log);
+        var serializer = new GatedSerializer(MessageCatalog.Default);
+
+        // The writer has not started, so two items fill the queue and the shared one is refused.
+        _connection.Send(new LoginAccepted());
+        _connection.Send(new LoginAccepted());
+        SerializedMessage shared = serializer.Serialize(new LoginAccepted());
+        _connection.Send(shared);
+
+        Assert.Equal(1, shared.References);
+        shared.Release();
+        Start();
+        await _run.WaitAsync(s_wait, TestContext.Current.CancellationToken);
+        Assert.Contains(log.Entries, entry => entry.Contains("ended: the outbound queue is full", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task SerializingAndSendingAllocatesNothingOnceWarm()
+    {
+        Start();
+        await Eventually.TrueAsync(() => _connection.Started);
+        var serializer = new GatedSerializer(MessageCatalog.Default);
+        var message = new LoginAccepted();
+
+        // The warm-up grows the queue's ring to the deepest backlog it has held, so the measured rounds find room in it; the serializer's
+        // own pool is stocked from the start.
+        for (uint i = 0; i < 200; i++)
+        {
+            message.DroppedForLag = i;
+            SerializedMessage shared = serializer.Serialize(message);
+            _connection.Send(shared);
+            shared.Release();
+        }
+
+        for (int i = 0; i < 200; i++)
+            await Client.ExpectAsync<LoginAccepted>();
+
+        long allocated = 0;
+        for (uint batch = 0; batch < 25; batch++)
+        {
+            for (uint i = 0; i < 4; i++)
+            {
+                message.DroppedForLag = (batch * 4) + i;
+                long before = GC.GetAllocatedBytesForCurrentThread();
+                SerializedMessage shared = serializer.Serialize(message);
+                _connection.Send(shared);
+                shared.Release();
                 allocated += GC.GetAllocatedBytesForCurrentThread() - before;
             }
 
