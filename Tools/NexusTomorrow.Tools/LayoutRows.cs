@@ -8,8 +8,9 @@ namespace NexusTomorrow.Tools;
 /// <summary>
 /// A message's members as rows in read order, for the <c>layout</c> verb: each row's path, width in bits (empty for a header,
 /// <c>varies</c> for a string or a byte block) and encoding. The members are <see cref="MessageBinder"/>'s, so a row path is the
-/// key the binder takes; a struct opens with a <c>the fields below</c> row, a fixed array has a row per element, an array counted
-/// on the wire is its own row followed by one element's rows under <c>path[]</c>, and a union is its own row, naming its type and
+/// key the binder takes; a struct opens with a <c>the fields below</c> row, a fixed array has a row per element, a counted array is
+/// its own row (<c>counted on the wire</c> for a count written before it, <c>counted by `path`</c> for an earlier [Count] member)
+/// followed by one element's rows under <c>path[]</c>, and a union is its own row, naming its type and
 /// selector, followed by each arm's rows under <c>path{case}</c> in case order (the arms <see cref="MessageBinder.Arms"/> finds);
 /// which arm a message holds depends on the values sent.
 /// </summary>
@@ -62,9 +63,9 @@ internal static class LayoutRows
                 continue;
             }
 
-            if (member.GetCustomAttribute<ArrayAttribute>() is not null)
+            if (member.GetCustomAttribute<ArrayAttribute>() is { } array)
             {
-                rows.Add((path, "", "array, counted on the wire"));
+                rows.Add((path, "", array.CountFrom is { } countFrom ? $"array, counted by `{prefix}{countFrom}`" : "array, counted on the wire"));
                 Type element = memberType.IsArray ? memberType.GetElementType()! : memberType.GetGenericArguments().Single();
                 AppendValue(member, element, path + "[]", rows, open);
                 continue;

@@ -2,7 +2,9 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
 using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.World.Entity.Command;
 using NexusTomorrow.Network.World.Message.Model.Entity;
+using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Spell;
 
 namespace NexusTomorrow.Tools.Tests;
@@ -18,6 +20,31 @@ public sealed class LayoutRowsTests
         Assert.Equal(
             [("Unknown0", "32", "unsigned"), ("Unknown1", "", "array, counted on the wire"), ("Unknown1[]", "32", "float")],
             LayoutRows.Of(typeof(Server0931)));
+    }
+
+    [Fact]
+    public void AnArrayCountedByAnEarlierMemberNamesThatMember()
+    {
+        List<(string Path, string Bits, string Encoding)> rows = LayoutRows.Of(typeof(Server0262Union2Arm03));
+
+        Assert.Equal(
+            [("Unknown0", "10", "unsigned"), ("Unknown1", "", "array, counted by `Unknown0`"), ("Unknown1[]", "32", "unsigned"),
+             ("Unknown2", "", "array, counted by `Unknown0`")],
+            rows[..4]);
+    }
+
+    [Fact]
+    public void AnArrayCountedByAMemberInsideAnArmNamesItByItsFullPath()
+    {
+        List<(string Path, string Bits, string Encoding)> rows = LayoutRows.Of(typeof(UnitMovement));
+
+        Assert.Contains(("Unknown4[].Unknown1{3}.Unknown2", "", "array, counted by `Unknown4[].Unknown1{3}.Unknown0`"), rows);
+    }
+
+    [Fact]
+    public void AUnionCaseAboveTheIntRangeKeepsItsFullValueInItsPath()
+    {
+        Assert.Contains(("Value{4294967295}", "", "the fields below"), LayoutRows.Of(typeof(WideCaseHolder)));
     }
 
     [Fact]
@@ -75,6 +102,27 @@ public sealed class LayoutRowsTests
 
         Assert.True(compared > 100, $"only {compared} fixed server messages were compared");
         Assert.True(problems.Count == 0, string.Join(Environment.NewLine, problems));
+    }
+
+    private interface IWideCase;
+
+    [UnionCase(0u)]
+    private sealed class NarrowArm : IWideCase
+    {
+        [UInt(8)] public byte Value { get; set; }
+    }
+
+    [UnionCase(uint.MaxValue)]
+    private sealed class WideArm : IWideCase
+    {
+        [UInt(8)] public byte Value { get; set; }
+    }
+
+    private sealed class WideCaseHolder
+    {
+        [UInt(32)] public uint Kind { get; set; }
+
+        [Union(nameof(Kind))] public IWideCase Value { get; set; } = new NarrowArm();
     }
 
     // The generator writes padding as fields of at most 64 bits; a row gives its padding as one width.

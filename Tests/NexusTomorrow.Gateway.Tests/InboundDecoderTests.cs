@@ -2,6 +2,7 @@
 using System.Collections.Frozen;
 using System.Numerics;
 using NexusTomorrow.Gateway.Catalog;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Entity.Command;
 using NexusTomorrow.Network.World.Message.Model.Movement;
@@ -99,7 +100,67 @@ public sealed class InboundDecoderTests
     {
         byte[] body = ClientFrames.EnvelopeBody(0x07E0, new CharacterListRequest(), s_cipher);
         body[0]++;
-        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll).Result);
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
+        Assert.Equal((InboundResult.Malformed, "the envelope's length is not its own"), (inbound.Result, inbound.Reason));
+    }
+
+    [Fact]
+    public void ANestedBlobWhoseLengthLiesIsMalformed()
+    {
+        var frame = new ArrayBufferWriter<byte>();
+        FrameWriter.WriteMessage(frame, 0x07E0, new CharacterListRequest());
+        byte[] lying = [.. frame.WrittenSpan];
+        lying[0]++;
+        byte[] body = ClientFrames.EnvelopeBody(ClientFrames.Nested, new RawBody(lying), s_cipher);
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
+        Assert.Equal((InboundResult.Malformed, ClientFrames.Nested, "the nested blob's length is not its own"),
+            (inbound.Result, inbound.Opcode, inbound.Reason));
+    }
+
+    [Theory]
+    [InlineData(ClientFrames.ClientEnvelope)]
+    [InlineData(ClientFrames.Nested)]
+    public void ANestedWrapperHoldingAnotherWrapperIsMalformed(ushort inner)
+    {
+        byte[] body = ClientFrames.NestedEnvelopeBody(inner, new RawBody([0x01]), s_cipher);
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
+        Assert.Equal((InboundResult.Malformed, inner, "a wrapper nested past one level"), (inbound.Result, inbound.Opcode, inbound.Reason));
+    }
+
+    [Fact]
+    public void ATaggedMessageWithAByteLeftAfterItIsMalformed()
+    {
+        var frame = new ArrayBufferWriter<byte>();
+        FrameWriter.WriteMessage(frame, 0x00F2, new WorldReady());
+        byte[] body = ClientFrames.EnvelopeBody(ClientFrames.Tagged, new RawBody([0x03, .. frame.WrittenSpan, 0xFF]), s_cipher);
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
+        Assert.Equal((InboundResult.Malformed, ClientFrames.Tagged, "8 bits left after the tagged message"),
+            (inbound.Result, inbound.Opcode, inbound.Reason));
+    }
+
+    [Fact]
+    public void ATaggedMessageWithoutAnInnerOpcodeIsMalformed()
+    {
+        // The tag, then a payload of one byte: its 32-bit length (5, counting itself) and half an opcode.
+        byte[] body = ClientFrames.EnvelopeBody(ClientFrames.Tagged, new RawBody([0x03, 0x05, 0x00, 0x00, 0x00, 0xF2]), s_cipher);
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
+        Assert.Equal((InboundResult.Malformed, ClientFrames.Tagged, "a tagged message without an inner opcode"),
+            (inbound.Result, inbound.Opcode, inbound.Reason));
+    }
+
+    [Fact]
+    public void AnAdmittedBodyTheDeclarationCannotReadIsMalformedWithTheCodecsReason()
+    {
+        byte[] body = ClientFrames.TaggedEnvelopeBody(0x03, 0x0637, new RawBody(ClientFrames.OverclaimingMovement()), s_cipher);
+        string codec = Assert.Throws<CodecException>(() =>
+        {
+            var reader = new BitReader(ClientFrames.OverclaimingMovement());
+            new ClientMovement().Read(ref reader);
+        }).Message;
+
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
+
+        Assert.Equal((InboundResult.Malformed, (ushort)0x0637, codec), (inbound.Result, inbound.Opcode, inbound.Reason));
     }
 
     [Fact]
@@ -172,7 +233,9 @@ public sealed class InboundDecoderTests
     public void ATaggedMessageHoldingAnotherWrapperIsMalformed()
     {
         byte[] body = ClientFrames.TaggedEnvelopeBody(0x03, ClientFrames.Tagged, new RawBody([0x03]), s_cipher);
-        Assert.Equal(InboundResult.Malformed, Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll).Result);
+        Inbound inbound = Decoder().Decode(ClientFrames.ClientEnvelope, body, s_cipher, s_admitAll);
+        Assert.Equal((InboundResult.Malformed, ClientFrames.Tagged, "a wrapper nested past one level"),
+            (inbound.Result, inbound.Opcode, inbound.Reason));
     }
 
     [Fact]

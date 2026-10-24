@@ -182,7 +182,6 @@ public sealed class MessageDumpTests
         return true;
     }
 
-
     private static IWireStruct Bound(Type type, JsonObject fields)
     {
         var message = (IWireStruct)Activator.CreateInstance(type, nonPublic: true)!;

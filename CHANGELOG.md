@@ -79,7 +79,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   reports, how severe it is and when it fires, generated from the diagnostics themselves.
 - In a Debug build, the developer tools' tap records each message the client sent with its decoded
   fields, read by the server or, for one the server dropped, by the tap, and the layout listing
-  names each union arm's members.
+  names each union arm's members and the member that counts each array.
 - Path messages carry their real names and field meanings: path XP, changing and unlocking paths,
   episodes and mission progress, the explorer's power maps and progress reports, the scientist's
   scanbot, experimentation and creature data, the settler's builds, hubs and infrastructure, and the

@@ -130,7 +130,8 @@ public sealed class InboundDecoder
 #if DEBUG
     /// <summary>
     /// The inner opcode and body of a clear client envelope, any wrapper opened as <see cref="Decode"/> opens it, for the Debug
-    /// tools' tap, which reads a message the table dropped. False for an envelope <see cref="Decode"/> calls malformed.
+    /// tools' tap, which reads a message the table dropped. False for an envelope or wrapper that <see cref="Decode"/> calls
+    /// malformed before it looks up a row; the checks after that (the row's tag, its size limit, the body's read) are not made.
     /// </summary>
     public static bool TryOpenClear(byte[] envelope, out ushort opcode, out byte[] inner)
     {

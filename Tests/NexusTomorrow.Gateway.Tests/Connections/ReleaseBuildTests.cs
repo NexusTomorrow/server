@@ -16,6 +16,7 @@ public sealed class ReleaseBuildTests
         Assert.Null(gateway.GetType("NexusTomorrow.Gateway.Connections.IDebugSession"));
         Assert.Null(gateway.GetType("NexusTomorrow.Gateway.Connections.ISessionTap"));
         Assert.DoesNotContain(typeof(ClientConnection).GetMethods(Every), method => method.Name is "SendUnchecked" or "SendRaw");
+        Assert.DoesNotContain(typeof(Catalog.InboundDecoder).GetMethods(Every), method => method.Name == "TryOpenClear");
     }
 }
 #endif
