@@ -4,7 +4,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Info;
 
 [WireStruct]
-public sealed partial class Server0598Part0
+public sealed partial class PlayerInfoSummary
 {
     [UInt(3)] public byte Unknown0 { get; set; }
     public RealmScopedId Unknown1 { get; set; } = new();

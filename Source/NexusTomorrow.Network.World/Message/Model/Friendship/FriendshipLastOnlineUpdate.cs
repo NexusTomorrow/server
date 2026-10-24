@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 /// Sets when a friendship's character was last online.
 /// </summary>
 /// <remarks>
-/// The client stores the time and then asks for the character's player info (<see cref="Info.Client0597"/>); the answer raises
+/// The client stores the time and then asks for the character's player info (<see cref="Info.PlayerInfoRequest"/>); the answer raises
 /// FriendshipUpdate and FriendshipUpdateOnline. Any answer to that request overwrites the friend's level and last-online time, so
 /// this time must agree with what the server answers there.
 /// </remarks>

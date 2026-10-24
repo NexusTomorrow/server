@@ -4,9 +4,9 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Info;
 
 [WireMessage(GameMessageOpcode.Server0599, Direction.ServerToClient)]
-public sealed partial class Server0599
+public sealed partial class PlayerInfoDetailsResponse
 {
-    public Server0598Part0 Unknown0 { get; set; } = new();
+    public PlayerInfoSummary Unknown0 { get; set; } = new();
     [UInt(1)] public bool Unknown1 { get; set; }
     [UInt(3)] public byte Unknown2 { get; set; }
     [UInt(8)] public byte Unknown3 { get; set; }
