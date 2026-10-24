@@ -2,8 +2,14 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
+/// <summary>
+/// A group's target marks.
+/// </summary>
 [WireStruct]
 public sealed partial class GroupMarks
 {
-    [Array(CountBits = 32)] public GroupMark[] Unknown0 { get; set; } = [];
+    /// <summary>
+    /// The marks, each a marker and the unit it marks.
+    /// </summary>
+    [VerifiedMember, Array(CountBits = 32)] public GroupMark[] Marks { get; set; } = [];
 }
