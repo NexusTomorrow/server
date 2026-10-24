@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using NexusTomorrow.Game.Static.Entity;
 using NexusTomorrow.Gateway.Catalog;
+using NexusTomorrow.Maps.Visibility;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Entity.Command;
@@ -354,7 +355,7 @@ public sealed class WorldEntryTests : IDisposable
     private static uint StatValue(Server0262Part4 stat) => Assert.IsType<Server0262Part4.Server0262Union1Arm00>(stat.Unknown2).Unknown0;
 
     private MapOwner NewMap() =>
-        new(1, MapOwnerTests.Settings(), _persistence, new Random(1), _metrics, NullLogger<MapOwner>.Instance);
+        new(1, MapOwnerTests.Settings(), _persistence, new Random(1), _metrics, new FakeMessageSerializer(), AllowAllVisibility.Instance, NullLogger<MapOwner>.Instance);
 
     private void Tick(MapOwner map)
     {
