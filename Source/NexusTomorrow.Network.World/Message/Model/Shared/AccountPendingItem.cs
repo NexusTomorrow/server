@@ -34,7 +34,7 @@ public sealed partial class AccountPendingItem
 
     /// <summary>
     /// The item's gift or return time: a Windows FILETIME, 100-nanosecond intervals since 1601-01-01 UTC. A group's time runs to the
-    /// earliest among its returnable items, which add-ons see as giftReturnTimeRemaining.
+    /// earliest among its returnable items, and add-ons see the seconds left until it as giftReturnTimeRemaining.
     /// </summary>
     [UInt(64)] public ulong GiftReturnTime { get; set; }
 

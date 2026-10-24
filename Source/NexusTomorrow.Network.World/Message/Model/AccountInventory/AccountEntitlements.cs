@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 /// <summary>
-/// Sets the account's entitlements; the client raises AccountEntitlementUpdate for each.
+/// Sets each listed entitlement; the client raises AccountEntitlementUpdate for each.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0968, Direction.ServerToClient)]
 [Verified(Rung.Fields)]

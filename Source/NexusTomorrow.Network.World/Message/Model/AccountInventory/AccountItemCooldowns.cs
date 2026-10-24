@@ -5,7 +5,7 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
 
 /// <summary>
-/// Sets the account item cooldowns; the client raises AccountInventoryUpdate.
+/// Sets each listed cooldown; the client raises AccountInventoryUpdate.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0969, Direction.ServerToClient)]
 [Verified(Rung.Fields)]
