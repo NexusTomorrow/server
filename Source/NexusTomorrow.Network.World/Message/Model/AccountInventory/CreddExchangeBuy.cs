@@ -1,0 +1,11 @@
+﻿using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.Message;
+
+namespace NexusTomorrow.Network.World.Message.Model.AccountInventory;
+
+[WireMessage(GameMessageOpcode.Client0265, Direction.ClientToServer)]
+public sealed partial class CreddExchangeBuy
+{
+    [UInt(64)] public ulong Unknown0 { get; private set; }
+    [UInt(1)] public bool Unknown1 { get; private set; }
+}
