@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Message.Model.Hazard;
 
 [WireStruct]
-public sealed partial class Message010BPart0
+public sealed partial class HazardMaxModifier
 {
     [Float32] public float Unknown0 { get; set; }
     [Float32] public float Unknown1 { get; set; }

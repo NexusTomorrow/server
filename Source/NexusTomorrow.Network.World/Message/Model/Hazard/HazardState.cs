@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Message.Model.Hazard;
 
 [WireStruct]
-public sealed partial class Message010APart0
+public sealed partial class HazardState
 {
     [UInt(14)] public ushort Unknown0 { get; set; }
     [UInt(3)] public byte Unknown1 { get; set; }
