@@ -21,8 +21,5 @@ public sealed partial class CinematicInterfaceMode
     /// </summary>
     [UInt(1)] public bool Entered { get; set; }
 
-    /// <summary>
-    /// Changes the mode gradually instead of at once.
-    /// </summary>
-    [UInt(1)] public bool Animated { get; set; }
+    [UInt(1)] public bool Unknown2 { get; set; }
 }

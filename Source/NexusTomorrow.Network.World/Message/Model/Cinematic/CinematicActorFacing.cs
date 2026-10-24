@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 /// <summary>
-/// Turns a cinematic actor at the command's time.
+/// Has the client build an entity command for a cinematic actor at the command's time.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0230, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]
@@ -21,8 +21,5 @@ public sealed partial class CinematicActorFacing
     /// </summary>
     [UInt(32)] public uint ActorUnitId { get; set; }
 
-    /// <summary>
-    /// The facing the actor turns to, in radians.
-    /// </summary>
-    [Float32] public float Facing { get; set; }
+    [Float32] public float Unknown2 { get; set; }
 }

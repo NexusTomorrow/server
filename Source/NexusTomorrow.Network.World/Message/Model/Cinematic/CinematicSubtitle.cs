@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 /// Shows or clears the cinematic's subtitle at the command's time.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server022A, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class CinematicSubtitle
 {
     /// <summary>
@@ -21,8 +21,5 @@ public sealed partial class CinematicSubtitle
     /// </summary>
     [UInt(21)] public uint TextId { get; set; }
 
-    /// <summary>
-    /// Shows the subtitle even with its display option off.
-    /// </summary>
-    [UInt(1)] public bool AlwaysShown { get; set; }
+    [UInt(1)] public bool Unknown2 { get; set; }
 }

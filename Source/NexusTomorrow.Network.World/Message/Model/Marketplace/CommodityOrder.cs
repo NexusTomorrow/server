@@ -36,16 +36,8 @@ public sealed partial class CommodityOrder
     /// </summary>
     [UInt(1)] public bool IsBuy { get; set; }
 
-    /// <summary>
-    /// The value the order's IsForceImmediate getter returns.
-    /// </summary>
-    [UInt(1)] public bool IsForceImmediate { get; set; }
-
-    /// <summary>
-    /// The order's list time, as its GetListTime getter returns it: a Windows FILETIME, 100-nanosecond intervals since 1601-01-01 UTC,
-    /// which the client keeps as is.
-    /// </summary>
-    [UInt(64)] public ulong ListTime { get; set; }
+    [UInt(1)] public bool Unknown6 { get; set; }
+    [UInt(64)] public ulong Unknown7 { get; set; }
 
     /// <summary>
     /// When the order expires: a Windows FILETIME, 100-nanosecond intervals since 1601-01-01 UTC, which the client keeps as is and hands

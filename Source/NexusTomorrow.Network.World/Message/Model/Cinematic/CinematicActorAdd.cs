@@ -17,15 +17,8 @@ public sealed partial class CinematicActorAdd
     /// </summary>
     [UInt(32)] public uint TimeMs { get; set; }
 
-    /// <summary>
-    /// The actor's options: bit 0 makes the actor a copy of the player.
-    /// </summary>
-    [UInt(16)] public ushort Options { get; set; }
-
-    /// <summary>
-    /// An offset to the actor's height, which the client negates and adds to the model's height when it places the actor.
-    /// </summary>
-    [SInt(16)] public short HeightOffset { get; set; }
+    [UInt(16)] public ushort Unknown1 { get; set; }
+    [SInt(16)] public short Unknown2 { get; set; }
 
     /// <summary>
     /// The actor's unit id, by which the later actor commands name it.
@@ -33,20 +26,13 @@ public sealed partial class CinematicActorAdd
     [UInt(32)] public uint ActorUnitId { get; set; }
 
     /// <summary>
-    /// The actor's creature, a Creature2 id, which the client does not use when <see cref="Options"/> makes the actor a copy of the player.
+    /// The actor's creature, a Creature2 id, while bit 0 of <see cref="Unknown1"/> is clear. With that bit set the client makes the actor
+    /// a copy of the player and does not use this value.
     /// </summary>
     [UInt(32)] public uint CreatureId { get; set; }
 
-    /// <summary>
-    /// The actor's mode, the one <see cref="CinematicActorMode"/> changes.
-    /// </summary>
-    [UInt(32)] public uint Mode { get; set; }
-
-    /// <summary>
-    /// Where the client places the actor.
-    /// </summary>
-    public Client0096Part0 Position { get; set; } = new();
-
+    [UInt(32)] public uint Unknown5 { get; set; }
+    public Client0096Part0 Unknown6 { get; set; } = new();
     [UInt(64)] public ulong Unknown7 { get; set; }
     [UInt(32)] public uint Unknown8 { get; set; }
 }

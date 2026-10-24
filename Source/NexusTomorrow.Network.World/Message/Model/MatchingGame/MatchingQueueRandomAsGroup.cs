@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 /// Joins the random matching queue of a match type as a group.
 /// </summary>
 [WireMessage(GameMessageOpcode.Client05F9, Direction.ClientToServer)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class MatchingQueueRandomAsGroup
 {
     /// <summary>

@@ -27,10 +27,7 @@ public sealed partial class CinematicCameraTransition
     /// </summary>
     [UInt(16)] public ushort DurationMs { get; set; }
 
-    /// <summary>
-    /// How long a fade holds after its fade-out, in milliseconds.
-    /// </summary>
-    [UInt(16)] public ushort HoldMs { get; set; }
+    [UInt(16)] public ushort Unknown3 { get; set; }
 
     /// <summary>
     /// How long a fade takes to fade back in, in milliseconds.
