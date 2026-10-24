@@ -9,7 +9,8 @@ namespace NexusTomorrow.Network.World.Message.Model.Info;
 /// Answers <see cref="PlayerInfoRequest"/> with a player's name and faction, and their path, class, level and last-online time.
 /// </summary>
 /// <remarks>
-/// The client takes it as a <see cref="PlayerInfoResponse"/> first, then hands the details to every request waiting on the player.
+/// The client takes it as a <see cref="PlayerInfoResponse"/> first, which answers every name lookup for the player, then hands the
+/// details to every detail request waiting on the player.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0599, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]

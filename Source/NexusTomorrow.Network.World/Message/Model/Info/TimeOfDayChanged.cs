@@ -24,7 +24,7 @@ public sealed partial class TimeOfDayChanged
     [UInt(32)] public uint Unknown1 { get; set; }
 
     /// <summary>
-    /// The length of a day in seconds. The client advances the time of day at 86400 divided by it, so it is never 0.
+    /// The length of a day in seconds. The client advances the time of day at a rate of 86400 divided by it, so it is never 0.
     /// </summary>
     [UInt(32)] public uint DayLengthSeconds { get; set; }
 }
