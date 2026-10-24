@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Instance;
 
 [WireMessage(GameMessageOpcode.Server0164, Direction.ServerToClient)]
-public sealed partial class Server0164
+public sealed partial class InstanceGameModeDialogShow
 {
     [UInt(32)] public uint Unknown0 { get; set; }
     [UInt(2)] public byte Unknown1 { get; set; }
