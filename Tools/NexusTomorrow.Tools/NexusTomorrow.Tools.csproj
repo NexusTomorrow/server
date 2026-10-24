@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <!-- The server references this project in Debug builds only, and it reaches the Gateway's Debug-only session surface. -->
+    <ProjectReference Include="..\..\Source\NexusTomorrow.Commands\NexusTomorrow.Commands.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Gateway\NexusTomorrow.Gateway.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Owners\NexusTomorrow.Owners.csproj" />
     <ProjectReference Include="..\..\Source\NexusTomorrow.Network\NexusTomorrow.Network.csproj" />
