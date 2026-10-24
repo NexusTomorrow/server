@@ -2,6 +2,7 @@
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Entity.Command;
+using NexusTomorrow.Network.World.Message.Model.Chat;
 using NexusTomorrow.Network.World.Message.Model.Entity;
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.PlayerPath;
@@ -17,6 +18,12 @@ public sealed class WorldSession : IAsyncDisposable
 {
     // The tag the client sends every in-world message under.
     public const byte WorldTag = 0x03;
+
+    // The tag the client sends its realm requests under, chat among them.
+    public const byte RealmTag = 0x0B;
+
+    // The client's built-in Say channel.
+    private const ushort SayChannelType = 4;
 
     private const byte TimeCommand = 0;
     private const byte PositionCommand = 2;
@@ -94,6 +101,14 @@ public sealed class WorldSession : IAsyncDisposable
         movement.Commands.Add(new Server0262Part5 { Unknown0 = PositionCommand, Unknown1 = new SetPositionCommand { Position = position, Blend = true } });
         movement.Commands.Add(new Server0262Part5 { Unknown0 = FacingCommand, Unknown1 = new SetRotationCommand { Rotation = new Vector3(yaw, 0, 0), Blend = true } });
         return Connection.SendTaggedAsync(WorldTag, movement);
+    }
+
+    // One line on the Say channel, as the chat input sends it, under the client's id for the line.
+    public Task SayAsync(string text, ushort chatId)
+    {
+        ChatSend say = ClientMessage.With(ClientMessage.With(new ChatSend(), nameof(ChatSend.Text), text), nameof(ChatSend.ChatId), chatId);
+        say.Channel.Type = SayChannelType;
+        return Connection.SendTaggedAsync(RealmTag, say);
     }
 
     // As the client does at the Escape menu's Log Out: ask, take the countdown, confirm, and take the logout to character select.

@@ -4,6 +4,7 @@ using NexusTomorrow.Harness;
 using NexusTomorrow.Maps;
 using NexusTomorrow.Network.World.Entity.Command;
 using NexusTomorrow.Network.World.Entity.Model;
+using NexusTomorrow.Network.World.Message.Model.Chat;
 using NexusTomorrow.Network.World.Message.Model.Entity;
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
@@ -267,6 +268,24 @@ public sealed class WorldScenarios
         Assert.Equal(arms, moved.Commands.Select(command => command.Unknown0));
         Assert.Equal(to, Assert.IsType<SetPositionCommand>(moved.Commands[1].Unknown1).Position);
         Assert.Equal(new Vector3(0.5f, 0, 0), Assert.IsType<SetRotationCommand>(moved.Commands[2].Unknown1).Rotation);
+    }
+
+    [Fact]
+    public async Task ASayLineReachesThePlayerInRangeAndIsAcceptedForTheSpeaker()
+    {
+        await using Scenario scenario = await Scenario.StartAsync();
+        await using Walkers walkers = await Walkers.EnterAsync(scenario);
+
+        await walkers.First.SayAsync("hello", 1);
+
+        ChatSendAccepted accepted = await walkers.First.ExpectAsync<ChatSendAccepted>();
+        Assert.Equal((ushort)1, accepted.ChatId);
+        Assert.Equal(CharacterName, accepted.SenderName);
+        ChatMessageReceived heard = await walkers.Second.ExpectAsync<ChatMessageReceived>();
+        Assert.Equal((ushort)4, heard.Channel.Type);
+        Assert.Equal(CharacterName, heard.SenderName);
+        Assert.Equal("hello", heard.Text);
+        Assert.Equal((ulong)walkers.FirstUnit, heard.UnitId);
     }
 
     [Fact]
