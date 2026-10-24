@@ -25,10 +25,7 @@ public sealed partial class FriendshipAccountCharacter
     /// </summary>
     [UInt(14)] public ushort ClassId { get; set; }
 
-    /// <summary>
-    /// The character's race id, which add-ons read as nRaceId.
-    /// </summary>
-    [UInt(14)] public ushort RaceId { get; set; }
+    [UInt(14)] public ushort Unknown3 { get; set; }
 
     /// <summary>
     /// The character's path id, which add-ons read as nPathId.

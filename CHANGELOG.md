@@ -138,6 +138,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   the developer tools' settings, which the page leaves out.
 - Comments restated in our own words.
 - The README's steps run the server as a Release build.
+- Friendship's last-online values are named in days, which lifts two messages to Fields; the account
+  friend update returns to Purpose while its characters' race field waits on a second reading.
 
 ### Fixed
 
