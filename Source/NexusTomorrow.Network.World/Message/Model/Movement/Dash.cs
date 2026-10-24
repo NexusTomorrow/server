@@ -21,5 +21,5 @@ public sealed partial class Dash
     /// <summary>
     /// The direction of the dash.
     /// </summary>
-    [UInt(3)] public DashDirection Direction { get; set; }
+    [VerifiedMember, UInt(3)] public DashDirection Direction { get; set; }
 }

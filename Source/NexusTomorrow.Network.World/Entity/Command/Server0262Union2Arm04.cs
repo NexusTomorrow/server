@@ -18,7 +18,10 @@ public sealed partial class Server0262Union2Arm04 : IServer0262Union2
     /// </summary>
     [VerifiedMember, PackedFloat] public float Speed { get; set; }
 
-    [UInt(2)] public byte Unknown2 { get; set; }
+    /// <summary>
+    /// How the unit moves between the path's points. With 0 it moves evenly along the path. A value above 1 fails the command.
+    /// </summary>
+    [VerifiedMember, UInt(2)] public byte Interpolation { get; set; }
 
     /// <summary>
     /// How the unit plays the path: 0 once, stopping at its end; 1 back and forth; 2 in a loop; 3 once backward, ending at its start.

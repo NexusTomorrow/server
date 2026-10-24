@@ -15,7 +15,7 @@ public sealed partial class SupportStuck
     /// <summary>
     /// The recall the player chose.
     /// </summary>
-    [UInt(3)] public SupportStuckAction Action { get; private set; }
+    [VerifiedMember, UInt(3)] public SupportStuckAction Action { get; private set; }
 
     /// <summary>
     /// The recall's cast, by the client's own id for it.

@@ -24,7 +24,12 @@ public sealed partial class Server0262Union2Arm0F : IServer0262Union2
     [VerifiedMember, Array(CountFrom = nameof(Count)), Float32] public List<Vector3> Rotations { get; set; } = [];
 
     [UInt(2)] public byte Unknown3 { get; set; }
-    [UInt(32)] public uint Unknown4 { get; set; }
+
+    /// <summary>
+    /// Time already elapsed on the command's keys, in milliseconds: the client adds it to the time since the command's start, so it sets
+    /// how far along its keys the unit's facing is.
+    /// </summary>
+    [VerifiedMember, UInt(32)] public uint Offset { get; set; }
 
     /// <summary>
     /// Whether the segment blends in: when set, the client blends away the jump to the segment; when clear, the unit snaps to it.
