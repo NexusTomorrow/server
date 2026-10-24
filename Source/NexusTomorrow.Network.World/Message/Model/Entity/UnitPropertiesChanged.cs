@@ -12,7 +12,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Entity;
 /// its property hash. An id above 196 ends the message there: the client sets no later entry and skips the recompute.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server093A, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class UnitPropertiesChanged
 {
     /// <summary>

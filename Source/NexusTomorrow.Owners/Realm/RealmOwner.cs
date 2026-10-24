@@ -164,13 +164,13 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
                 {
                     Free(left.Session, returnedId);
                     if (left.Loading)
-                        left.Session.Send(new CharacterSelectFailed { Reason = SelectReasons.General });
+                        left.Session.Send(new CharacterSelectFailed { Unknown0 = SelectReasons.General });
                 }
 
                 if (_parked.Remove(returnedId, out SelectCharacter? waiting))
                 {
                     Free(waiting.Session, returnedId);
-                    waiting.Session.Send(new CharacterSelectFailed { Reason = SelectReasons.General });
+                    waiting.Session.Send(new CharacterSelectFailed { Unknown0 = SelectReasons.General });
                 }
 
                 break;
@@ -366,7 +366,7 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
         };
         if (refusal is byte reason)
         {
-            select.Session.Send(new CharacterSelectFailed { Reason = reason });
+            select.Session.Send(new CharacterSelectFailed { Unknown0 = reason });
             return;
         }
 
@@ -384,7 +384,7 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
         if (_parked.Remove(select.CharacterId, out SelectCharacter? older))
         {
             Free(older.Session, select.CharacterId);
-            older.Session.Send(new CharacterSelectFailed { Reason = SelectReasons.General });
+            older.Session.Send(new CharacterSelectFailed { Unknown0 = SelectReasons.General });
         }
 
         _parked[select.CharacterId] = select;
@@ -472,7 +472,7 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
         _presences.Remove(characterId);
         Free(presence.Session, characterId);
         if (answerGeneral)
-            presence.Session.Send(new CharacterSelectFailed { Reason = SelectReasons.General });
+            presence.Session.Send(new CharacterSelectFailed { Unknown0 = SelectReasons.General });
 
         RunParked(characterId);
     }
@@ -531,14 +531,14 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
                 GenderId = summary.Sex,
                 RaceId = summary.Race,
                 ClassId = summary.Class,
-                FactionId = summary.FactionId,
-                Level = summary.Level,
+                Unknown5 = summary.FactionId,
+                Unknown6 = summary.Level,
                 WorldId = summary.WorldId,
                 ZoneId = summary.ZoneId,
                 Position = summary.Position,
-                PathId = summary.Path,
-                Disabled = summary.Disabled,
-                RequiresRename = summary.RequiresRename,
+                Unknown15 = summary.Path,
+                Unknown16 = summary.Disabled,
+                Unknown17 = summary.RequiresRename,
             };
             character.Bones.AddRange(summary.Bones);
             list.Characters.Add(character);

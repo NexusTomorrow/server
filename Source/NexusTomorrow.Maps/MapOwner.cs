@@ -47,8 +47,8 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     // refuses it set.
     private readonly LogoutCountdown _logoutCountdown = new();
 
-    // With a reason other than 6, 7, 8, 12, 15, 16, 19 and 20, ToCharacterSelect decides (WorldLogout.Reason); 0 is not one of them.
-    private readonly WorldLogout _logoutToCharacterSelect = new() { ToCharacterSelect = true, Reason = 0 };
+    // With a reason other than 6, 7, 8, 12, 15, 16, 19 and 20, ToCharacterSelect decides (WorldLogout.Unknown1); 0 is not one of them.
+    private readonly WorldLogout _logoutToCharacterSelect = new() { ToCharacterSelect = true, Unknown1 = 0 };
 
     // Written by any thread: the queue count by posters and the tick, the stop request by StopAsync.
     private int _queued;

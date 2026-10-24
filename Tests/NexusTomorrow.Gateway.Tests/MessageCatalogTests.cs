@@ -107,6 +107,55 @@ public sealed class MessageCatalogTests
         Assert.True(MessageCatalog.Default.MaySend(new Network.World.Message.Model.WorldEntry.PlayerState(), out _));
     }
 
+    [Theory]
+    [InlineData((byte)1)]
+    [InlineData((byte)2)]
+    [InlineData((byte)3)]
+    public void ASelectFailureMaySendEachReasonTheServerGives(byte reason)
+    {
+        bool allowed = MessageCatalog.Default.MaySend(new Network.World.Message.Model.Pregame.CharacterSelectFailed { Unknown0 = reason }, out string? refusal);
+
+        Assert.True(allowed, refusal);
+    }
+
+    [Fact]
+    public void ALogoutToCharacterSelectMaySend()
+    {
+        bool allowed = MessageCatalog.Default.MaySend(new Network.World.Message.Model.Pregame.WorldLogout { ToCharacterSelect = true }, out string? refusal);
+
+        Assert.True(allowed, refusal);
+    }
+
+    [Fact]
+    public void ACharacterListWithTheShownMembersSetMaySend()
+    {
+        var list = new Network.World.Message.Model.Pregame.CharacterList();
+        list.Characters.Add(new Network.World.Message.Model.Pregame.CharacterList.Character
+        {
+            Name = "Rebaser Head",
+            Unknown5 = 166,
+            Unknown6 = 7,
+            Unknown15 = 2,
+            Unknown16 = true,
+            Unknown17 = true,
+        });
+
+        bool allowed = MessageCatalog.Default.MaySend(list, out string? refusal);
+
+        Assert.True(allowed, refusal);
+    }
+
+    [Fact]
+    public void AUnitCreateWithPropertiesMaySend()
+    {
+        var create = new Network.World.Message.Model.Entity.UnitCreate();
+        create.Properties.Add(new Network.World.Message.Model.Shared.UnitPropertyValue { Id = 42, Unknown1 = 1.25f, Value = 1.5f });
+
+        bool allowed = MessageCatalog.Default.MaySend(create, out string? refusal);
+
+        Assert.True(allowed, refusal);
+    }
+
     [Fact]
     public void ASendTheGateAllowsAllocatesNothing()
     {

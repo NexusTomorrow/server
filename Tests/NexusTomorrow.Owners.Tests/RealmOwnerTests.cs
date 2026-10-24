@@ -195,7 +195,7 @@ public sealed class RealmOwnerTests : IAsyncLifetime
         await ListAsync(Summary(5, "Rebaser Head") with { RequiresRename = requiresRename, Disabled = disabled });
         _owner.Post(new SelectCharacter(Account, _session, 5));
         await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterSelectFailed>().Any());
-        Assert.Equal(reason, _session.Single<CharacterSelectFailed>().Reason);
+        Assert.Equal(reason, _session.Single<CharacterSelectFailed>().Unknown0);
     }
 
     [Fact]
@@ -226,7 +226,7 @@ public sealed class RealmOwnerTests : IAsyncLifetime
         await ListAsync(InWorld(5, "Rebaser Head", 9));
         await SelectAndLoadAsync(_session, 5, Record(5, 9));
         await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterSelectFailed>().Any());
-        Assert.Equal(SelectReasons.General, _session.Single<CharacterSelectFailed>().Reason);
+        Assert.Equal(SelectReasons.General, _session.Single<CharacterSelectFailed>().Unknown0);
 
         _owner.Post(new SelectCharacter(Account, _session, 5));
         await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
@@ -240,7 +240,7 @@ public sealed class RealmOwnerTests : IAsyncLifetime
         await ListAsync(InWorld(5, "Rebaser Head", 1));
         await SelectAndLoadAsync(_session, 5, Record(5, 1));
         await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterSelectFailed>().Any());
-        Assert.Equal(SelectReasons.General, _session.Single<CharacterSelectFailed>().Reason);
+        Assert.Equal(SelectReasons.General, _session.Single<CharacterSelectFailed>().Unknown0);
         Assert.Empty(map.Posted);
 
         _owner.Post(new SelectCharacter(Account, _session, 5));
@@ -254,7 +254,7 @@ public sealed class RealmOwnerTests : IAsyncLifetime
         await ListAsync(InWorld(5, "Rebaser Head", 1));
         await SelectAndLoadAsync(_session, 5, null);
         await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterSelectFailed>().Any());
-        Assert.Equal(SelectReasons.General, _session.Single<CharacterSelectFailed>().Reason);
+        Assert.Equal(SelectReasons.General, _session.Single<CharacterSelectFailed>().Unknown0);
     }
 
     [Fact]
@@ -395,7 +395,7 @@ public sealed class RealmOwnerTests : IAsyncLifetime
         await ListAsync(InWorld(5, "Rebaser Head", 1));
         await SelectAndLoadAsync(_session, 5, Record(5, 1));
         await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterSelectFailed>().Any());
-        Assert.Equal(SelectReasons.General, _session.Single<CharacterSelectFailed>().Reason);
+        Assert.Equal(SelectReasons.General, _session.Single<CharacterSelectFailed>().Unknown0);
 
         map.Throwing = false;
         _owner.Post(new SelectCharacter(Account, _session, 5));
@@ -432,7 +432,7 @@ public sealed class RealmOwnerTests : IAsyncLifetime
         await ListAsync(newer, Account, InWorld(5, "Rebaser Head", 1));
         _owner.Post(new SelectCharacter(Account, newer, 5));
         await Eventually.TrueAsync(() => older.Sent.OfType<CharacterSelectFailed>().Any());
-        Assert.Equal(SelectReasons.General, older.Single<CharacterSelectFailed>().Reason);
+        Assert.Equal(SelectReasons.General, older.Single<CharacterSelectFailed>().Unknown0);
 
         _owner.Post(new CharacterReturned(Account, 5, new CharacterLocation(1, 0, new Vector3(1, 2, 3), 0)));
         await Eventually.TrueAsync(() => _db.Queued.OfType<LoadCharacterWork>().Any());
@@ -635,7 +635,7 @@ public sealed class RealmOwnerTests : IAsyncLifetime
         await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterList>().Count() == 2);
         CharacterList.Character kept = Assert.Single(_session.Sent.OfType<CharacterList>().Last().Characters);
         Assert.Equal("Rebaser Head", kept.Name);
-        Assert.True(kept.RequiresRename);
+        Assert.True(kept.Unknown17);
     }
 
     [Fact]

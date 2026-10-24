@@ -50,8 +50,8 @@ public sealed class PregameScenarios
         CharacterList.Character character = Assert.Single(list.Characters);
         Assert.Equal("Rebaser Head", character.Name);
         Assert.Equal(created.CharacterId, character.CharacterId);
-        Assert.Equal(2, character.PathId);
-        Assert.Equal(166u, character.FactionId);
+        Assert.Equal(2, character.Unknown15);
+        Assert.Equal(166u, character.Unknown5);
     }
 
     [Fact]
