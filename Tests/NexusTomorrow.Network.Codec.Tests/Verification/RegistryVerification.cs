@@ -117,7 +117,6 @@ internal static class RegistryVerification
         "0x0175",
         "0x0176",
         "0x0178",
-        "0x0179",
         "0x017A",
         "0x017B",
         "0x017C",

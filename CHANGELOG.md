@@ -137,6 +137,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   counts, effects and the combat values an effect carries.
 - Support messages carry their real names and field meanings: bug reports, player reports, support
   tickets, suggestions, customer surveys and their responses, and the stuck window's recall actions.
+- Hazard messages carry their real names and field meanings: each hazard's state and meter, the
+  maximum modifiers, and hazard actions. Showing a tutorial has its own Tutorial area and reaches
+  Fields.
 
 ### Changed
 
