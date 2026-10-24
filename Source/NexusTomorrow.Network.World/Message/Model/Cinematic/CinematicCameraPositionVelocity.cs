@@ -6,7 +6,7 @@ using NexusTomorrow.Network.World.Entity;
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 /// <summary>
-/// Moves the cinematic camera from the command's time.
+/// Drives the cinematic camera from the command's time.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0214, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]

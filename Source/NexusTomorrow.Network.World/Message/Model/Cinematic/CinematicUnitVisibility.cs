@@ -17,14 +17,14 @@ public sealed partial class CinematicUnitVisibility
     [UInt(32)] public uint TimeMs { get; set; }
 
     /// <summary>
-    /// The unit, by unit id; 0 for every unit.
+    /// The unit, by unit id; while <see cref="Unknown3"/> is clear, 0 names every unit.
     /// </summary>
     [UInt(32)] public uint UnitId { get; set; }
 
     /// <summary>
-    /// Whether the units it names are shown during the cinematic. With <see cref="UnitId"/> 0, set shows them, and clear hides every unit
-    /// not kept visible. With a unit, set keeps that unit visible and clear stops keeping it; for a cinematic actor, it shows or hides the
-    /// actor.
+    /// Whether the units it names are shown during the cinematic. With <see cref="UnitId"/> 0 and <see cref="Unknown3"/> clear, set shows
+    /// every unit, and clear hides every unit not kept visible. With a unit, set keeps that unit visible and clear stops keeping it; for a
+    /// cinematic actor, it shows or hides the actor.
     /// </summary>
     [UInt(1)] public bool Visible { get; set; }
 

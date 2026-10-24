@@ -2,8 +2,8 @@
 
 /// <summary>
 /// Every declared message below <see cref="Message.Rung.Fields"/> that is not dormant, by opcode. The registry verification test fails on an
-/// entry that has reached fields or is marked <see cref="Message.DormantAttribute"/>, and on a message below fields, not dormant, that the list
-/// lacks.
+/// entry that has reached fields, is marked <see cref="Message.DormantAttribute"/> or names no declared message, and on a message below fields,
+/// not dormant, that the list lacks.
 /// </summary>
 internal static class RegistryVerification
 {

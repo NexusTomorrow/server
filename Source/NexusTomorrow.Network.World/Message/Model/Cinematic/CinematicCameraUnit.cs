@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 /// <summary>
-/// Puts the cinematic camera on a unit, from the command's time.
+/// Drives the cinematic camera with a unit, from the command's time.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0217, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]

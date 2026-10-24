@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 
 /// <summary>
-/// Moves the cinematic camera along a spline, from the command's time.
+/// Drives the cinematic camera along a spline, from the command's time.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0215, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]

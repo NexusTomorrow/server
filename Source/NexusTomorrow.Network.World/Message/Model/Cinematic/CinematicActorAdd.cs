@@ -26,7 +26,8 @@ public sealed partial class CinematicActorAdd
     [UInt(32)] public uint ActorUnitId { get; set; }
 
     /// <summary>
-    /// The actor's creature, a Creature2 id.
+    /// The actor's creature, a Creature2 id, while bit 0 of <see cref="Unknown1"/> is clear. With that bit set the client makes the actor
+    /// a copy of the player and does not use this value.
     /// </summary>
     [UInt(32)] public uint CreatureId { get; set; }
 

@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 
 /// <summary>
-/// Has the client print a time in the matching text, which it does only for two values of the first field.
+/// Has the client print a time in the matching text, which it does only for two values of <see cref="Unknown0"/>.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0616, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]

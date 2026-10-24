@@ -5,7 +5,8 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 
 /// <summary>
-/// Starts a vote to kick a player from the match; the client keeps the target and raises MatchVoteKickBegin with it.
+/// Starts a vote to kick a player from the match; unless <see cref="Unknown0"/> is the player's own realm-scoped id, the client keeps the
+/// target and raises MatchVoteKickBegin with it.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0614, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]
