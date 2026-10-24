@@ -126,6 +126,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   player's state.
 - A whisper names its target's realm: what the player types after the target's name and an at sign,
   a hyphen or a full stop.
+- Info messages carry their real names and field meanings: player info requests and their answers,
+  realm names, the time of day, gameplay systems switched off, healthy gaming updates and the
+  generic error notice.
 
 ### Changed
 
