@@ -6,10 +6,13 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Entity;
 
 /// <summary>
-/// Changes a unit's look: its race, gender, creature and display.
+/// Changes a unit's look: its race, gender, creature, display, outfit and the items it shows.
 /// </summary>
+/// <remarks>
+/// When the unit is the player, the client also raises AppearanceChanged.
+/// </remarks>
 [WireMessage(GameMessageOpcode.Server0905, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class UnitVisualsChanged
 {
     /// <summary>
@@ -37,14 +40,21 @@ public sealed partial class UnitVisualsChanged
     /// </summary>
     [UInt(17)] public uint DisplayInfoId { get; set; }
 
-    [UInt(15)] public ushort Unknown5 { get; set; }
+    /// <summary>
+    /// The unit's outfit, as an id in the client's Creature2OutfitInfo table, or 0 for none. The client ignores an id the table lacks.
+    /// </summary>
+    [UInt(15)] public ushort OutfitInfoId { get; set; }
 
     /// <summary>
     /// The client gives this value no meaning.
     /// </summary>
     [Float32] public float Unknown6 { get; set; }
 
-    [UInt(1)] public bool Unknown7 { get; set; }
+    /// <summary>
+    /// Whether this look is laid over the unit's own. Set, the unit keeps its own race and sex, its own bone values stop applying, and a
+    /// cinematic copy of the unit carries the look. Clear, the race and sex also become the unit's own.
+    /// </summary>
+    [UInt(1)] public bool IsTemporaryAppearance { get; set; }
 
     /// <summary>
     /// The items the unit shows, each giving one slot of its model its look and colour as <see cref="UnitItemVisualsChanged.Items"/>

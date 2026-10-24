@@ -95,10 +95,10 @@ public sealed class MessageBuildTests
     [Fact]
     public void ACountedArrayOfFloatsBinds()
     {
-        (IWireStruct? message, _, string? refusal) = Build<UnitBonesChanged>("""{"Unknown0": 7, "Unknown1": [1.5, -2.25]}""");
+        (IWireStruct? message, _, string? refusal) = Build<UnitBonesChanged>("""{"UnitId": 7, "BoneValues": [1.5, -2.25]}""");
 
         Assert.Null(refusal);
-        Assert.Equal([1.5f, -2.25f], Assert.IsType<UnitBonesChanged>(message).Unknown1);
+        Assert.Equal([1.5f, -2.25f], Assert.IsType<UnitBonesChanged>(message).BoneValues);
     }
 
     [Fact]

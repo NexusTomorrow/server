@@ -20,7 +20,7 @@ public sealed class MessageDumpTests
     {
         { typeof(Kicked), """{"Unknown0": 7}""" },
         { typeof(GearScoreChanged), """{"GearScore": 412.5}""" },
-        { typeof(UnitBonesChanged), """{"Unknown0": 7, "Unknown1": [1.5, -2.25]}""" },
+        { typeof(UnitBonesChanged), """{"UnitId": 7, "BoneValues": [1.5, -2.25]}""" },
         { typeof(Server0252), """{"Unknown0": [1, 2, 3]}""" },
         { typeof(Server0775), """{"Unknown0": "0A0B0C"}""" },
         { typeof(CombatLog), """{"Type": 0, "Payload": {"$case": 0, "Amount": 9, "Action": {"CasterId": 1, "TargetId": 2, "SpellId": 3, "CombatResult": 4}}}""" },
