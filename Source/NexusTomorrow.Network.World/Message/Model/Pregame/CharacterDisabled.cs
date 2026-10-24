@@ -7,8 +7,8 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// Marks one listed character disabled or enabled on character select.
 /// </summary>
 /// <remarks>
-/// The character-select connection takes it in any state, and ignores a character the list does not hold. In the world the
-/// client receives it and ignores it.
+/// Taken on character select, which ignores a character the list does not hold. In the world the client receives it and
+/// ignores it.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server00E7, Direction.ServerToClient)]
 [Verified(Rung.Fields)]
