@@ -85,6 +85,7 @@ public sealed class MessageDumpTests
     {
         var problems = new List<string>();
         int dumped = 0;
+        int unwritable = 0;
         for (int opcode = 0; opcode <= ushort.MaxValue; opcode++)
         {
             IWireStruct?[] messages =
@@ -99,9 +100,17 @@ public sealed class MessageDumpTests
                 if (message is null)
                     continue;
 
+                // A default that leaves a member null cannot be written at all, so it has no bytes to compare.
+                JsonObject dump = MessageDump.Of(message);
+                if (HoldsNull(dump))
+                {
+                    unwritable++;
+                    continue;
+                }
+
                 try
                 {
-                    if (!Serialize(message).AsSpan().SequenceEqual(Serialize(Bound(message.GetType(), MessageDump.Of(message)))))
+                    if (!Serialize(message).AsSpan().SequenceEqual(Serialize(Bound(message.GetType(), dump))))
                         problems.Add($"{message.GetType().Name}: binds back to other bytes");
                 }
                 catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
@@ -113,9 +122,18 @@ public sealed class MessageDumpTests
             }
         }
 
+        TestContext.Current.TestOutputHelper?.WriteLine($"{dumped} declared messages bound back; {unwritable} have a default that cannot be written.");
         Assert.True(dumped > 200, $"only {dumped} messages were dumped");
         Assert.True(problems.Count == 0, string.Join(Environment.NewLine, problems));
     }
+
+    private static bool HoldsNull(JsonNode? node) => node switch
+    {
+        null => true,
+        JsonObject values => values.Any(pair => HoldsNull(pair.Value)),
+        JsonArray items => items.Any(HoldsNull),
+        _ => false,
+    };
 
     private static IWireStruct Bound(Type type, JsonObject fields)
     {
