@@ -43,15 +43,6 @@ public sealed partial class PlayerState
     }
 
     [WireStruct]
-    public sealed partial class Server025EPart2
-    {
-        [UInt(32)] public uint Unknown0 { get; set; }
-        [UInt(18)] public uint Unknown1 { get; set; }
-        [UInt(5)] public byte Unknown2 { get; set; }
-        [UInt(5)] public byte Unknown3 { get; set; }
-    }
-
-    [WireStruct]
     public sealed partial class Server025EPart3
     {
         /// <summary>
@@ -107,7 +98,10 @@ public sealed partial class PlayerState
     /// </summary>
     public Server025EPart0 Unknown10 { get; set; } = new();
 
-    [Array(CountBits = 32)] public List<Server025EPart2> Unknown11 { get; } = [];
+    /// <summary>
+    /// The pets the player has summoned, which the client keeps as it keeps the one <see cref="Pet.PetSpawned"/> adds.
+    /// </summary>
+    [VerifiedMember, Array(CountBits = 32)] public List<SummonedPet> Pets { get; } = [];
 
     /// <summary>
     /// Which of the player's key binding sets is in use, as the client's interface shows it: 3 or 4. The client takes any other value as 3.

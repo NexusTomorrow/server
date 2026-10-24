@@ -121,6 +121,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   change.
 - The unit movement message (0x0638) is marked as one whose layout the client takes as declared,
   every movement command included.
+- Pet messages carry their real names and field meanings: pets summoned and dismissed, stances,
+  customizations and their results, flair, vanity pets learned and summoned, and the pets in the
+  player's state.
 
 ### Changed
 
