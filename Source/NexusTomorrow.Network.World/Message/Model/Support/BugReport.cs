@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Support;
 
 [WireMessage(GameMessageOpcode.Client0830, Direction.ClientToServer)]
-public sealed partial class Client0830
+public sealed partial class BugReport
 {
     [UInt(16)] public ushort Unknown0 { get; private set; }
     [UInt(32)] public uint Unknown1 { get; private set; }
