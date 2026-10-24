@@ -50,7 +50,7 @@ public sealed class MessageCatalogTests
     [Fact]
     public void AMessageReadToFieldsMaySendWhateverItSets()
     {
-        bool allowed = MessageCatalog.Default.MaySend(new Network.World.Message.Model.Pregame.CharacterList { RealmId = 3 }, out string? refusal);
+        bool allowed = MessageCatalog.Default.MaySend(new Network.World.Message.Model.Pregame.CharacterRenameResult { Result = 18 }, out string? refusal);
 
         Assert.True(allowed);
         Assert.Null(refusal);

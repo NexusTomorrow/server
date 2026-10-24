@@ -83,7 +83,7 @@ public sealed class WorldConnectionRedeemTests : IAsyncLifetime
         var owned = new TaskCompletionSource<WorldDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
         Start((connection, hello, key) =>
         {
-            _accounts.Post(new RedeemSessionKey(key, hello.Echo, hello.AccountName, connection, owned));
+            _accounts.Post(new RedeemSessionKey(key, hello.AccountId, hello.AccountName, connection, owned));
             return gate.Task;
         });
         await Client.ExpectAsync<ServerHello>();
@@ -119,7 +119,7 @@ public sealed class WorldConnectionRedeemTests : IAsyncLifetime
 
     private static WorldHello Hello(LoginGranted grant)
     {
-        var hello = new WorldHello { Echo = grant.Echo, AccountName = "alice@example.com" };
+        var hello = new WorldHello { AccountId = grant.Echo, AccountName = "alice@example.com" };
         var key = NetworkGuid.FromBytes(grant.SessionKey);
         hello.SessionKey.Data1 = key.Data1;
         hello.SessionKey.Data2 = key.Data2;

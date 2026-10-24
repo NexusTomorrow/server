@@ -15,10 +15,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Group;
 [Verified(Rung.Purpose)]
 public sealed partial class GroupJoinRequest
 {
-    /// <summary>
-    /// The request, by id; <see cref="GroupRequestAnswer"/> sends it back.
-    /// </summary>
-    [UInt(64)] public ulong RequestId { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
 
     /// <summary>
     /// The player asking to join.

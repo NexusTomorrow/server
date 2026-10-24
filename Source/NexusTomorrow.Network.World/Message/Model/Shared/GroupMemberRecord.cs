@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
 /// <summary>
-/// A group member as the server describes one: its id, flags, state and place in the group's order.
+/// A group member as the server describes one: its id, flags and state.
 /// </summary>
 [WireStruct]
 public sealed partial class GroupMemberRecord
@@ -23,8 +23,5 @@ public sealed partial class GroupMemberRecord
     /// </summary>
     public GroupMemberInfo Info { get; set; } = new();
 
-    /// <summary>
-    /// The member's place in the group's order; GroupLib.GetGroupMember reports it plus one as nOrder.
-    /// </summary>
-    [UInt(32)] public uint Order { get; set; }
+    [UInt(32)] public uint Unknown3 { get; set; }
 }

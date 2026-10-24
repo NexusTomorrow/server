@@ -11,7 +11,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Group;
 /// For its current group the client then raises Group_MemberOrderChanged.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0438, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class GroupMemberOrderChanged
 {
     /// <summary>
@@ -34,8 +34,5 @@ public sealed partial class GroupMemberOrderChanged
     /// </summary>
     [Array(CountFrom = nameof(MemberCount))] public List<RealmScopedId> MemberIds { get; } = [];
 
-    /// <summary>
-    /// Each member's order, in the same position; GroupLib.GetGroupMember reports it plus one as nOrder.
-    /// </summary>
-    [Array(CountFrom = nameof(MemberCount)), UInt(32)] public List<uint> Orders { get; } = [];
+    [Array(CountFrom = nameof(MemberCount)), UInt(32)] public List<uint> Unknown4 { get; } = [];
 }

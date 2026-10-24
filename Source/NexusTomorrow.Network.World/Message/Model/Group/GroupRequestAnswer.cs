@@ -11,13 +11,10 @@ namespace NexusTomorrow.Network.World.Message.Model.Group;
 /// whose other fields it sends back unchanged.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Client0453, Direction.ClientToServer)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class GroupRequestAnswer
 {
-    /// <summary>
-    /// The request's id, as the request gave it.
-    /// </summary>
-    [UInt(64)] public ulong RequestId { get; set; }
+    [UInt(64)] public ulong Unknown0 { get; set; }
 
     /// <summary>
     /// True from GroupLib.AcceptRequest, false from GroupLib.DenyRequest.
