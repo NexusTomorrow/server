@@ -141,6 +141,27 @@ public sealed class LocalChatTests : IDisposable
     }
 
     [Fact]
+    public void ALineTheCodecRefusesIsDroppedAndTheSpeakerStays()
+    {
+        MapOwner map = NewMap();
+        FakeClientSession a = Enter(map, 1001, Vector3.Zero);
+        FakeClientSession b = Enter(map, 1002, new Vector3(100, 0, 0));
+        Flush(map);
+
+        // More units than a wide string's 15-bit length holds, so the heard line's serialisation is refused.
+        map.Post(new LocalChat(a, 1001, 3, new string('a', 0x8000)));
+        Tick(map);
+
+        Assert.Null(a.DisconnectReason);
+        Assert.NotNull(map.PlayerOf(a));
+        Assert.Empty(b.Sent.OfType<ChatMessageReceived>());
+
+        map.Post(new LocalChat(a, 1001, 4, "hello"));
+        Tick(map);
+        Assert.Equal("hello", b.Single<ChatMessageReceived>().Text);
+    }
+
+    [Fact]
     public void ASayLineAllocatesNothingOnTheTick()
     {
         MapOwner map = NewMap();

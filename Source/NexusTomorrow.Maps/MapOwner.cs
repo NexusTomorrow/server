@@ -103,7 +103,7 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
         _timers = new SaveTimerHandler(this);
         _visibility = new AreaOfInterest(settings, serializer, visibility, metrics, logger, worldId, _worldTag);
         _relay = new MovementRelay(serializer, metrics, logger, worldId, _worldTag);
-        _chat = new MapChat(settings, _visibility, serializer);
+        _chat = new MapChat(settings, _visibility, serializer, logger, worldId);
         _serializer = serializer;
         Name = $"map {worldId}";
     }

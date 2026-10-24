@@ -4,35 +4,19 @@ namespace NexusTomorrow.Owners;
 
 /// <summary>
 /// A server message serialized once for many sessions: its opcode, its type, and its body. Each holder takes a reference and releases
-/// it exactly once; the last release clears the body and returns the message to its pool, so it is not touched afterwards. Only a
-/// serializer (<see cref="IMessageSerializer"/>) makes one, holding the reference of the caller that asked for it.
+/// it exactly once; the last release clears the body and returns the message to its serializer's pool, so it is not touched
+/// afterwards. Only a serializer (<see cref="IMessageSerializer"/>) makes one, holding the reference of the caller that asked for it.
 /// </summary>
-/// <remarks>
-/// A pooled message keeps its body buffer, so the last release, on whichever thread a session's writer runs, puts the buffer back
-/// where the next serialization takes it. The pool starts stocked, so a process that never holds more than
-/// <see cref="StockedMessages"/> messages at once, each within <see cref="StockedBodyBytes"/>, never allocates one.
-/// </remarks>
 public sealed class SerializedMessage
 {
-    /// <summary>
-    /// How many messages the pool holds before the first is taken.
-    /// </summary>
-    public const int StockedMessages = 64;
-
-    /// <summary>
-    /// The body buffer each stocked message starts with.
-    /// </summary>
-    public const int StockedBodyBytes = 256;
-
-    private static readonly Lock s_poolGate = new();
-    private static readonly Stack<SerializedMessage> s_pool = Stock();
-
+    private readonly SerializedMessagePool _pool;
     private byte[] _body;
     private int _length;
     private int _references;
 
-    private SerializedMessage(int bodyBytes)
+    internal SerializedMessage(SerializedMessagePool pool, int bodyBytes)
     {
+        _pool = pool;
         _body = new byte[bodyBytes];
     }
 
@@ -55,32 +39,6 @@ public sealed class SerializedMessage
     /// How many holders have not yet released the message.
     /// </summary>
     public int References => Volatile.Read(ref _references);
-
-    /// <summary>
-    /// Take a message from the pool for a body of <paramref name="length"/> bytes, which the caller writes through
-    /// <paramref name="body"/> before any session is given the message, and releases the message if the write fails. The message holds
-    /// one reference, the caller's.
-    /// </summary>
-    public static SerializedMessage Rent(ushort opcode, Type messageType, int length, out Span<byte> body)
-    {
-        SerializedMessage? message = null;
-        lock (s_poolGate)
-        {
-            if (s_pool.Count > 0)
-                message = s_pool.Pop();
-        }
-
-        message ??= new SerializedMessage(StockedBodyBytes);
-        if (message._body.Length < length)
-            message._body = new byte[BitOperations.RoundUpToPowerOf2((uint)length)];
-
-        message.Opcode = opcode;
-        message.MessageType = messageType;
-        message._length = length;
-        Volatile.Write(ref message._references, 1);
-        body = message._body.AsSpan(0, length);
-        return message;
-    }
 
     /// <summary>
     /// Take a reference for a new holder, which releases it once.
@@ -114,16 +72,19 @@ public sealed class SerializedMessage
         // Cleared like every returned send buffer: a pooled body holds no message bytes.
         _body.AsSpan(0, _length).Clear();
         _length = 0;
-        lock (s_poolGate)
-            s_pool.Push(this);
+        _pool.Return(this);
     }
 
-    private static Stack<SerializedMessage> Stock()
+    // Taken from the pool for a body of length bytes, the buffer grown to the next power of two when it is smaller; holds one reference.
+    internal Span<byte> Take(ushort opcode, Type messageType, int length)
     {
-        var pool = new Stack<SerializedMessage>(StockedMessages);
-        for (int i = 0; i < StockedMessages; i++)
-            pool.Push(new SerializedMessage(StockedBodyBytes));
+        if (_body.Length < length)
+            _body = new byte[BitOperations.RoundUpToPowerOf2((uint)length)];
 
-        return pool;
+        Opcode = opcode;
+        MessageType = messageType;
+        _length = length;
+        Volatile.Write(ref _references, 1);
+        return _body.AsSpan(0, length);
     }
 }

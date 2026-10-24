@@ -49,4 +49,7 @@ internal static partial class MapLog
 
     [LoggerMessage(EventId = 7015, Level = LogLevel.Warning, Message = "Map {World} could not relay character {CharacterId}'s movement, so the batch is dropped")]
     public static partial void RelayRefused(ILogger logger, ushort world, ulong characterId, Exception exception);
+
+    [LoggerMessage(EventId = 7016, Level = LogLevel.Warning, Message = "Map {World} could not send character {CharacterId}'s chat line, so it is dropped")]
+    public static partial void ChatRefused(ILogger logger, ushort world, ulong characterId, Exception exception);
 }

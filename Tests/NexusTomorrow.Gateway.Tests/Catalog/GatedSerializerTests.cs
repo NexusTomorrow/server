@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Gateway.Catalog;
+﻿using System.Reflection;
+using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Network.World.Message.Model.Entity;
 using NexusTomorrow.Owners;
 using NexusTomorrow.Testing;
@@ -34,6 +35,36 @@ public sealed class GatedSerializerTests
         Assert.Equal(9u, session.Single<UnitDestroyed>().UnitId);
         Assert.Equal(0, shared.References);
         Assert.Equal(1, serializer.SerializedCount(typeof(UnitDestroyed)));
+    }
+
+    [Fact]
+    public void NothingButASerializerMakesASerializedMessage()
+    {
+        // The send gate runs in the serializer, so a message made anywhere else could reach a session ungated.
+        Assert.Empty(typeof(SerializedMessage).GetConstructors());
+        Type[] makers =
+        [
+            .. typeof(SerializedMessage).Assembly.GetExportedTypes()
+                .SelectMany(type => type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+                .Where(method => method.ReturnType == typeof(SerializedMessage))
+                .Select(method => method.DeclaringType!),
+        ];
+        Type[] serializerOnly = [typeof(IMessageSerializer)];
+        Assert.Equal(serializerOnly, makers);
+    }
+
+    [Fact]
+    public void TwoSerializersNeverShareAMessage()
+    {
+        var first = new GatedSerializer(MessageCatalog.Default);
+        var second = new GatedSerializer(MessageCatalog.Default);
+        SerializedMessage released = first.Serialize(new UnitDestroyed { UnitId = 1 });
+        released.Release();
+
+        SerializedMessage other = second.Serialize(new UnitDestroyed { UnitId = 2 });
+
+        Assert.NotSame(released, other);
+        other.Release();
     }
 
     [Fact]

@@ -277,7 +277,7 @@ public sealed class ClientConnectionTests : IAsyncLifetime
         var message = new LoginAccepted();
 
         // The warm-up grows the queue's ring to the deepest backlog it has held, so the measured rounds find room in it; the serializer's
-        // pool is stocked from the start.
+        // own pool is stocked from the start.
         for (uint i = 0; i < 200; i++)
         {
             message.DroppedForLag = i;

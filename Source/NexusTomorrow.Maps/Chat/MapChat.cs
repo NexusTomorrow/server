@@ -1,4 +1,6 @@
-﻿using NexusTomorrow.Maps.Visibility;
+﻿using Microsoft.Extensions.Logging;
+using NexusTomorrow.Maps.Visibility;
+using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Message.Model.Chat;
 using NexusTomorrow.Owners;
 using NexusTomorrow.Owners.World;
@@ -8,8 +10,8 @@ namespace NexusTomorrow.Maps.Chat;
 
 // The map's half of /say: a line the realm passed on is accepted to its speaker and sent, serialised once, to every other player in
 // the world within MapSettings.SayRange of the speaker, three-dimensional, as the grid holds them since the last flush. The two chat
-// messages are kept and refilled for each line; each is serialised before it is sent, so no queued send holds them (Send<T> queues
-// the message itself, ClientConnection.Send).
+// messages are kept and refilled for each line; each is serialised before any send, so refilling it for the next line touches
+// nothing queued. A line the send gate or the codec refuses is logged, without its text, and dropped; no session is ended over it.
 internal sealed class MapChat
 {
     // The client's built-in Say channel (ChatChannelKey.Type); its id stays 0.
@@ -17,15 +19,19 @@ internal sealed class MapChat
 
     private readonly AreaOfInterest _visibility;
     private readonly IMessageSerializer _serializer;
+    private readonly ILogger _logger;
+    private readonly ushort _worldId;
     private readonly int _sayRange;
     private readonly List<Player> _listeners = [];
     private readonly ChatSendAccepted _accepted;
     private readonly ChatMessageReceived _heard = new();
 
-    public MapChat(MapSettings settings, AreaOfInterest visibility, IMessageSerializer serializer)
+    public MapChat(MapSettings settings, AreaOfInterest visibility, IMessageSerializer serializer, ILogger logger, ushort worldId)
     {
         _visibility = visibility;
         _serializer = serializer;
+        _logger = logger;
+        _worldId = worldId;
         _sayRange = settings.SayRange;
         _accepted = new ChatSendAccepted { RealmName = settings.RealmName };
         _heard.Channel.Type = SayChannelType;
@@ -39,6 +45,18 @@ internal sealed class MapChat
         if (!speaker.InWorld || character.Id != line.CharacterId)
             return;
 
+        try
+        {
+            Send(speaker, character, line);
+        }
+        catch (Exception exception) when (exception is InvalidOperationException or CodecException)
+        {
+            MapLog.ChatRefused(_logger, _worldId, character.Id, exception);
+        }
+    }
+
+    private void Send(Player speaker, CharacterRecord character, LocalChat line)
+    {
         _accepted.ChatId = line.ChatId;
         _accepted.SenderName = character.Name;
         _accepted.UnitId = speaker.UnitId;

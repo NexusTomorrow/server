@@ -6,11 +6,12 @@ namespace NexusTomorrow.Gateway.Catalog;
 
 /// <summary>
 /// The server's <see cref="IMessageSerializer"/>: the send gate (<see cref="MessageCatalog.MaySend"/>) once, then the body once into a
-/// pooled buffer, which every session it goes to shares.
+/// message from this serializer's own pool, which every session it goes to shares.
 /// </summary>
 public sealed class GatedSerializer : IMessageSerializer
 {
     private readonly MessageCatalog _catalog;
+    private readonly SerializedMessagePool _pool = new();
 
     /// <summary>
     /// Create a serializer gated by <paramref name="catalog"/>.
@@ -28,7 +29,7 @@ public sealed class GatedSerializer : IMessageSerializer
             throw new InvalidOperationException($"{refusal}, so the server may not send it.");
 
         int length = FrameWriter.BodyBytes(message);
-        var serialized = SerializedMessage.Rent(T.Opcode, message.GetType(), length, out Span<byte> body);
+        SerializedMessage serialized = _pool.Rent(T.Opcode, message.GetType(), length, out Span<byte> body);
         try
         {
             FrameWriter.WriteBody(body, message, length);
