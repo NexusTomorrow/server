@@ -124,6 +124,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Pet messages carry their real names and field meanings: pets summoned and dismissed, stances,
   customizations and their results, flair, vanity pets learned and summoned, and the pets in the
   player's state.
+- A whisper names its target's realm: what the player types after the target's name and an at sign,
+  a hyphen or a full stop.
 
 ### Changed
 

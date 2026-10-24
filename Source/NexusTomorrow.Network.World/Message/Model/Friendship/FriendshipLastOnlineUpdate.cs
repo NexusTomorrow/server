@@ -22,8 +22,8 @@ public sealed partial class FriendshipLastOnlineUpdate
     public RealmScopedId CharacterId { get; set; } = new();
 
     /// <summary>
-    /// When the friend was last online, in days from now, which add-ons read as fLastOnline: 0 clears it and a negative value is
-    /// that many days ago.
+    /// When the friend was last online, in days from now, which add-ons read as fLastOnline:
+    /// 0 clears it and a negative value is that many days ago.
     /// </summary>
     [Float32] public float LastOnlineDays { get; set; }
 }
