@@ -24,7 +24,7 @@ public sealed partial class CustomerSurveyResponse
     [UInt(32)] public uint ObjectId { get; private set; }
 
     /// <summary>
-    /// The player's four answers, one per question.
+    /// Up to four answers, one per question.
     /// </summary>
     [FixedArray(4), UInt(8)] public byte[] Responses { get; private set; } = new byte[4];
 

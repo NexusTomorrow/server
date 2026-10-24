@@ -15,7 +15,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Support;
 public sealed partial class CustomerSurveyAdded
 {
     /// <summary>
-    /// The survey, as its CustomerSurvey row id: one of the CustomerSurveyLib.CodeEnumCustomerSurvey values.
+    /// The survey, as a CustomerSurvey row id; CustomerSurveyLib.CodeEnumCustomerSurvey names 1 to 10.
     /// </summary>
     [UInt(14)] public ushort SurveyId { get; set; }
 

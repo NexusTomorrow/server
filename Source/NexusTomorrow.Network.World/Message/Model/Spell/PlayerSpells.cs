@@ -5,10 +5,10 @@ using NexusTomorrow.Network.World.Message.Model.Shared;
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 /// <summary>
-/// Creates the player's spells.
+/// Sends the player's spell list.
 /// </summary>
 /// <remarks>
-/// The client creates each spell on the player's unit and files it with the unit's spells, as it does for the spells a
+/// The client hands the player's unit and the list to the routine it also runs for the records a
 /// <see cref="Entity.UnitCreate"/> carries.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0551, Direction.ServerToClient)]

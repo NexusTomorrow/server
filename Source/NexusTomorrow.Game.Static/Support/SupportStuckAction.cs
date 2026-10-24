@@ -1,7 +1,7 @@
 ﻿namespace NexusTomorrow.Game.Static.Support;
 
 /// <summary>
-/// A recall a stuck player can ask for, as GameLib.SupportStuckAction names them; the client keeps a cooldown for each.
+/// A recall a stuck player can ask for, as GameLib.SupportStuckAction names them; GameLib.GetStuckCooldowns reports a cooldown for each.
 /// </summary>
 public enum SupportStuckAction
 {
@@ -16,7 +16,7 @@ public enum SupportStuckAction
     RecallHouse = 2,
 
     /// <summary>
-    /// Recall by the player's death, which the stuck window asks the player to confirm first.
+    /// The death recall, which the stuck window asks the player to confirm first.
     /// </summary>
     RecallDeath = 3,
 }

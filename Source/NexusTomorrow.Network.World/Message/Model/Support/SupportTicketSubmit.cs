@@ -14,17 +14,17 @@ namespace NexusTomorrow.Network.World.Message.Model.Support;
 public sealed partial class SupportTicketSubmit
 {
     /// <summary>
-    /// The ticket's category, one of the ids PlayerTicket_GetErrorTypeList lists; the client never sends -1.
+    /// The ticket's category, one of the ids PlayerTicket_GetErrorTypeList lists; the client never sends 0xFFFF (-1).
     /// </summary>
     [UInt(16)] public ushort CategoryId { get; private set; }
 
     /// <summary>
-    /// The ticket's subcategory, one under <see cref="CategoryId"/> as PlayerTicket_GetSubtype lists them; the client never sends -1.
+    /// The ticket's subcategory, one under <see cref="CategoryId"/> as PlayerTicket_GetSubtype lists them; the client never sends 0xFFFF (-1).
     /// </summary>
     [UInt(16)] public ushort SubcategoryId { get; private set; }
 
     /// <summary>
-    /// The player unit's position.
+    /// The controlled unit's position.
     /// </summary>
     [Float32] public Vector3 Position { get; private set; }
 
