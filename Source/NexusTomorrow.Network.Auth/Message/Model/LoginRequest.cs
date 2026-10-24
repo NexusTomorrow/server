@@ -166,7 +166,7 @@ public sealed partial class LoginRequest
     /// <summary>
     /// The game token the STS issued for this login, parsed from its text form.
     /// </summary>
-    public NetworkGuid GameToken { get; } = new();
+    [WireSecret] public NetworkGuid GameToken { get; } = new();
 
     /// <summary>
     /// The client's own IPv4 address on its STS connection, as its socket reports the local end, as a host-order integer: a.b.c.d is

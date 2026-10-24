@@ -89,6 +89,71 @@ public sealed class OracleEndpointTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AConnectionThatSendsNoTokenInTimeIsClosed()
+    {
+        int port = await StartAsync(enabled: true, firstLineTime: TimeSpan.FromMilliseconds(200));
+        await TokenAsync();
+        using LineClient client = await LineClient.ConnectAsync(port);
+
+        Assert.Null(await client.ReadAsync());
+    }
+
+    [Fact]
+    public async Task AFirstLineLongerThanTheCapIsClosedBeforeItEnds()
+    {
+        // A deadline past the read's wait, so only the cap can close the connection in time.
+        int port = await StartAsync(enabled: true, firstLineTime: TimeSpan.FromMinutes(1));
+        await TokenAsync();
+        using LineClient client = await LineClient.ConnectAsync(port);
+
+        await client.SendRawAsync(new string('x', 5000));
+
+        Assert.Null(await client.ReadAsync());
+    }
+
+    [Fact]
+    public async Task APeerThatEndsItsSideStillGetsTheAnswersWaiting()
+    {
+        int port = await StartAsync(enabled: true);
+        using LineClient client = await LineClient.ConnectAsync(port);
+
+        await client.SendAsync(new JsonObject { ["token"] = await TokenAsync() });
+        await client.SendAsync(new JsonObject { ["id"] = 3, ["verb"] = "status" });
+        client.EndSending();
+
+        JsonObject reply = Assert.IsType<JsonObject>(await client.ReadAsync());
+        Assert.Equal(3, (int)reply["id"]!);
+        Assert.Null(await client.ReadAsync());
+    }
+
+    [Fact]
+    public async Task AConnectionThatStopsReadingItsAnswersIsClosed()
+    {
+        int port = await StartAsync(enabled: true, outboxLines: 4);
+        using LineClient client = await LineClient.ConnectAsync(port, receiveBuffer: 1024);
+        await client.SendAsync(new JsonObject { ["token"] = await TokenAsync() });
+
+        // A write that blocks past the limit fails the test instead of hanging it.
+        using var limit = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        bool closed = false;
+        for (int i = 0; i < 200_000 && !closed; i++)
+            closed = !await client.TrySendAsync(new JsonObject { ["id"] = i, ["verb"] = "status" }, limit.Token);
+
+        Assert.True(closed);
+    }
+
+    [Fact]
+    public async Task TheTokenFileIsItsOwnersAlone()
+    {
+        await StartAsync(enabled: true);
+        await TokenAsync();
+
+        Assert.SkipWhen(OperatingSystem.IsWindows(), "Windows keeps local application data to its user");
+        if (!OperatingSystem.IsWindows())
+            Assert.Equal(UnixFileMode.UserRead | UnixFileMode.UserWrite, File.GetUnixFileMode(TokenFile));
+    }
+
+    [Fact]
     public async Task AnUnknownVerbIsAnsweredWithAnError()
     {
         int port = await StartAsync(enabled: true);
@@ -102,11 +167,15 @@ public sealed class OracleEndpointTests : IAsyncLifetime
         Assert.Equal("no verb fly", (string)reply["error"]!);
     }
 
-    private async Task<int> StartAsync(bool enabled)
+    private async Task<int> StartAsync(bool enabled, TimeSpan? firstLineTime = null, int outboxLines = 1 << 16)
     {
         int port = FreePort();
         var options = new OracleOptions { Enabled = enabled, Port = port, TokenFile = TokenFile };
-        _endpoint = new OracleEndpoint(Options.Create(options), new OracleVerbs(_accounts, TimeProvider.System), NullLogger<OracleEndpoint>.Instance);
+        _endpoint = new OracleEndpoint(Options.Create(options), new OracleVerbs(_accounts, TimeProvider.System), NullLogger<OracleEndpoint>.Instance)
+        {
+            FirstLineTime = firstLineTime ?? TimeSpan.FromSeconds(5),
+            OutboxLines = outboxLines,
+        };
         await _endpoint.StartAsync(CancellationToken.None);
         return port;
     }
@@ -141,11 +210,13 @@ public sealed class OracleEndpointTests : IAsyncLifetime
         }
 
         // The endpoint starts listening a moment after it writes its token, so the first attempts may be refused.
-        public static async Task<LineClient> ConnectAsync(int port)
+        public static async Task<LineClient> ConnectAsync(int port, int? receiveBuffer = null)
         {
             for (int attempt = 0; ; attempt++)
             {
                 var client = new TcpClient();
+                if (receiveBuffer is { } bytes)
+                    client.ReceiveBufferSize = bytes;
                 try
                 {
                     await client.ConnectAsync(IPAddress.Loopback, port);
@@ -161,11 +232,29 @@ public sealed class OracleEndpointTests : IAsyncLifetime
 
         public Task SendAsync(JsonObject message) => SendLineAsync(message.ToJsonString());
 
-        public async Task SendLineAsync(string line)
+        public Task SendLineAsync(string line) => SendRawAsync(line + "\n");
+
+        public void EndSending() => _client.Client.Shutdown(SocketShutdown.Send);
+
+        // False once the endpoint has closed the connection.
+        public async Task<bool> TrySendAsync(JsonObject message, CancellationToken cancellationToken)
         {
             try
             {
-                await _stream.WriteAsync(Encoding.UTF8.GetBytes(line + "\n"));
+                await _stream.WriteAsync(Encoding.UTF8.GetBytes(message.ToJsonString() + "\n"), cancellationToken);
+                return true;
+            }
+            catch (IOException)
+            {
+                return false;
+            }
+        }
+
+        public async Task SendRawAsync(string text)
+        {
+            try
+            {
+                await _stream.WriteAsync(Encoding.UTF8.GetBytes(text));
             }
             catch (IOException)
             {

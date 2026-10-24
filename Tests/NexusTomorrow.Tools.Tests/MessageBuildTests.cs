@@ -84,6 +84,15 @@ public sealed class MessageBuildTests
     }
 
     [Fact]
+    public void AFloatMemberBinds()
+    {
+        (IWireStruct? message, _, string? refusal) = Build<GearScoreChanged>("""{"GearScore": 412.5}""");
+
+        Assert.Null(refusal);
+        Assert.Equal(412.5f, Assert.IsType<GearScoreChanged>(message).GearScore);
+    }
+
+    [Fact]
     public void ACountedArrayOfFloatsBinds()
     {
         (IWireStruct? message, _, string? refusal) = Build<Server0931>("""{"Unknown0": 7, "Unknown1": [1.5, -2.25]}""");

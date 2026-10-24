@@ -242,7 +242,7 @@ public sealed class AccountOwner : Owner<AccountMessage>
         return stored.Indefinite || stored.Until > now || (!stored.ReplacesCredentials && fromCredentials);
     }
 
-    // Proportional to the accounts online: a lookup an operator or a debug tool asks for, never one a client message causes.
+    // Proportional to the accounts online: only the Debug build's tools post FindOnlineSession, never a client message.
     private IClientSession? Find(string email)
     {
         foreach (OnlineSession online in _online.Values)

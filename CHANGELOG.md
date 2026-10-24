@@ -10,8 +10,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 
 - Debug builds carry a test endpoint for developers, off unless `Tools:Oracle:Enabled` is set and
   bound to loopback only behind a token written at each start. It sends any server message to a
-  logged-in session, records the session's messages both ways without their secrets, and lists a
-  message's members. Release builds contain none of it, and the test workflow checks that.
+  logged-in session, records the session's messages both ways, leaving out the bytes of any that
+  carries a session key, a login token or a password, and lists a message's members. Release builds
+  contain none of it, and the test workflow checks that.
 - The protocol reference has a page for the gateway's opcode table and one for the admin commands,
   both generated from the code.
 - More of the client's messages carry their real names and field meanings: mail, quests, the
@@ -124,6 +125,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Matchmaking messages match the client's layout: each entry of the queued-players list has a 2-bit
   sixth value, and a PvP kill's killer can be of a third kind.
 - In a Debug build, the developer tools can set a message's float values.
+- In a Debug build, the developer tools' tap leaves out the login token and chat channel passwords,
+  the endpoint closes a connection that sends no token in time or stops reading, and a failed
+  request is answered instead of dropping the connection.
 - A game table column that follows a string reads its own value when the string sits after an odd
   number of 4-byte columns.
 - Marketplace messages match the client's layout: a CREDD history entry has no trailing 32-bit

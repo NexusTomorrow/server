@@ -23,7 +23,7 @@ public sealed partial class ChatJoinChannel
     /// <summary>
     /// A custom channel's password.
     /// </summary>
-    [WideString] public string Password { get; private set; } = "";
+    [WideString, WireSecret] public string Password { get; private set; } = "";
 
     /// <summary>
     /// The number the client gives the channel, which <see cref="ChatChannelJoined.Order"/> sends back.
