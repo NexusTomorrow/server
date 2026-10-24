@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.World.Message.Model.Costume;
 
 [WireStruct]
-public sealed partial class Server00D8Part0
+public sealed partial class CostumeEntry
 {
     [UInt(32)] public uint Unknown0 { get; set; }
     [UInt(32)] public uint Unknown1 { get; set; }

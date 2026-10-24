@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Costume;
 
 [WireMessage(GameMessageOpcode.Client0144, Direction.ClientToServer)]
-public sealed partial class Client0144
+public sealed partial class CharacterCustomizationCommit
 {
     [UInt(5)] public byte Unknown0 { get; private set; }
     [UInt(2)] public byte Unknown1 { get; private set; }
