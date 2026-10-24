@@ -13,7 +13,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Friendship;
 /// then raises FriendshipAccountDataUpdate.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0399, Direction.ServerToClient)]
-[Verified(Rung.Fields)]
+[Verified(Rung.Purpose)]
 public sealed partial class FriendshipAccountUpdate
 {
     /// <summary>
