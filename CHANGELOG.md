@@ -150,6 +150,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - The README's steps run the server as a Release build.
 - Friendship's last-online values are named in days, which lifts two messages to Fields; the account
   friend update returns to Purpose while its characters' race field waits on a second reading.
+- The facts check's split test says it holds layout-confirmed messages as well as those at Fields,
+  and its line counts both.
 
 ### Fixed
 

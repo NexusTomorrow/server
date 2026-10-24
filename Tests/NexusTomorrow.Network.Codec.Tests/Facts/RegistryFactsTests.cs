@@ -63,7 +63,7 @@ public sealed class RegistryFactsTests
 
     // Every message at Fields, and every layout-confirmed message, takes each field the client reads as one field whole, or lists the split as settled (FieldsSplits).
     [Fact]
-    public void EveryMessageAtFieldsTakesEachClientFieldWholeOrSettlesItsSplit()
+    public void EveryMessageAtFieldsOrLayoutConfirmedTakesEachClientFieldWholeOrSettlesItsSplit()
     {
         Dictionary<int, WireFactsRow> rows = WireFacts.Load(WireFacts.TablePath);
         var rungs = s_models.SelectMany(assembly => assembly.GetTypes())
@@ -78,7 +78,7 @@ public sealed class RegistryFactsTests
         List<string> report = FieldsSplits.Check(
             Layouts().Select(layout => (layout, rungs.TryGetValue(layout.Opcode, out Rung rung) ? rung : (Rung?)null, confirmed.Contains(layout.Opcode))), rows, FieldsSplits.Settled);
 
-        TestContext.Current.TestOutputHelper?.WriteLine($"{rungs.Values.Count(rung => rung >= Rung.Fields)} messages at fields; {FieldsSplits.Settled.Count} splits settled.");
+        TestContext.Current.TestOutputHelper?.WriteLine($"{rungs.Values.Count(rung => rung >= Rung.Fields)} messages at fields; {confirmed.Count} layout-confirmed; {FieldsSplits.Settled.Count} splits settled.");
         if (report.Count > 0)
             Assert.Fail(string.Join(Environment.NewLine, report));
     }

@@ -28,7 +28,7 @@ public sealed class FieldsSplitsTests
         WireLayout split = Layout("8 6 4", 8, 6, 4);
         Dictionary<int, WireFactsRow> rows = Rows("14 4", 14, 4);
 
-        Assert.Equal([$"split at Fields, not settled: {Key}: {Split}"], FieldsSplits.Check([(split, Rung.Fields, false)], rows, Settled()));
+        Assert.Equal([$"split not settled: {Key}: {Split}"], FieldsSplits.Check([(split, Rung.Fields, false)], rows, Settled()));
         Assert.Empty(FieldsSplits.Check([(split, Rung.Fields, false)], rows, Settled((Key, new Pin("settled: one value the client reads whole", Split)))));
     }
 
@@ -45,7 +45,7 @@ public sealed class FieldsSplitsTests
     {
         WireLayout split = Layout("8 6 4", 8, 6, 4);
 
-        Assert.Equal([$"split at Fields, not settled: {Key}: {Split}"], FieldsSplits.Check([(split, Rung.Purpose, true)], Rows("14 4", 14, 4), Settled()));
+        Assert.Equal([$"split not settled: {Key}: {Split}"], FieldsSplits.Check([(split, Rung.Purpose, true)], Rows("14 4", 14, 4), Settled()));
     }
 
     [Fact]
