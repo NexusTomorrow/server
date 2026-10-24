@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Pet;
 
 [WireMessage(GameMessageOpcode.Server068B, Direction.ServerToClient)]
-public sealed partial class Server068B
+public sealed partial class PetCustomizationFailed
 {
     [UInt(4)] public byte Unknown0 { get; set; }
     [UInt(2)] public byte Unknown1 { get; set; }

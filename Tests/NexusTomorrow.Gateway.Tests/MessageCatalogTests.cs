@@ -59,11 +59,11 @@ public sealed class MessageCatalogTests
     [Fact]
     public void AMessageBelowPurposeMayNotSend()
     {
-        bool unverified = MessageCatalog.Default.MaySend(new Network.World.Message.Model.Pet.Server0068(), out string? refusal);
+        bool unverified = MessageCatalog.Default.MaySend(new Network.World.Message.Model.Pet.PetSpawned(), out string? refusal);
         bool unread = s_gate.MaySend(new GateUnreadMessage { Known = 1 }, out _);
 
         Assert.False(unverified);
-        Assert.Equal("Server0068 is not read to Purpose", refusal);
+        Assert.Equal("PetSpawned is not read to Purpose", refusal);
         Assert.False(unread);
     }
 

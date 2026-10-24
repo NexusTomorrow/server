@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Pet;
 
 [WireMessage(GameMessageOpcode.Client082F, Direction.ClientToServer)]
-public sealed partial class Client082F
+public sealed partial class SummonVanityPet
 {
     [UInt(18)] public uint Unknown0 { get; private set; }
 }
