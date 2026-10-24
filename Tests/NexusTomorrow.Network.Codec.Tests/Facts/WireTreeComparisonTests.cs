@@ -38,6 +38,42 @@ public sealed class WireTreeComparisonTests
     }
 
     [Fact]
+    public void AClientPackedFloatTheDeclarationReadsAsAnIntegerDisagrees()
+    {
+        Assert.Equal(["0xFFFF client to server [1]: the client reads a packed float, the declaration an integer"], Compare("8 16", "8 16h"));
+    }
+
+    [Fact]
+    public void AClientPackedFloatTheDeclarationReadsAsAPackedFloatAgrees()
+    {
+        Assert.Empty(Compare("8 16h 32h", "8 16h 32h"));
+    }
+
+    [Fact]
+    public void AClientSignedIntegerTheDeclarationReadsAsAnIntegerDisagrees()
+    {
+        Assert.Equal(["0xFFFF client to server [1]: the client reads a signed integer, the declaration an integer"], Compare("8 32", "8 32s"));
+    }
+
+    [Fact]
+    public void AClientSignedIntegerTheDeclarationReadsAsASignedIntegerAgrees()
+    {
+        Assert.Empty(Compare("8 32s 16s", "8 32s 16s"));
+    }
+
+    [Fact]
+    public void AClientPackedFloatTheDeclarationReadsAsAFloatDisagrees()
+    {
+        Assert.Equal(["0xFFFF client to server [0]: the client reads a packed float, the declaration a float"], Compare("16f", "16h"));
+    }
+
+    [Fact]
+    public void AClientSignedIntegerTheDeclarationReadsAsAFloatDisagrees()
+    {
+        Assert.Equal(["0xFFFF client to server [0]: the client reads a signed integer, the declaration a float"], Compare("32f", "32s"));
+    }
+
+    [Fact]
     public void AnEncodingDisagreementDoesNotStopTheSequence()
     {
         Assert.Equal(

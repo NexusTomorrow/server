@@ -84,11 +84,15 @@ internal static class WireTreeComparison
             declaredIndexOf[j] = i;
             switch (mine.Kind)
             {
-                // The client facts mark only the fields the client reads as IEEE floats, so a marked field the declaration reads otherwise
-                // disagrees, and an unmarked one says nothing against any encoding the declaration gives it. The walk goes on past it.
+                // The client facts mark the fields the client reads as IEEE floats, packed floats or signed integers, so a marked field
+                // the declaration reads otherwise disagrees, and an unmarked one says nothing against any encoding the declaration gives it.
                 case WireNodeKind.Field:
                     if (theirs.Encoding == WireEncoding.Ieee && mine.Encoding != WireEncoding.Ieee)
                         problems.Add($"{label} {here}: the client reads a float, the declaration {DescribeEncoding(mine.Encoding)}");
+                    else if (theirs.Encoding == WireEncoding.PackedFloat && mine.Encoding != WireEncoding.PackedFloat)
+                        problems.Add($"{label} {here}: the client reads a packed float, the declaration {DescribeEncoding(mine.Encoding)}");
+                    else if (theirs.Encoding == WireEncoding.TwosComplement && mine.Encoding != WireEncoding.TwosComplement)
+                        problems.Add($"{label} {here}: the client reads a signed integer, the declaration {DescribeEncoding(mine.Encoding)}");
                     break;
                 case WireNodeKind.Array:
                     if (mine.Reference != declaredIndexOf[theirs.Reference])
