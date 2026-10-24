@@ -8,13 +8,13 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 /// </summary>
 [WireMessage(GameMessageOpcode.Server076D, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]
-public sealed partial class GuildRecruitmentRecruiters
+public sealed partial class Server076D
 {
     /// <summary>
     /// The change to one guild's listing.
     /// </summary>
     [WireStruct]
-    public sealed partial class Change
+    public sealed partial class Server076DPart0
     {
         /// <summary>
         /// The guild, by its id within the realm.
@@ -32,5 +32,5 @@ public sealed partial class GuildRecruitmentRecruiters
     /// <summary>
     /// The changes, a guild each.
     /// </summary>
-    [Array(CountBits = 32)] public List<Change> Changes { get; set; } = [];
+    [Array(CountBits = 32)] public List<Server076DPart0> Changes { get; set; } = [];
 }

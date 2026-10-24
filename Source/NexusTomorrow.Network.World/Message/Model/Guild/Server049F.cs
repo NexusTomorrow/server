@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Guild;
 /// </summary>
 [WireMessage(GameMessageOpcode.Server049F, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]
-public sealed partial class GuildRecruitmentAvailabilityChanged
+public sealed partial class Server049F
 {
     /// <summary>
     /// The guild, by id.

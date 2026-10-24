@@ -12,7 +12,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server00E7, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]
-public sealed partial class CharacterDisabled
+public sealed partial class Server00E7
 {
     /// <summary>
     /// The character, as listed in the character list (0x0117).
