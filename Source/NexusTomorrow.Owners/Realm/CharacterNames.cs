@@ -1,45 +1,17 @@
-﻿using System.Reflection;
-using NexusTomorrow.GameTable.Text.Static;
+﻿using NexusTomorrow.GameTable.Text.Static;
+using NexusTomorrow.Owners.Text;
 
 namespace NexusTomorrow.Owners.Realm;
 
 /// <summary>
-/// The server's check of a new character name: the client's lengths for a whole name and for each part, at least one space, no
-/// space at either end, and letters only.
+/// The server's check of a new character name: the client's rule for a whole name (two parts of the client's letters joined by one
+/// space, 5 to 30 units, <see cref="UserTextRules"/>), then the word filter, which the client never runs on a name.
 /// </summary>
 public static class CharacterNames
 {
-    private static readonly UserTextAttribute s_whole = Rule(UserText.CharacterName);
-    private static readonly UserTextAttribute s_part = Rule(UserText.CharacterNamePart);
-
     /// <summary>
-    /// True when <paramref name="name"/> may be used.
+    /// True when <paramref name="name"/> meets the client's name rule and <paramref name="filter"/> allows it.
     /// </summary>
-    public static bool IsAllowed(string name)
-    {
-        if (name.Length < s_whole.MinLength || name.Length > s_whole.MaxLength)
-            return false;
-        if (name[0] == ' ' || name[^1] == ' ')
-            return false;
-
-        string[] parts = name.Split(' ');
-        if (parts.Length < 2)
-            return false;
-        foreach (string part in parts)
-        {
-            if (part.Length < s_part.MinLength || part.Length > s_part.MaxLength)
-                return false;
-            foreach (char character in part)
-            {
-                if (!char.IsLetter(character))
-                    return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static UserTextAttribute Rule(UserText text) =>
-        typeof(UserText).GetField(text.ToString())?.GetCustomAttribute<UserTextAttribute>()
-        ?? throw new InvalidOperationException($"UserText.{text} carries no UserTextAttribute.");
+    public static bool IsAllowed(string name, IWordFilter filter) =>
+        UserTextRules.Check(name, UserText.CharacterName) && filter.Allows(name);
 }

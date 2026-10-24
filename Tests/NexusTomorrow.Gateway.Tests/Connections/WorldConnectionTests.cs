@@ -15,6 +15,7 @@ using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
+using NexusTomorrow.Owners.Text;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Account;
@@ -41,7 +42,7 @@ public sealed class WorldConnectionTests : IAsyncLifetime
     public WorldConnectionTests()
     {
         _accounts = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind());
-        _realm = new RealmOwner(_db, new FixedCreationCatalog([]), new FakeMapDirectory(), _time, Options.Create(new RealmOptions { Id = 3 }), NullLogger<RealmOwner>.Instance);
+        _realm = new RealmOwner(_db, new FixedCreationCatalog([]), new WordFilter([], NullLogger<WordFilter>.Instance), new FakeMapDirectory(), _time, Options.Create(new RealmOptions { Id = 3 }), NullLogger<RealmOwner>.Instance);
     }
 
     private GameTestClient Client { get; set; } = null!;
