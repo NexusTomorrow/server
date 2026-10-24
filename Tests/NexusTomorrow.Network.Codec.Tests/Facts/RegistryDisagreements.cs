@@ -28,7 +28,7 @@ internal static class RegistryDisagreements
         ["0x0823 client to server [1]"] = new(PartMissing, "the client has 32, the declaration a blob"), // Client0823
         ["0x082A client to server [0]"] = new(BitsDiffer, "the client has 32, the declaration 20"), // Client082A
         ["0x084C server to client [1].element"] = new(TreeDiffers, "the declaration's sequence goes on for 1 nodes after the client's ends"), // Server084C
-        ["0x092C server to client [1].element[3]"] = new(TreeDiffers, "the client has 32, the declaration a union"), // Server092C
+        ["0x092C server to client [1].element[3]"] = new(TreeDiffers, "the client has 32, the declaration a union"), // RewardPropertiesChanged
         ["0x0967 server to client"] = new(BitsDiffer, "the declaration's sequence goes on for 1 nodes after the client's ends"), // Server0967
         ["0x098B server to client [1].element[6].element[11].element[1]"] = new(TreeDiffers, "the client accepts selector 3 and the declaration has no arm"), // Server098B
         ["0x098B server to client [1].element[6].element[11].element[1].arm 0x01"] = new(TreeDiffers, "the client's sequence goes on for 1 nodes after the declaration's ends"), // Server098B

@@ -162,6 +162,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Hazard messages carry their real names and field meanings: each hazard's state and meter, the
   maximum modifiers, and hazard actions. Showing a tutorial has its own Tutorial area and reaches
   Fields.
+- The reward properties message carries its real name and field meanings: each property, its
+  sub-key, how its value counts and the value. A chat line's id, and the speaker's name, realm and
+  unit on the accepted line, carry theirs.
 
 ### Changed
 
@@ -226,6 +229,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 ### Fixed
 
 - Two account inventory messages that carried each other's meanings carry their own.
+- A chat map point link names its second coordinate Z.
 - Every declared message's default can be written: two housing requests, the matchmaking queue's
   players and the guild bank's tab names default their fixed lists in full, and a test holds every
   declaration to it.

@@ -29,19 +29,20 @@ public sealed partial class ChatSendAccepted
     [Array(CountBits = 5)] public List<ChatItemRecord> Items { get; } = [];
 
     /// <summary>
-    /// The player, by name.
+    /// The speaker's name: the client shows the player's own accepted line under this name, never the player's own.
     /// </summary>
-    [WideString] public string SenderName { get; set; } = "";
+    [VerifiedMember, WideString] public string SenderName { get; set; } = "";
 
     /// <summary>
-    /// The player's realm, by name.
+    /// The speaker's realm, by name, which the client shows with the line.
     /// </summary>
-    [WideString] public string RealmName { get; set; } = "";
+    [VerifiedMember, WideString] public string RealmName { get; set; } = "";
 
     /// <summary>
-    /// The player's unit, by unit id.
+    /// The speaker's unit, by unit id: the client ties the line to the player's unit when this is the player's id, and to no unit for
+    /// 0.
     /// </summary>
-    [UInt(32)] public uint UnitId { get; set; }
+    [VerifiedMember, UInt(32)] public uint UnitId { get; set; }
 
     [UInt(8)] public byte Unknown6 { get; set; }
 }
