@@ -1,6 +1,7 @@
 ﻿using System.Buffers;
 using System.Text.Json.Nodes;
 using NexusTomorrow.Network.Codec;
+using NexusTomorrow.Network.World.Message.Model.Chat;
 using NexusTomorrow.Network.World.Message.Model.Contract;
 using NexusTomorrow.Network.World.Message.Model.Entity;
 using NexusTomorrow.Network.World.Message.Model.Movement;
@@ -51,22 +52,69 @@ public sealed class MessageDumpTests
     }
 
     [Fact]
-    public void EveryClientMessageDumps()
+    public void AGetOnlyListBindsBackFromItsDump()
     {
+        var message = new ChatSend();
+        message.Links.Add(new ChatLink { Start = 1, End = 4 });
+        message.Links.Add(new ChatLink { Start = 6, End = 9 });
+
+        IWireStruct again = Bound(typeof(ChatSend), MessageDump.Of(message));
+
+        Assert.Equal(Serialize(message), Serialize(again));
+        Assert.Equal(2, ((ChatSend)again).Links.Count);
+    }
+
+    [Fact]
+    public void AFloatThatIsNotABinaryFractionBindsBackToTheSameFloat()
+    {
+        IWireStruct message = Bound(typeof(GearScoreChanged), new JsonObject { ["GearScore"] = 0.1 });
+
+        Assert.Equal(0.1f, ((GearScoreChanged)Bound(typeof(GearScoreChanged), MessageDump.Of(message))).GearScore);
+    }
+
+    [Fact]
+    public void AFloatThatIsNotFiniteIsWrittenAsItsName()
+    {
+        var message = new GearScoreChanged { GearScore = float.NaN };
+
+        Assert.Equal("""{"GearScore":"NaN"}""", MessageDump.Of(message).ToJsonString());
+    }
+
+    [Fact]
+    public void EveryDeclaredMessagesDefaultDumpBindsBackToTheSameBytes()
+    {
+        var problems = new List<string>();
         int dumped = 0;
         for (int opcode = 0; opcode <= ushort.MaxValue; opcode++)
         {
-            IWireMessage? message = Network.World.WireMessages.CreateClientToServer((ushort)opcode)
-                ?? Network.Auth.WireMessages.CreateClientToServer((ushort)opcode)
-                ?? Network.WireMessages.CreateClientToServer((ushort)opcode);
-            if (message is null)
-                continue;
+            IWireStruct?[] messages =
+            [
+                Network.World.WireMessages.CreateClientToServer((ushort)opcode)
+                    ?? Network.Auth.WireMessages.CreateClientToServer((ushort)opcode)
+                    ?? Network.WireMessages.CreateClientToServer((ushort)opcode),
+                OracleVerbs.CreateServerMessage((ushort)opcode),
+            ];
+            foreach (IWireStruct? message in messages)
+            {
+                if (message is null)
+                    continue;
 
-            _ = MessageDump.Of(message);
-            dumped++;
+                try
+                {
+                    if (!Serialize(message).AsSpan().SequenceEqual(Serialize(Bound(message.GetType(), MessageDump.Of(message)))))
+                        problems.Add($"{message.GetType().Name}: binds back to other bytes");
+                }
+                catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+                {
+                    problems.Add($"{message.GetType().Name}: {exception.Message}");
+                }
+
+                dumped++;
+            }
         }
 
-        Assert.True(dumped > 100, $"only {dumped} client messages were dumped");
+        Assert.True(dumped > 200, $"only {dumped} messages were dumped");
+        Assert.True(problems.Count == 0, string.Join(Environment.NewLine, problems));
     }
 
     private static IWireStruct Bound(Type type, JsonObject fields)

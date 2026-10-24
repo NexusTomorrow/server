@@ -11,7 +11,8 @@ namespace NexusTomorrow.Tools;
 /// The <c>tap</c> verb's tap: every message a session reads or writes, sent to an endpoint connection as
 /// <c>{"tap": {...}}</c> lines. Each direction is numbered from 1 in the order the session handled it, so the n-th message sent is the
 /// n-th the client receives on this connection after the tap was attached. A message whose type has a member marked
-/// <see cref="WireSecretAttribute"/>, at any depth, is recorded without its bytes. A message the server read carries its decoded
+/// <see cref="WireSecretAttribute"/>, in itself, a wire type it holds, or an arm of a union it holds, is recorded without its bytes.
+/// A message the server read carries its decoded
 /// <c>fields</c> (<see cref="MessageDump"/>), which a secret one never does. A record the connection cannot take (it has ended,
 /// or left its outbox full) throws, so the session detaches the tap rather than record with gaps.
 /// </summary>
@@ -55,17 +56,19 @@ public sealed class SessionRecorder : ISessionTap
         }));
     }
 
-    // The message the server decoded, as MessageDump writes it; a shape the dump cannot write is named instead of thrown, since a tap
-    // that throws is detached.
-    private static JsonObject Fields(IWireMessage message)
+    // The message the server decoded, as MessageDump writes it and serialized here, so a value JSON cannot carry (a lone surrogate
+    // a client sent) fails inside the catch too. Whatever fails is named in "$error" instead of thrown, since a tap that throws is
+    // detached.
+    private static JsonNode Fields(IWireMessage message)
     {
         try
         {
-            return MessageDump.Of(message);
+            JsonObject fields = MessageDump.Of(message);
+            return JsonNode.Parse(fields.ToJsonString())!;
         }
-        catch (Exception exception) when (exception is InvalidOperationException or InvalidCastException)
+        catch (Exception exception)
         {
-            return new JsonObject { ["$error"] = exception.Message };
+            return new JsonObject { ["$error"] = $"{exception.GetType().Name}: {exception.Message}" };
         }
     }
 
@@ -87,7 +90,8 @@ public sealed class SessionRecorder : ISessionTap
     }
 
     /// <summary>
-    /// Whether <paramref name="type"/> or any wire struct it holds has a member marked <see cref="WireSecretAttribute"/>.
+    /// Whether <paramref name="type"/>, a wire type it holds, or any arm of a union it holds has a member marked
+    /// <see cref="WireSecretAttribute"/>.
     /// </summary>
     internal static bool HoldsSecret(Type type) => s_secret.GetOrAdd(type, static t => HoldsSecret(t, []));
 
@@ -104,7 +108,9 @@ public sealed class SessionRecorder : ISessionTap
 
             Type memberType = member is PropertyInfo property ? property.PropertyType : ((FieldInfo)member).FieldType;
             Type inner = memberType.IsArray ? memberType.GetElementType()! : memberType.IsGenericType ? memberType.GetGenericArguments()[0] : memberType;
-            if (inner.GetCustomAttribute<WireStructAttribute>() is not null && HoldsSecret(inner, seen))
+            if (MessageBinder.IsWireType(inner) && HoldsSecret(inner, seen))
+                return true;
+            if (member.GetCustomAttribute<UnionAttribute>() is not null && MessageBinder.Arms(member, inner).Any(arm => HoldsSecret(arm, seen)))
                 return true;
         }
 
