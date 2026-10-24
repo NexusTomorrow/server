@@ -18,5 +18,5 @@ public sealed partial class ZoneMapExplored
     /// <summary>
     /// One bit per hex of the zone's hex rectangle; the client refuses a length other than the rectangle's bit count rounded up to bytes.
     /// </summary>
-    [Blob(32)] public byte[] ExploredHexes { get; set; } = [];
+    [Array(CountBits = 32), UInt(8)] public List<byte> ExploredHexes { get; set; } = [];
 }

@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Message.Model.Shared;
 
@@ -14,7 +15,7 @@ public sealed partial class DatacubeProgress
     [UInt(14)] public ushort DatacubeId { get; set; }
 
     /// <summary>
-    /// One bit per part unlocked; a datacube of the Chronicle type is complete when the set bits reach its unlockCount.
+    /// One bit per part unlocked; a <see cref="DatacubeType.Chronicle"/> datacube is complete when the set bits reach its unlockCount.
     /// </summary>
     [UInt(32)] public uint UnlockedMask { get; set; }
 }
