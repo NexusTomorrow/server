@@ -30,7 +30,7 @@ public sealed class WorldEntryTests : IDisposable
     public void Dispose() => _metrics.Dispose();
 
     [Fact]
-    public void ArrivalSendsTheEntryInTheClientsOrder()
+    public void EntrySendsThePathAfterThePlayersUnit()
     {
         MapOwner map = NewMap();
         var session = new FakeClientSession();
@@ -39,10 +39,13 @@ public sealed class WorldEntryTests : IDisposable
 
         Type[] expected =
         [
-            typeof(EnterWorld), typeof(UnitCreate), typeof(PlayerUnit), typeof(WorldSettings), typeof(MovementControl),
-            typeof(PlayerState), typeof(PathState),
+            typeof(EnterWorld), typeof(UnitCreate), typeof(PlayerUnit), typeof(UnitPathTypeChanged), typeof(WorldSettings),
+            typeof(MovementControl), typeof(PlayerState), typeof(PathState),
         ];
         Assert.Equal(expected, [.. session.Sent.Select(sent => sent.GetType())]);
+        UnitPathTypeChanged path = session.Single<UnitPathTypeChanged>();
+        Assert.Equal(session.Single<UnitCreate>().UnitId, path.UnitId);
+        Assert.Equal((byte)2, path.PathType);
         Assert.Null(session.DisconnectReason);
     }
 
@@ -54,7 +57,7 @@ public sealed class WorldEntryTests : IDisposable
 
         Arrive(map, session);
 
-        Assert.Equal(7, session.Sent.Count);
+        Assert.Equal(8, session.Sent.Count);
         Assert.Null(session.DisconnectReason);
         foreach (object sent in session.Sent)
         {
@@ -242,11 +245,16 @@ public sealed class WorldEntryTests : IDisposable
     }
 
     [Fact]
-    public void ALogoutRequestIsAnsweredWithACountdownOfZero()
+    public void ACountdownGoesOutOnlyAnsweringARequest()
     {
         MapOwner map = NewMap();
         var session = new FakeClientSession();
         Arrive(map, session);
+        map.Post(new ClientControlReceipt(session, session.Single<MovementControl>().Ticket));
+        map.Post(new ClientWorldReady(session, 6));
+        for (int i = 0; i < 30; i++)
+            Tick(map);
+        Assert.Empty(session.Sent.OfType<LogoutCountdown>());
 
         map.Post(new ClientLogoutRequested(session, true));
         Tick(map);
@@ -257,6 +265,20 @@ public sealed class WorldEntryTests : IDisposable
         Assert.Empty(session.Sent.OfType<WorldLogout>());
         Assert.Equal(1, map.PlayerCount);
         Assert.Empty(_realm.Posted);
+    }
+
+    [Fact]
+    public void ARequestWithoutBeginSendsNoCountdown()
+    {
+        MapOwner map = NewMap();
+        var session = new FakeClientSession();
+        Arrive(map, session);
+
+        map.Post(new ClientLogoutRequested(session, false));
+        Tick(map);
+
+        Assert.Empty(session.Sent.OfType<LogoutCountdown>());
+        Assert.Equal(1, map.PlayerCount);
     }
 
     [Fact]
