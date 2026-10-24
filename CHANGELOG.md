@@ -94,6 +94,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - The message pages mark each message whose layout the client takes as declared, and each message
   the 16042 client never acts on, which the server neither sends nor handles.
 - A chat link to a map point names its second coordinate Z.
+- The tether unit message (0x0881) has its name and meaning, and seven messages the client receives
+  and ignores are marked dormant.
 
 ### Changed
 
