@@ -20,9 +20,9 @@ public static class MovementReads
     [
         (typeof(ClientMovement), nameof(ClientMovement.Unknown1)),
         (typeof(Server0262Part5), nameof(Server0262Part5.Unknown1)),
-        (typeof(SetPlatformCommand), nameof(SetPlatformCommand.Unknown0)),
-        (typeof(SetPositionCommand), nameof(SetPositionCommand.Unknown0)),
-        (typeof(SetRotationCommand), nameof(SetRotationCommand.Unknown0)),
+        (typeof(SetPlatformCommand), nameof(SetPlatformCommand.PlatformUnitId)),
+        (typeof(SetPositionCommand), nameof(SetPositionCommand.Position)),
+        (typeof(SetRotationCommand), nameof(SetRotationCommand.Rotation)),
     ];
 
     /// <summary>
@@ -42,13 +42,13 @@ public static class MovementReads
             switch (command.Unknown1)
             {
                 case SetPlatformCommand platform:
-                    onPlatform = platform.Unknown0 != 0;
+                    onPlatform = platform.PlatformUnitId != 0;
                     break;
-                case SetPositionCommand moved when !onPlatform && IsFinite(moved.Unknown0):
-                    position = moved.Unknown0;
+                case SetPositionCommand moved when !onPlatform && IsFinite(moved.Position):
+                    position = moved.Position;
                     break;
-                case SetRotationCommand turned when !onPlatform && float.IsFinite(turned.Unknown0.X):
-                    facing = turned.Unknown0.X;
+                case SetRotationCommand turned when !onPlatform && float.IsFinite(turned.Rotation.X):
+                    facing = turned.Rotation.X;
                     break;
             }
         }

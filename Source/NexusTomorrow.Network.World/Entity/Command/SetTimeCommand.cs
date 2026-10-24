@@ -10,7 +10,8 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 public sealed partial class SetTimeCommand : IServer0262Union2
 {
     /// <summary>
-    /// The time, on the sender's clock.
+    /// The time of the commands after it, in milliseconds on the sender's clock. The client maps it to its own clock through its fit of
+    /// the sender's clock for the unit, the fit <see cref="Message.Model.Movement.UnitMovement.Unknown1"/> feeds.
     /// </summary>
-    [UInt(32)] public uint Unknown0 { get; set; }
+    [VerifiedMember, UInt(32)] public uint Time { get; set; }
 }

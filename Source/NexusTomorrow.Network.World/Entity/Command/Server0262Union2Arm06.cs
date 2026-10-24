@@ -17,5 +17,9 @@ public sealed partial class Server0262Union2Arm06 : IServer0262Union2
     [UInt(32)] public uint Unknown7 { get; set; }
     [UInt(32)] public uint Unknown8 { get; set; }
     [UInt(1)] public bool Unknown9 { get; set; }
+
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
     [UInt(1)] public bool Unknown10 { get; set; }
 }

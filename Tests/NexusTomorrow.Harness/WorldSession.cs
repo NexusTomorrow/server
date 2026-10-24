@@ -88,10 +88,10 @@ public sealed class WorldSession : IAsyncDisposable
     // One ClientMovement as the client sends it: a time, a position and a facing of (yaw, 0, 0).
     public Task MoveAsync(Vector3 position, float yaw, uint clock)
     {
-        var movement = new ClientMovement { Unknown0 = clock };
-        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = TimeCommand, Unknown1 = new SetTimeCommand { Unknown0 = clock + BatchLeadMs } });
-        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = PositionCommand, Unknown1 = new SetPositionCommand { Unknown0 = position, Unknown1 = true } });
-        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = FacingCommand, Unknown1 = new SetRotationCommand { Unknown0 = new Vector3(yaw, 0, 0), Unknown1 = true } });
+        var movement = new ClientMovement { ClientTime = clock };
+        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = TimeCommand, Unknown1 = new SetTimeCommand { Time = clock + BatchLeadMs } });
+        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = PositionCommand, Unknown1 = new SetPositionCommand { Position = position, Blend = true } });
+        movement.Unknown1.Add(new Server0262Part5 { Unknown0 = FacingCommand, Unknown1 = new SetRotationCommand { Rotation = new Vector3(yaw, 0, 0), Blend = true } });
         return Connection.SendTaggedAsync(WorldTag, movement);
     }
 

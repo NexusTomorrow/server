@@ -55,7 +55,7 @@ public sealed class MovementReadsTests
     [Fact]
     public void AMessageOfTimesAloneGivesNothing()
     {
-        ClientMovement message = Movement(new Server0262Part5 { Unknown0 = 0, Unknown1 = new SetTimeCommand { Unknown0 = 1000 } });
+        ClientMovement message = Movement(new Server0262Part5 { Unknown0 = 0, Unknown1 = new SetTimeCommand { Time = 1000 } });
         bool onPlatform = false;
 
         Assert.False(MovementReads.TryLatest(message, ref onPlatform, out _));
@@ -112,11 +112,11 @@ public sealed class MovementReadsTests
         return message;
     }
 
-    private static Server0262Part5 Platform(uint unit) => new() { Unknown0 = 1, Unknown1 = new SetPlatformCommand { Unknown0 = unit } };
+    private static Server0262Part5 Platform(uint unit) => new() { Unknown0 = 1, Unknown1 = new SetPlatformCommand { PlatformUnitId = unit } };
 
     private static Server0262Part5 Position(float x, float y, float z) =>
-        new() { Unknown0 = 2, Unknown1 = new SetPositionCommand { Unknown0 = new Vector3(x, y, z) } };
+        new() { Unknown0 = 2, Unknown1 = new SetPositionCommand { Position = new Vector3(x, y, z) } };
 
     private static Server0262Part5 Facing(float yaw) =>
-        new() { Unknown0 = 14, Unknown1 = new SetRotationCommand { Unknown0 = new Vector3(yaw, 0, 0) } };
+        new() { Unknown0 = 14, Unknown1 = new SetRotationCommand { Rotation = new Vector3(yaw, 0, 0) } };
 }
