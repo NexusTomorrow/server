@@ -4,7 +4,7 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.WorldEntry;
 
 /// <summary>
-/// Starts the countdown before a logout completes, or cancels the pending request.
+/// Starts the countdown before a logout completes.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0092, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]

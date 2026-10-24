@@ -23,7 +23,7 @@ public sealed partial class WorldSettings
     [VerifiedMember, UInt(2)] public byte Difficulty { get; set; }
 
     /// <summary>
-    /// The world's prime level, which GameLib.GetWorldPrimeLevel reports.
+    /// The world's prime level, which the client keeps as the world's and reports to its interface unchanged.
     /// </summary>
     [VerifiedMember, UInt(32)] public uint PrimeLevel { get; set; }
 
