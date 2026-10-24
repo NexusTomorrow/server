@@ -55,7 +55,8 @@ public sealed partial class PlayerState
         [VerifiedMember, UInt(14)] public ushort EntitlementId { get; set; }
 
         /// <summary>
-        /// The entitlement's count, which AccountItemLib.GetCharacterEntitlements reports as nCount.
+        /// The entitlement's count, which AccountItemLib.GetCharacterEntitlements reports as nCount. The client caps it at the
+        /// maxCount of the entitlement's Entitlement table row.
         /// </summary>
         [VerifiedMember, UInt(32)] public uint Count { get; set; }
     }
@@ -69,8 +70,10 @@ public sealed partial class PlayerState
     [VerifiedMember, FixedArray(15), UInt(64)] public ulong[] Currencies { get; } = new ulong[15];
 
     /// <summary>
-    /// A limit on the credits the player may move, which GameLib.GetMoneyTradeLimit reports. While the client applies the limit, it
-    /// refuses credits above it in a trade or a guild bank deposit.
+    /// A limit on the credits the player may move, which GameLib.GetMoneyTradeLimit reports. The limit applies only while the client
+    /// holds an entry from <see cref="Reward.Server092C"/> for reward property 20 of kind 1 with a non-zero value; with no such entry,
+    /// or with a kind 0 entry or a value of 0, the getter answers nothing. While it applies, the client refuses credits above it in a
+    /// trade or a guild bank deposit.
     /// </summary>
     [VerifiedMember, UInt(64)] public ulong MoneyTradeLimit { get; set; }
 
@@ -101,7 +104,7 @@ public sealed partial class PlayerState
     [VerifiedMember, UInt(32)] public uint PeriodicElderPoints { get; set; }
 
     /// <summary>
-    /// Which of the player's ability sets is active, by index, as the client's interface shows it.
+    /// The index of the player's active ability set, counted from 0. The client's interface reports it counted from 1.
     /// </summary>
     [VerifiedMember, UInt(3)] public byte ActiveActionSet { get; set; }
 
@@ -133,7 +136,8 @@ public sealed partial class PlayerState
     [VerifiedMember, UInt(16)] public ushort BindPointId { get; set; }
 
     /// <summary>
-    /// The index of the costume the player wears, as the client's interface shows it. Until a value arrives the client holds 0xFFFFFFFF.
+    /// The index of the costume the player wears, counted from 0. The client's interface reports it plus one, so 0xFFFFFFFF reports as 0.
+    /// Until a value arrives the client holds 0xFFFFFFFF.
     /// </summary>
     [VerifiedMember, UInt(32)] public uint CostumeIndex { get; set; }
 

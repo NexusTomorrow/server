@@ -178,6 +178,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   and its line counts both.
 - Cinematic, marketplace and matchmaking members whose meaning rests on a single reader keep neutral
   names, and the eight messages that held one go back below Fields.
+- The player state's active ability set and costume are indexes from 0, which the client's interface
+  reports from 1; an entitlement's count is capped at its Entitlement row's maximum; and the money trade
+  limit applies only while the client holds the matching premium reward entry.
 - A new unit's minimap marker keeps a neutral name while it rests on a single reader; its spell list
   and the player's spell list are named for the spell records they hold.
 - A new unit's shown flag, the spell record's raw damage and five movement tracks' key times keep
