@@ -3,11 +3,11 @@
 namespace NexusTomorrow.Network.Codec.Tests.Facts;
 
 /// <summary>
-/// Holds a message at <see cref="Rung.Fields"/> or above, and a layout-confirmed message, to taking each field the client reads as one field whole. The tree comparison
-/// accepts a run of declared fields against one client field (8 6 against 14) as the same bits, but each member then holds part of one
-/// client value, so such a split fails here unless it is listed in <see cref="Settled"/>, keyed by the label and path of the node it starts
-/// at, with its reason and the split's text. One declared field against a run of client fields (32 against 8 8 8 8) takes the client's
-/// values together and is not checked.
+/// Holds a message at <see cref="Rung.Fields"/> or above, and a layout-confirmed message, to taking each field the client reads as
+/// one field whole. The tree comparison accepts a run of declared fields against one client field (8 6 against 14) as the same bits,
+/// but each member then holds part of one client value, so such a split fails here unless it is listed in <see cref="Settled"/>,
+/// keyed by the label and path of the node it starts at, with its reason and the split's text. One declared field against a run of
+/// client fields (32 against 8 8 8 8) takes the client's values together and is not checked.
 /// </summary>
 internal static class FieldsSplits
 {
@@ -20,7 +20,8 @@ internal static class FieldsSplits
     };
 
     /// <summary>
-    /// Every split at Fields that is not settled, every settled split whose text has changed, and every settled split that no longer occurs.
+    /// Every split on a message at <see cref="Rung.Fields"/> or above, or layout-confirmed, that is not settled; every settled split
+    /// whose text has changed; and every settled split that no longer occurs.
     /// </summary>
     public static List<string> Check(IEnumerable<(WireLayout Layout, Rung? Rung, bool LayoutConfirmed)> messages, IReadOnlyDictionary<int, WireFactsRow> rows, IReadOnlyDictionary<string, Pin> settled)
     {
@@ -40,7 +41,7 @@ internal static class FieldsSplits
         foreach ((string key, string text) in found)
         {
             if (!settled.TryGetValue(key, out Pin pin))
-                report.Add($"split at Fields, not settled: {key}: {text}");
+                report.Add($"split not settled: {key}: {text}");
             else if (pin.Problem != text)
                 report.Add($"settled, but the split changed: {key}: {text}");
         }
