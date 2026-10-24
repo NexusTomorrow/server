@@ -30,8 +30,8 @@ namespace NexusTomorrow.Tools;
 /// <item><c>command</c>: <c>line</c>, a command line as the server's console takes it, run through <see cref="CommandDispatcher"/> as
 /// the actor <c>oracle</c>, which holds every permission and is audited under that name whenever the line names a registered command.
 /// Answered with the command's outcome and its reply text. A command still running after <see cref="CommandTime"/> is signalled to
-/// cancel, and one that honours the signal is answered as failed by the dispatcher, so the requests after it on the connection are
-/// not held.</item>
+/// cancel; one that stops by throwing, as a wait on the token does, is answered as failed by the dispatcher, so the requests after
+/// it on the connection are not held.</item>
 /// </list>
 /// </remarks>
 public sealed class OracleVerbs

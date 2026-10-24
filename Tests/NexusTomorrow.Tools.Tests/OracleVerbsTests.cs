@@ -321,7 +321,7 @@ public sealed class OracleVerbsTests : IAsyncLifetime
     {
         _verbs = new OracleVerbs(_accounts, Dispatcher(), TimeProvider.System) { CommandTime = TimeSpan.FromMilliseconds(50) };
 
-        JsonObject reply = await RequestAsync("command", """{"line": "test hang"}""").WaitAsync(s_wait);
+        JsonObject reply = await RequestAsync("command", """{"line": "test hang"}""").WaitAsync(s_wait, TestContext.Current.CancellationToken);
 
         Assert.True((bool)reply["ok"]!);
         Assert.Equal(("Failed", "The command failed; see the server log."), ((string)reply["outcome"]!, (string)reply["text"]!));
