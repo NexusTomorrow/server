@@ -43,8 +43,7 @@ public sealed partial class GroupMemberPositions
     [Array(CountFrom = nameof(MemberCount)), UInt(32)] public List<uint> ZoneIds { get; set; } = [];
 
     /// <summary>
-    /// Each member's combat state, as a number: bit 0 is set while the member is in PvP combat, the client passes bit 1 on as PvE
-    /// combat, and the client never reads bits 2 to 31.
+    /// Each member's combat state, as a number: bit 0 is set while the member is in PvP combat; bits 2 to 31 the client never reads.
     /// </summary>
     [Array(CountFrom = nameof(MemberCount)), UInt(32)] public List<uint> CombatFlags { get; set; } = [];
 }

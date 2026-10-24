@@ -20,10 +20,7 @@ public sealed partial class ZoneMapHexGroupUpdated
     /// </summary>
     [UInt(21)] public uint TooltipTextId { get; set; }
 
-    /// <summary>
-    /// The group's color, as an index 0 to 3; any other value gives a default color.
-    /// </summary>
-    [UInt(32)] public uint Color { get; set; }
+    [UInt(32)] public uint Unknown2 { get; set; }
 
     /// <summary>
     /// Whether the group shows; the client keeps the group only while it is set.
