@@ -9,8 +9,8 @@ namespace NexusTomorrow.Tools;
 /// A message's members as rows in read order, for the <c>layout</c> verb: each row's path, width in bits (empty for a header,
 /// <c>varies</c> for a string or a byte block) and encoding. The members are <see cref="MessageBinder"/>'s, so a row path is the
 /// key the binder takes; a struct opens with a <c>the fields below</c> row, a fixed array has a row per element, an array counted
-/// on the wire is its own row followed by one element's rows under <c>path[]</c>, and a union is one row that says so, since its
-/// rows depend on the values sent.
+/// on the wire is its own row followed by one element's rows under <c>path[]</c>, and a union is its own row, naming its type and
+/// selector, followed by each arm's rows under <c>path{case}</c> in case order; which arm a message holds depends on the values sent.
 /// </summary>
 internal static class LayoutRows
 {
@@ -39,12 +39,25 @@ internal static class LayoutRows
             {
                 _ when member.GetCustomAttribute<PadAttribute>() is { } pad => (Number(pad.Bits), "padding"),
                 _ when member.GetCustomAttribute<BlobAttribute>() is not null => ("varies", "byte block"),
-                _ when member.GetCustomAttribute<UnionAttribute>() is { } union => ("", $"union, selected by `{prefix}{union.Selector}`"),
                 _ => null,
             };
             if (single is { } row)
             {
                 rows.Add((path, row.Bits, row.Encoding));
+                continue;
+            }
+
+            if (member.GetCustomAttribute<UnionAttribute>() is { } union)
+            {
+                rows.Add((path, "", $"union of {memberType.Name}, selected by `{prefix}{union.Selector}`"));
+                foreach ((decimal unionCase, Type arm) in MessageBinder.Arms(member, memberType)
+                    .Select(arm => (CaseNumber(arm), arm)).OrderBy(pair => pair.Item1))
+                {
+                    string armPath = $"{path}{{{Number((int)unionCase)}}}";
+                    rows.Add((armPath, "", "the fields below"));
+                    Append(arm, armPath + ".", rows, open);
+                }
+
                 continue;
             }
 
@@ -113,4 +126,7 @@ internal static class LayoutRows
     }
 
     private static string Number(int value) => value.ToString(CultureInfo.InvariantCulture);
+
+    private static decimal CaseNumber(Type arm) =>
+        Convert.ToDecimal(arm.GetCustomAttribute<UnionCaseAttribute>()!.Value, CultureInfo.InvariantCulture);
 }

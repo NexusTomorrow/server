@@ -123,9 +123,43 @@ public sealed class OracleVerbsTests : IAsyncLifetime
         Assert.All(records, r => Assert.True((bool)r["redacted"]!));
         Assert.Null(records[0]["body"]);
         Assert.Null(records[1]["envelope"]);
+        Assert.Null(records[1]["fields"]);
         Assert.Null(records[2]["envelope"]);
         Assert.True(SessionRecorder.HoldsSecret(typeof(RealmRedirect)));
         Assert.False(SessionRecorder.HoldsSecret(typeof(Kicked)));
+    }
+
+    [Fact]
+    public async Task AReceivedMessageIsRecordedWithItsDecodedFields()
+    {
+        await RequestAsync("tap", """{"account": "alice@example.com"}""");
+        var receipt = new Network.World.Message.Model.Movement.MovementControlReceipt();
+        MessageBinder.Bind(receipt, new JsonObject { ["Ticket"] = 77 });
+
+        _session.Tap!.Received(1, [0x01], new Inbound(InboundResult.Message, 0x0635, receipt, ""));
+
+        JsonObject record = Assert.Single(Records(1));
+        Assert.Equal("""{"Ticket":77}""", record["fields"]!.ToJsonString());
+    }
+
+    [Fact]
+    public void ASecretInAUnionArmIsFoundThroughTheUnion()
+    {
+        Assert.True(SessionRecorder.HoldsSecret(typeof(ArmHolder)));
+        Assert.False(SessionRecorder.HoldsSecret(typeof(PlainHolder)));
+    }
+
+    [Fact]
+    public async Task AMessageTheDumpCannotWriteIsRecordedWithItsErrorAndTheTapStays()
+    {
+        await RequestAsync("tap", """{"account": "alice@example.com"}""");
+        ISessionTap tap = _session.Tap!;
+
+        tap.Received(1, [0x01], new Inbound(InboundResult.Message, 0x0001, new Undumpable(), ""));
+
+        JsonObject record = Assert.Single(Records(1));
+        Assert.StartsWith("InvalidOperationException:", (string)record["fields"]!["$error"]!);
+        Assert.Same(tap, _session.Tap);
     }
 
     [Fact]
@@ -197,6 +231,58 @@ public sealed class OracleVerbsTests : IAsyncLifetime
         byte[] body = rented.AsSpan(0, length).ToArray();
         System.Buffers.ArrayPool<byte>.Shared.Return(rented, clearArray: true);
         return body;
+    }
+
+    private interface IFixturePayload;
+
+    [UnionCase(0)]
+    private sealed class PlainArm : IFixturePayload
+    {
+        [UInt(8)] public byte Value { get; set; }
+    }
+
+    [UnionCase(1)]
+    private sealed class SecretArm : IFixturePayload
+    {
+        [WireSecret, UInt(32)] public uint Key { get; set; }
+    }
+
+    private sealed class ArmHolder
+    {
+        [UInt(1)] public byte Type { get; set; }
+
+        [Union(nameof(Type))] public IFixturePayload Payload { get; set; } = new PlainArm();
+    }
+
+    private sealed class PlainHolder
+    {
+        [UInt(8)] public byte Value { get; set; }
+    }
+
+    // A message with a member no JSON shape fits.
+    private sealed class Undumpable : IWireMessage
+    {
+        public static ushort Opcode => 0x0001;
+
+        public static Direction Direction => Direction.ClientToServer;
+
+        public static WireLayout Layout => throw new NotSupportedException();
+
+        public DateTime When { get; set; } = DateTime.UnixEpoch;
+
+        public void Read(ref BitReader reader)
+        {
+        }
+
+        public void Write(ref BitWriter writer)
+        {
+        }
+
+        public int MeasureBits() => 0;
+
+        public string? FindUnverifiedValue() => null;
+
+        public bool IsDefault() => true;
     }
 
     // A world session that records what the oracle queues on it.

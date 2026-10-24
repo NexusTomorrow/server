@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System.Collections;
+using System.Collections.Concurrent;
+using System.Globalization;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -22,6 +24,7 @@ namespace NexusTomorrow.Tools;
 internal static class MessageBinder
 {
     private const BindingFlags Declared = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+    private static readonly ConcurrentDictionary<Type, IReadOnlyList<MemberInfo>> s_members = new();
 
     /// <summary>
     /// Set every wire member of <paramref name="target"/> from <paramref name="values"/>.
@@ -31,7 +34,7 @@ internal static class MessageBinder
     public static void Bind(object target, JsonObject values, string path = "")
     {
         Type type = target.GetType();
-        List<MemberInfo> members = WireMembers(type);
+        IReadOnlyList<MemberInfo> members = WireMembers(type);
         var named = members.Where(member => member.GetCustomAttribute<PadAttribute>() is null).Select(member => member.Name).ToHashSet(StringComparer.Ordinal);
         foreach ((string key, _) in values)
         {
@@ -142,17 +145,24 @@ internal static class MessageBinder
             throw new ArgumentException($"{path}: a union takes an object with \"$case\", the arm's case value");
 
         decimal wanted = decimal.Parse(caseValue.ToJsonString(), CultureInfo.InvariantCulture);
-        Type declaring = member.DeclaringType!;
-        Type arm = declaring.Assembly.GetTypes()
-            .Where(candidate => !candidate.IsAbstract && unionType.IsAssignableFrom(candidate))
-            .FirstOrDefault(candidate => candidate.GetCustomAttribute<UnionCaseAttribute>() is { } unionCase && CaseNumber(unionCase.Value) == wanted)
+        Type arm = Arms(member, unionType)
+            .FirstOrDefault(candidate => CaseNumber(candidate.GetCustomAttribute<UnionCaseAttribute>()!.Value) == wanted)
             ?? throw new ArgumentException($"{path}: {unionType.Name} has no arm for case {wanted}");
         object instance = Activator.CreateInstance(arm, nonPublic: true)!;
         Bind(instance, values, path + ".");
         return instance;
     }
 
-    private static void CheckSelector(object target, List<MemberInfo> members, MemberInfo union, string selector, string path)
+    /// <summary>
+    /// The arms of the union <paramref name="member"/> holds: every concrete type in its declaring assembly that implements
+    /// <paramref name="unionType"/> and carries a <see cref="UnionCaseAttribute"/>.
+    /// </summary>
+    internal static IEnumerable<Type> Arms(MemberInfo member, Type unionType) =>
+        member.DeclaringType!.Assembly.GetTypes()
+            .Where(candidate => !candidate.IsAbstract && unionType.IsAssignableFrom(candidate)
+                && candidate.GetCustomAttribute<UnionCaseAttribute>() is not null);
+
+    private static void CheckSelector(object target, IReadOnlyList<MemberInfo> members, MemberInfo union, string selector, string path)
     {
         MemberInfo? selectorMember = members.FirstOrDefault(member => member.Name == selector);
         object? arm = Read(union, target);
@@ -235,10 +245,13 @@ internal static class MessageBinder
     private static decimal CaseNumber(object value) => Convert.ToDecimal(value, CultureInfo.InvariantCulture);
 
     // The generator's member order, base type first: LayoutRowsTests holds it to every fixed message's generated widths, as
-    // LayoutWalkTests holds the protocol reference's copy of the rule to every generated tree.
-    internal static List<MemberInfo> WireMembers(Type type)
+    // LayoutWalkTests holds the protocol reference's copy of the rule to every generated tree. Read once per type: the tap
+    // calls it for every element of every list a received message holds, on the session's thread.
+    internal static IReadOnlyList<MemberInfo> WireMembers(Type type) => s_members.GetOrAdd(type, ReadWireMembers);
+
+    private static IReadOnlyList<MemberInfo> ReadWireMembers(Type type)
     {
-        List<MemberInfo> members = type.BaseType is { } baseType && IsWireType(baseType) ? WireMembers(baseType) : [];
+        List<MemberInfo> members = type.BaseType is { } baseType && IsWireType(baseType) ? [.. WireMembers(baseType)] : [];
         List<MemberInfo> properties = [.. type.GetProperties(Declared)
             .Where(property => property.GetIndexParameters().Length == 0 && !property.Name.Contains('.', StringComparison.Ordinal))
             .Where(property => property.GetCustomAttribute<NotOnWireAttribute>() is null)
@@ -266,7 +279,7 @@ internal static class MessageBinder
 
     private static bool CanOnlyRead(MemberInfo member) => member is PropertyInfo { SetMethod: null };
 
-    private static object? Read(MemberInfo member, object target) => member switch
+    internal static object? Read(MemberInfo member, object target) => member switch
     {
         PropertyInfo property => property.GetValue(target),
         FieldInfo field => field.GetValue(target),
@@ -282,6 +295,20 @@ internal static class MessageBinder
                 break;
             case FieldInfo field:
                 field.SetValue(target, value);
+                break;
+
+            // A list declared { get; } = [] is filled in place, as a nested struct is; a fixed array keeps its length.
+            case PropertyInfo property when value is IList given && property.GetValue(target) is IList held:
+                if (held.IsFixedSize)
+                {
+                    for (int i = 0; i < given.Count; i++)
+                        held[i] = given[i];
+                    break;
+                }
+
+                held.Clear();
+                foreach (object? item in given)
+                    held.Add(item);
                 break;
             default:
                 throw new ArgumentException($"{member.Name}: the member cannot be set");

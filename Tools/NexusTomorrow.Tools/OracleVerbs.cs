@@ -22,7 +22,8 @@ namespace NexusTomorrow.Tools;
 /// <see cref="MessageBinder"/>) or <c>body</c> (hex, sent as given). A built message must read back to the same bytes with no whole
 /// byte left over; it is then queued on the account's world session below the send gate. Answered with the body sent.</item>
 /// <item><c>tap</c>: <c>account</c>; from the answer on, every message the account's world session reads or writes arrives as a
-/// <c>{"tap": {...}}</c> line (<see cref="SessionRecorder"/>), for as long as this connection lasts.</item>
+/// <c>{"tap": {...}}</c> line (<see cref="SessionRecorder"/>), a message the server read with its decoded fields, for as long as this
+/// connection lasts.</item>
 /// <item><c>layout</c>: <c>opcode</c>; the server message's members in wire order, each with its path, width and encoding
 /// (<see cref="LayoutRows"/>).</item>
 /// </list>

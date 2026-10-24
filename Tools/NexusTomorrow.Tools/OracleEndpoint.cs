@@ -118,9 +118,13 @@ public sealed partial class OracleEndpoint : BackgroundService
             bool overflowed = false;
             bool peerEnded = false;
 
-            // A tap reports a full outbox on the game session's thread, so the cancellation's callbacks run on the thread pool.
+            // A tap reports a full outbox on the game session's thread, so the cancellation's callbacks run on the thread pool. Once
+            // the connection is ending, a tap still inside its callback finds the outbox complete, which is no overflow.
+            bool ending = false;
             var connection = new OracleConnection(outbox.Writer, full: () =>
             {
+                if (Volatile.Read(ref ending))
+                    return;
                 overflowed = true;
                 CancelSoon(lifetime);
             });
@@ -161,10 +165,11 @@ public sealed partial class OracleEndpoint : BackgroundService
                     Closed($"it left {OutboxLines} lines unread");
 
                 // Taps first, so none writes to an outbox that has completed.
+                Volatile.Write(ref ending, true);
                 connection.Dispose();
                 outbox.Writer.TryComplete();
-                if (peerEnded)
-                    await DrainAsync(writer);
+                if (peerEnded && !await DrainedAsync(writer))
+                    Closed($"it ended its side and did not read what was waiting within {DrainTime.TotalSeconds:0} s");
                 lifetime.Cancel();
                 client.Close();
                 await writer;
@@ -173,14 +178,16 @@ public sealed partial class OracleEndpoint : BackgroundService
         }
     }
 
-    private async Task DrainAsync(Task writer)
+    private async Task<bool> DrainedAsync(Task writer)
     {
         try
         {
             await writer.WaitAsync(DrainTime);
+            return true;
         }
         catch (TimeoutException)
         {
+            return false;
         }
     }
 

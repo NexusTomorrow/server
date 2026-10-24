@@ -117,12 +117,14 @@ public sealed class OracleEndpointTests : IAsyncLifetime
         int port = await StartAsync(enabled: true);
         using LineClient client = await LineClient.ConnectAsync(port);
 
+        // Many requests in one write, so the end of input reaches the endpoint while answers still wait to be written.
+        const int Requests = 3000;
         await client.SendAsync(new JsonObject { ["token"] = await TokenAsync() });
-        await client.SendAsync(new JsonObject { ["id"] = 3, ["verb"] = "status" });
+        await client.SendRawAsync(string.Concat(Enumerable.Range(0, Requests).Select(i => $$"""{"id": {{i}}, "verb": "status"}""" + "\n")));
         client.EndSending();
 
-        JsonObject reply = Assert.IsType<JsonObject>(await client.ReadAsync());
-        Assert.Equal(3, (int)reply["id"]!);
+        for (int i = 0; i < Requests; i++)
+            Assert.Equal(i, (int)Assert.IsType<JsonObject>(await client.ReadAsync())["id"]!);
         Assert.Null(await client.ReadAsync());
     }
 
