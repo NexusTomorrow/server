@@ -2,10 +2,24 @@
 
 namespace NexusTomorrow.Network.World.Message.Model.Hazard;
 
+/// <summary>
+/// A multiplier and an offset the client applies to a hazard's maximum.
+/// </summary>
 [WireStruct]
 public sealed partial class HazardMaxModifier
 {
-    [Float32] public float Unknown0 { get; set; }
-    [Float32] public float Unknown1 { get; set; }
-    [UInt(1)] public bool Unknown2 { get; set; }
+    /// <summary>
+    /// The factor on the maximum. A hazard the server sends no modifier for keeps a multiplier of 1.
+    /// </summary>
+    [VerifiedMember, Float32] public float Multiplier { get; set; }
+
+    /// <summary>
+    /// The term added to the maximum. A hazard the server sends no modifier for keeps an offset of 0.
+    /// </summary>
+    [VerifiedMember, Float32] public float Offset { get; set; }
+
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool Unknown2 { get; set; }
 }
