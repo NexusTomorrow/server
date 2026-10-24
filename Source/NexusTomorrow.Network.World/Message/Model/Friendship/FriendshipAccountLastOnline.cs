@@ -22,8 +22,8 @@ public sealed partial class FriendshipAccountLastOnline
     [UInt(32)] public uint AccountId { get; set; }
 
     /// <summary>
-    /// When the account was last online, in days from now, which add-ons read as an account friend's fLastOnline: 0 clears it and
-    /// a negative value is that many days ago.
+    /// When the account was last online, in days from now, which add-ons read as an account friend's
+    /// fLastOnline: 0 clears it and a negative value is that many days ago.
     /// </summary>
     [Float32] public float LastOnlineDays { get; set; }
 }
