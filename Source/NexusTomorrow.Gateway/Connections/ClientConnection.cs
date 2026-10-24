@@ -89,6 +89,14 @@ public abstract partial class ClientConnection : IClientSession
         Enqueue(Outbound.Enveloped(T.Opcode, message));
     }
 
+    /// <inheritdoc/>
+    /// <exception cref="InvalidOperationException">Every holder has already released <paramref name="message"/>.</exception>
+    public void Send(SerializedMessage message)
+    {
+        message.AddReference();
+        Enqueue(Outbound.SharedBody(message));
+    }
+
     /// <summary>
     /// End the connection after the messages already queued, logging <paramref name="reason"/>. A client that has stopped reading
     /// cannot hold the connection open: after <see cref="GatewayOptions.DisconnectGrace"/> both loops are cancelled and the transport
@@ -392,7 +400,8 @@ public abstract partial class ClientConnection : IClientSession
                 while (reader.TryRead(out Outbound item))
                 {
                     // The writer owns the item once it is read: its buffer goes back after this write, whether or not the write throws.
-                    // Body and MessageType are set by the Bare and Enveloped factories and Cipher by Key, the only ways to build those kinds.
+                    // Body and MessageType are set by the Bare and Enveloped factories, Shared by SharedBody and Cipher by Key, the only
+                    // ways to build those kinds.
                     try
                     {
                         switch (item.Kind)
@@ -403,6 +412,11 @@ public abstract partial class ClientConnection : IClientSession
                                 break;
                             case OutboundKind.Enveloped:
                                 FrameWriter.WriteEnvelope(output, _envelopeOpcode, item.Opcode, item.Body.AsSpan(0, item.BodyLength), sendCipher);
+                                LogSent(item);
+                                break;
+                            case OutboundKind.Shared:
+                                // The envelope copies the body into the output and encrypts it there, so the shared body is never written.
+                                FrameWriter.WriteEnvelope(output, _envelopeOpcode, item.Opcode, item.Shared!.Body, sendCipher);
                                 LogSent(item);
                                 break;
                             case OutboundKind.Key:
