@@ -18,7 +18,11 @@ public sealed partial class ChatWhisper
     /// </summary>
     [WideString] public string TargetName { get; private set; } = "";
 
-    [WideString] public string Unknown1 { get; private set; } = "";
+    /// <summary>
+    /// The realm the player typed after the target's name: the client splits it off the name at an at sign, a hyphen or a
+    /// full stop.
+    /// </summary>
+    [VerifiedMember, WideString] public string TargetRealm { get; private set; } = "";
 
     /// <summary>
     /// The line's text.
