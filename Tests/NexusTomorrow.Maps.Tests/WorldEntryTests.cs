@@ -107,9 +107,9 @@ public sealed class WorldEntryTests : IDisposable
         Assert.Equal(125U, session.Single<WorldSettings>().MovementInterval);
 
         PlayerState state = session.Single<PlayerState>();
-        Assert.Equal(900U, state.Unknown2);
-        Assert.Equal(3U, state.Unknown12);
-        Assert.Equal(uint.MaxValue, state.Unknown14);
+        Assert.Equal(900U, state.Experience);
+        Assert.Equal(3U, state.InputKeySet);
+        Assert.Equal(uint.MaxValue, state.CostumeIndex);
 
         PathState path = session.Single<PathState>();
         Assert.Equal((byte)2, path.ActivePath);

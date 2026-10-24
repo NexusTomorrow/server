@@ -129,6 +129,12 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Info messages carry their real names and field meanings: player info requests and their answers,
   realm names, the time of day, gameplay systems switched off, healthy gaming updates and the
   generic error notice.
+- The player's own state names its currencies and money trade limit, experience and rest experience,
+  elder points, item proficiencies, active action set, reputations, bind point, PvP flag cooldown,
+  cached augments, supply satchel, gear score, PvP server flag, matchmaking privileges and
+  entitlements. A new unit names its loot, its world socket and world, two more unit types' names,
+  and whether it is shown; its spell records name the caster, target, cast, spell, targets, stack
+  counts, effects and the combat values an effect carries.
 
 ### Changed
 
@@ -157,6 +163,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   and its line counts both.
 - Cinematic, marketplace and matchmaking members whose meaning rests on a single reader keep neutral
   names, and the eight messages that held one go back below Fields.
+- A new unit's spell list and minimap marker keep neutral names while each rests on a single reader.
 
 ### Fixed
 

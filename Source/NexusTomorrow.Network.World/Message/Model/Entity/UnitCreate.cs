@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Entity;
 
 /// <summary>
 /// Creates a unit in the client's world under an id the client then knows it by: its type and the data that type carries, its stats and
-/// other values set by id, the commands applied to it, the spells created on it, its faction, and its display and outfit.
+/// other values set by id, the commands applied to it, its faction, and its display and outfit.
 /// </summary>
 /// <remarks>
 /// The client ignores a create for an id it already has, and that unit keeps what it had. Among the units it refuses are a unit whose type
@@ -150,7 +150,13 @@ public sealed partial class UnitCreate
     [VerifiedMember, UInt(1)] public bool IsVendor { get; set; }
 
     [UInt(1)] public bool Unknown3Bit3 { get; set; }
-    [UInt(1)] public bool Unknown3Bit4 { get; set; }
+
+    /// <summary>
+    /// Whether the unit is shown: set, the client fades the unit's model in and raises UnitCreated; clear, it fades the model out and
+    /// raises UnitDestroyed.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool IsShown { get; set; }
+
     [UInt(1)] public bool Unknown3Bit5 { get; set; }
     [UInt(1)] public bool Unknown3Bit6 { get; set; }
     [UInt(1)] public bool Unknown3Bit7 { get; set; }
@@ -185,10 +191,7 @@ public sealed partial class UnitCreate
     /// </summary>
     [VerifiedMember, Array(CountBits = 7)] public List<ItemVisual> Items { get; set; } = [];
 
-    /// <summary>
-    /// Spells the client creates on the unit. A spell it fails to create, or cannot find once created, does not refuse the unit.
-    /// </summary>
-    [Array(CountBits = 9)] public List<Server0262Part7> Spells { get; } = [];
+    [Array(CountBits = 9)] public List<Server0262Part7> Unknown9 { get; } = [];
 
     /// <summary>
     /// A spell, as an id the client looks up among the spells it holds.
@@ -226,12 +229,7 @@ public sealed partial class UnitCreate
 
     public Server0262Part15 Unknown16 { get; set; } = new();
     public Server0262Part16 Unknown17 { get; set; } = new();
-
-    /// <summary>
-    /// The unit's minimap marker, by id. Unit:GetMiniMapMarkers returns it, or else the minimap marker of the creature's
-    /// TradeskillHarvestingInfo row for a tier the player knows. <see cref="UnitMiniMapMarkerChanged"/> sets it too.
-    /// </summary>
-    [VerifiedMember, UInt(14)] public ushort MiniMapMarkerId { get; set; }
+    [UInt(14)] public ushort Unknown18 { get; set; }
 
     /// <summary>
     /// The unit's display, as an id in the client's Creature2DisplayInfo table, or 0 for none. The client ignores an id the table lacks.
