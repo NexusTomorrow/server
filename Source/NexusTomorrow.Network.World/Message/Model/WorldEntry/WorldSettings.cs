@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Message.Model.WorldEntry;
 /// </summary>
 /// <remarks>
 /// Taken in any state, after <see cref="Pregame.EnterWorld"/>, which clears the difficulty and the readiness this message grants. On
-/// arrival the client sends <c>0x00D5</c> and <c>0x063B</c>. The client needs it to finish entering the world: it sends
+/// arrival the client sends <see cref="Option.OptionsSync"/> and <c>0x063B</c>. The client needs it to finish entering the world: it sends
 /// <see cref="WorldReady"/> only after it.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server00F1, Direction.ServerToClient)]
@@ -18,20 +18,47 @@ namespace NexusTomorrow.Network.World.Message.Model.WorldEntry;
 public sealed partial class WorldSettings
 {
     /// <summary>
-    /// The world's difficulty, as the client's interface shows it. Until this message arrives the client holds 2.
+    /// The world's difficulty, which GameLib.GetInstanceSettings reports as eWorldDifficulty. Until this message arrives the client holds 2.
     /// </summary>
-    [UInt(2)] public byte Difficulty { get; set; }
+    [VerifiedMember, UInt(2)] public byte Difficulty { get; set; }
 
     /// <summary>
-    /// The world's prime level, as the client's interface shows it.
+    /// The world's prime level, which GameLib.GetWorldPrimeLevel reports.
     /// </summary>
-    [UInt(32)] public uint PrimeLevel { get; set; }
+    [VerifiedMember, UInt(32)] public uint PrimeLevel { get; set; }
 
     /// <summary>
-    /// Flags. Bit 0: the world scales the player's level, as the client's interface shows it. The client gives bits 1 and 4 to 7 no
-    /// meaning.
+    /// Whether the world scales the player's level, which GameLib.GetInstanceSettings reports as bWorldForcesLevelScaling.
     /// </summary>
-    [UInt(8)] public byte Flags { get; set; }
+    [VerifiedMember, UInt(1)] public bool ForcesLevelScaling { get; set; }
+
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool Unknown2Bit1 { get; set; }
+
+    [UInt(1)] public bool Unknown2Bit2 { get; set; }
+    [UInt(1)] public bool Unknown2Bit3 { get; set; }
+
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool Unknown2Bit4 { get; set; }
+
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool Unknown2Bit5 { get; set; }
+
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool Unknown2Bit6 { get; set; }
+
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool Unknown2Bit7 { get; set; }
 
     /// <summary>
     /// The period, in milliseconds, of the client's movement timer, from which the client sends the movement of the unit it moves
