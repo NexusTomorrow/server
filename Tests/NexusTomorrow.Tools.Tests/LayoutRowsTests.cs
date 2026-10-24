@@ -19,7 +19,7 @@ public sealed class LayoutRowsTests
     {
         Assert.Equal(
             [("Unknown0", "32", "unsigned"), ("Unknown1", "", "array, counted on the wire"), ("Unknown1[]", "32", "float")],
-            LayoutRows.Of(typeof(Server0931)));
+            LayoutRows.Of(typeof(UnitBonesChanged)));
     }
 
     [Fact]
