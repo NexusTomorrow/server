@@ -6,6 +6,8 @@ using NexusTomorrow.Commands;
 using NexusTomorrow.Gateway;
 using NexusTomorrow.Maps;
 using NexusTomorrow.Owners.Account;
+using NexusTomorrow.Owners.Realm;
+using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Server;
 using NexusTomorrow.Settings;
@@ -51,14 +53,14 @@ public static class Registries
     ];
 
     /// <summary>
-    /// Every command the server registers (<see cref="BuiltinCommands"/>), built over an account owner that never starts: the page reads
-    /// the definitions and runs none of them.
+    /// Every command the server registers (<see cref="BuiltinCommands"/>), built over an account owner that never starts and a realm
+    /// that takes nothing: the page reads the definitions and runs none of them.
     /// </summary>
     public static IReadOnlyList<CommandDefinition> Commands()
     {
         var persistence = new NoPersistence();
         var accounts = new AccountOwner(TimeProvider.System, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, persistence);
-        return BuiltinCommands.Create(accounts, [accounts], persistence, TimeProvider.System);
+        return BuiltinCommands.Create(accounts, new NoRealm(), [accounts], persistence, TimeProvider.System);
     }
 
     // Nothing runs a command here, so nothing is ever queued.
@@ -69,5 +71,11 @@ public static class Registries
         public bool IsAvailable => false;
 
         public void Enqueue(PersistenceWork work) => throw new InvalidOperationException("The reference pages run no command.");
+    }
+
+    // Nothing runs a command here, so nothing is ever posted.
+    private sealed class NoRealm : IRealmInbox
+    {
+        public bool Post(RealmMessage message) => throw new InvalidOperationException("The reference pages run no command.");
     }
 }

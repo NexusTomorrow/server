@@ -75,11 +75,7 @@ internal static class WorldEntry
                 Gender = (Sex)character.Sex,
             },
             Stats = [Stat(HealthStat, PlayerHealth), Stat(LevelStat, character.Level)],
-            Commands =
-            [
-                new Server0262Part5 { Unknown0 = PositionCommand, Unknown1 = new SetPositionCommand { Position = location.Position } },
-                new Server0262Part5 { Unknown0 = FacingCommand, Unknown1 = new SetRotationCommand { Rotation = new Vector3(location.Facing, 0, 0) } },
-            ],
+            Commands = [.. Placement(location.Position, location.Facing)],
             FactionId = (ushort)character.FactionId,
             BaseFactionId = (ushort)character.FactionId,
         };
@@ -97,6 +93,13 @@ internal static class WorldEntry
         AddIfKept(create, target.LatestMode);
         return create;
     }
+
+    // The commands that place a unit at position, facing the yaw in radians.
+    public static Server0262Part5[] Placement(Vector3 position, float facing) =>
+    [
+        new Server0262Part5 { Unknown0 = PositionCommand, Unknown1 = new SetPositionCommand { Position = position } },
+        new Server0262Part5 { Unknown0 = FacingCommand, Unknown1 = new SetRotationCommand { Rotation = new Vector3(facing, 0, 0) } },
+    ];
 
     // The client keeps a unit's path only from this message, for any player's unit.
     public static UnitPathTypeChanged PathOf(Player player) => new() { UnitId = player.UnitId, PathType = player.Character.Path };
