@@ -16,7 +16,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell;
 public sealed partial class PlayerSpells
 {
     /// <summary>
-    /// The spells.
+    /// The spells the client creates on the player's unit, each the spell (<see cref="Server0262Part7.Spell4Id"/>) and its targets.
     /// </summary>
-    [Array(CountBits = 32)] public List<Server0262Part7> Spells { get; } = [];
+    [VerifiedMember, Array(CountBits = 32)] public List<Server0262Part7> Spells { get; } = [];
 }

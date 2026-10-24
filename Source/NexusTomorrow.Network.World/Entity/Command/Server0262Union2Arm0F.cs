@@ -13,14 +13,13 @@ public sealed partial class Server0262Union2Arm0F : IServer0262Union2
     [VerifiedMember, UInt(10), Count] public ushort Count { get; set; }
 
     /// <summary>
-    /// The time of each key, in milliseconds on the sender's clock. The client maps each through its fit of the sender's clock for the
-    /// unit, as it maps <see cref="SetTimeCommand.Time"/>, and the key takes effect at that time.
+    /// The time of each key, in milliseconds on the sender's clock. These times place the unit's facing along its keys: how far the unit
+    /// has turned between two keys at a given moment depends on how far apart in time the two keys are.
     /// </summary>
     [VerifiedMember, Array(CountFrom = nameof(Count)), UInt(32)] public List<uint> Times { get; set; } = [];
 
     /// <summary>
-    /// The unit's facing at each key, as <see cref="SetRotationCommand.Rotation"/> gives one: the client turns the unit through them by
-    /// the keys' times.
+    /// The unit's facing at each key, as <see cref="SetRotationCommand.Rotation"/> gives one: the client turns the unit through them.
     /// </summary>
     [VerifiedMember, Array(CountFrom = nameof(Count)), Float32] public List<Vector3> Rotations { get; set; } = [];
 

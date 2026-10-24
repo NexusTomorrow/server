@@ -12,9 +12,23 @@ public sealed partial class Server0262Union2Arm07 : IServer0262Union2
     /// </summary>
     [VerifiedMember, Float32] public Vector3 TargetPosition { get; set; }
 
-    [Float32] public Vector3 Unknown1 { get; set; }
-    [UInt(32)] public uint Unknown2 { get; set; }
-    [Float32] public float Unknown3 { get; set; }
+    /// <summary>
+    /// Where the unit's flight starts. On a unit the client already shows, the client starts the flight from the unit's shown position
+    /// instead.
+    /// </summary>
+    [VerifiedMember, Float32] public Vector3 StartPosition { get; set; }
+
+    /// <summary>
+    /// How long the flight lasts, in milliseconds, before the unit reaches <see cref="TargetPosition"/>.
+    /// </summary>
+    [VerifiedMember, UInt(32)] public uint FlightTime { get; set; }
+
+    /// <summary>
+    /// How far the flight bows above the straight line from its start to <see cref="TargetPosition"/>: a larger value bows higher, and
+    /// zero or a negative value does not rise above the line.
+    /// </summary>
+    [VerifiedMember, Float32] public float Gravity { get; set; }
+
     [UInt(32)] public uint Unknown4 { get; set; }
 
     /// <summary>

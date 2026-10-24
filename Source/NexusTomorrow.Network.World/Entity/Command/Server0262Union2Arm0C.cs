@@ -8,19 +8,15 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 public sealed partial class Server0262Union2Arm0C : IServer0262Union2
 {
     /// <summary>
-    /// How many keys the command carries: the number of entries in <see cref="Times"/> and in <see cref="CommandedVelocities"/>.
+    /// How many keys the command carries: the number of entries in <see cref="Unknown1"/> and in <see cref="CommandedVelocities"/>.
     /// </summary>
     [VerifiedMember, UInt(10), Count] public ushort Count { get; set; }
 
-    /// <summary>
-    /// The time of each key, in milliseconds on the sender's clock. The client maps each through its fit of the sender's clock for the
-    /// unit, as it maps <see cref="SetTimeCommand.Time"/>, and the key takes effect at that time.
-    /// </summary>
-    [VerifiedMember, Array(CountFrom = nameof(Count)), UInt(32)] public List<uint> Times { get; set; } = [];
+    [Array(CountFrom = nameof(Count)), UInt(32)] public List<uint> Unknown1 { get; set; } = [];
 
     /// <summary>
     /// The velocity the unit is driven at, at each key, as <see cref="SetMoveCommand.CommandedVelocity"/> gives one: the client moves that
-    /// velocity through them by the keys' times.
+    /// velocity through them.
     /// </summary>
     [VerifiedMember, Array(CountFrom = nameof(Count)), PackedFloat] public List<Vector3> CommandedVelocities { get; set; } = [];
 

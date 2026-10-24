@@ -7,19 +7,15 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 public sealed partial class Server0262Union2Arm17 : IServer0262Union2
 {
     /// <summary>
-    /// How many keys the command carries: the number of entries in <see cref="Times"/> and in <see cref="Scales"/>.
+    /// How many keys the command carries: the number of entries in <see cref="Unknown1"/> and in <see cref="Scales"/>.
     /// </summary>
     [VerifiedMember, UInt(8), Count] public byte Count { get; set; }
 
-    /// <summary>
-    /// The time of each key, in milliseconds on the sender's clock. The client maps each through its fit of the sender's clock for the
-    /// unit, as it maps <see cref="SetTimeCommand.Time"/>, and the key takes effect at that time.
-    /// </summary>
-    [VerifiedMember, Array(CountFrom = nameof(Count)), UInt(32)] public List<uint> Times { get; set; } = [];
+    [Array(CountFrom = nameof(Count)), UInt(32)] public List<uint> Unknown1 { get; set; } = [];
 
     /// <summary>
     /// The unit's scale at each key, as <see cref="Server0262Union2Arm16.Scale"/> gives one: the client moves the unit's scale through
-    /// them by the keys' times.
+    /// them.
     /// </summary>
     [VerifiedMember, Array(CountFrom = nameof(Count)), PackedFloat] public List<float> Scales { get; set; } = [];
 

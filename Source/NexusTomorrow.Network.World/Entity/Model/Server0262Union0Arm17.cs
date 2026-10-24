@@ -1,4 +1,5 @@
-﻿using NexusTomorrow.Network.Codec;
+﻿using NexusTomorrow.Game.Static.Entity;
+using NexusTomorrow.Network.Codec;
 
 namespace NexusTomorrow.Network.World.Entity.Model;
 
@@ -35,9 +36,9 @@ public sealed partial class Server0262Union0Arm17 : IServer0262Union0
     [VerifiedMember, UInt(5)] public byte ClassId { get; set; }
 
     /// <summary>
-    /// The unit's gender id.
+    /// The unit's gender.
     /// </summary>
-    [VerifiedMember, UInt(2)] public byte Gender { get; set; }
+    [VerifiedMember, UInt(2)] public Sex Gender { get; set; }
 
     /// <summary>
     /// The unit's group, by id; 0 when it is in none.

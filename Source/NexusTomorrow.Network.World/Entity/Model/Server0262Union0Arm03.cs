@@ -22,7 +22,8 @@ public sealed partial class Server0262Union0Arm03 : IServer0262Union0
     [VerifiedMember, UInt(14)] public ushort UnitVehicleId { get; set; }
 
     /// <summary>
-    /// Other units: each one the client has takes this unit as its vehicle.
+    /// The unit's passengers, each a unit (<see cref="Server0262Part0.UnitId"/>) and the seat it takes
+    /// (<see cref="Server0262Part0.SeatType"/>): each one the client has takes this unit as its vehicle.
     /// </summary>
-    [VerifiedMember, Array(CountBits = 3)] public List<Server0262Part0> Unknown2 { get; set; } = [];
+    [VerifiedMember, Array(CountBits = 3)] public List<Server0262Part0> Passengers { get; set; } = [];
 }
