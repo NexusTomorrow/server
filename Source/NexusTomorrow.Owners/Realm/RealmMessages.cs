@@ -37,6 +37,12 @@ public sealed record RenameCharacter(long AccountId, IClientSession Session, ulo
 public sealed record SelectCharacter(long AccountId, IWorldSession Session, ulong CharacterId) : RealmMessage;
 
 /// <summary>
+/// The client said a line from the world (<c>ChatSend</c>): its channel's type, the line, and the client's own id for it, which the
+/// answer carries back.
+/// </summary>
+public sealed record ChatSaid(long AccountId, IWorldSession Session, ushort ChannelType, string Text, ushort ChatId) : RealmMessage;
+
+/// <summary>
 /// A world session ended; its account's cached characters go with it.
 /// </summary>
 public sealed record RealmSessionClosed(long AccountId, IWorldSession Session) : RealmMessage;

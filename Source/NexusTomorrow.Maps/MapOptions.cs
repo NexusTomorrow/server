@@ -93,4 +93,11 @@ public sealed class MapOptions
     /// </summary>
     [AtLeast(1)]
     public int SwapsPerCheck { get; set; } = 32;
+
+    /// <summary>
+    /// How near, in world units, a player must stand to hear another's <c>/say</c> line, measured in three dimensions from the
+    /// speaker; a server policy figure, not the client's.
+    /// </summary>
+    [AtLeast(1)]
+    public int SayRange { get; set; } = 155;
 }

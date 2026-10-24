@@ -4,6 +4,7 @@ using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Gateway.World;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message.Model;
+using NexusTomorrow.Network.World.Message.Model.Chat;
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Network.World.Message.Model.WorldEntry;
@@ -16,8 +17,8 @@ namespace NexusTomorrow.Gateway.Connections;
 
 /// <summary>
 /// The world connection: greets inside the world envelope under the build key, redeems the session key through the account owner,
-/// switches both directions to the session cipher, hands character-select messages to the realm owner, and routes in-world messages
-/// to the map holding the session's character.
+/// switches both directions to the session cipher, hands character-select messages and, from the world, chat lines to the realm
+/// owner, and routes in-world messages to the map holding the session's character.
 /// </summary>
 public sealed class WorldConnection : ClientConnection, IWorldSession
 {
@@ -141,6 +142,15 @@ public sealed class WorldConnection : ClientConnection, IWorldSession
                 }
 
                 return Post(new SelectCharacter(accountId, this, select.CharacterId));
+            case ChatSend say:
+                // Reads only ChatReads.Members.
+                if (!InMap())
+                {
+                    Drop(row.Opcode, "chat outside the world");
+                    return true;
+                }
+
+                return Post(new ChatSaid(accountId, this, say.Channel.Type, say.Text, say.ChatId));
             case PregameKeepAlive:
                 return true;
             default:

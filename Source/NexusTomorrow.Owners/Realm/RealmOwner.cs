@@ -1,7 +1,9 @@
 ﻿using System.Numerics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NexusTomorrow.GameTable.Text.Static;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Owners.Text;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Realm;
@@ -12,15 +14,20 @@ namespace NexusTomorrow.Owners.Realm;
 /// The realm side: each online account's characters, loaded once per world session, the character-select answers, and the character
 /// handoff (P6): select loads the character in full and hands it to its world's map, which hands it back when it leaves. An answer that
 /// depends on a write is sent only from the write's completion message. A character away from rest is never loaded again until its
-/// map hands it back.
+/// map hands it back. A chat line from the world is checked here (its channel, the client's chat rule and the word filter) and passed
+/// to the map holding the speaker's character.
 /// </summary>
 public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
 {
     // The highest path id CharacterCreate.Path documents (3 Explorer).
     private const byte LastPath = 3;
 
+    // The client's built-in Say channel (ChatChannelKey.Type).
+    private const ushort SayChannelType = 4;
+
     private readonly IWriteBehind _persistence;
     private readonly ICreationCatalog _catalog;
+    private readonly IWordFilter _filter;
     private readonly IMapDirectory _maps;
     private readonly TimeProvider _time;
     private readonly RealmOptions _options;
@@ -51,21 +58,30 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
 
     private long _ticket;
 
+    // Written by the owner, read from any thread.
+    private long _droppedChatLines;
+
     /// <summary>
     /// Create the realm owner.
     /// </summary>
     public RealmOwner(
-        IWriteBehind persistence, ICreationCatalog catalog, IMapDirectory maps, TimeProvider time, IOptions<RealmOptions> options,
-        ILogger<RealmOwner> logger)
+        IWriteBehind persistence, ICreationCatalog catalog, IWordFilter filter, IMapDirectory maps, TimeProvider time,
+        IOptions<RealmOptions> options, ILogger<RealmOwner> logger)
         : base("realm", logger)
     {
         _persistence = persistence;
         _catalog = catalog;
+        _filter = filter;
         _maps = maps;
         _time = time;
         _options = options.Value;
         _log = logger;
     }
+
+    /// <summary>
+    /// How many chat lines the realm refused or could not pass to a map.
+    /// </summary>
+    public long DroppedChatLines => Volatile.Read(ref _droppedChatLines);
 
     /// <inheritdoc/>
     protected override void Handle(RealmMessage message)
@@ -115,6 +131,9 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
                 break;
             case RealmSessionClosed closed:
                 Closed(closed);
+                break;
+            case ChatSaid said:
+                Say(said);
                 break;
         }
 
@@ -213,7 +232,7 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
             return;
         }
 
-        if (!CharacterNames.IsAllowed(request.Name))
+        if (!CharacterNames.IsAllowed(request.Name, _filter))
         {
             RefuseCreate(session, CreateResults.NameNotAllowed);
             return;
@@ -314,7 +333,7 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
             return;
         }
 
-        if (!CharacterNames.IsAllowed(rename.NewName))
+        if (!CharacterNames.IsAllowed(rename.NewName, _filter))
         {
             RefuseRename(session, RenameResults.NameNotAllowed);
             return;
@@ -427,7 +446,38 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
         }
 
         presence.Loading = false;
+        presence.Map = map;
     }
+
+    // A line goes on only from the Say channel, within the client's chat rule and the word filter, and from a session whose character
+    // a map holds. A refused line is logged by its length and reason only, never its text.
+    private void Say(ChatSaid said)
+    {
+        string? refusal = said.ChannelType != SayChannelType ? "not the Say channel"
+            : !UserTextRules.Check(said.Text, UserText.Chat) ? "outside the chat rule"
+            : !_filter.Allows(said.Text) ? "a filtered word"
+            : null;
+        if (refusal is null)
+        {
+            if (MapOf(said.Session, out ulong characterId) is not { } map)
+                refusal = "no character in a map";
+            else if (map.Post(new LocalChat(said.Session, characterId, said.ChatId, said.Text)))
+                return;
+            else
+                refusal = "the map has stopped";
+        }
+
+        RealmLog.ChatDropped(_log, said.Session.Id, said.Text.Length, refusal);
+        Volatile.Write(ref _droppedChatLines, _droppedChatLines + 1);
+    }
+
+    // The map holding the session's character from its arrival on; null while the character loads, waits behind another session's
+    // presence, or is at rest.
+    private IMapInbox? MapOf(IWorldSession session, out ulong characterId) =>
+        _held.TryGetValue(session, out characterId) && _presences.TryGetValue(characterId, out Presence? presence)
+            && ReferenceEquals(presence.Session, session)
+            ? presence.Map
+            : null;
 
     private void Returned(CharacterReturned returned)
     {
@@ -567,6 +617,9 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
 
         // True until the arrival is posted to the map.
         public bool Loading { get; set; } = true;
+
+        // The map the arrival was posted to, from then until the character is back at rest; null before.
+        public IMapInbox? Map { get; set; }
 
         // The session closed while the load was out: the load is dropped when it lands.
         public bool Abandoned { get; set; }

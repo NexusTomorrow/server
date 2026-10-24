@@ -69,3 +69,9 @@ public sealed record ClientLogoutRequested(IWorldSession Session, bool Begin) : 
 /// The client confirmed its logout request; on an exit it then quits.
 /// </summary>
 public sealed record ClientLogoutConfirmed(IWorldSession Session) : SessionMessage(Session);
+
+/// <summary>
+/// A line the realm checked and passed on for its speaker's map to say: the speaker's session and character, the client's own id
+/// for the line, and the line.
+/// </summary>
+public sealed record LocalChat(IWorldSession Session, ulong CharacterId, ushort ChatId, string Text) : SessionMessage(Session);

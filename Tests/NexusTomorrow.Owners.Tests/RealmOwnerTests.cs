@@ -6,6 +6,7 @@ using Microsoft.Extensions.Time.Testing;
 using NexusTomorrow.Game.Static;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Owners.Realm;
+using NexusTomorrow.Owners.Text;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Realm;
@@ -25,6 +26,9 @@ public sealed class RealmOwnerTests : IAsyncLifetime
         new CreationOption(3, Race: 1, Sex: 0, Class: 1, FactionId: 166, Enabled: true, CharacterCreationStart.Level50, Xp: 0, Level: 50, EntitlementRequired: 0, CostAmount: 1, CostumeOnly: false),
     ]);
 
+    // A made-up word, never one of the client's.
+    private static readonly WordFilter s_filter = new([(0, "blorp")], NullLogger<WordFilter>.Instance);
+
     private readonly FakeTimeProvider _time = new(new DateTimeOffset(2026, 10, 16, 12, 0, 0, TimeSpan.Zero));
     private readonly FakeWriteBehind _db = new();
     private readonly FakeClientSession _session = new();
@@ -33,7 +37,7 @@ public sealed class RealmOwnerTests : IAsyncLifetime
 
     public RealmOwnerTests()
     {
-        _owner = new RealmOwner(_db, s_catalog, _maps, _time, Options.Create(new RealmOptions { MaxCharactersPerAccount = 2 }), NullLogger<RealmOwner>.Instance);
+        _owner = new RealmOwner(_db, s_catalog, s_filter, _maps, _time, Options.Create(new RealmOptions { MaxCharactersPerAccount = 2 }), NullLogger<RealmOwner>.Instance);
     }
 
     public ValueTask InitializeAsync()
@@ -110,6 +114,16 @@ public sealed class RealmOwnerTests : IAsyncLifetime
         _owner.Post(new CreateCharacter(Account, _session, Create(name)));
         await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterCreateResult>().Any());
         Assert.Equal(expected, _session.Single<CharacterCreateResult>().Result);
+        Assert.Empty(_db.Queued.OfType<CreateCharacterWork>());
+    }
+
+    [Fact]
+    public async Task ACreateWithAFilteredNameIsRefusedAsNotAllowed()
+    {
+        await ListAsync();
+        _owner.Post(new CreateCharacter(Account, _session, Create("Blorp Smith")));
+        await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterCreateResult>().Any());
+        Assert.Equal(CreateResults.NameNotAllowed, _session.Single<CharacterCreateResult>().Result);
         Assert.Empty(_db.Queued.OfType<CreateCharacterWork>());
     }
 
@@ -740,7 +754,7 @@ public sealed class RealmOwnerTests : IAsyncLifetime
 
     private RealmOwner StartOwner(FakeWriteBehind db, int? ids)
     {
-        var owner = new RealmOwner(db, s_catalog, _maps, _time, Options.Create(new RealmOptions()), NullLogger<RealmOwner>.Instance);
+        var owner = new RealmOwner(db, s_catalog, s_filter, _maps, _time, Options.Create(new RealmOptions()), NullLogger<RealmOwner>.Instance);
         if (ids is int count)
             owner.Post(new IdBlockTaken(new IdBlock(5001, count)));
         owner.Start();
