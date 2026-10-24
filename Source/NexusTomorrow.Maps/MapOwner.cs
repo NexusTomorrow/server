@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
+using NexusTomorrow.Maps.Movement;
 using NexusTomorrow.Maps.Scheduling;
 using NexusTomorrow.Maps.Timing;
 using NexusTomorrow.Maps.Visibility;
@@ -45,6 +46,7 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     private readonly List<Player> _due = [];
     private readonly WorldEntryComplete _entryComplete = new();
     private readonly AreaOfInterest _visibility;
+    private readonly MovementRelay _relay;
 
     // Sent only in answer to a logout request with Begin set: at a countdown's deadline the client goes on with the logout
     // (LogoutCountdown.Duration), so an unasked countdown would log the player out. Duration 0 puts that deadline at now, so it
@@ -93,6 +95,7 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
         _drainBudgetTimestamps = (long)(settings.NormalDrainBudget.TotalSeconds * Stopwatch.Frequency);
         _timers = new SaveTimerHandler(this);
         _visibility = new AreaOfInterest(settings, serializer, visibility, metrics, logger, worldId, _worldTag);
+        _relay = new MovementRelay(serializer, metrics, logger, worldId, _worldTag);
         Name = $"map {worldId}";
     }
 
@@ -125,6 +128,16 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     /// How many client messages the map read but did not act on.
     /// </summary>
     public long DroppedMessages => Volatile.Read(ref _droppedMessages);
+
+    /// <summary>
+    /// How many movement batches the map relayed to the players who see their mover.
+    /// </summary>
+    public long RelayedBatches => _relay.Relayed;
+
+    /// <summary>
+    /// How many movement batches the map dropped for <paramref name="reason"/>.
+    /// </summary>
+    public long DroppedBatches(RelayDrop reason) => _relay.Dropped(reason);
 
     /// <inheritdoc/>
     public bool Post(MapMessage message) => Write(_normal.Writer, message);
@@ -193,7 +206,9 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
             _ticksSinceFlush = 0;
             try
             {
+                // The check runs first, so a viewer admitted at this flush takes the mover's create before its movement.
                 _visibility.Check(_byCharacter.Values, nowMs);
+                _relay.Flush(_byCharacter.Values);
             }
             catch (Exception exception)
             {
@@ -265,9 +280,14 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
                         granted.HasControl = true;
                     break;
                 case ClientMoved moved:
-                    // Movement counts once the client has taken control on the grant's ticket.
+                    // Movement counts once the client has taken control on the grant's ticket; its batch waits for the next flush.
                     if (_bySession.TryGetValue(moved.Session, out Player? mover) && mover.HasControl)
+                    {
                         KeepMovement(mover, moved.Sample);
+                        if (moved.Batch is { } batch)
+                            _relay.Queue(mover, batch, _nowMs);
+                    }
+
                     break;
                 case ClientZoneChanged zoneChanged:
                     if (_bySession.TryGetValue(zoneChanged.Session, out Player? moving))
@@ -323,6 +343,9 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
             _nowMs + _random.NextInt64(1, _saveIntervalMs + 1), new MapTimer(MapTimerKind.Save, character.Id));
         MapLog.Entered(_logger, _worldId, character.Id, player.UnitId);
         player.ControlTicket = ++_lastControlTicket;
+
+        // The first stamp after a grant lags the client's clock, so the first relay restarts every viewer's fit.
+        player.ResetNext = true;
         WorldEntry.Send(player, _settings);
     }
 

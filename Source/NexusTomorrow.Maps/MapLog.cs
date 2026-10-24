@@ -46,4 +46,7 @@ internal static partial class MapLog
 
     [LoggerMessage(EventId = 7014, Level = LogLevel.Error, Message = "Map {World} failed its replication flush")]
     public static partial void FlushFailed(ILogger logger, ushort world, Exception exception);
+
+    [LoggerMessage(EventId = 7015, Level = LogLevel.Warning, Message = "Map {World} could not relay character {CharacterId}'s movement, so the batch is dropped")]
+    public static partial void RelayRefused(ILogger logger, ushort world, ulong characterId, Exception exception);
 }

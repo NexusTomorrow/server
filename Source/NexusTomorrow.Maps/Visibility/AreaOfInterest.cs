@@ -75,6 +75,9 @@ internal sealed class AreaOfInterest
         }
     }
 
+    // Clears into, then adds every player in the world, as of the last flush, within radius of center (MapGrid.CollectWithin).
+    public void CollectWithin(Vector3 center, float radius, List<Player> into) => _grid.CollectWithin(center, radius, into);
+
     // Takes a leaving player out of every set and off the grid. With sendDestroys, each player who saw it is sent its destroy.
     public void Forget(Player leaving, bool sendDestroys)
     {
