@@ -109,6 +109,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   agree (time, platform, position, velocity, commanded velocity, rotation, state and mode), and the
   player's movement message says which commands the client sends. A new unit names its creature,
   vendor flag and prerequisite, owner, vehicle, warplot tier and plug, and the time it was created.
+- Instance messages carry their real names and field meanings: the instance settings window, resets
+  and their results, the restricted window, the busy flag, leaving a pending-removal instance and the
+  raid info request.
 
 ### Changed
 
