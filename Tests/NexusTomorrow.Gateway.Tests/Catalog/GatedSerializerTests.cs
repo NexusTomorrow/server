@@ -35,4 +35,27 @@ public sealed class GatedSerializerTests
         Assert.Equal(0, shared.References);
         Assert.Equal(1, serializer.SerializedCount(typeof(UnitDestroyed)));
     }
+
+    [Fact]
+    public void ABodyReleasedOnAnotherThreadServesTheNextSerializationWithoutAllocating()
+    {
+        var serializer = new GatedSerializer(MessageCatalog.Default);
+        var message = new UnitDestroyed { UnitId = 3 };
+
+        // Each message is released on a thread of its own, which then ends, as a session's writer releases it off the map's tick.
+        long allocated = 0;
+        for (int i = 0; i < 20; i++)
+        {
+            long before = GC.GetAllocatedBytesForCurrentThread();
+            SerializedMessage shared = serializer.Serialize(message);
+            if (i > 0)
+                allocated += GC.GetAllocatedBytesForCurrentThread() - before;
+
+            var writer = new Thread(shared.Release);
+            writer.Start();
+            writer.Join();
+        }
+
+        Assert.Equal(0L, allocated);
+    }
 }

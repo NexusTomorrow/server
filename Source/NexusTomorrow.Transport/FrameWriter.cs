@@ -118,15 +118,23 @@ public static class FrameWriter
         return frame;
     }
 
-    private static int BodyBytes(IWireStruct message) => (message.MeasureBits() + 7) >> 3;
-
     private static void WriteHeader(Span<byte> frame, int length, ushort opcode)
     {
         BinaryPrimitives.WriteUInt32LittleEndian(frame, (uint)length);
         BinaryPrimitives.WriteUInt16LittleEndian(frame[4..], opcode);
     }
 
-    private static void WriteBody(Span<byte> body, IWireStruct message, int bodyBytes)
+    /// <summary>
+    /// The byte count of <paramref name="message"/>'s body.
+    /// </summary>
+    public static int BodyBytes(IWireStruct message) => (message.MeasureBits() + 7) >> 3;
+
+    /// <summary>
+    /// Serialize <paramref name="message"/>'s body into the first <paramref name="bodyBytes"/> of <paramref name="body"/>, where
+    /// <paramref name="bodyBytes"/> is the message's <see cref="BodyBytes"/>.
+    /// </summary>
+    /// <exception cref="CodecException">The message wrote a different number of bytes than it measured.</exception>
+    public static void WriteBody(Span<byte> body, IWireStruct message, int bodyBytes)
     {
         var writer = new BitWriter(body[..bodyBytes]);
         message.Write(ref writer);

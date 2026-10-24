@@ -27,7 +27,18 @@ public sealed class GatedSerializer : IMessageSerializer
         if (!_catalog.MaySend(message, out string? refusal))
             throw new InvalidOperationException($"{refusal}, so the server may not send it.");
 
-        byte[] body = FrameWriter.RentBody(message, out int length);
-        return SerializedMessage.FromRentedBody(T.Opcode, message.GetType(), body, length);
+        int length = FrameWriter.BodyBytes(message);
+        SerializedMessage serialized = SerializedMessage.Rent(T.Opcode, message.GetType(), length, out Span<byte> body);
+        try
+        {
+            FrameWriter.WriteBody(body, message, length);
+        }
+        catch
+        {
+            serialized.Release();
+            throw;
+        }
+
+        return serialized;
     }
 }
