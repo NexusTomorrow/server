@@ -77,8 +77,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   the server checks at start and what it sets, generated from the settings themselves.
 - The protocol reference has a Codec-diagnostics page: every diagnostic the codec's source generator
   reports, how severe it is and when it fires, generated from the diagnostics themselves.
-- In a Debug build, the developer tools' tap records each message the server read with its decoded
-  fields, and the layout listing names each union arm's members.
+- In a Debug build, the developer tools' tap records each message the client sent with its decoded
+  fields, read by the server or, for one the server dropped, by the tap, and the layout listing
+  names each union arm's members.
 - Path messages carry their real names and field meanings: path XP, changing and unlocking paths,
   episodes and mission progress, the explorer's power maps and progress reports, the scientist's
   scanbot, experimentation and creature data, the settler's builds, hubs and infrastructure, and the

@@ -87,7 +87,7 @@ public sealed class MessageDumpTests
     {
         var problems = new List<string>();
         int dumped = 0;
-        int unwritable = 0;
+        var unwritable = new List<string>();
         for (int opcode = 0; opcode <= ushort.MaxValue; opcode++)
         {
             IWireStruct?[] messages =
@@ -103,13 +103,15 @@ public sealed class MessageDumpTests
                     continue;
 
                 // A default that leaves a member null cannot be written at all, and one whose union holds an arm its selector does
-                // not name (a union with no case-0 arm) is no message a client sends; neither has bytes to compare.
-                JsonObject dump = MessageDump.Of(message);
-                if (HoldsNull(dump) || !UnionsMatchTheirSelectors(message))
+                // not name (a union with no case-0 arm) is no message a client sends; neither has bytes to compare. Both are judged
+                // from the message, so a dump that wrongly writes null fails below rather than hide here.
+                if (HoldsNullMember(message) || !UnionsMatchTheirSelectors(message))
                 {
-                    unwritable++;
+                    unwritable.Add(message.GetType().Name);
                     continue;
                 }
+
+                JsonObject dump = MessageDump.Of(message);
 
                 try
                 {
@@ -125,9 +127,37 @@ public sealed class MessageDumpTests
             }
         }
 
-        TestContext.Current.TestOutputHelper?.WriteLine($"{dumped} declared messages bound back; {unwritable} have a default no client sends.");
+        TestContext.Current.TestOutputHelper?.WriteLine(
+            $"{dumped} declared messages bound back; {unwritable.Count} have a default no client sends: {string.Join(", ", unwritable.Order())}");
         Assert.True(dumped > 200, $"only {dumped} messages were dumped");
         Assert.True(problems.Count == 0, string.Join(Environment.NewLine, problems));
+
+        // Pinned, so a message whose default stops being one a client sends is seen rather than skipped.
+        Assert.Equal(["Client0255", "Client033F", "Client050D", "Client0510", "GuildBankTabNames"], unwritable.Order());
+    }
+
+    private static bool HoldsNullMember(object value)
+    {
+        foreach (MemberInfo member in MessageBinder.WireMembers(value.GetType()))
+        {
+            if (member.GetCustomAttribute<PadAttribute>() is not null)
+                continue;
+
+            object? held = MessageBinder.Read(member, value);
+            if (held is null)
+                return true;
+            if (held is System.Collections.IEnumerable items and not string and not byte[])
+            {
+                if (items.Cast<object?>().Any(item => item is null || (MessageBinder.IsWireType(item.GetType()) && HoldsNullMember(item))))
+                    return true;
+            }
+            else if ((MessageBinder.IsWireType(held.GetType()) || member.GetCustomAttribute<UnionAttribute>() is not null) && HoldsNullMember(held))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool UnionsMatchTheirSelectors(object value)
@@ -152,13 +182,6 @@ public sealed class MessageDumpTests
         return true;
     }
 
-    private static bool HoldsNull(JsonNode? node) => node switch
-    {
-        null => true,
-        JsonObject values => values.Any(pair => HoldsNull(pair.Value)),
-        JsonArray items => items.Any(HoldsNull),
-        _ => false,
-    };
 
     private static IWireStruct Bound(Type type, JsonObject fields)
     {

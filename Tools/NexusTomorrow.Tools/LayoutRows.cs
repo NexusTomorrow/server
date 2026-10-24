@@ -10,7 +10,8 @@ namespace NexusTomorrow.Tools;
 /// <c>varies</c> for a string or a byte block) and encoding. The members are <see cref="MessageBinder"/>'s, so a row path is the
 /// key the binder takes; a struct opens with a <c>the fields below</c> row, a fixed array has a row per element, an array counted
 /// on the wire is its own row followed by one element's rows under <c>path[]</c>, and a union is its own row, naming its type and
-/// selector, followed by each arm's rows under <c>path{case}</c> in case order; which arm a message holds depends on the values sent.
+/// selector, followed by each arm's rows under <c>path{case}</c> in case order (the arms <see cref="MessageBinder.Arms"/> finds);
+/// which arm a message holds depends on the values sent.
 /// </summary>
 internal static class LayoutRows
 {
@@ -53,7 +54,7 @@ internal static class LayoutRows
                 foreach ((decimal unionCase, Type arm) in MessageBinder.Arms(member, memberType)
                     .Select(arm => (CaseNumber(arm), arm)).OrderBy(pair => pair.Item1))
                 {
-                    string armPath = $"{path}{{{Number((int)unionCase)}}}";
+                    string armPath = $"{path}{{{unionCase.ToString(CultureInfo.InvariantCulture)}}}";
                     rows.Add((armPath, "", "the fields below"));
                     Append(arm, armPath + ".", rows, open);
                 }
