@@ -19,7 +19,7 @@ public sealed partial class Server0262Union0Arm0F : IServer0262Union0
     /// The world the client plugs into the socket, as an id in the client's World table. The client refuses the unit when it cannot look
     /// the world up.
     /// </summary>
-    [VerifiedMember, UInt(15)] public ushort WorldId { get; set; }
+    [VerifiedMember, UInt(15)] public ushort PlugWorldId { get; set; }
 
     [UInt(6)] public byte Unknown2 { get; set; }
 }

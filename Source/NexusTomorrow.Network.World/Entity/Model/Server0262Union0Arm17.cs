@@ -12,32 +12,32 @@ public sealed partial class Server0262Union0Arm17 : IServer0262Union0
     /// <summary>
     /// The client gives this value no meaning.
     /// </summary>
-    [UInt(64)] public ulong Unknown0 { get; set; }
+    [VerifiedMember, UInt(64)] public ulong Unknown0 { get; set; }
 
     /// <summary>
     /// The client gives this value no meaning.
     /// </summary>
-    [UInt(14)] public ushort Unknown1 { get; set; }
+    [VerifiedMember, UInt(14)] public ushort Unknown1 { get; set; }
 
     /// <summary>
-    /// The unit's name. When it is empty the client uses a default name.
+    /// The unit's name.
     /// </summary>
-    [WideString] public string Unknown2 { get; set; } = "";
+    [VerifiedMember, WideString] public string Name { get; set; } = "";
 
     /// <summary>
     /// The unit's race id. The client refuses the unit when it is above 17.
     /// </summary>
-    [UInt(5)] public byte Unknown3 { get; set; }
+    [VerifiedMember, UInt(5)] public byte RaceId { get; set; }
 
     /// <summary>
     /// The unit's class, as an id in the client's Class table. An id the table lacks does not refuse the unit.
     /// </summary>
-    [UInt(5)] public byte Unknown4 { get; set; }
+    [VerifiedMember, UInt(5)] public byte ClassId { get; set; }
 
     /// <summary>
     /// The unit's gender id.
     /// </summary>
-    [UInt(2)] public byte Unknown5 { get; set; }
+    [VerifiedMember, UInt(2)] public byte Gender { get; set; }
 
     /// <summary>
     /// The unit's group, by id; 0 when it is in none.
@@ -62,9 +62,9 @@ public sealed partial class Server0262Union0Arm17 : IServer0262Union0
     [VerifiedMember, Array(CountBits = 5), UInt(64)] public List<ulong> GuildIds { get; set; } = [];
 
     /// <summary>
-    /// Values the client applies to the unit's model.
+    /// The unit's bone values, which the client applies to the unit's model with the bone set of its race and gender.
     /// </summary>
-    [Array(CountBits = 6), Float32] public List<float> ModelValues { get; set; } = [];
+    [VerifiedMember, Array(CountBits = 6), Float32] public List<float> BoneValues { get; set; } = [];
 
     /// <summary>
     /// The unit's title, a CharacterTitle table id, which Unit:HasTitle and Unit:GetTitleOrName read;

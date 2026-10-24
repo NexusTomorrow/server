@@ -15,5 +15,9 @@ public sealed partial class Server0262Union0Arm23 : IServer0262Union0
     /// </summary>
     [VerifiedMember, UInt(18)] public uint CreatureId { get; set; }
 
-    [UInt(14)] public ushort Unknown1 { get; set; }
+    /// <summary>
+    /// The world socket of the housing plot the unit belongs to, as an id in the client's WorldSocket table. The client finds the residence
+    /// by the plot whose HousingPlotInfo row names this socket.
+    /// </summary>
+    [VerifiedMember, UInt(14)] public ushort PlotWorldSocketId { get; set; }
 }

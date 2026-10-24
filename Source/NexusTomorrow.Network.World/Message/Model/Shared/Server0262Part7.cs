@@ -6,14 +6,14 @@ namespace NexusTomorrow.Network.World.Message.Model.Shared;
 public sealed partial class Server0262Part7
 {
     /// <summary>
-    /// The spell's caster, by unit id.
+    /// The spell's caster, by unit id, which the client looks up as it creates the spell.
     /// </summary>
-    [VerifiedMember, UInt(32)] public uint CasterId { get; set; }
+    [VerifiedMember, UInt(32)] public uint CasterUnitId { get; set; }
 
     /// <summary>
-    /// The spell's target, by unit id.
+    /// A second unit, by unit id, which the client looks up and takes with the caster as it creates the spell.
     /// </summary>
-    [VerifiedMember, UInt(32)] public uint TargetId { get; set; }
+    [VerifiedMember, UInt(32)] public uint SecondUnitId { get; set; }
 
     /// <summary>
     /// The cast, by the server's id for it. When it is not 0 and the client already holds a spell under it, the client refreshes that

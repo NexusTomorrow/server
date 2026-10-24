@@ -9,14 +9,14 @@ namespace NexusTomorrow.Network.World.Message.Model.Entity;
 
 /// <summary>
 /// Creates a unit in the client's world under an id the client then knows it by: its type and the data that type carries, its stats and
-/// other values set by id, the commands applied to it, its faction, and its display and outfit.
+/// other values set by id, the commands applied to it, the spells created on it, its faction, and its display and outfit.
 /// </summary>
 /// <remarks>
 /// The client ignores a create for an id it already has, and that unit keeps what it had. Among the units it refuses are a unit whose type
 /// (<see cref="UnitType"/>) is 21, 26 or 28, a unit with a command it cannot apply, a unit that names a creature the client does not have
 /// unless its type is 10 or 16, a type-20 unit whose <see cref="Server0262Union0Arm14.CharacterId"/> or
 /// <see cref="Server0262Union0Arm14.RealmId"/> is 0 or whose <see cref="Server0262Union0Arm14.RaceId"/> is above 17, and a type-23 unit
-/// whose <see cref="Server0262Union0Arm17.Unknown3"/> is above 17. The player's unit comes from this message before
+/// whose <see cref="Server0262Union0Arm17.RaceId"/> is above 17. The player's unit comes from this message before
 /// <see cref="PlayerUnit"/> names it, and the client refuses that <see cref="PlayerUnit"/> unless <see cref="BaseFactionId"/> is an id in
 /// the client's Faction2 table. If
 /// <see cref="MovementControl"/> named the id before the unit existed, the client takes control of the unit as it creates it.
@@ -45,7 +45,7 @@ public sealed partial class UnitCreate
             /// <summary>
             /// The client gives this value no meaning.
             /// </summary>
-            [UInt(1)] public bool Unknown0 { get; set; }
+            [VerifiedMember, UInt(1)] public bool Unknown0 { get; set; }
         }
 
         /// <summary>
@@ -73,6 +73,9 @@ public sealed partial class UnitCreate
         [VerifiedMember, Union(nameof(Unknown0))] public IServer0262Union4 Unknown1 { get; set; } = new Server0262Union4Arm00();
     }
 
+    /// <summary>
+    /// The unit's identity as housing decor, when it has one.
+    /// </summary>
     [WireStruct]
     public sealed partial class Server0262Part15
     {
@@ -80,25 +83,50 @@ public sealed partial class UnitCreate
         {
         }
 
+        /// <summary>
+        /// No decor identity.
+        /// </summary>
         [WireStruct]
         [UnionCase(0)]
         public sealed partial class Server0262Union5Arm00 : IServer0262Union5
         {
-            [UInt(1)] public bool Unknown0 { get; set; }
+            /// <summary>
+            /// The client gives this value no meaning.
+            /// </summary>
+            [VerifiedMember, UInt(1)] public bool Unknown0 { get; set; }
         }
 
+        /// <summary>
+        /// A decor identity.
+        /// </summary>
         [WireStruct]
         [UnionCase(1)]
         public sealed partial class Server0262Union5Arm01 : IServer0262Union5
         {
             [UInt(64)] public ulong Unknown0 { get; set; }
-            [UInt(14)] public ushort Unknown1 { get; set; }
+
+            /// <summary>
+            /// The world socket of the housing plot the unit belongs to, as an id in the client's WorldSocket table. The client finds the
+            /// residence by the plot whose HousingPlotInfo row names this socket.
+            /// </summary>
+            [VerifiedMember, UInt(14)] public ushort PlotWorldSocketId { get; set; }
         }
 
-        [UInt(2)] public byte Unknown0 { get; set; }
-        [Union(nameof(Unknown0))] public IServer0262Union5 Unknown1 { get; set; } = new Server0262Union5Arm00();
+        /// <summary>
+        /// Whether the unit has a decor identity: 1 carries one in <see cref="Server0262Union5Arm01"/>, and 0 carries none. It selects
+        /// <see cref="Unknown1"/>.
+        /// </summary>
+        [VerifiedMember, UInt(2)] public byte Unknown0 { get; set; }
+
+        /// <summary>
+        /// The decor identity, in the form <see cref="Unknown0"/> selects.
+        /// </summary>
+        [VerifiedMember, Union(nameof(Unknown0))] public IServer0262Union5 Unknown1 { get; set; } = new Server0262Union5Arm00();
     }
 
+    /// <summary>
+    /// The cluster the unit belongs to, when it belongs to one.
+    /// </summary>
     [WireStruct]
     public sealed partial class Server0262Part16
     {
@@ -106,23 +134,45 @@ public sealed partial class UnitCreate
         {
         }
 
+        /// <summary>
+        /// No cluster.
+        /// </summary>
         [WireStruct]
         [UnionCase(0)]
         public sealed partial class Server0262Union6Arm00 : IServer0262Union6
         {
-            [UInt(1)] public bool Unknown0 { get; set; }
+            /// <summary>
+            /// The client gives this value no meaning.
+            /// </summary>
+            [VerifiedMember, UInt(1)] public bool Unknown0 { get; set; }
         }
 
+        /// <summary>
+        /// A cluster, by id.
+        /// </summary>
         [WireStruct]
         [UnionCase(1)]
         public sealed partial class Server0262Union6Arm01 : IServer0262Union6
         {
-            [UInt(32)] public uint Unknown0 { get; set; }
+            /// <summary>
+            /// The cluster the unit belongs to, by id. The client files the unit under it, and Unit:GetClusterUnits,
+            /// Unit:GetClusterInformation and Unit:GetDifficulty find the unit's cluster by it.
+            /// </summary>
+            [VerifiedMember, UInt(32)] public uint ClusterId { get; set; }
+
             [UInt(18)] public uint Unknown1 { get; set; }
         }
 
-        [UInt(2)] public byte Unknown0 { get; set; }
-        [Union(nameof(Unknown0))] public IServer0262Union6 Unknown1 { get; set; } = new Server0262Union6Arm00();
+        /// <summary>
+        /// Whether the unit belongs to a cluster: 1 names one in <see cref="Server0262Union6Arm01"/>, and 0 names none. It selects
+        /// <see cref="Unknown1"/>.
+        /// </summary>
+        [VerifiedMember, UInt(2)] public byte Unknown0 { get; set; }
+
+        /// <summary>
+        /// The cluster, in the form <see cref="Unknown0"/> selects.
+        /// </summary>
+        [VerifiedMember, Union(nameof(Unknown0))] public IServer0262Union6 Unknown1 { get; set; } = new Server0262Union6Arm00();
     }
 
     /// <summary>
@@ -149,14 +199,12 @@ public sealed partial class UnitCreate
     /// </summary>
     [VerifiedMember, UInt(1)] public bool IsVendor { get; set; }
 
-    [UInt(1)] public bool Unknown3Bit3 { get; set; }
-
     /// <summary>
-    /// Whether the unit is shown: set, the client fades the unit's model in and raises UnitCreated; clear, it fades the model out and
-    /// raises UnitDestroyed.
+    /// The client gives this value no meaning.
     /// </summary>
-    [VerifiedMember, UInt(1)] public bool IsShown { get; set; }
+    [VerifiedMember, UInt(1)] public bool Unknown3Bit3 { get; set; }
 
+    [UInt(1)] public bool Unknown3Bit4 { get; set; }
     [UInt(1)] public bool Unknown3Bit5 { get; set; }
     [UInt(1)] public bool Unknown3Bit6 { get; set; }
     [UInt(1)] public bool Unknown3Bit7 { get; set; }
@@ -191,7 +239,10 @@ public sealed partial class UnitCreate
     /// </summary>
     [VerifiedMember, Array(CountBits = 7)] public List<ItemVisual> Items { get; set; } = [];
 
-    [Array(CountBits = 9)] public List<Server0262Part7> Unknown9 { get; } = [];
+    /// <summary>
+    /// The spells the client creates on the unit as it creates it, each the spell (<see cref="Server0262Part7.Spell4Id"/>) and its targets.
+    /// </summary>
+    [VerifiedMember, Array(CountBits = 9)] public List<Server0262Part7> Spells { get; } = [];
 
     /// <summary>
     /// A spell, as an id the client looks up among the spells it holds.
@@ -227,8 +278,17 @@ public sealed partial class UnitCreate
     /// </summary>
     [VerifiedMember] public Server0262Part14 VendorPrerequisite { get; set; } = new();
 
-    public Server0262Part15 Unknown16 { get; set; } = new();
-    public Server0262Part16 Unknown17 { get; set; } = new();
+    /// <summary>
+    /// The unit's identity as housing decor, whose plot socket (<see cref="Server0262Part15.Server0262Union5Arm01.PlotWorldSocketId"/>)
+    /// ties the unit to a residence.
+    /// </summary>
+    [VerifiedMember] public Server0262Part15 DecorIdentity { get; set; } = new();
+
+    /// <summary>
+    /// The cluster the unit belongs to (<see cref="Server0262Part16.Server0262Union6Arm01.ClusterId"/>).
+    /// </summary>
+    [VerifiedMember] public Server0262Part16 Cluster { get; set; } = new();
+
     [UInt(14)] public ushort Unknown18 { get; set; }
 
     /// <summary>

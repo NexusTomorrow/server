@@ -7,10 +7,28 @@ namespace NexusTomorrow.Network.World.Entity.Command;
 [UnionCase(9)]
 public sealed partial class Server0262Union2Arm09 : IServer0262Union2
 {
-    [UInt(10), Count] public ushort Unknown0 { get; set; }
-    [Array(CountFrom = nameof(Unknown0)), UInt(32)] public List<uint> Unknown1 { get; set; } = [];
-    [Array(CountFrom = nameof(Unknown0)), PackedFloat] public List<Vector3> Unknown2 { get; set; } = [];
+    /// <summary>
+    /// How many keys the command carries: the number of entries in <see cref="Times"/> and in <see cref="Velocities"/>.
+    /// </summary>
+    [VerifiedMember, UInt(10), Count] public ushort Count { get; set; }
+
+    /// <summary>
+    /// The time of each key, in milliseconds on the sender's clock. The client maps each through its fit of the sender's clock for the
+    /// unit, as it maps <see cref="SetTimeCommand.Time"/>, and the key takes effect at that time.
+    /// </summary>
+    [VerifiedMember, Array(CountFrom = nameof(Count)), UInt(32)] public List<uint> Times { get; set; } = [];
+
+    /// <summary>
+    /// The unit's velocity at each key, as <see cref="SetVelocityCommand.Velocity"/> gives one: the client moves the unit's velocity
+    /// through them by the keys' times.
+    /// </summary>
+    [VerifiedMember, Array(CountFrom = nameof(Count)), PackedFloat] public List<Vector3> Velocities { get; set; } = [];
+
     [UInt(2)] public byte Unknown3 { get; set; }
     [UInt(32)] public uint Unknown4 { get; set; }
-    [UInt(1)] public bool Unknown5 { get; set; }
+
+    /// <summary>
+    /// Whether the segment blends in: when set, the client blends away the jump to the segment; when clear, the unit snaps to it.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool Blend { get; set; }
 }

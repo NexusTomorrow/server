@@ -28,8 +28,8 @@ public sealed class LayoutRowsTests
         List<(string Path, string Bits, string Encoding)> rows = LayoutRows.Of(typeof(Server0262Union2Arm03));
 
         Assert.Equal(
-            [("Unknown0", "10", "unsigned"), ("Unknown1", "", "array, counted by `Unknown0`"), ("Unknown1[]", "32", "unsigned"),
-             ("Unknown2", "", "array, counted by `Unknown0`")],
+            [("Count", "10", "unsigned"), ("Times", "", "array, counted by `Count`"), ("Times[]", "32", "unsigned"),
+             ("Positions", "", "array, counted by `Count`")],
             rows[..4]);
     }
 
@@ -38,7 +38,7 @@ public sealed class LayoutRowsTests
     {
         List<(string Path, string Bits, string Encoding)> rows = LayoutRows.Of(typeof(UnitMovement));
 
-        Assert.Contains(("Unknown4[].Unknown1{3}.Unknown2", "", "array, counted by `Unknown4[].Unknown1{3}.Unknown0`"), rows);
+        Assert.Contains(("Unknown4[].Unknown1{3}.Positions", "", "array, counted by `Unknown4[].Unknown1{3}.Count`"), rows);
     }
 
     [Fact]

@@ -12,5 +12,5 @@ public sealed partial class Server0262Union0Arm15 : IServer0262Union0
     /// <summary>
     /// The client gives this value no meaning.
     /// </summary>
-    [UInt(18)] public uint Unknown0 { get; set; }
+    [VerifiedMember, UInt(18)] public uint Unknown0 { get; set; }
 }

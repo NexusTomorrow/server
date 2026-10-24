@@ -295,7 +295,7 @@ public sealed class InboundDecoderTests
     {
         var movement = new ClientMovement { ClientTime = 1000 };
         for (int i = 0; i < commands; i++)
-            movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 10, Unknown1 = new Server0262Union2Arm0A { Unknown0 = true } });
+            movement.Unknown1.Add(new Server0262Part5 { Unknown0 = 10, Unknown1 = new Server0262Union2Arm0A { Blend = true } });
 
         return movement;
     }
