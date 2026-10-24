@@ -8,5 +8,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Unsettled;
 public sealed partial class Server01A9
 {
     [UInt(14)] public ushort Unknown0 { get; set; }
-    [UInt(32)] public uint Unknown1 { get; set; }
+    [Float32] public float Unknown1 { get; set; }
 }

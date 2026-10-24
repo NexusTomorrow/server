@@ -16,8 +16,8 @@ public sealed partial class Server0991
     [WideString] public string Unknown7 { get; set; } = "";
     [WideString] public string Unknown8 { get; set; } = "";
     [WideString] public string Unknown9 { get; set; } = "";
-    [UInt(32)] public uint Unknown10 { get; set; }
-    [UInt(32)] public uint Unknown11 { get; set; }
-    [UInt(32)] public uint Unknown12 { get; set; }
+    [Float32] public float Unknown10 { get; set; }
+    [Float32] public float Unknown11 { get; set; }
+    [Float32] public float Unknown12 { get; set; }
     [WideString] public string Unknown13 { get; set; } = "";
 }

@@ -140,7 +140,7 @@ public sealed partial class CharacterList
         /// </summary>
         [VerifiedMember, Array(CountBits = 32), Float32] public List<float> Bones { get; } = [];
 
-        [UInt(32)] public uint Unknown23 { get; set; }
+        [Float32] public float Unknown23 { get; set; }
     }
 
     /// <summary>

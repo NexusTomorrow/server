@@ -42,7 +42,7 @@ public sealed partial class UnitVisualsChanged
     /// <summary>
     /// The client gives this value no meaning.
     /// </summary>
-    [UInt(32)] public uint Unknown6 { get; set; }
+    [Float32] public float Unknown6 { get; set; }
 
     [UInt(1)] public bool Unknown7 { get; set; }
 

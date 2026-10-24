@@ -7,20 +7,20 @@ namespace NexusTomorrow.Network.World.Message.Model.Unsettled;
 [Dormant]
 public sealed partial class Server034D
 {
-    [UInt(32)] public uint Unknown0 { get; set; }
-    [UInt(32)] public uint Unknown1 { get; set; }
-    [UInt(32)] public uint Unknown2 { get; set; }
-    [UInt(32)] public uint Unknown3 { get; set; }
-    [UInt(32)] public uint Unknown4 { get; set; }
-    [UInt(32)] public uint Unknown5 { get; set; }
-    [UInt(32)] public uint Unknown6 { get; set; }
-    [UInt(32)] public uint Unknown7 { get; set; }
-    [UInt(32)] public uint Unknown8 { get; set; }
-    [UInt(32)] public uint Unknown9 { get; set; }
-    [UInt(32)] public uint Unknown10 { get; set; }
-    [UInt(32)] public uint Unknown11 { get; set; }
-    [UInt(32)] public uint Unknown12 { get; set; }
-    [UInt(32)] public uint Unknown13 { get; set; }
-    [UInt(32)] public uint Unknown14 { get; set; }
-    [UInt(32)] public uint Unknown15 { get; set; }
+    [Float32] public float Unknown0 { get; set; }
+    [Float32] public float Unknown1 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
+    [Float32] public float Unknown3 { get; set; }
+    [Float32] public float Unknown4 { get; set; }
+    [Float32] public float Unknown5 { get; set; }
+    [Float32] public float Unknown6 { get; set; }
+    [Float32] public float Unknown7 { get; set; }
+    [Float32] public float Unknown8 { get; set; }
+    [Float32] public float Unknown9 { get; set; }
+    [Float32] public float Unknown10 { get; set; }
+    [Float32] public float Unknown11 { get; set; }
+    [Float32] public float Unknown12 { get; set; }
+    [Float32] public float Unknown13 { get; set; }
+    [Float32] public float Unknown14 { get; set; }
+    [Float32] public float Unknown15 { get; set; }
 }

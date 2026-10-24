@@ -13,7 +13,7 @@ public sealed partial class Server084C
         [UInt(32)] public uint Unknown1 { get; set; }
         [UInt(32)] public uint Unknown2 { get; set; }
         [UInt(32)] public uint Unknown3 { get; set; }
-        [UInt(32)] public uint Unknown4 { get; set; }
+        [Float32] public float Unknown4 { get; set; }
         [Float32] public float Unknown5 { get; set; }
         [UInt(32)] public uint Unknown6 { get; set; }
     }

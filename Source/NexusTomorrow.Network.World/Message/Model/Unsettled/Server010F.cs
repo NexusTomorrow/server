@@ -37,11 +37,11 @@ public sealed partial class Server010F
     [UInt(15)] public ushort Unknown9 { get; set; }
     [UInt(15)] public ushort Unknown10 { get; set; }
     [UInt(14)] public ushort Unknown11 { get; set; }
-    [UInt(32)] public uint Unknown12 { get; set; }
-    [UInt(32)] public uint Unknown13 { get; set; }
-    [UInt(32)] public uint Unknown14 { get; set; }
-    [UInt(32)] public uint Unknown15 { get; set; }
-    [UInt(32)] public uint Unknown16 { get; set; }
+    [Float32] public float Unknown12 { get; set; }
+    [Float32] public float Unknown13 { get; set; }
+    [Float32] public float Unknown14 { get; set; }
+    [Float32] public float Unknown15 { get; set; }
+    [Float32] public float Unknown16 { get; set; }
     [UInt(3)] public byte Unknown17 { get; set; }
     [UInt(1)] public bool Unknown18 { get; set; }
     [UInt(1)] public bool Unknown19 { get; set; }
@@ -50,5 +50,5 @@ public sealed partial class Server010F
     [Array(CountFrom = nameof(Unknown21)), UInt(32)] public List<uint> Unknown22 { get; } = [];
     [Array(CountFrom = nameof(Unknown21)), UInt(32)] public List<uint> Unknown23 { get; } = [];
     [Array(CountBits = 32), UInt(32)] public List<uint> Unknown24 { get; } = [];
-    [UInt(32)] public uint Unknown25 { get; set; }
+    [Float32] public float Unknown25 { get; set; }
 }

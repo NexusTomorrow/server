@@ -16,7 +16,7 @@ public sealed partial class UnitVitalMaxChanged
     [UInt(32)] public uint UnitId { get; set; }
 
     [UInt(5)] public byte Unknown1 { get; set; }
-    [UInt(32)] public uint Unknown2 { get; set; }
+    [Float32] public float Unknown2 { get; set; }
 
     /// <summary>
     /// The maximum.

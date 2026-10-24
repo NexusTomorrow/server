@@ -11,7 +11,7 @@ public sealed partial class Server05A1
     {
         [UInt(32)] public uint Unknown0 { get; set; }
         [UInt(32)] public uint Unknown1 { get; set; }
-        [UInt(32)] public uint Unknown2 { get; set; }
+        [Float32] public float Unknown2 { get; set; }
     }
 
     [Array(CountBits = 32)] public List<Server05A1Part0> Unknown0 { get; } = [];
