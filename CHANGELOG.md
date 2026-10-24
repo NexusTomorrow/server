@@ -165,6 +165,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - The reward properties message carries its real name and field meanings: each property, its
   sub-key, how its value counts and the value; each property's modifier list stays unread. A chat
   line's id, and the speaker's name, realm and unit on the accepted line, carry theirs.
+- A chat line names its sender for the client's ignore list, and the unit its speech bubble rises
+  over.
 
 ### Changed
 
