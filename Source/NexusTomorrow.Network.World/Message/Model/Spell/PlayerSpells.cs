@@ -15,8 +15,5 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell;
 [Verified(Rung.Purpose)]
 public sealed partial class PlayerSpells
 {
-    /// <summary>
-    /// The spells.
-    /// </summary>
-    [Array(CountBits = 32)] public List<Server0262Part7> Spells { get; } = [];
+    [Array(CountBits = 32)] public List<Server0262Part7> Unknown0 { get; } = [];
 }
