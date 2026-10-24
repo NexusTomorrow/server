@@ -13,7 +13,7 @@ public enum MatchingQueueFlags
     /// </summary>
     GroupIsQueued = 0x04,
 
-    AsMercenary = 0x20,
+    Unknown20 = 0x20,
 
     /// <summary>
     /// The queue looks for other players.

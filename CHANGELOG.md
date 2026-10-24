@@ -164,6 +164,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Cinematic, marketplace and matchmaking members whose meaning rests on a single reader keep neutral
   names, and the eight messages that held one go back below Fields.
 - A new unit's spell list and minimap marker keep neutral names while each rests on a single reader.
+- A cinematic camera flag and a matchmaking queue flag the client never names keep neutral names.
 
 ### Fixed
 
