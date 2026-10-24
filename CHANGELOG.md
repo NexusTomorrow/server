@@ -96,6 +96,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - A chat link to a map point names its second coordinate Z.
 - The tether unit message (0x0881) has its name and meaning, and seven messages the client receives
   and ignores are marked dormant.
+- Cinematic messages carry their real names and field meanings: starting, continuing and skipping a
+  cinematic, its cameras, actors, transitions and visual effects, and the white-out; clearing a map's
+  destination marker sits with the map messages.
 
 ### Changed
 
