@@ -5,6 +5,7 @@ using System.Threading.Channels;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
+using NexusTomorrow.Commands;
 using NexusTomorrow.Gateway.Catalog;
 using NexusTomorrow.Gateway.Connections;
 using NexusTomorrow.Network.Codec;
@@ -12,6 +13,7 @@ using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Owners;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Persistence.Account;
+using NexusTomorrow.Persistence.Ops;
 using NexusTomorrow.Testing;
 
 namespace NexusTomorrow.Tools.Tests;
@@ -24,6 +26,8 @@ public sealed class OracleVerbsTests : IAsyncLifetime
     private readonly AccountOwner _accounts =
         new(new FakeTimeProvider(), Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind(), FixedEntitlementCaps.Defaults());
     private readonly SessionDouble _session = new();
+    private readonly FakeWriteBehind _audit = new();
+    private readonly ConcurrentQueue<CommandActor> _actors = new();
     private readonly Channel<string> _lines = Channel.CreateUnbounded<string>();
     private readonly OracleConnection _connection;
     private OracleVerbs _verbs = null!;
@@ -36,7 +40,7 @@ public sealed class OracleVerbsTests : IAsyncLifetime
     public async ValueTask InitializeAsync()
     {
         _accounts.Start();
-        _verbs = new OracleVerbs(_accounts, new FakeTimeProvider(new DateTimeOffset(2026, 10, 23, 12, 0, 0, TimeSpan.Zero)));
+        _verbs = new OracleVerbs(_accounts, Dispatcher(), new FakeTimeProvider(new DateTimeOffset(2026, 10, 23, 12, 0, 0, TimeSpan.Zero)));
         await LogInAsync(s_alice, _session);
     }
 
@@ -284,6 +288,42 @@ public sealed class OracleVerbsTests : IAsyncLifetime
         Assert.Equal(("Unknown0", "5", "unsigned"), ((string)member["path"]!, (string)member["bits"]!, (string)member["encoding"]!));
     }
 
+    [Fact]
+    public async Task CommandRunsTheLineAsTheOracleWithEveryPermissionAndAnswersItsReply()
+    {
+        JsonObject reply = await RequestAsync("command", """{"line": "test echo hello"}""");
+
+        Assert.True((bool)reply["ok"]!);
+        Assert.Equal(("Done", "hello"), ((string)reply["outcome"]!, (string)reply["text"]!));
+        CommandActor actor = Assert.Single(_actors);
+        Assert.Equal(("oracle", FrontEnd.Cli), (actor.Name, actor.FrontEnd));
+        Assert.True(actor.Holds("test.echo"));
+        AuditRow audit = _audit.Take<AuditWork>().Row;
+        Assert.Equal(("oracle", "Cli", "test echo", "Done"), (audit.Actor, audit.FrontEnd, audit.Action, audit.Outcome));
+    }
+
+    [Theory]
+    [InlineData("""{"line": "fly away"}""", "Refused", "Unknown command; try help.")]
+    [InlineData("""{"line": "test echo"}""", "Refused", "Usage: test echo <word>")]
+    public async Task ACommandTheDispatcherRefusesIsAnsweredWithItsOutcome(string request, string outcome, string text)
+    {
+        JsonObject reply = await RequestAsync("command", request);
+
+        Assert.True((bool)reply["ok"]!);
+        Assert.Equal((outcome, text), ((string)reply["outcome"]!, (string)reply["text"]!));
+        Assert.Empty(_actors);
+    }
+
+    [Fact]
+    public async Task CommandNamesItsLine()
+    {
+        JsonObject reply = await RequestAsync("command", """{"line": 5}""");
+
+        Assert.False((bool)reply["ok"]!);
+        Assert.Equal("command names a line", (string)reply["error"]!);
+        Assert.Empty(_actors);
+    }
+
     private async Task<JsonObject> RequestAsync(string verb, string request)
     {
         var body = (JsonObject)JsonNode.Parse(request)!;
@@ -291,6 +331,26 @@ public sealed class OracleVerbsTests : IAsyncLifetime
         body["id"] = 1;
         return await _verbs.HandleAsync(body, _connection, TestContext.Current.CancellationToken);
     }
+
+    // One command that needs a permission of its own and answers with its word, keeping the actor that ran it.
+    private CommandDispatcher Dispatcher() => new(
+        [
+            new CommandDefinition
+            {
+                Name = "test echo",
+                Description = "Answer with the word given.",
+                Permission = "test.echo",
+                Parameters = [new("word", "the word to answer with")],
+                ExecuteAsync = (invocation, _) =>
+                {
+                    _actors.Enqueue(invocation.Actor);
+                    return Task.FromResult(new CommandReply(CommandOutcome.Done, invocation.Arguments[0]));
+                },
+            },
+        ],
+        _audit,
+        TimeProvider.System,
+        NullLogger<CommandDispatcher>.Instance);
 
     private IEnumerable<JsonObject> Records(int count)
     {

@@ -5,6 +5,7 @@ using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
+using NexusTomorrow.Commands;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Testing;
 
@@ -173,7 +174,8 @@ public sealed class OracleEndpointTests : IAsyncLifetime
     {
         int port = FreePort();
         var options = new OracleOptions { Enabled = enabled, Port = port, TokenFile = TokenFile };
-        _endpoint = new OracleEndpoint(Options.Create(options), new OracleVerbs(_accounts, TimeProvider.System), NullLogger<OracleEndpoint>.Instance)
+        var commands = new CommandDispatcher([], new FakeWriteBehind(), TimeProvider.System, NullLogger<CommandDispatcher>.Instance);
+        _endpoint = new OracleEndpoint(Options.Create(options), new OracleVerbs(_accounts, commands, TimeProvider.System), NullLogger<OracleEndpoint>.Instance)
         {
             FirstLineTime = firstLineTime ?? TimeSpan.FromSeconds(5),
             OutboxLines = outboxLines,

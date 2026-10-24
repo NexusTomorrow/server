@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using NexusTomorrow.Commands;
 using NexusTomorrow.Gateway.Connections;
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Owners;
@@ -26,21 +27,27 @@ namespace NexusTomorrow.Tools;
 /// connection lasts.</item>
 /// <item><c>layout</c>: <c>opcode</c>; the server message's members in wire order, each with its path, width and encoding
 /// (<see cref="LayoutRows"/>).</item>
+/// <item><c>command</c>: <c>line</c>, a command line as the server's console takes it, run through <see cref="CommandDispatcher"/> as
+/// the actor <c>oracle</c>, which holds every permission and is audited under that name. Answered with the command's outcome and its
+/// reply text.</item>
 /// </list>
 /// </remarks>
 public sealed class OracleVerbs
 {
     private static readonly TimeSpan s_lookup = TimeSpan.FromSeconds(5);
+    private static readonly CommandActor s_actor = new("oracle", FrontEnd.Cli, new HashSet<string> { PermissionKeys.All }, null);
 
     private readonly AccountOwner _accounts;
+    private readonly CommandDispatcher _commands;
     private readonly TimeProvider _time;
 
     /// <summary>
     /// Create the verbs.
     /// </summary>
-    public OracleVerbs(AccountOwner accounts, TimeProvider time)
+    public OracleVerbs(AccountOwner accounts, CommandDispatcher commands, TimeProvider time)
     {
         _accounts = accounts;
+        _commands = commands;
         _time = time;
     }
 
@@ -61,6 +68,7 @@ public sealed class OracleVerbs
                 "inject" => await InjectAsync(request, cancellationToken),
                 "tap" => await TapAsync(request, connection, cancellationToken),
                 "layout" => Layout(request),
+                "command" => await CommandAsync(request, cancellationToken),
                 null => Error("a request names its verb"),
                 _ => Error($"no verb {verb}"),
             };
@@ -174,6 +182,15 @@ public sealed class OracleVerbs
         foreach ((string path, string bits, string encoding) in LayoutRows.Of(message.GetType()))
             members.Add(new JsonObject { ["path"] = path, ["bits"] = bits, ["encoding"] = encoding });
         return new JsonObject { ["ok"] = true, ["type"] = message.GetType().Name, ["members"] = members };
+    }
+
+    private async Task<JsonObject> CommandAsync(JsonObject request, CancellationToken cancellationToken)
+    {
+        if (Text(request["line"]) is not { } line)
+            return Error("command names a line");
+
+        CommandReply reply = await _commands.DispatchAsync(s_actor, line, cancellationToken);
+        return new JsonObject { ["ok"] = true, ["outcome"] = reply.Outcome.ToString(), ["text"] = reply.Text };
     }
 
     private async Task<IClientSession?> FindAsync(string account, CancellationToken cancellationToken)
