@@ -36,6 +36,8 @@ public sealed class WorldScenarios
         Assert.Equal(HarnessServer.Start, world.Enter.Position);
         uint unitId = world.Unit.UnitId;
         Assert.Equal(unitId, world.Player.UnitId);
+        Assert.Equal(unitId, world.UnitPath.UnitId);
+        Assert.Equal((byte)2, world.UnitPath.PathType);
         Assert.Equal(unitId, world.Control.UnitId);
         Assert.Equal(CharacterName, Assert.IsType<Server0262Union0Arm14>(world.Unit.TypeData).Name);
         Assert.Equal((ushort)166, world.Unit.BaseFactionId);

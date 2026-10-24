@@ -6,6 +6,13 @@ using NexusTomorrow.Network.World.Message.Model.WorldEntry;
 
 namespace NexusTomorrow.Harness;
 
-// The seven messages the server sent to bring a character into the world, in the order they arrived.
+// The eight messages the server sent to bring a character into the world, in the order they arrived.
 public sealed record EnteredWorld(
-    EnterWorld Enter, UnitCreate Unit, PlayerUnit Player, WorldSettings Settings, MovementControl Control, PlayerState State, PathState Path);
+    EnterWorld Enter,
+    UnitCreate Unit,
+    PlayerUnit Player,
+    UnitPathTypeChanged UnitPath,
+    WorldSettings Settings,
+    MovementControl Control,
+    PlayerState State,
+    PathState Path);

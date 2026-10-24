@@ -43,8 +43,9 @@ public sealed class MapOwner : IMapInbox, IOwner, ITickable
     private readonly List<Player> _due = [];
     private readonly WorldEntryComplete _entryComplete = new();
 
-    // LogoutCountdown.Duration 0 puts the client's deadline at now, so it confirms at once. Unknown1 is unmarked, so the send gate
-    // refuses it set.
+    // Sent only in answer to a logout request with Begin set: at a countdown's deadline the client goes on with the logout
+    // (LogoutCountdown.Duration), so an unasked countdown would log the player out. Duration 0 puts that deadline at now, so it
+    // confirms at once. Unknown1 is unmarked, so the send gate refuses it set.
     private readonly LogoutCountdown _logoutCountdown = new();
 
     // With a reason other than 6, 7, 8, 12, 15, 16, 19 and 20, ToCharacterSelect decides (WorldLogout.Unknown1); 0 is not one of them.

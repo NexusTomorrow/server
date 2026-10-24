@@ -14,7 +14,8 @@ using NexusTomorrow.Persistence.Realm;
 
 namespace NexusTomorrow.Maps;
 
-// What a map sends a character on arrival, in the order the client takes it: PlayerUnit needs the unit its UnitCreate made,
+// What a map sends a character on arrival, in the order the client takes it: PlayerUnit needs the unit its UnitCreate made, and so
+// does UnitPathTypeChanged, the client's only store of a unit's path (Unit:GetPlayerPathType reads 2147483647 without it);
 // WorldSettings is needed before the client sends WorldReady, and MovementControl, PlayerState and PathState are taken only once
 // PlayerUnit has named the player. Every member not set goes as its default, and every member set is marked [VerifiedMember] or sits
 // in a message read to Fields.
@@ -48,6 +49,7 @@ internal static class WorldEntry
         session.Send(new EnterWorld { WorldId = location.WorldId, Position = location.Position });
         session.Send(PlayerCreate(player, settings.RealmId));
         session.Send(new PlayerUnit { UnitId = player.UnitId });
+        session.Send(new UnitPathTypeChanged { UnitId = player.UnitId, PathType = player.Character.Path });
         session.Send(new WorldSettings { MovementInterval = settings.MovementInterval });
         session.Send(new MovementControl { Ticket = player.ControlTicket, RebuildMovement = true, UnitId = player.UnitId });
         session.Send(new PlayerState { Experience = player.Character.TotalXp, InputKeySet = PlayerStateMode, CostumeIndex = PlayerStateNoValue });

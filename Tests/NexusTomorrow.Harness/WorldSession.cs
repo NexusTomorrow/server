@@ -64,7 +64,7 @@ public sealed class WorldSession : IAsyncDisposable
         return await Connection.ExpectAsync<CharacterSelectFailed>();
     }
 
-    // As the client does: select, take the seven entry messages in order, answer the control grant, report the first takeover's zone
+    // As the client does: select, take the eight entry messages in order, answer the control grant, report the first takeover's zone
     // change and the world loaded, and wait for the end of the entry.
     public async Task<EnteredWorld> EnterWorldAsync(ulong characterId, ushort zoneId = 7)
     {
@@ -73,6 +73,7 @@ public sealed class WorldSession : IAsyncDisposable
             await Connection.ExpectAsync<EnterWorld>(),
             await Connection.ExpectAsync<UnitCreate>(),
             await Connection.ExpectAsync<PlayerUnit>(),
+            await Connection.ExpectAsync<UnitPathTypeChanged>(),
             await Connection.ExpectAsync<WorldSettings>(),
             await Connection.ExpectAsync<MovementControl>(),
             await Connection.ExpectAsync<PlayerState>(),
