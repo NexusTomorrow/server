@@ -13,6 +13,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Movement;
 /// </remarks>
 [WireMessage(GameMessageOpcode.Message0638, Direction.ServerToClient)]
 [Verified(Rung.Purpose)]
+[LayoutConfirmed]
 public sealed partial class UnitMovement
 {
     /// <summary>
