@@ -3,7 +3,7 @@
 namespace NexusTomorrow.Network.Codec.Tests.Facts;
 
 /// <summary>
-/// Holds a message at <see cref="Rung.Fields"/> or above to taking each field the client reads as one field whole. The tree comparison
+/// Holds a message at <see cref="Rung.Fields"/> or above, and a layout-confirmed message, to taking each field the client reads as one field whole. The tree comparison
 /// accepts a run of declared fields against one client field (8 6 against 14) as the same bits, but each member then holds part of one
 /// client value, so such a split fails here unless it is listed in <see cref="Settled"/>, keyed by the label and path of the node it starts
 /// at, with its reason and the split's text. One declared field against a run of client fields (32 against 8 8 8 8) takes the client's
@@ -11,17 +11,23 @@ namespace NexusTomorrow.Network.Codec.Tests.Facts;
 /// </summary>
 internal static class FieldsSplits
 {
-    public static IReadOnlyDictionary<string, Pin> Settled { get; } = new Dictionary<string, Pin>(StringComparer.Ordinal);
+    private const string PackedFloats = "settled: the client reads the element as one 48-bit field that holds three packed floats";
+
+    public static IReadOnlyDictionary<string, Pin> Settled { get; } = new Dictionary<string, Pin>(StringComparer.Ordinal)
+    {
+        ["0x0638 server to client [5].element[1].arm 0x09[2].element[0]"] = new(PackedFloats, "the client reads 48 as one field, the declaration as 16 16 16"), // UnitMovement
+        ["0x0638 server to client [5].element[1].arm 0x0C[2].element[0]"] = new(PackedFloats, "the client reads 48 as one field, the declaration as 16 16 16"), // UnitMovement
+    };
 
     /// <summary>
     /// Every split at Fields that is not settled, every settled split whose text has changed, and every settled split that no longer occurs.
     /// </summary>
-    public static List<string> Check(IEnumerable<(WireLayout Layout, Rung? Rung)> messages, IReadOnlyDictionary<int, WireFactsRow> rows, IReadOnlyDictionary<string, Pin> settled)
+    public static List<string> Check(IEnumerable<(WireLayout Layout, Rung? Rung, bool LayoutConfirmed)> messages, IReadOnlyDictionary<int, WireFactsRow> rows, IReadOnlyDictionary<string, Pin> settled)
     {
         var found = new Dictionary<string, string>(StringComparer.Ordinal);
-        foreach ((WireLayout layout, Rung? rung) in messages)
+        foreach ((WireLayout layout, Rung? rung, bool layoutConfirmed) in messages)
         {
-            if (rung is null or < Rung.Fields)
+            if (!layoutConfirmed && rung is null or < Rung.Fields)
                 continue;
 
             var splits = new List<WireSplit>();

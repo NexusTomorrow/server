@@ -28,8 +28,8 @@ public sealed class FieldsSplitsTests
         WireLayout split = Layout("8 6 4", 8, 6, 4);
         Dictionary<int, WireFactsRow> rows = Rows("14 4", 14, 4);
 
-        Assert.Equal([$"split at Fields, not settled: {Key}: {Split}"], FieldsSplits.Check([(split, Rung.Fields)], rows, Settled()));
-        Assert.Empty(FieldsSplits.Check([(split, Rung.Fields)], rows, Settled((Key, new Pin("settled: one value the client reads whole", Split)))));
+        Assert.Equal([$"split at Fields, not settled: {Key}: {Split}"], FieldsSplits.Check([(split, Rung.Fields, false)], rows, Settled()));
+        Assert.Empty(FieldsSplits.Check([(split, Rung.Fields, false)], rows, Settled((Key, new Pin("settled: one value the client reads whole", Split)))));
     }
 
     [Fact]
@@ -37,13 +37,30 @@ public sealed class FieldsSplitsTests
     {
         WireLayout split = Layout("8 6 4", 8, 6, 4);
 
-        Assert.Empty(FieldsSplits.Check([(split, Rung.Purpose), (split, null)], Rows("14 4", 14, 4), Settled()));
+        Assert.Empty(FieldsSplits.Check([(split, Rung.Purpose, false), (split, null, false)], Rows("14 4", 14, 4), Settled()));
+    }
+
+    [Fact]
+    public void ALayoutConfirmedMessageBelowFieldsIsChecked()
+    {
+        WireLayout split = Layout("8 6 4", 8, 6, 4);
+
+        Assert.Equal([$"split at Fields, not settled: {Key}: {Split}"], FieldsSplits.Check([(split, Rung.Purpose, true)], Rows("14 4", 14, 4), Settled()));
+    }
+
+    [Fact]
+    public void ALayoutConfirmedMessageBelowFieldsTakesASettledSplit()
+    {
+        WireLayout split = Layout("8 6 4", 8, 6, 4);
+        Dictionary<string, Pin> settled = Settled((Key, new Pin("settled: one value the client reads whole", Split)));
+
+        Assert.Empty(FieldsSplits.Check([(split, Rung.Purpose, true)], Rows("14 4", 14, 4), settled));
     }
 
     [Fact]
     public void OneDeclaredFieldAgainstARunOfClientFieldsPassesAtFields()
     {
-        Assert.Empty(FieldsSplits.Check([(Layout("32 4", 32, 4), Rung.Fields)], Rows("8 8 8 8 4", 8, 8, 8, 8, 4), Settled()));
+        Assert.Empty(FieldsSplits.Check([(Layout("32 4", 32, 4), Rung.Fields, false)], Rows("8 8 8 8 4", 8, 8, 8, 8, 4), Settled()));
     }
 
     [Fact]
@@ -52,9 +69,9 @@ public sealed class FieldsSplitsTests
         Dictionary<int, WireFactsRow> rows = Rows("14 4", 14, 4);
         Dictionary<string, Pin> settled = Settled((Key, new Pin("settled: one value the client reads whole", "the client reads 14 as one field, the declaration as 4 10")));
 
-        Assert.Equal([$"settled, but the split changed: {Key}: {Split}"], FieldsSplits.Check([(Layout("8 6 4", 8, 6, 4), Rung.Fields)], rows, settled));
+        Assert.Equal([$"settled, but the split changed: {Key}: {Split}"], FieldsSplits.Check([(Layout("8 6 4", 8, 6, 4), Rung.Fields, false)], rows, settled));
         Assert.Equal(
             [$"settled, but it is no longer split: {Key} (settled: one value the client reads whole)"],
-            FieldsSplits.Check([(Layout("14 4", 14, 4), Rung.Fields)], rows, settled));
+            FieldsSplits.Check([(Layout("14 4", 14, 4), Rung.Fields, false)], rows, settled));
     }
 }

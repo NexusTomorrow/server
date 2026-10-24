@@ -34,7 +34,7 @@ public sealed class RegistryMarkersTests
         where TMarker : Attribute => type.IsDefined(typeof(TMarker), inherit: false);
 
     // A confirmed layout is the one the client takes, so on every side the message travels the facts give that side's layout and it agrees
-    // field for field, with no split of one field into several, and no pinned disagreement stands on the message.
+    // field for field, with no split of one field into several unless FieldsSplits settles it, and no pinned disagreement stands on the message.
     [Fact]
     public void EveryLayoutConfirmedMessageMatchesTheClientFactsAndNoPinNamesIt()
     {
@@ -50,7 +50,7 @@ public sealed class RegistryMarkersTests
             WireFactsRow? row = rows.GetValueOrDefault(layout.Opcode);
             var splits = new List<WireSplit>();
             problems.AddRange(WireFactsComparison.Compare(layout, row, splits).Select(problem => $"{type.Name}: {problem}"));
-            problems.AddRange(splits.Select(split => $"{type.Name}: {split.Key}: the client takes {string.Join(' ', split.Client)} where the declaration takes {string.Join(' ', split.Declared)}"));
+            problems.AddRange(splits.Where(split => !FieldsSplits.Settled.ContainsKey(split.Key)).Select(split => $"{type.Name}: {split.Key}: the client takes {string.Join(' ', split.Client)} where the declaration takes {string.Join(' ', split.Declared)}"));
             if ((layout.Direction & Direction.ClientToServer) != 0 && row?.ClientToServer?.Kind == "unknown")
                 problems.Add($"{type.Name}: {key} client to server: the client facts give no layout for this side");
             if ((layout.Direction & Direction.ServerToClient) != 0 && row?.ServerToClient?.Kind == "unknown")

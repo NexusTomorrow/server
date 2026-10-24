@@ -119,6 +119,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Costume messages carry their real names and field meanings: the costume list and updates, wearing a
   costume, saving one and its result, unlocking and forgetting costume items, and the appearance
   change.
+- The unit movement message (0x0638) is marked as one whose layout the client takes as declared,
+  every movement command included.
 
 ### Changed
 
