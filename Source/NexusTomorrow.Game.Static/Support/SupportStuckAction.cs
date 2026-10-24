@@ -1,8 +1,22 @@
 ﻿namespace NexusTomorrow.Game.Static.Support;
 
+/// <summary>
+/// A recall a stuck player can ask for, as GameLib.SupportStuckAction names them; the client keeps a cooldown for each.
+/// </summary>
 public enum SupportStuckAction
 {
-    RecallTransmat = 1, // spell2Id = 49881
-    RecallHouse = 2, // spell2id = 49882
-    FreeSuicide = 3  // spell2Id = 52577
+    /// <summary>
+    /// Recall to the player's bind point; the stuck window offers it only when the player has one.
+    /// </summary>
+    RecallBind = 1,
+
+    /// <summary>
+    /// Recall to the player's house; the stuck window offers it only to a residence owner.
+    /// </summary>
+    RecallHouse = 2,
+
+    /// <summary>
+    /// Recall by the player's death, which the stuck window asks the player to confirm first.
+    /// </summary>
+    RecallDeath = 3,
 }
