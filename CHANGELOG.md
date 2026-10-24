@@ -90,6 +90,9 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - Marketplace messages carry their real names and field meanings: commodity orders, item auctions,
   bids and searches, CREDD exchange orders and their history, and the marketplace's status. Order
   times are Windows file times.
+- The message pages mark each message whose layout the client takes as declared, and each message
+  the 16042 client never acts on, which the server neither sends nor handles.
+- A chat link to a map point names its second coordinate Z.
 
 ### Changed
 
@@ -111,6 +114,7 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - The Host-settings page says it lists the settings a Release build reads: a Debug build also reads
   the developer tools' settings, which the page leaves out.
 - Comments restated in our own words.
+- The README's steps run the server as a Release build.
 
 ### Fixed
 

@@ -77,3 +77,17 @@ public sealed partial class ServerFF22
 
     [Union(nameof(Unknown1))] public IServerFF21Union0 Unknown2 { get; set; } = new ServerFF21Arm01();
 }
+
+[WireMessage((GameMessageOpcode)0xFF23, Direction.ServerToClient)]
+[LayoutConfirmed]
+public sealed partial class ServerFF23
+{
+    [UInt(32)] public uint Unknown0 { get; set; }
+}
+
+[WireMessage((GameMessageOpcode)0xFF24, Direction.Both)]
+[Dormant]
+public sealed partial class MessageFF24
+{
+    [UInt(16)] public ushort Unknown0 { get; set; }
+}

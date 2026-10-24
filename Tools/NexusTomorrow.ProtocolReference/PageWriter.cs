@@ -29,6 +29,14 @@ public static class PageWriter
     // The page never explains a value it does not show, so this sentence is on the opcode page only when a row sets a largest body.
     private const string LargestBodySentence = "A message whose body is larger than its row's largest body ends the session before the body is read.";
 
+    // The page never explains a value it does not show, so each marker's sentence is on the index or an area page only when a row there
+    // carries the marker.
+    private const string LayoutConfirmedSentence =
+        "**Layout confirmed**: the client takes the message's layout as declared, every member's width and order, whatever rung its meaning has reached.";
+
+    private const string DormantSentence =
+        "**Dormant**: the 16042 client never acts on the message. It never sends the message and does nothing with it when it arrives, so the server never sends or handles it either.";
+
     private const string Unsettled = "Unsettled";
 
     private const string AreaGrouping =
@@ -82,6 +90,7 @@ public static class PageWriter
         else if (!messages.Any(message => message.Rung >= Rung.Purpose))
             blocks.Insert(2, AreaGrouping);
 
+        MarkerSentences(blocks, messages);
         foreach ((Direction direction, string title) in s_chapters)
         {
             List<ReferenceMessage> chapter = [.. messages.Where(message => message.Direction == direction).OrderBy(message => message.Opcode).ThenBy(message => message.Type.Name, StringComparer.Ordinal)];
@@ -120,11 +129,14 @@ public static class PageWriter
                 $"[{message.Type.Name}](Messages-{message.Area}#{Anchor(message)})",
                 DirectionText(message.Direction),
                 RungText(message.Rung),
+                MarkText(message.LayoutConfirmed),
+                MarkText(message.Dormant),
                 $"[{message.Area}](Messages-{message.Area})",
             ]);
         }
 
-        blocks.Add(Table(["Opcode", "Message", "Direction", "Verified to", "Area"], index));
+        blocks.Add(Table(["Opcode", "Message", "Direction", "Verified to", "Layout confirmed", "Dormant", "Area"], index));
+        MarkerSentences(blocks, messages);
 
         blocks.Add("## Areas");
         IEnumerable<string[]> areas = messages
@@ -297,7 +309,9 @@ public static class PageWriter
         if (purpose && docs.Summary(typeId) is { } summary)
             blocks.Add(summary);
 
-        blocks.Add(Table(["Opcode", "Direction", "Verified to"], [[Code(Hex(message.Opcode)), DirectionText(message.Direction), RungText(message.Rung)]]));
+        blocks.Add(Table(
+            ["Opcode", "Direction", "Verified to", "Layout confirmed", "Dormant"],
+            [[Code(Hex(message.Opcode)), DirectionText(message.Direction), RungText(message.Rung), MarkText(message.LayoutConfirmed), MarkText(message.Dormant)]]));
 
         string[] header = fields ? ["Field", "Bits", "Encoding", "Meaning"] : ["Field", "Bits", "Encoding"];
         var rows = new List<string[]>();
@@ -314,6 +328,15 @@ public static class PageWriter
 
         if (purpose && docs.Remarks(typeId) is { } remarks)
             blocks.Add(remarks);
+    }
+
+    // One block per marker some row of the page carries: layout confirmed first, then dormant, the order of their columns.
+    private static void MarkerSentences(List<string> blocks, IReadOnlyList<ReferenceMessage> messages)
+    {
+        if (messages.Any(message => message.LayoutConfirmed))
+            blocks.Add(LayoutConfirmedSentence);
+        if (messages.Any(message => message.Dormant))
+            blocks.Add(DormantSentence);
     }
 
     // "[A](a) explains these." for one page, "[A](a) and [B](b) explain these." for two.
@@ -413,6 +436,9 @@ public static class PageWriter
         DiagnosticSeverity.Warning => "warning, an error in our build",
         _ => throw new ArgumentOutOfRangeException(nameof(severity), severity, "The page has no word for this severity."),
     };
+
+    // A marked message's cell reads "yes"; an unmarked one is empty, which Row writes as "| |".
+    private static string MarkText(bool marked) => marked ? "yes" : "";
 
     private static string RungText(Rung? rung) => rung switch
     {

@@ -30,9 +30,9 @@ public sealed class PageWriterTests
 
             ### `0xFF21` ServerFF21
 
-            | Opcode | Direction | Verified to |
-            |---|---|---|
-            | `0xFF21` | server to client | unverified |
+            | Opcode | Direction | Verified to | Layout confirmed | Dormant |
+            |---|---|---|---|---|
+            | `0xFF21` | server to client | unverified | | |
 
             | Field | Bits | Encoding |
             |---|---|---|
@@ -52,9 +52,9 @@ public sealed class PageWriterTests
 
             Asks for one page of the sample list.
 
-            | Opcode | Direction | Verified to |
-            |---|---|---|
-            | `0xFF20` | client to server | fields |
+            | Opcode | Direction | Verified to | Layout confirmed | Dormant |
+            |---|---|---|---|---|
+            | `0xFF20` | client to server | fields | | |
 
             | Field | Bits | Encoding | Meaning |
             |---|---|---|---|
@@ -116,13 +116,137 @@ public sealed class PageWriterTests
         string[] lines = page.Split("\n");
 
         Assert.StartsWith("![reference, committed]", lines[0], StringComparison.Ordinal);
-        int first = Array.IndexOf(lines, "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | client to server | fields | [Sample](Messages-Sample) |");
-        int second = Array.IndexOf(lines, "| `0xFF21` | [ServerFF21](Messages-Sample#0xff21-serverff21) | server to client | unverified | [Sample](Messages-Sample) |");
+        int first = Array.IndexOf(lines, "| `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | client to server | fields | | | [Sample](Messages-Sample) |");
+        int second = Array.IndexOf(lines, "| `0xFF21` | [ServerFF21](Messages-Sample#0xff21-serverff21) | server to client | unverified | | | [Sample](Messages-Sample) |");
         Assert.True(first > 0, "the SampleRequest row is missing");
         Assert.Equal(first + 1, second);
         Assert.Contains("| [Sample](Messages-Sample) | 2 | 1 |", lines);
         Assert.EndsWith("\n", page, StringComparison.Ordinal);
         Assert.DoesNotContain("\r", page, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AnIndexWithAMessageOfEachMarkShowsBothColumnsAndExplainsBothMarks()
+    {
+        const string expected = """
+            ![reference, committed](https://img.shields.io/badge/reference-committed-2ea44f) ![verified 2026-10-17](https://img.shields.io/badge/verified-2026--10--17-6e7781) [![bootstrap abc1234](https://img.shields.io/badge/bootstrap-abc1234-6e7781)](https://github.com/NexusTomorrow/server/commit/abc1234)
+
+            Every client message by opcode, with its direction, how far it is verified, and the page that describes it.
+
+            > [!NOTE]
+            > Generated from the message declarations at bootstrap `abc1234` by `Tools/NexusTomorrow.ProtocolReference`. Don't edit it by hand: change the declaration's documentation and regenerate.
+
+            ## Messages by opcode
+
+            | Opcode | Message | Direction | Verified to | Layout confirmed | Dormant | Area |
+            |---|---|---|---|---|---|---|
+            | `0xFF23` | [ServerFF23](Messages-Sample#0xff23-serverff23) | server to client | unverified | yes | | [Sample](Messages-Sample) |
+            | `0xFF24` | [MessageFF24](Messages-Sample#0xff24-messageff24) | both ways | unverified | | yes | [Sample](Messages-Sample) |
+
+            **Layout confirmed**: the client takes the message's layout as declared, every member's width and order, whatever rung its meaning has reached.
+
+            **Dormant**: the 16042 client never acts on the message. It never sends the message and does nothing with it when it arrives, so the server never sends or handles it either.
+
+            ## Areas
+
+            | Area | Messages | At fields or above |
+            |---|---|---|
+            | [Sample](Messages-Sample) | 2 | 0 |
+
+            ## Where the code lives
+
+            | Piece | Path |
+            |---|---|
+            | Network messages | `Source/NexusTomorrow.Network/Message/Model/` |
+            | Login messages | `Source/NexusTomorrow.Network.Auth/Message/Model/` |
+            | World messages | `Source/NexusTomorrow.Network.World/Message/Model/` |
+            | The verification rungs | `Source/NexusTomorrow.Network/Message/VerifiedAttribute.cs` |
+            | This page's generator | `Tools/NexusTomorrow.ProtocolReference/` |
+            """;
+
+        string page = PageWriter.IndexPage([ReferenceMessage.Of(typeof(MessageFF24)), ReferenceMessage.Of(typeof(ServerFF23))], s_stamp);
+
+        Assert.Equal(expected.ReplaceLineEndings("\n") + "\n", page);
+    }
+
+    [Fact]
+    public void AnIndexWithNoMarkedMessageKeepsBothColumnsEmptyAndExplainsNeitherMark()
+    {
+        const string expected = """
+            ![reference, committed](https://img.shields.io/badge/reference-committed-2ea44f) ![verified 2026-10-17](https://img.shields.io/badge/verified-2026--10--17-6e7781) [![bootstrap abc1234](https://img.shields.io/badge/bootstrap-abc1234-6e7781)](https://github.com/NexusTomorrow/server/commit/abc1234)
+
+            Every client message by opcode, with its direction, how far it is verified, and the page that describes it.
+
+            > [!NOTE]
+            > Generated from the message declarations at bootstrap `abc1234` by `Tools/NexusTomorrow.ProtocolReference`. Don't edit it by hand: change the declaration's documentation and regenerate.
+
+            ## Messages by opcode
+
+            | Opcode | Message | Direction | Verified to | Layout confirmed | Dormant | Area |
+            |---|---|---|---|---|---|---|
+            | `0xFF20` | [SampleRequest](Messages-Sample#0xff20-samplerequest) | client to server | fields | | | [Sample](Messages-Sample) |
+            | `0xFF21` | [ServerFF21](Messages-Sample#0xff21-serverff21) | server to client | unverified | | | [Sample](Messages-Sample) |
+
+            ## Areas
+
+            | Area | Messages | At fields or above |
+            |---|---|---|
+            | [Sample](Messages-Sample) | 2 | 1 |
+
+            ## Where the code lives
+
+            | Piece | Path |
+            |---|---|
+            | Network messages | `Source/NexusTomorrow.Network/Message/Model/` |
+            | Login messages | `Source/NexusTomorrow.Network.Auth/Message/Model/` |
+            | World messages | `Source/NexusTomorrow.Network.World/Message/Model/` |
+            | The verification rungs | `Source/NexusTomorrow.Network/Message/VerifiedAttribute.cs` |
+            | This page's generator | `Tools/NexusTomorrow.ProtocolReference/` |
+            """;
+
+        string page = PageWriter.IndexPage([ReferenceMessage.Of(typeof(SampleRequest)), ReferenceMessage.Of(typeof(ServerFF21))], s_stamp);
+
+        Assert.Equal(expected.ReplaceLineEndings("\n") + "\n", page);
+    }
+
+    [Fact]
+    public void AnAreaPageWithAMarkedMessageShowsItsMarkAndExplainsItOnceAfterTheOpening()
+    {
+        const string expected = """
+            ![reference, committed](https://img.shields.io/badge/reference-committed-2ea44f) ![verified 2026-10-17](https://img.shields.io/badge/verified-2026--10--17-6e7781) [![bootstrap abc1234](https://img.shields.io/badge/bootstrap-abc1234-6e7781)](https://github.com/NexusTomorrow/server/commit/abc1234)
+
+            Every message in the Sample area: its opcode, direction, how far it is verified, and its fields.
+
+            This area groups messages by the client feature they belong to; a message may sit here provisionally until its reading confirms the area. None is verified to its purpose yet, so this page claims nothing about what they do.
+
+            > [!NOTE]
+            > Generated from the message declarations at bootstrap `abc1234` by `Tools/NexusTomorrow.ProtocolReference`. Don't edit it by hand: change the declaration's documentation and regenerate.
+
+            **Layout confirmed**: the client takes the message's layout as declared, every member's width and order, whatever rung its meaning has reached.
+
+            ## Server to client
+
+            ### `0xFF23` ServerFF23
+
+            | Opcode | Direction | Verified to | Layout confirmed | Dormant |
+            |---|---|---|---|---|
+            | `0xFF23` | server to client | unverified | yes | |
+
+            | Field | Bits | Encoding |
+            |---|---|---|
+            | `Unknown0` | 32 | unsigned |
+
+            ## Where the code lives
+
+            | Piece | Path |
+            |---|---|
+            | Message declarations | `Tests/NexusTomorrow.ProtocolReference.Tests/Message/Model/Sample/` |
+            | This page's generator | `Tools/NexusTomorrow.ProtocolReference/` |
+            """;
+
+        string page = PageWriter.AreaPage("Sample", [ReferenceMessage.Of(typeof(ServerFF23))], s_walk, s_docs, s_stamp);
+
+        Assert.Equal(expected.ReplaceLineEndings("\n") + "\n", page);
     }
 
     [Fact]

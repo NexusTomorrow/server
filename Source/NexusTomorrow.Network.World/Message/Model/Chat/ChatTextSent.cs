@@ -8,6 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Chat;
 /// </summary>
 [WireMessage(GameMessageOpcode.Message01C4, Direction.Both)]
 [Verified(Rung.Purpose)]
+[Dormant]
 public sealed partial class ChatTextSent
 {
     /// <summary>

@@ -43,6 +43,7 @@ A server for the WildStar client, build 16042, written in C# on .NET 10.
 | `NexusTomorrow.MapGenerator` | Tool: extracts tables from your client and generates map files |
 | `NexusTomorrow.ClientConnector` | Tool: starts your client pointed at a server |
 | `Tools/NexusTomorrow.ProtocolReference` | Writes the wiki's message reference, opcode table, command list, codec diagnostics and host settings from the declarations and the server's registries |
+| `Tools/NexusTomorrow.Tools` | Debug-only tools the server hosts in a Debug build, off until enabled: a loopback endpoint that sends messages down a session, records what a session reads and writes, and lists a message's layout; a Release build compiles none of it |
 
 The solution is `Source/NexusTomorrow.slnx`, and the tests live under `Tests/`.
 
@@ -83,7 +84,7 @@ alone. Seeing other players comes next.
    ```
 
    Keep the secret the same across restarts.
-3. Create the schemas: `dotnet run --project Source/NexusTomorrow.Server -- migrate`.
+3. Create the schemas: `dotnet run -c Release --project Source/NexusTomorrow.Server -- migrate`.
 4. Point `Content:ClientDataPath` at the folder MapGenerator extracted your tables into (the one
    holding `tbl`), for example `$env:Content__ClientDataPath = "<output>"`. Without it, character
    creation offers nothing.
@@ -101,7 +102,7 @@ alone. Seeing other players comes next.
    $env:Realm__StartLocations__0__Y = "<y>"
    $env:Realm__StartLocations__0__Z = "<z>"
    ```
-6. Start it: `dotnet run --project Source/NexusTomorrow.Server`. Every listener binds to
+6. Start it: `dotnet run -c Release --project Source/NexusTomorrow.Server`. Every listener binds to
    `127.0.0.1` unless configured otherwise.
 7. At the server's console, create an account: `account create <email> <password>`. A password
    with spaces goes in double quotes, as in `account create alice@example.com "correct horse battery"`;

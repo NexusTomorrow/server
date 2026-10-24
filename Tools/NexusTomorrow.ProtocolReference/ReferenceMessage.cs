@@ -5,9 +5,10 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.ProtocolReference;
 
 /// <summary>
-/// A declared message as the reference pages list it.
+/// A declared message as the reference pages list it, with whether it carries <see cref="LayoutConfirmedAttribute"/> and
+/// <see cref="DormantAttribute"/>.
 /// </summary>
-public sealed record ReferenceMessage(Type Type, ushort Opcode, Direction Direction, Rung? Rung, string Area)
+public sealed record ReferenceMessage(Type Type, ushort Opcode, Direction Direction, Rung? Rung, string Area, bool LayoutConfirmed, bool Dormant)
 {
     /// <summary>
     /// The message <paramref name="type"/> declares.
@@ -17,7 +18,14 @@ public sealed record ReferenceMessage(Type Type, ushort Opcode, Direction Direct
     {
         WireMessageAttribute message = type.GetCustomAttribute<WireMessageAttribute>()
             ?? throw new ArgumentException($"{type.Name} is not a declared message.", nameof(type));
-        return new ReferenceMessage(type, (ushort)message.Opcode, message.Direction, type.GetCustomAttribute<VerifiedAttribute>()?.Rung, Areas.AreaOf(type));
+        return new ReferenceMessage(
+            type,
+            (ushort)message.Opcode,
+            message.Direction,
+            type.GetCustomAttribute<VerifiedAttribute>()?.Rung,
+            Areas.AreaOf(type),
+            type.IsDefined(typeof(LayoutConfirmedAttribute), inherit: false),
+            type.IsDefined(typeof(DormantAttribute), inherit: false));
     }
 }
 
