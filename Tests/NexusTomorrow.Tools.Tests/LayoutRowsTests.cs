@@ -18,8 +18,8 @@ public sealed class LayoutRowsTests
     public void ACountedArrayIsItsOwnRowThenItsElementsRows()
     {
         Assert.Equal(
-            [("Unknown0", "32", "unsigned"), ("Unknown1", "", "array, counted on the wire"), ("Unknown1[]", "32", "float")],
-            LayoutRows.Of(typeof(Server0931)));
+            [("UnitId", "32", "unsigned"), ("BoneValues", "", "array, counted on the wire"), ("BoneValues[]", "32", "float")],
+            LayoutRows.Of(typeof(UnitBonesChanged)));
     }
 
     [Fact]

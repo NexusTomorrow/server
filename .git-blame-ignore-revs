@@ -106,3 +106,5 @@ abec0512b5b386c7c8c14ede43f105c0a23b3fd5
 9d649a763a3cb77ea9b306a1e079da5834dc6050
 # Rename the group join, marks and death state messages
 720462628ff7b47834308c8b1ea58ce1d52a6460
+# Rename the unit bones message to a name of its own
+1da8a6bf6cd00becc08500d4f7f4ba09a70ef98b

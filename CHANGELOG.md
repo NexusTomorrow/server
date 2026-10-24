@@ -191,6 +191,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   its action set.
 - Joining a group, a group's target marks and a unit's death state carry their real names and field
   meanings, with the group's id, flags, size, loot rules, members, leader and marks.
+- A unit's changed look and bone values carry their real names and field meanings, including the
+  unit's outfit and whether a look is laid over its own.
 
 ### Changed
 
