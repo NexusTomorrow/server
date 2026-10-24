@@ -133,7 +133,7 @@ public sealed class MessageDumpTests
         Assert.True(problems.Count == 0, string.Join(Environment.NewLine, problems));
 
         // Pinned, so a message whose default stops being one a client sends is seen rather than skipped.
-        Assert.Equal(["Client033F", "Client050D", "Client0510", "CostumeSave", "GuildBankTabNames"], unwritable.Order());
+        Assert.Equal(["Client033F", "Client050D", "Client0510", "GuildBankTabNames"], unwritable.Order());
     }
 
     private static bool HoldsNullMember(object value)
