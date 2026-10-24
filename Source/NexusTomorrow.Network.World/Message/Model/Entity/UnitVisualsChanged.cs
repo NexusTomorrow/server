@@ -51,8 +51,8 @@ public sealed partial class UnitVisualsChanged
     [Float32] public float Unknown6 { get; set; }
 
     /// <summary>
-    /// Whether this look is laid over the unit's own. Set, the unit keeps its own race and sex, its own bone values stop applying, and a
-    /// cinematic copy of the unit carries the look. Clear, the race and sex also become the unit's own.
+    /// Whether this look is laid over the unit's own. Set, the unit keeps its own race and gender, its own bone values stop applying, and
+    /// a cinematic copy of the unit carries the look. Clear, the race and gender also become the unit's own.
     /// </summary>
     [UInt(1)] public bool IsTemporaryAppearance { get; set; }
 
