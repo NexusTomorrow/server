@@ -8,7 +8,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pet;
 /// </summary>
 [WireMessage(GameMessageOpcode.Server01AE, Direction.ServerToClient)]
 [Verified(Rung.Fields)]
-public sealed partial class VanityPetUnlocked
+public sealed partial class VanityPetLearned
 {
     /// <summary>
     /// The vanity pet's spell, as a Spell4 id the client looks up for the chat line's name.
