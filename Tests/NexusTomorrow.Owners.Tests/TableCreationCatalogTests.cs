@@ -47,7 +47,7 @@ public sealed class TableCreationCatalogTests : IDisposable
         CreationOption option = Assert.IsType<CreationOption>(Catalog().Find(1));
         Assert.Equal(166u, option.FactionId);
         Assert.Equal(2u, option.Level);
-        Assert.True(option.IsOffered);
+        Assert.True(option.IsOfferedTo(new HashSet<uint>(), creationLevelLimit: 3));
         Assert.Equal(0, _logger.Warnings);
     }
 

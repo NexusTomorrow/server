@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NexusTomorrow.GameTable.Text.Static;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Text;
 using NexusTomorrow.Owners.World;
 using NexusTomorrow.Persistence;
@@ -28,6 +29,7 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
     private readonly IWriteBehind _persistence;
     private readonly ICreationCatalog _catalog;
     private readonly IWordFilter _filter;
+    private readonly AccountDefaults _accountDefaults;
     private readonly IMapDirectory _maps;
     private readonly TimeProvider _time;
     private readonly RealmOptions _options;
@@ -65,13 +67,14 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
     /// Create the realm owner.
     /// </summary>
     public RealmOwner(
-        IWriteBehind persistence, ICreationCatalog catalog, IWordFilter filter, IMapDirectory maps, TimeProvider time,
-        IOptions<RealmOptions> options, ILogger<RealmOwner> logger)
+        IWriteBehind persistence, ICreationCatalog catalog, IWordFilter filter, AccountDefaults accountDefaults, IMapDirectory maps,
+        TimeProvider time, IOptions<RealmOptions> options, ILogger<RealmOwner> logger)
         : base("realm", logger)
     {
         _persistence = persistence;
         _catalog = catalog;
         _filter = filter;
+        _accountDefaults = accountDefaults;
         _maps = maps;
         _time = time;
         _options = options.Value;
@@ -226,7 +229,8 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
         // A repeated look id would make two customization rows under one key (RealmContext's character_customization), and the
         // write would throw on every retry while holding the account's keys.
         CreationOption? option = _catalog.Find(request.CreationId);
-        if (option is not { IsOffered: true } || request.Path > LastPath || RepeatsAnId(request.LookIds))
+        if (option?.IsOfferedTo(_accountDefaults.EntitlementIds, _accountDefaults.CreationLevelLimit) != true || request.Path > LastPath
+            || RepeatsAnId(request.LookIds))
         {
             RefuseCreate(session, CreateResults.General);
             return;

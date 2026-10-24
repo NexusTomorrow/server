@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NexusTomorrow.Network.World.Message.Model.AccountInventory;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Persistence;
 using NexusTomorrow.Persistence.Account;
@@ -10,8 +11,8 @@ namespace NexusTomorrow.Owners.Account;
 
 /// <summary>
 /// The account side (decisions.md D9 2b): game tokens and session keys, each redeemable once within the token lifetime, with one live
-/// game token per account; the world session of each account, where a second login replaces the first; and the admin changes to
-/// accounts. Every suspension change goes through this owner, which keeps the state that overrides what the credentials said at
+/// game token per account; the world session of each account, where a second login replaces the first, and which a grant opens with
+/// the account's entitlements and creation level limit (<see cref="AccountDefaults"/>); and the admin changes to accounts. Every suspension change goes through this owner, which keeps the state that overrides what the credentials said at
 /// login, so a refusal here never disagrees with the database once the change has committed.
 /// </summary>
 public sealed class AccountOwner : Owner<AccountMessage>
@@ -32,15 +33,24 @@ public sealed class AccountOwner : Owner<AccountMessage>
     private int _onlineCount;
     private int _pendingGameTokens;
 
+    // The account block every grant sends, the same for every account until accounts store their own. Built once and never changed,
+    // so every session may queue the same instances.
+    private readonly AccountEntitlements _entitlements = new();
+    private readonly CreationLevelLimit _creationLevelLimit;
+
     /// <summary>
     /// Create the account owner.
     /// </summary>
-    public AccountOwner(TimeProvider time, IOptions<AccountOptions> options, ILogger<AccountOwner> logger, IWriteBehind persistence)
+    public AccountOwner(
+        TimeProvider time, IOptions<AccountOptions> options, ILogger<AccountOwner> logger, IWriteBehind persistence, AccountDefaults defaults)
         : base("account", logger)
     {
         _persistence = persistence;
         _time = time;
         _lifetime = options.Value.TokenLifetime;
+        foreach (EntitlementCount held in defaults.Entitlements)
+            _entitlements.Entitlements.Add(new AccountEntitlements.AccountEntitlement { EntitlementId = held.Id, Count = held.Count });
+        _creationLevelLimit = new CreationLevelLimit { Level = defaults.CreationLevelLimit };
     }
 
     /// <summary>
@@ -191,6 +201,11 @@ public sealed class AccountOwner : Owner<AccountMessage>
 
         _online[pending.AccountId] = new OnlineSession(greet.Session, pending.Email);
         Volatile.Write(ref _onlineCount, _online.Count);
+
+        // Sent before the grant completes, so they reach the client ahead of everything the connection answers once granted, the
+        // first character list among them: character select reads the account's entitlements and the creation limit from these alone.
+        greet.Session.Send(_entitlements);
+        greet.Session.Send(_creationLevelLimit);
         return new WorldGranted(pending.AccountId);
     }
 

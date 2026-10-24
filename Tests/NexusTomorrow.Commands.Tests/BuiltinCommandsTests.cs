@@ -11,7 +11,7 @@ public sealed class BuiltinCommandsTests
     public void TheBuiltinCommandsAreTheAccountAndServerCommandsInRegistrationOrder()
     {
         var persistence = new FakeWriteBehind();
-        var accounts = new AccountOwner(TimeProvider.System, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, persistence);
+        var accounts = new AccountOwner(TimeProvider.System, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, persistence, FixedEntitlementCaps.Defaults());
 
         IReadOnlyList<CommandDefinition> commands = BuiltinCommands.Create(accounts, [accounts], persistence, TimeProvider.System);
 

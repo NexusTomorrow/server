@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
+using NexusTomorrow.Network.World.Message.Model.AccountInventory;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
 using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Persistence;
@@ -19,13 +20,39 @@ public sealed class AccountOwnerTests : IAsyncLifetime
 
     public AccountOwnerTests()
     {
-        _owner = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, _db);
+        _owner = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, _db, FixedEntitlementCaps.Defaults());
         _owner.Start();
     }
 
     public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
     public async ValueTask DisposeAsync() => await _owner.StopAsync().WaitAsync(TimeSpan.FromSeconds(10));
+
+    [Fact]
+    public async Task AGrantSendsTheEntitlementsThenTheCreationLimit()
+    {
+        LoginGranted grant = Assert.IsType<LoginGranted>(await RedeemAsync(await IssueAsync(s_alice), "alice@example.com"));
+        var session = new FakeClientSession();
+
+        Assert.IsType<WorldGranted>(await GreetAsync(grant.SessionKey, grant.Echo, "alice@example.com", session));
+
+        Assert.Equal(2, session.Sent.Count);
+        AccountEntitlements entitlements = Assert.IsType<AccountEntitlements>(session.Sent[0]);
+        uint[] ids = [4, 10, 14, 15, 16, 17, 18, 19, 20, 21, 61, 62];
+        Assert.Equal(ids, entitlements.Entitlements.Select(entitlement => entitlement.EntitlementId));
+        Assert.All(entitlements.Entitlements, entitlement => Assert.Equal(1u, entitlement.Count));
+        Assert.Equal(3u, Assert.IsType<CreationLevelLimit>(session.Sent[1]).Level);
+    }
+
+    [Fact]
+    public async Task ARefusedGreetingSendsNeither()
+    {
+        var session = new FakeClientSession();
+
+        Assert.IsType<WorldRefused>(await GreetAsync(new byte[16], 1, "alice@example.com", session));
+
+        Assert.Empty(session.Sent);
+    }
 
     [Fact]
     public async Task AGameTokenWorksOnce()

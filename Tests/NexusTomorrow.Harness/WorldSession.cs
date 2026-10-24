@@ -2,6 +2,7 @@
 using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Entity.Command;
+using NexusTomorrow.Network.World.Message.Model.AccountInventory;
 using NexusTomorrow.Network.World.Message.Model.Entity;
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.PlayerPath;
@@ -27,12 +28,20 @@ public sealed class WorldSession : IAsyncDisposable
 
     private readonly SocketPipe _pipe;
 
-    internal WorldSession(SocketPipe pipe, GameTestClient connection, CharacterList firstList)
+    internal WorldSession(
+        SocketPipe pipe, GameTestClient connection, AccountEntitlements entitlements, CreationLevelLimit creationLimit, CharacterList firstList)
     {
         _pipe = pipe;
         Connection = connection;
+        Entitlements = entitlements;
+        CreationLimit = creationLimit;
         FirstList = firstList;
     }
+
+    // The account's entitlements and the creation level limit the server sent with the grant, before the first list.
+    public AccountEntitlements Entitlements { get; }
+
+    public CreationLevelLimit CreationLimit { get; }
 
     // The list the server sent when the session reached character select.
     public CharacterList FirstList { get; }

@@ -37,9 +37,9 @@ public static class CoreServices
     private static readonly TimeSpan s_ownerStallTime = TimeSpan.FromSeconds(10);
 
     /// <summary>
-    /// Register the core against <paramref name="configuration"/>. The clock, the creation catalog, the word filter, the world
-    /// catalog, the map scheduler and the random source are registered only when the caller has not, so a harness that registers its
-    /// own first wins.
+    /// Register the core against <paramref name="configuration"/>. The clock, the creation catalog, the word filter, the entitlement
+    /// caps, the world catalog, the map scheduler and the random source are registered only when the caller has not, so a harness that
+    /// registers its own first wins.
     /// </summary>
     public static IServiceCollection AddNexusTomorrowCore(this IServiceCollection services, IConfiguration configuration)
     {
@@ -48,12 +48,15 @@ public static class CoreServices
         AddOptions<RealmOptions>(services, configuration, RealmOptions.Section);
         AddOptions<MapOptions>(services, configuration, MapOptions.Section);
         AddOptions<AccountOptions>(services, configuration, AccountOptions.Section);
+        AddOptions<AccountDefaultsOptions>(services, configuration, AccountDefaultsOptions.Section);
         AddOptions<ContentOptions>(services, configuration, ContentOptions.Section);
         AddOptions<CliOptions>(services, configuration, CliOptions.Section);
 
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<ICreationCatalog, TableCreationCatalog>();
         services.TryAddSingleton<IWordFilter, TableWordFilter>();
+        services.TryAddSingleton<IEntitlementCaps, TableEntitlementCaps>();
+        services.AddSingleton<AccountDefaults>();
 
         // Random.Shared is safe from any thread; a harness registers its own seeded one first.
         services.TryAddSingleton(Random.Shared);

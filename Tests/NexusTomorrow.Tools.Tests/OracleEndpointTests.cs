@@ -16,7 +16,7 @@ public sealed class OracleEndpointTests : IAsyncLifetime
 
     private readonly string _folder = Directory.CreateTempSubdirectory("oracle-endpoint-").FullName;
     private readonly AccountOwner _accounts =
-        new(new FakeTimeProvider(), Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind());
+        new(new FakeTimeProvider(), Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind(), FixedEntitlementCaps.Defaults());
     private OracleEndpoint? _endpoint;
 
     private string TokenFile => Path.Combine(_folder, "token");

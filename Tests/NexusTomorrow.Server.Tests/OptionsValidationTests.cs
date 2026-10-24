@@ -99,6 +99,14 @@ public sealed class OptionsValidationTests
     }
 
     [Fact]
+    public void AccountDefaultsRefuseARepeatedId()
+    {
+        using WebApplication app = Build(new() { ["AccountDefaults:Entitlements:0:Id"] = "10", ["AccountDefaults:Entitlements:1:Id"] = "10" });
+        OptionsValidationException failure = Assert.Throws<OptionsValidationException>(() => Resolve(app.Services, typeof(AccountDefaultsOptions)));
+        Assert.Contains(failure.Failures, line => line.StartsWith("AccountDefaults:Entitlements ", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void EveryFailingRuleInASectionIsReported()
     {
         using WebApplication app = Build(new() { ["Maps:PoolThreads"] = "0", ["Maps:TickMs"] = "30" });
@@ -154,6 +162,8 @@ public sealed class OptionsValidationTests
             _ = services.GetRequiredService<IOptions<MapOptions>>().Value;
         else if (options == typeof(AccountOptions))
             _ = services.GetRequiredService<IOptions<AccountOptions>>().Value;
+        else if (options == typeof(AccountDefaultsOptions))
+            _ = services.GetRequiredService<IOptions<AccountDefaultsOptions>>().Value;
         else
             throw new ArgumentOutOfRangeException(nameof(options));
     }

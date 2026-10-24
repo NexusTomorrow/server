@@ -57,8 +57,15 @@ public static class Registries
     public static IReadOnlyList<CommandDefinition> Commands()
     {
         var persistence = new NoPersistence();
-        var accounts = new AccountOwner(TimeProvider.System, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, persistence);
+        var defaults = new AccountDefaults(Options.Create(new AccountDefaultsOptions()), new NoEntitlementCaps(), NullLogger<AccountDefaults>.Instance);
+        var accounts = new AccountOwner(TimeProvider.System, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, persistence, defaults);
         return BuiltinCommands.Create(accounts, [accounts], persistence, TimeProvider.System);
+    }
+
+    // No command runs here, so no account is ever granted; the caps are never read for a send.
+    private sealed class NoEntitlementCaps : IEntitlementCaps
+    {
+        public uint? MaxCountOf(uint entitlementId) => null;
     }
 
     // Nothing runs a command here, so nothing is ever queued.

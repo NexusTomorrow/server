@@ -33,7 +33,7 @@ public sealed class LoginConnectionTests : IAsyncLifetime
 
     public LoginConnectionTests()
     {
-        _accounts = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind());
+        _accounts = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind(), FixedEntitlementCaps.Defaults());
     }
 
     private GameTestClient Client { get; set; } = null!;

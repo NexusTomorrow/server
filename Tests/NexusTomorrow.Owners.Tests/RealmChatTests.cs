@@ -30,7 +30,7 @@ public sealed class RealmChatTests : IAsyncLifetime
         // A made-up word, never one of the client's.
         var filter = new WordFilter([(0, "blorp")], NullLogger<WordFilter>.Instance);
         _owner = new RealmOwner(
-            _db, new FixedCreationCatalog([]), filter, _maps, new FakeTimeProvider(), Options.Create(new RealmOptions()), _log);
+            _db, new FixedCreationCatalog([]), filter, FixedEntitlementCaps.Defaults(), _maps, new FakeTimeProvider(), Options.Create(new RealmOptions()), _log);
     }
 
     public ValueTask InitializeAsync()

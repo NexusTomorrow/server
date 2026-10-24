@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 using NexusTomorrow.Game.Static;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
+using NexusTomorrow.Owners.Account;
 using NexusTomorrow.Owners.Realm;
 using NexusTomorrow.Owners.Text;
 using NexusTomorrow.Owners.World;
@@ -37,7 +38,9 @@ public sealed class RealmOwnerTests : IAsyncLifetime
 
     public RealmOwnerTests()
     {
-        _owner = new RealmOwner(_db, s_catalog, s_filter, _maps, _time, Options.Create(new RealmOptions { MaxCharactersPerAccount = 2 }), NullLogger<RealmOwner>.Instance);
+        _owner = new RealmOwner(
+            _db, s_catalog, s_filter, FixedEntitlementCaps.Defaults(), _maps, _time, Options.Create(new RealmOptions { MaxCharactersPerAccount = 2 }),
+            NullLogger<RealmOwner>.Instance);
     }
 
     public ValueTask InitializeAsync()
@@ -115,6 +118,37 @@ public sealed class RealmOwnerTests : IAsyncLifetime
         await Eventually.TrueAsync(() => _session.Sent.OfType<CharacterCreateResult>().Any());
         Assert.Equal(expected, _session.Single<CharacterCreateResult>().Result);
         Assert.Empty(_db.Queued.OfType<CreateCharacterWork>());
+    }
+
+    [Fact]
+    public async Task AnOptionNeedingAnEntitlementTheAccountHoldsIsCreated()
+    {
+        Assert.Equal(CreateResults.Created, await CreateUnderAsync(Offer(entitlement: 61, level: 1), Holding(61)));
+    }
+
+    [Fact]
+    public async Task AnOptionNeedingAnEntitlementTheAccountLacksIsRefused()
+    {
+        Assert.Equal(CreateResults.General, await CreateUnderAsync(Offer(entitlement: 61, level: 1), Holding(10)));
+    }
+
+    [Fact]
+    public async Task AnOptionAtTheCreationLevelLimitIsCreated()
+    {
+        Assert.Equal(CreateResults.Created, await CreateUnderAsync(Offer(entitlement: 0, level: 3), Holding(10)));
+    }
+
+    [Fact]
+    public async Task AnOptionAboveTheCreationLevelLimitIsRefused()
+    {
+        Assert.Equal(CreateResults.General, await CreateUnderAsync(Offer(entitlement: 0, level: 6), Holding(10)));
+    }
+
+    [Fact]
+    public async Task ALevelFiftyStartIsRefusedWhateverIsHeld()
+    {
+        CreationOption levelFifty = Offer(entitlement: 61, level: 50) with { Start = CharacterCreationStart.Level50 };
+        Assert.Equal(CreateResults.General, await CreateUnderAsync(levelFifty, Holding(61)));
     }
 
     [Fact]
@@ -754,11 +788,48 @@ public sealed class RealmOwnerTests : IAsyncLifetime
 
     private RealmOwner StartOwner(FakeWriteBehind db, int? ids)
     {
-        var owner = new RealmOwner(db, s_catalog, s_filter, _maps, _time, Options.Create(new RealmOptions()), NullLogger<RealmOwner>.Instance);
+        var owner = new RealmOwner(
+            db, s_catalog, s_filter, FixedEntitlementCaps.Defaults(), _maps, _time, Options.Create(new RealmOptions()), NullLogger<RealmOwner>.Instance);
         if (ids is int count)
             owner.Post(new IdBlockTaken(new IdBlock(5001, count)));
         owner.Start();
         return owner;
+    }
+
+    // Our own fixture option 900, on and free, needing the entitlement given (0 for none) and starting at the level given.
+    private static CreationOption Offer(uint entitlement, uint level) =>
+        new(900, Race: 1, Sex: 0, Class: 1, FactionId: 166, Enabled: true, CharacterCreationStart.Arkship, Xp: 0, Level: level,
+            EntitlementRequired: entitlement, CostAmount: 0, CostumeOnly: false);
+
+    // An account holding the one entitlement given, at count 1, under a creation level limit of 3.
+    private static AccountDefaultsOptions Holding(uint entitlement) =>
+        new() { Entitlements = [new EntitlementGrant { Id = entitlement, Count = 1 }], CreationLevelLimit = 3 };
+
+    // Creates a character from option under an owner of its own holding defaults: the create's result, a committed write's when the
+    // option was offered.
+    private async Task<byte> CreateUnderAsync(CreationOption option, AccountDefaultsOptions defaults)
+    {
+        var db = new FakeWriteBehind();
+        var session = new FakeClientSession();
+        var owner = new RealmOwner(
+            db, new FixedCreationCatalog([option]), s_filter, FixedEntitlementCaps.Defaults(defaults), _maps, _time, Options.Create(new RealmOptions()),
+            NullLogger<RealmOwner>.Instance);
+        owner.Post(new IdBlockTaken(new IdBlock(5001, 10)));
+        owner.Start();
+        try
+        {
+            await ListOnAsync(owner, db, session, Account);
+            owner.Post(new CreateCharacter(Account, session, new CharacterCreate { CreationId = option.Id, Name = "Rebaser Head", Path = 1 }));
+            await Eventually.TrueAsync(() => db.Queued.OfType<CreateCharacterWork>().Any() || session.Sent.OfType<CharacterCreateResult>().Any());
+            if (db.Queued.OfType<CreateCharacterWork>().Any())
+                db.Take<CreateCharacterWork>().Complete(WorkResult.Committed);
+            await Eventually.TrueAsync(() => session.Sent.OfType<CharacterCreateResult>().Any());
+            return session.Single<CharacterCreateResult>().Result;
+        }
+        finally
+        {
+            await owner.StopAsync().WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        }
     }
 
     // A cached list answer is sent only after every earlier message has been handled.

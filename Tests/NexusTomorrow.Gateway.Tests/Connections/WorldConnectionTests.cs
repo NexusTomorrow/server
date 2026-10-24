@@ -10,6 +10,7 @@ using NexusTomorrow.Network;
 using NexusTomorrow.Network.Message.Model;
 using NexusTomorrow.Network.World.Entity;
 using NexusTomorrow.Network.World.Entity.Command;
+using NexusTomorrow.Network.World.Message.Model.AccountInventory;
 using NexusTomorrow.Network.World.Message.Model.Chat;
 using NexusTomorrow.Network.World.Message.Model.Movement;
 using NexusTomorrow.Network.World.Message.Model.Pregame;
@@ -43,8 +44,8 @@ public sealed class WorldConnectionTests : IAsyncLifetime
 
     public WorldConnectionTests()
     {
-        _accounts = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind());
-        _realm = new RealmOwner(_db, new FixedCreationCatalog([]), new WordFilter([], NullLogger<WordFilter>.Instance), _maps, _time, Options.Create(new RealmOptions { Id = 3 }), NullLogger<RealmOwner>.Instance);
+        _accounts = new AccountOwner(_time, Options.Create(new AccountOptions()), NullLogger<AccountOwner>.Instance, new FakeWriteBehind(), FixedEntitlementCaps.Defaults());
+        _realm = new RealmOwner(_db, new FixedCreationCatalog([]), new WordFilter([], NullLogger<WordFilter>.Instance), FixedEntitlementCaps.Defaults(), _maps, _time, Options.Create(new RealmOptions { Id = 3 }), NullLogger<RealmOwner>.Instance);
     }
 
     private GameTestClient Client { get; set; } = null!;
@@ -459,6 +460,10 @@ public sealed class WorldConnectionTests : IAsyncLifetime
         LoginGranted grant = await GrantAsync();
         await Client.SendAsync(Hello(grant));
         Client.Cipher = new PacketCipher(PacketCipher.SessionKey(grant.SessionKey));
+
+        // The account owner's grant sends these before the session reads anything else.
+        await Client.ExpectAsync<AccountEntitlements>();
+        await Client.ExpectAsync<CreationLevelLimit>();
     }
 
     // Enters character 5 as the client does, through the realm's list and select, and routes the session to the map it arrived at.
