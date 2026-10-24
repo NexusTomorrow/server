@@ -135,6 +135,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
   entitlements. A new unit names its loot, its world socket and world, two more unit types' names,
   and whether it is shown; its spell records name the caster, target, cast, spell, targets, stack
   counts, effects and the combat values an effect carries.
+- Support messages carry their real names and field meanings: bug reports, player reports, support
+  tickets, suggestions, customer surveys and their responses, and the stuck window's recall actions.
 
 ### Changed
 
@@ -169,6 +171,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 ### Fixed
 
 - Two account inventory messages that carried each other's meanings carry their own.
+- A customer survey response matches the client's layout: the survey, the object, four answers and a
+  comment in one record.
 
 - The combat log matches the client's layout: a reflected hit's sixth value is 32 bits, the dispel,
   transference and one amount kind end with their caster, target, spell and result, and kind 34 is
