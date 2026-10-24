@@ -9,7 +9,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 /// changes.
 /// </summary>
 /// <remarks>
-/// While a bit is set the client offers no interaction with that kind of terminal, and moves a player at one away from it.
+/// While a bit is set the client offers no interaction with that kind of terminal, and closes it for a player using one.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0640, Direction.ServerToClient)]
 [Verified(Rung.Fields)]
