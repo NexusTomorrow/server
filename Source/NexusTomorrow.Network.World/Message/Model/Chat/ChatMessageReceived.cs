@@ -36,9 +36,9 @@ public sealed partial class ChatMessageReceived
     [UInt(1)] public bool IsAutoResponse { get; set; }
 
     /// <summary>
-    /// The sender, by character id.
+    /// The sender, by character id: the client drops a line whose sender its ignore list holds.
     /// </summary>
-    public RealmScopedId SenderId { get; set; } = new();
+    [VerifiedMember] public RealmScopedId SenderId { get; set; } = new();
 
     /// <summary>
     /// The sender, by name.
@@ -76,9 +76,9 @@ public sealed partial class ChatMessageReceived
     [UInt(16)] public ushort Unknown11 { get; set; }
 
     /// <summary>
-    /// The sender's unit, by unit id, for the speech bubble on channels that show one.
+    /// The unit the line comes from, by unit id, which its speech bubble rises over on channels that show one; 0 names no unit.
     /// </summary>
-    [UInt(32)] public ulong UnitId { get; set; }
+    [VerifiedMember, UInt(32)] public ulong UnitId { get; set; }
 
     [UInt(8)] public byte Unknown13 { get; set; }
 }
