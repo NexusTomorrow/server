@@ -17,6 +17,9 @@ internal static class FieldsSplits
     {
         ["0x0638 server to client [5].element[1].arm 0x09[2].element[0]"] = new(PackedFloats, "the client reads 48 as one field, the declaration as 16 16 16"), // UnitMovement
         ["0x0638 server to client [5].element[1].arm 0x0C[2].element[0]"] = new(PackedFloats, "the client reads 48 as one field, the declaration as 16 16 16"), // UnitMovement
+        ["0x0248 client to server [0]"] = new(
+            "settled: the client writes one 32-bit value of which only bit 0 has a meaning, so the declaration takes that bit apart",
+            "the client reads 32 as one field, the declaration as 1 31"), // CombatLogOtherPlayersSet
     };
 
     /// <summary>
