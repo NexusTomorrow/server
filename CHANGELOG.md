@@ -188,6 +188,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - The ability book carries its real names and field meanings: ability tiers per action set, ability
   points, an action set's slots, unlock flag and request result, and the client's request to change
   its action set.
+- Joining a group, a group's target marks and a unit's death state carry their real names and field
+  meanings, with the group's id, flags, size, loot rules, members, leader and marks.
 
 ### Changed
 

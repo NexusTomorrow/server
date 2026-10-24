@@ -1,5 +1,6 @@
 ﻿using NexusTomorrow.Network.Codec;
 using NexusTomorrow.Network.Message;
+using NexusTomorrow.Network.World.Message.Model.Shared;
 
 namespace NexusTomorrow.Network.World.Message.Model.Group;
 
@@ -8,15 +9,16 @@ namespace NexusTomorrow.Network.World.Message.Model.Group;
 /// and raises Group_SetMark for a mark only when that group is the current one and the TargetMarker table holds the marker.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0431, Direction.ServerToClient)]
-public sealed partial class Server0431
+[Verified(Rung.Fields)]
+public sealed partial class GroupMarksChanged
 {
-    [WireStruct]
-    public sealed partial class Server0431Part0
-    {
-        [UInt(32)] public uint Unknown0 { get; set; }
-        [UInt(32)] public uint Unknown1 { get; set; }
-    }
+    /// <summary>
+    /// The group, by id.
+    /// </summary>
+    [UInt(64)] public ulong GroupId { get; set; }
 
-    [UInt(64)] public ulong Unknown0 { get; set; }
-    [Array(CountBits = 32)] public List<Server0431Part0> Unknown1 { get; } = [];
+    /// <summary>
+    /// The marks to apply, each a marker and the unit it marks.
+    /// </summary>
+    [Array(CountBits = 32)] public List<GroupMark> Marks { get; } = [];
 }
