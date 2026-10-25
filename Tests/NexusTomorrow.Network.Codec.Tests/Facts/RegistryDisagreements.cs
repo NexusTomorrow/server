@@ -23,6 +23,7 @@ internal static class RegistryDisagreements
         ["0x0152 server to client [1].element[0]"] = new(TreeDiffers, "the client has 8, the declaration 3"), // Server0152
         ["0x01A1 server to client [0]"] = new(SignedNotDeclared, "the client reads a signed integer, the declaration an integer"), // Server01A1
         ["0x0258 server to client [0]"] = new(SignedNotDeclared, "the client reads a signed integer, the declaration an integer"), // Server0258
+        ["0x025E server to client [129]"] = new(SignedNotDeclared, "the client reads a signed integer, the declaration an integer"), // Server025E
         ["0x0359 server to client [2].element[1]"] = new(TreeDiffers, "the client accepts selector 2 and the declaration has no arm"), // Server0359
         ["0x0359 server to client [2].element[1].arm 0x01[0]"] = new(TreeDiffers, "the client has a narrow string, the declaration a wide string"), // Server0359
         ["0x035F server to client [5].element[5]"] = new(TreeDiffers, "the client has a union, the declaration an array"), // Server035F
