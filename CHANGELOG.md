@@ -263,6 +263,8 @@ named for its date. **Unreleased** is what `dev` holds that `main` doesn't yet.
 - The group flags message goes back below Fields while its bit 0x100 rests on a single reading.
 - Two fields the client reads as signed integers are declared signed, among them a spell
   threshold's tier, and a field the wire facts marked signed is read as unsigned.
+- The wire facts mark a signed field in the player's state at its right place, which its declaration
+  already reads as signed.
 
 ### Fixed
 
