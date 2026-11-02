@@ -10,12 +10,12 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// Taken only while a selection is pending.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0162, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class CharacterSelectFailed
 {
     /// <summary>
     /// The client picks the interface's select error text by this value: 1 shows the rename-first text, 3 the disabled text and 2 the
     /// general text.
     /// </summary>
-    [VerifiedMember, UInt(3)] public byte Unknown0 { get; set; }
+    [VerifiedMember, UInt(3)] public byte Reason { get; set; }
 }

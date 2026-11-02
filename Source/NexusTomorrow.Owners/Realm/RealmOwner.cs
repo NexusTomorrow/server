@@ -189,13 +189,13 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
                 {
                     Free(left.Session, returnedId);
                     if (left.Loading)
-                        left.Session.Send(new CharacterSelectFailed { Unknown0 = SelectReasons.General });
+                        left.Session.Send(new CharacterSelectFailed { Reason = SelectReasons.General });
                 }
 
                 if (_parked.Remove(returnedId, out SelectCharacter? waiting))
                 {
                     Free(waiting.Session, returnedId);
-                    waiting.Session.Send(new CharacterSelectFailed { Unknown0 = SelectReasons.General });
+                    waiting.Session.Send(new CharacterSelectFailed { Reason = SelectReasons.General });
                 }
 
                 break;
@@ -395,7 +395,7 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
         };
         if (refusal is byte reason)
         {
-            select.Session.Send(new CharacterSelectFailed { Unknown0 = reason });
+            select.Session.Send(new CharacterSelectFailed { Reason = reason });
             return;
         }
 
@@ -413,7 +413,7 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
         if (_parked.Remove(select.CharacterId, out SelectCharacter? older))
         {
             Free(older.Session, select.CharacterId);
-            older.Session.Send(new CharacterSelectFailed { Unknown0 = SelectReasons.General });
+            older.Session.Send(new CharacterSelectFailed { Reason = SelectReasons.General });
         }
 
         _parked[select.CharacterId] = select;
@@ -540,7 +540,7 @@ public sealed class RealmOwner : Owner<RealmMessage>, IRealmInbox
         _presences.Remove(characterId);
         Free(presence.Session, characterId);
         if (answerGeneral)
-            presence.Session.Send(new CharacterSelectFailed { Unknown0 = SelectReasons.General });
+            presence.Session.Send(new CharacterSelectFailed { Reason = SelectReasons.General });
 
         RunParked(characterId);
     }

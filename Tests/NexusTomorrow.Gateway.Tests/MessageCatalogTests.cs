@@ -113,7 +113,7 @@ public sealed class MessageCatalogTests
     [InlineData((byte)3)]
     public void ASelectFailureMaySendEachReasonTheServerGives(byte reason)
     {
-        bool allowed = MessageCatalog.Default.MaySend(new Network.World.Message.Model.Pregame.CharacterSelectFailed { Unknown0 = reason }, out string? refusal);
+        bool allowed = MessageCatalog.Default.MaySend(new Network.World.Message.Model.Pregame.CharacterSelectFailed { Reason = reason }, out string? refusal);
 
         Assert.True(allowed, refusal);
     }

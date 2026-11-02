@@ -133,7 +133,7 @@ public sealed class WorldScenarios
 
         // An unknown id is refused with the same reason, so the created character is what makes this the held world's refusal. No
         // map was made for either world.
-        Assert.Equal(SelectReasons.General, (await session.SelectAsync(created.CharacterId)).Unknown0);
+        Assert.Equal(SelectReasons.General, (await session.SelectAsync(created.CharacterId)).Reason);
         Assert.Empty(scenario.Server.Service<MapDirectory>().Maps);
     }
 
