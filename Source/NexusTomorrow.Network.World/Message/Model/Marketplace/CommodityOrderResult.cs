@@ -7,18 +7,21 @@ namespace NexusTomorrow.Network.World.Message.Model.Marketplace;
 /// The result of posting a commodity order; the client raises PostCommodityOrderResult from it.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server06DB, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class CommodityOrderResult
 {
     /// <summary>
     /// The result, a GameLib.CodeEnumGenericError code.
     /// </summary>
-    [UInt(8)] public byte Result { get; set; }
+    [VerifiedMember, UInt(8)] public byte Result { get; set; }
 
     /// <summary>
     /// The order.
     /// </summary>
-    public CommodityOrder Order { get; set; } = new();
+    [VerifiedMember] public CommodityOrder Order { get; set; } = new();
 
-    [UInt(64)] public ulong Unknown2 { get; set; }
+    /// <summary>
+    /// The order's total amount in credits, which the client raises as the money part of PostCommodityOrderResult.
+    /// </summary>
+    [VerifiedMember, UInt(64)] public ulong Amount { get; set; }
 }

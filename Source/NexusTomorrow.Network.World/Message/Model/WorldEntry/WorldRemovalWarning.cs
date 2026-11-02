@@ -12,8 +12,11 @@ namespace NexusTomorrow.Network.World.Message.Model.WorldEntry;
 /// <see cref="WorldRemovalCancelled"/> calls it off.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0689, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class WorldRemovalWarning
 {
-    [UInt(3)] public byte Unknown0 { get; set; }
+    /// <summary>
+    /// The reason for the pending removal, which the client raises as its PendingWorldRemovalWarning event.
+    /// </summary>
+    [VerifiedMember, UInt(3)] public byte Reason { get; set; }
 }
