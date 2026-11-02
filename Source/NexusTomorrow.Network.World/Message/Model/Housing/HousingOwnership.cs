@@ -12,13 +12,16 @@ namespace NexusTomorrow.Network.World.Message.Model.Housing;
 /// residence is the current one.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0533, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class HousingOwnership
 {
     /// <summary>
     /// The residence, by id.
     /// </summary>
-    public RealmScopedId ResidenceId { get; set; } = new();
+    [VerifiedMember] public RealmScopedId ResidenceId { get; set; } = new();
 
-    [UInt(32)] public uint Unknown1 { get; set; }
+    /// <summary>
+    /// The ownership state; 1 or 2 raises HousingOwnershipRecieved, any other closes the panel when it is the current residence.
+    /// </summary>
+    [VerifiedMember, UInt(32)] public uint Ownership { get; set; }
 }
