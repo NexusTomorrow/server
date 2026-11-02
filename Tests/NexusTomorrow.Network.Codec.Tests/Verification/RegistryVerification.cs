@@ -152,8 +152,6 @@ internal static class RegistryVerification
         "0x0222",
         "0x0227",
         "0x0228",
-        "0x022A",
-        "0x022C",
         "0x022E",
         "0x022F",
         "0x0230",

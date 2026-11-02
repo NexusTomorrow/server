@@ -7,19 +7,22 @@ namespace NexusTomorrow.Network.World.Message.Model.Cinematic;
 /// Shows or clears the cinematic's subtitle at the command's time.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server022A, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class CinematicSubtitle
 {
     /// <summary>
     /// When the client runs the command, in milliseconds after the cinematic's start or after the last
     /// <see cref="CinematicTimeRebase"/> it ran.
     /// </summary>
-    [UInt(32)] public uint TimeMs { get; set; }
+    [VerifiedMember, UInt(32)] public uint TimeMs { get; set; }
 
     /// <summary>
     /// The subtitle, a LocalizedText id: the client shows its text and plays its voice-over. 0 clears the subtitle.
     /// </summary>
-    [UInt(21)] public uint TextId { get; set; }
+    [VerifiedMember, UInt(21)] public uint TextId { get; set; }
 
-    [UInt(1)] public bool Unknown2 { get; set; }
+    /// <summary>
+    /// Whether the client plays the subtitle's voice-over.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool PlaySound { get; set; }
 }
