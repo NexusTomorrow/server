@@ -53,13 +53,13 @@ public sealed class OracleVerbsTests : IAsyncLifetime
     [Fact]
     public async Task InjectQueuesTheBuiltMessageOnTheAccountsSessionBelowTheGate()
     {
-        JsonObject reply = await RequestAsync("inject", """{"account": "ALICE@example.com", "opcode": "0x036A", "fields": {"Unknown0": 3}}""");
+        JsonObject reply = await RequestAsync("inject", """{"account": "ALICE@example.com", "opcode": "0x036A", "fields": {"Reason": 3}}""");
 
         Assert.True((bool)reply["ok"]!);
         Assert.Equal("Kicked", (string)reply["type"]!);
         (ushort opcode, IWireStruct message) = Assert.Single(_session.Unchecked);
         Assert.Equal(0x036A, opcode);
-        Assert.Equal(3, Assert.IsType<Kicked>(message).Unknown0);
+        Assert.Equal(3, Assert.IsType<Kicked>(message).Reason);
         Assert.Equal(Convert.ToHexString(Serialize(message)), (string)reply["body"]!);
     }
 

@@ -13,17 +13,17 @@ public sealed class MessageBuildTests
     [Fact]
     public void AMessageBuildsFromEveryMemberAndReadsBackTheSame()
     {
-        (IWireStruct? message, byte[] body, string? refusal) = Build<Kicked>("""{"Unknown0": 7}""");
+        (IWireStruct? message, byte[] body, string? refusal) = Build<Kicked>("""{"Reason": 7}""");
 
         Assert.Null(refusal);
-        Assert.Equal(7, Assert.IsType<Kicked>(message).Unknown0);
+        Assert.Equal(7, Assert.IsType<Kicked>(message).Reason);
         Assert.Single(body);
     }
 
     [Fact]
     public void AMissingMemberIsRefusedByItsPath()
     {
-        Assert.Equal("Unknown0: no value given", Build<Kicked>("{}").Refusal);
+        Assert.Equal("Reason: no value given", Build<Kicked>("{}").Refusal);
     }
 
     [Fact]

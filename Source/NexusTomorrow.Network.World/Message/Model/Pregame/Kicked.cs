@@ -10,8 +10,11 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// Taken on character select, realm select and in the world: the client drops its connections and shows a message.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server036A, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class Kicked
 {
-    [UInt(5)] public byte Unknown0 { get; set; }
+    /// <summary>
+    /// The kick reason; the client shows the matching error text.
+    /// </summary>
+    [VerifiedMember, UInt(5)] public byte Reason { get; set; }
 }
