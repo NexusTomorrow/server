@@ -7,7 +7,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Entity;
 /// Destroys a unit.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0355, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class UnitDestroyed
 {
     /// <summary>
@@ -16,5 +16,8 @@ public sealed partial class UnitDestroyed
     /// </summary>
     [VerifiedMember, UInt(32)] public uint UnitId { get; set; }
 
-    [UInt(1)] public bool Unknown1 { get; set; }
+    /// <summary>
+    /// For a player unit, when set the client marks the unit's destroyed state before raising UnitDestroyed; ignored for other units.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool DestroyFlag { get; set; }
 }
