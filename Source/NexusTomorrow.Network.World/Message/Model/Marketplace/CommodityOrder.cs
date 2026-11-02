@@ -29,6 +29,9 @@ public sealed partial class CommodityOrder
     /// </summary>
     [UInt(64)] public ulong PricePerUnit { get; set; }
 
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
     [UInt(64)] public ulong Unknown4 { get; set; }
 
     /// <summary>
@@ -36,7 +39,14 @@ public sealed partial class CommodityOrder
     /// </summary>
     [UInt(1)] public bool IsBuy { get; set; }
 
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
     [UInt(1)] public bool Unknown6 { get; set; }
+
+    /// <summary>
+    /// The client gives this value no meaning.
+    /// </summary>
     [UInt(64)] public ulong Unknown7 { get; set; }
 
     /// <summary>

@@ -5,16 +5,19 @@ using NexusTomorrow.Network.Message;
 namespace NexusTomorrow.Network.World.Message.Model.Spell;
 
 /// <summary>
-/// Sets the resurrect dialog's options.
+/// Sets the resurrect dialog's availability and its options.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server0100, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class ResurrectionState
 {
-    [UInt(1)] public bool Unknown0 { get; set; }
+    /// <summary>
+    /// Whether a resurrection is available; when set, the client runs the resurrection countdown, and when clear it drops any running one.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool Available { get; set; }
 
     /// <summary>
     /// The ways the player may resurrect.
     /// </summary>
-    [UInt(8)] public ResurrectionType Options { get; set; }
+    [VerifiedMember, UInt(8)] public ResurrectionType Options { get; set; }
 }
