@@ -8,20 +8,31 @@ namespace NexusTomorrow.Network.World.Message.Model.Pet;
 /// Reports that a pet customization failed; the client raises PetCustomizationFailed with the result.
 /// </summary>
 [WireMessage(GameMessageOpcode.Server068B, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class PetCustomizationFailed
 {
     /// <summary>
     /// Why the customization failed.
     /// </summary>
-    [UInt(4)] public PetCustomizeResult Result { get; set; }
+    [VerifiedMember, UInt(4)] public PetCustomizeResult Result { get; set; }
 
-    [UInt(2)] public byte Unknown1 { get; set; }
-    [UInt(32)] public uint Unknown2 { get; set; }
-    [UInt(16)] public ushort Unknown3 { get; set; }
+    /// <summary>
+    /// The pet type, raised as ePetType in the client's PetCustomizationFailed event.
+    /// </summary>
+    [VerifiedMember, UInt(2)] public byte PetType { get; set; }
+
+    /// <summary>
+    /// The pet, raised as idPet in the client's PetCustomizationFailed event.
+    /// </summary>
+    [VerifiedMember, UInt(32)] public uint PetId { get; set; }
+
+    /// <summary>
+    /// The flair slot, raised as nFlairSlotIndex in the client's PetCustomizationFailed event.
+    /// </summary>
+    [VerifiedMember, UInt(16)] public ushort FlairSlotIndex { get; set; }
 
     /// <summary>
     /// The flair, as an id the client looks up in its PetFlair table.
     /// </summary>
-    [UInt(14)] public ushort PetFlairId { get; set; }
+    [VerifiedMember, UInt(14)] public ushort PetFlairId { get; set; }
 }

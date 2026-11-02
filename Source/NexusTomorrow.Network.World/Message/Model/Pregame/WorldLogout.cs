@@ -10,7 +10,7 @@ namespace NexusTomorrow.Network.World.Message.Model.Pregame;
 /// Character select and realm select drop it.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0594, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class WorldLogout
 {
     /// <summary>
@@ -19,5 +19,8 @@ public sealed partial class WorldLogout
     /// </summary>
     [VerifiedMember, UInt(1)] public bool ToCharacterSelect { get; set; }
 
-    [UInt(5)] public byte Unknown1 { get; set; }
+    /// <summary>
+    /// The logout reason; an ordinary reason is 0 or 1, and other values drive the client's error-screen text.
+    /// </summary>
+    [VerifiedMember, UInt(5)] public byte Reason { get; set; }
 }
