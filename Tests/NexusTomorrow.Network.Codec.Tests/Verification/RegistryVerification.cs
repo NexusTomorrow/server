@@ -198,7 +198,6 @@ internal static class RegistryVerification
         "0x035D",
         "0x035F",
         "0x0360",
-        "0x0362",
         "0x0366",
         "0x036F",
         "0x037E",
