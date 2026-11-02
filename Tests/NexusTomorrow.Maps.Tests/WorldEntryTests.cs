@@ -312,7 +312,7 @@ public sealed class WorldEntryTests : IDisposable
         Assert.Equal(moved, Assert.IsType<CharacterReturned>(Assert.Single(_realm.Posted)).Location);
         WorldLogout logout = session.Single<WorldLogout>();
         Assert.True(logout.ToCharacterSelect);
-        Assert.Equal((byte)0, logout.Unknown1);
+        Assert.Equal((byte)0, logout.Reason);
         Assert.Null(session.Map);
         Assert.Null(session.DisconnectReason);
         Assert.Equal(0, map.PlayerCount);

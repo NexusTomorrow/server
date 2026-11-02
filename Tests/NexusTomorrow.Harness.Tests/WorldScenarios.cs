@@ -234,7 +234,7 @@ public sealed class WorldScenarios
 
         Assert.Equal(0u, countdown.Duration);
         Assert.True(logout.ToCharacterSelect);
-        Assert.Equal((byte)0, logout.Unknown1);
+        Assert.Equal((byte)0, logout.Reason);
         Assert.Equal((ushort)1, again.Enter.WorldId);
     }
 
