@@ -13,13 +13,16 @@ namespace NexusTomorrow.Network.World.Message.Model.MatchingGame;
 /// <see cref="MatchingQueueResult.NotWaitingToAccept"/> MatchingCancelPendingGame.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server05E1, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class MatchingQueueOperationResult
 {
     /// <summary>
     /// The result.
     /// </summary>
-    [UInt(6)] public MatchingQueueResult Result { get; set; }
+    [VerifiedMember, UInt(6)] public MatchingQueueResult Result { get; set; }
 
-    [UInt(4)] public byte Unknown1 { get; set; }
+    /// <summary>
+    /// The matching queue, by queue id.
+    /// </summary>
+    [VerifiedMember, UInt(4)] public byte QueueId { get; set; }
 }

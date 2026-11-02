@@ -10,13 +10,16 @@ namespace NexusTomorrow.Network.World.Message.Model.Spell;
 /// The client raises ClearSpellThreshold.
 /// </remarks>
 [WireMessage(GameMessageOpcode.Server0814, Direction.ServerToClient)]
-[Verified(Rung.Purpose)]
+[Verified(Rung.Fields)]
 public sealed partial class SpellThresholdClear
 {
     /// <summary>
     /// The spell, a Spell4 table id.
     /// </summary>
-    [UInt(18)] public uint SpellId { get; set; }
+    [VerifiedMember, UInt(18)] public uint SpellId { get; set; }
 
-    [UInt(1)] public bool Unknown1 { get; set; }
+    /// <summary>
+    /// When set, the client clears all spell thresholds; when clear, only this spell's.
+    /// </summary>
+    [VerifiedMember, UInt(1)] public bool ResetAll { get; set; }
 }
