@@ -29,20 +29,20 @@ public sealed class MessageBuildTests
     [Fact]
     public void AMemberTheMessageDoesNotHaveIsRefused()
     {
-        Assert.Equal("Speed: Kicked has no such wire member", Build<Kicked>("""{"Unknown0": 1, "Speed": 2}""").Refusal);
+        Assert.Equal("Speed: Kicked has no such wire member", Build<Kicked>("""{"Reason": 1, "Speed": 2}""").Refusal);
     }
 
     [Fact]
     public void AValueOutsideItsMembersTypeIsRefused()
     {
-        Assert.Equal("Unknown0: 300 does not fit a Byte", Build<Kicked>("""{"Unknown0": 300}""").Refusal);
+        Assert.Equal("Reason: 300 does not fit a Byte", Build<Kicked>("""{"Reason": 300}""").Refusal);
     }
 
     [Fact]
     public void AValueWiderThanItsBitsIsRefused()
     {
-        // Kicked.Unknown0 is 5 bits wide, so 32 cannot travel.
-        (IWireStruct? message, _, string? refusal) = Build<Kicked>("""{"Unknown0": 32}""");
+        // Kicked.Reason is 5 bits wide, so 32 cannot travel.
+        (IWireStruct? message, _, string? refusal) = Build<Kicked>("""{"Reason": 32}""");
 
         Assert.Null(message);
         Assert.NotNull(refusal);

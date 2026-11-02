@@ -75,11 +75,11 @@ public sealed class OracleVerbsTests : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData("""{"account": "bob@example.com", "opcode": "0x036A", "fields": {"Unknown0": 3}}""", "bob@example.com has no world session")]
-    [InlineData("""{"account": "alice@example.com", "opcode": "36A", "fields": {"Unknown0": 3}}""", "inject names an opcode as 0xNNNN")]
+    [InlineData("""{"account": "bob@example.com", "opcode": "0x036A", "fields": {"Reason": 3}}""", "bob@example.com has no world session")]
+    [InlineData("""{"account": "alice@example.com", "opcode": "36A", "fields": {"Reason": 3}}""", "inject names an opcode as 0xNNNN")]
     [InlineData("""{"account": "alice@example.com", "opcode": "0x036A", "fields": {}, "body": "00"}""", "inject takes either fields or body")]
-    [InlineData("""{"account": "alice@example.com", "opcode": "0x036A", "fields": {}}""", "Unknown0: no value given")]
-    [InlineData("""{"opcode": "0x036A", "fields": {"Unknown0": 3}}""", "inject names an account")]
+    [InlineData("""{"account": "alice@example.com", "opcode": "0x036A", "fields": {}}""", "Reason: no value given")]
+    [InlineData("""{"opcode": "0x036A", "fields": {"Reason": 3}}""", "inject names an account")]
     public async Task InjectNamesWhyItRefusesAndQueuesNothing(string request, string error)
     {
         JsonObject reply = await RequestAsync("inject", request);
@@ -285,7 +285,7 @@ public sealed class OracleVerbsTests : IAsyncLifetime
 
         Assert.True((bool)reply["ok"]!);
         JsonObject member = Assert.IsType<JsonObject>(Assert.Single(Assert.IsType<JsonArray>(reply["members"])));
-        Assert.Equal(("Unknown0", "5", "unsigned"), ((string)member["path"]!, (string)member["bits"]!, (string)member["encoding"]!));
+        Assert.Equal(("Reason", "5", "unsigned"), ((string)member["path"]!, (string)member["bits"]!, (string)member["encoding"]!));
     }
 
     [Fact]

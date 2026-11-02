@@ -18,7 +18,7 @@ public sealed class MessageDumpTests
 {
     public static TheoryData<Type, string> Messages => new()
     {
-        { typeof(Kicked), """{"Unknown0": 7}""" },
+        { typeof(Kicked), """{"Reason": 7}""" },
         { typeof(GearScoreChanged), """{"GearScore": 412.5}""" },
         { typeof(UnitBonesChanged), """{"UnitId": 7, "BoneValues": [1.5, -2.25]}""" },
         { typeof(Server0252), """{"Unknown0": [1, 2, 3]}""" },
